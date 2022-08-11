@@ -9,8 +9,8 @@ public static class Client
 {
     private static Game currentGame = null!;
     private static Loader loader = null!;
-    public static Graphics Graphics { get; private set; } = null!;
     private static readonly CartridgeChain CartridgeChain = new();
+    public static Graphics Graphics { get; private set; } = null!;
     public static InputState Input { get; private set; }
     public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
     public static Assets Assets { get; } = new();
@@ -35,20 +35,7 @@ public static class Client
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
-
-        foreach (var cartridge in Client.CartridgeChain.GetAll())
-        {
-            if (cartridge is not ICartridgeWithPreload preloadCartridge)
-            {
-                continue;
-            }
-
-            foreach (var preloadEvent in preloadCartridge.Preload(Client.Graphics.Painter))
-            {
-                Client.loader.AddDynamicLoadEvent(preloadEvent);
-            }
-        }
-        
+        Client.CartridgeChain.ForeachPreload(loadEvent => Client.loader.AddDynamicLoadEvent(loadEvent));
         Client.CartridgeChain.Prepend(new LoadingCartridge(Client.loader));
     }
 
@@ -76,14 +63,27 @@ public static class Client
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
     /// </summary>
+    /// <param name="args">Args passed via command line</param>
     /// <param name="gameCartridge">Cartridge for your game</param>
     /// <param name="fileSystem">FileSystem plugin for your platform</param>
-    public static void Start(ICartridge gameCartridge, IFileSystem fileSystem)
+    public static void Start(string[] args, ICartridge gameCartridge, IFileSystem fileSystem)
     {
         Client.FileSystem = fileSystem;
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
+
+        var givenArgs = new CommandLineArguments(args);
         
+        Client.CartridgeChain.ForeachCommandLine(parameter =>
+        {
+            givenArgs.BindToParameter(parameter);
+        });
+
+        foreach (var arg in givenArgs.UnboundArgs())
+        {
+            Console.WriteLine($"Unknown arg: {arg}");
+        }
+
         using var game = new NotGame();
         Client.currentGame = game;
         game.Run();

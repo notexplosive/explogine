@@ -7,7 +7,7 @@ using NotCore;
 namespace SampleGame;
 
 
-public class SampleGameCartridge : ICartridgeWithPreload
+public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
     private float _totalTime;
 
@@ -32,7 +32,7 @@ public class SampleGameCartridge : ICartridgeWithPreload
         return false;
     }
 
-    public IEnumerable<Loader.LoadEvent> Preload(Painter painter)
+    public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
     {
         yield return () =>
         {
@@ -66,5 +66,11 @@ public class SampleGameCartridge : ICartridgeWithPreload
 
             return canvas.AsAsset("dynamic-asset2");
         };
+    }
+
+    public IEnumerable<ICommandLineParameter> CommandLineArguments()
+    {
+        yield return new CommandLineBool("fullscreen");
+        yield return new CommandLineBool("snazziness");
     }
 }

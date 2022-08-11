@@ -11,7 +11,12 @@ public interface ICartridge
     public bool ShouldLoadNextCartridge();
 }
 
-public interface ICartridgeWithPreload : ICartridge
+public interface ILoadEventProvider
 {
-    public IEnumerable<Loader.LoadEvent> Preload(Painter painter);
+    public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter);
+}
+
+public interface ICommandLineParameterProvider
+{
+    public IEnumerable<ICommandLineParameter> CommandLineArguments();
 }

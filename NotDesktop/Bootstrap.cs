@@ -4,8 +4,8 @@ namespace NotDesktop;
 
 public static class Bootstrap
 {
-    public static void Run(ICartridge gameCartridge)
+    public static void Run(string[] args, ICartridge gameCartridge)
     {
-        Client.Start(gameCartridge, new DesktopFileSystem());
+        Client.Start(args, gameCartridge, new DesktopFileSystem());
     }
 }
