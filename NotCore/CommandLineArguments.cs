@@ -9,12 +9,7 @@ public class CommandLineArguments
     private readonly Dictionary<string, string> _argTable = new();
     private readonly Dictionary<string, ICommandLineParameter> _parameterValueTable = new();
 
-    public CommandLineArguments() : this(Array.Empty<string>())
-    {
-        
-    }
-    
-    public CommandLineArguments(string[] args)
+    public CommandLineArguments(params string[] args)
     {
         foreach (var arg in args)
         {
@@ -44,7 +39,7 @@ public class CommandLineArguments
         return arg.StartsWith("--");
     }
 
-    internal void BindToParameter(ICommandLineParameter commandLineParameter)
+    public void BindToParameter(ICommandLineParameter commandLineParameter)
     {
         var name = commandLineParameter.Name;
 

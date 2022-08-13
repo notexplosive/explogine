@@ -1,14 +1,45 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace NotCore;
 
-internal class CartridgeChain
+internal class CartridgeChain : ICommandLineParameterProvider, ILoadEventProvider
 {
     private readonly LinkedList<ICartridge> _list = new();
 
     private ICartridge Current => _list.First!.Value;
+
+    public IEnumerable<ICommandLineParameter> GetFormalParameters()
+    {
+        foreach (var cartridge in GetAllCartridges())
+        {
+            if (cartridge is not ICommandLineParameterProvider provider)
+            {
+                continue;
+            }
+
+            foreach (var parameter in provider.GetFormalParameters())
+            {
+                yield return parameter;
+            }
+        }
+    }
+
+    public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
+    {
+        foreach (var cartridge in GetAllCartridges())
+        {
+            if (cartridge is not ILoadEventProvider preloadCartridge)
+            {
+                continue;
+            }
+
+            foreach (var loadEvent in preloadCartridge.LoadEvents(Client.Graphics.Painter))
+            {
+                yield return loadEvent;
+            }
+        }
+    }
 
     public void Update(float dt)
     {
@@ -50,44 +81,24 @@ internal class CartridgeChain
 
     public void ForeachPreload(Action<Loader.LoadEvent> callback)
     {
-        foreach (var cartridge in GetAllCartridges())
+        foreach (var loadEvent in LoadEvents(Client.Graphics.Painter))
         {
-            if (cartridge is not ILoadEventProvider preloadCartridge)
-            {
-                continue;
-            }
-
-            foreach (var loadEvent in preloadCartridge.LoadEvents(Client.Graphics.Painter))
-            {
-                callback(loadEvent);
-            }
+            callback(loadEvent);
         }
     }
 
     public void ForeachCommandLineParam(Action<ICommandLineParameter> callback)
     {
-        foreach (var cartridge in GetAllCartridges())
+        foreach (var arg in GetFormalParameters())
         {
-            if (cartridge is not ICommandLineParameterProvider provider)
-            {
-                continue;
-            }
-
-            foreach (var arg in provider.GetFormalParameters())
-            {
-                callback(arg);
-            }
+            callback(arg);
         }
     }
 
     public void ValidateParameters()
     {
-        var parameters = new List<ICommandLineParameter>();
-        ForeachCommandLineParam(param => parameters.Add(param));
-
         HashSet<string> names = new();
-
-        foreach (var parameter in parameters)
+        foreach (var parameter in GetFormalParameters())
         {
             if (!names.Add(parameter.Name))
             {
