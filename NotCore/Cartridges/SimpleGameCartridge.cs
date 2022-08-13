@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NotCore;
+namespace NotCore.Cartridges;
 
 public abstract class SimpleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {

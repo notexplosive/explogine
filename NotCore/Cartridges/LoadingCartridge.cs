@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using NotCore.AssetManagement;
 
-namespace NotCore;
+namespace NotCore.Cartridges;
 
 public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 {

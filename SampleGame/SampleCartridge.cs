@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using NotCore;
 using NotCore.AssetManagement;
+using NotCore.Cartridges;
 
 namespace SampleGame;
 

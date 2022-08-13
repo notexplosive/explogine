@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NotCore;
+namespace NotCore.Cartridges;
 
 public class IntroCartridge : ICartridge
 {
