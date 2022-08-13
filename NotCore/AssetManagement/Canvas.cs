@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace NotCore;
+namespace NotCore.AssetManagement;
 
 public sealed class Canvas : IDisposable
 {

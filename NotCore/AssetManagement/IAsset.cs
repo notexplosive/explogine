@@ -1,4 +1,4 @@
-﻿namespace NotCore;
+﻿namespace NotCore.AssetManagement;
 
 public interface IAsset
 {

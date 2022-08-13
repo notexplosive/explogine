@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NotCore;
+namespace NotCore.AssetManagement;
 
 public class DynamicAsset : IAsset
 {

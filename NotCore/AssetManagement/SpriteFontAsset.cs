@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace NotCore;
+namespace NotCore.AssetManagement;
 
 public class SpriteFontAsset : IAsset
 {

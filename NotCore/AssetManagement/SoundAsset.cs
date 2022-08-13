@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Audio;
 
-namespace NotCore;
+namespace NotCore.AssetManagement;
 
 public class SoundAsset : IAsset
 {
