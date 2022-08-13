@@ -79,7 +79,7 @@ internal class CartridgeChain : ILoadEventProvider
             {
                 continue;
             }
-            
+
             provider.SetupFormalParameters(args);
         }
     }

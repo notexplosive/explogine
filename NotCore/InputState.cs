@@ -17,7 +17,7 @@ public readonly struct InputState
         return new InputState(
             new NotKeyboardState(Microsoft.Xna.Framework.Input.Keyboard.GetState(), previousInputState.Keyboard),
             new NotMouseState(Microsoft.Xna.Framework.Input.Mouse.GetState(), previousInputState.Mouse)
-            );
+        );
     }
 
     public NotMouseState Mouse { get; } = new(new MouseState(), null);

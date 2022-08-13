@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace NotCore;
@@ -63,7 +62,8 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         // main canvas draw
         painter.Clear(Color.Black);
         painter.BeginSpriteBatch();
-        painter.Draw(_loadingBarGraphic.Texture, (Client.Graphics.ScreenSize.ToVector2() / 2) - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
+        painter.Draw(_loadingBarGraphic.Texture,
+            Client.Graphics.ScreenSize.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
         painter.EndSpriteBatch();
     }
 
@@ -72,16 +72,16 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         return _loader.IsDone();
     }
 
-    ~LoadingCartridge()
-    {
-        _loadingBarGraphic.Dispose();
-        _progressSliceGraphic.Dispose();
-    }
-
     public void SetupFormalParameters(CommandLineArguments args)
     {
         args.AddParameter<bool>("fullscreen");
         args.AddParameter<bool>("skipsnapshot");
         args.AddParameter<string>("demo");
+    }
+
+    ~LoadingCartridge()
+    {
+        _loadingBarGraphic.Dispose();
+        _progressSliceGraphic.Dispose();
     }
 }

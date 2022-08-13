@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace NotCore;
@@ -18,7 +15,7 @@ public class Assets
         {
             throw new Exception($"No such asset: {key}");
         }
-        
+
         if (_lookupTable[key] is not T result)
         {
             throw new Exception($"No {typeof(T).Name} with name {key} found");
@@ -35,7 +32,7 @@ public class Assets
         {
             throw new Exception($"Asset with key {key} cannot be casted as {typeof(T).Name}");
         }
-        
+
         return result;
     }
 
@@ -43,12 +40,12 @@ public class Assets
     {
         return GetAsset<TextureAsset>(key).Texture;
     }
-    
+
     public SoundEffect GetSoundEffect(string key)
     {
         return GetAsset<SoundAsset>(key).SoundEffect;
     }
-    
+
     public SoundEffectInstance GetSoundEffectInstance(string key)
     {
         return GetAsset<SoundAsset>(key).SoundEffectInstance;

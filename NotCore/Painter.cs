@@ -5,8 +5,8 @@ namespace NotCore;
 
 public class Painter
 {
-    private readonly SpriteBatch _spriteBatch;
     private readonly GraphicsDevice _graphicsDevice;
+    private readonly SpriteBatch _spriteBatch;
 
     public Painter(GraphicsDevice graphicsDevice)
     {

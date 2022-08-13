@@ -12,7 +12,6 @@ public class IntroCartridge : ICartridge
 
     public void Draw(Painter painter)
     {
-        
     }
 
     public bool ShouldLoadNextCartridge()

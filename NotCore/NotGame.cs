@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 
 namespace NotCore;
 
@@ -26,7 +23,7 @@ public class NotGame : Game
     {
         Client.LoadContent(Content);
     }
-    
+
     protected override void UnloadContent()
     {
         Client.UnloadContent();

@@ -19,7 +19,6 @@ public static class Client
 
     public static string ContentBaseDirectory => "Content";
 
-
     public static event Action? Initialized;
     public static event Action? ContentLoaded;
 
@@ -39,7 +38,7 @@ public static class Client
         Client.loader = new Loader(contentManager);
         Client.CartridgeChain.ForeachPreload(loadEvent => Client.loader.AddDynamicLoadEvent(loadEvent));
         Client.CartridgeChain.Prepend(new LoadingCartridge(Client.loader));
-        
+
         Client.CartridgeChain.ValidateParameters(Client.CommandLineArguments);
         foreach (var arg in Client.CommandLineArguments.UnboundArgs())
         {
