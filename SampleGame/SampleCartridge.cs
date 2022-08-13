@@ -26,7 +26,7 @@ public class SampleCartridge : SimpleGameCartridge
         painter.Clear(Color.CornflowerBlue);
         painter.BeginSpriteBatch();
         painter.Draw(Client.Assets.GetTexture("nesto/nesty/amongus"), new Vector2(100, _totalTime));
-        painter.Draw(Client.Assets.GetTexture("winking jack"), new Vector2(_totalTime, 100));
+        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position);
         painter.Draw(Client.Assets.GetDynamicAsset<Canvas>("dynamic-asset").Texture, new Vector2(90, 90));
         painter.Draw(Client.Assets.GetDynamicAsset<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
         painter.EndSpriteBatch();

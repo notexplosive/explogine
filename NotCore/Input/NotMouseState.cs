@@ -12,7 +12,7 @@ public class NotMouseState
     private readonly bool[] _wasPressed;
     private readonly bool[] _wasReleased;
 
-    public NotMouseState(MouseState rawCurrentState, NotMouseState? previousState)
+    internal NotMouseState(MouseState rawCurrentState, NotMouseState? previousState)
     {
         Position = rawCurrentState.Position.ToVector2();
         var mouseButtons = Enum.GetValues(typeof(MouseButton));

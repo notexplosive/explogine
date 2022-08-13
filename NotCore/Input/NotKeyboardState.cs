@@ -8,7 +8,7 @@ public class NotKeyboardState
     private readonly bool[] _wasPressedThisFrame;
     private readonly bool[] _wasReleasedThisFrame;
 
-    public NotKeyboardState(KeyboardState newKeyboardState, NotKeyboardState? previousState)
+    internal NotKeyboardState(KeyboardState newKeyboardState, NotKeyboardState? previousState)
     {
         _buttonState = NotKeyboardState.CreateKeyboardStateArray<ButtonState>();
         _wasPressedThisFrame = NotKeyboardState.CreateKeyboardStateArray<bool>();
