@@ -3,27 +3,11 @@ using System.Collections.Generic;
 
 namespace NotCore;
 
-internal class CartridgeChain : ICommandLineParameterProvider, ILoadEventProvider
+internal class CartridgeChain : ILoadEventProvider
 {
     private readonly LinkedList<ICartridge> _list = new();
 
     private ICartridge Current => _list.First!.Value;
-
-    public IEnumerable<ICommandLineParameter> GetFormalParameters()
-    {
-        foreach (var cartridge in GetAllCartridges())
-        {
-            if (cartridge is not ICommandLineParameterProvider provider)
-            {
-                continue;
-            }
-
-            foreach (var parameter in provider.GetFormalParameters())
-            {
-                yield return parameter;
-            }
-        }
-    }
 
     public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
     {
@@ -87,23 +71,16 @@ internal class CartridgeChain : ICommandLineParameterProvider, ILoadEventProvide
         }
     }
 
-    public void ForeachCommandLineParam(Action<ICommandLineParameter> callback)
+    public void ValidateParameters(CommandLineArguments args)
     {
-        foreach (var arg in GetFormalParameters())
+        foreach (var cartridge in GetAllCartridges())
         {
-            callback(arg);
-        }
-    }
-
-    public void ValidateParameters()
-    {
-        HashSet<string> names = new();
-        foreach (var parameter in GetFormalParameters())
-        {
-            if (!names.Add(parameter.Name))
+            if (cartridge is not ICommandLineParameterProvider provider)
             {
-                throw new Exception($"Command line Parameter {parameter.Name} is defined twice");
+                continue;
             }
+            
+            provider.SetupFormalParameters(args);
         }
     }
 }

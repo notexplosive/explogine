@@ -39,6 +39,12 @@ public static class Client
         Client.loader = new Loader(contentManager);
         Client.CartridgeChain.ForeachPreload(loadEvent => Client.loader.AddDynamicLoadEvent(loadEvent));
         Client.CartridgeChain.Prepend(new LoadingCartridge(Client.loader));
+        
+        Client.CartridgeChain.ValidateParameters(Client.CommandLineArguments);
+        foreach (var arg in Client.CommandLineArguments.UnboundArgs())
+        {
+            Console.WriteLine($"Unknown arg: {arg}");
+        }
     }
 
     internal static void UnloadContent()
@@ -73,18 +79,7 @@ public static class Client
         Client.FileSystem = fileSystem;
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
-
-        var givenArgs = new CommandLineArguments(args);
-
-        Client.CartridgeChain.ValidateParameters();
-        Client.CartridgeChain.ForeachCommandLineParam(parameter => { givenArgs.BindToParameter(parameter); });
-
-        foreach (var arg in givenArgs.UnboundArgs())
-        {
-            Console.WriteLine($"Unknown arg: {arg}");
-        }
-
-        Client.CommandLineArguments = givenArgs;
+        Client.CommandLineArguments = new CommandLineArguments(args);
 
         using var game = new NotGame();
         Client.currentGame = game;

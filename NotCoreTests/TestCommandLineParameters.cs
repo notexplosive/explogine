@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NotCore;
 using Xunit;
@@ -9,21 +10,65 @@ public class TestCommandLineParameters
     [Fact]
     public void happy_path()
     {
-        var args = new CommandLineArguments("--snazziness=4", "--roll", "--take=never");
-        args.BindToParameter(new CommandLineInt("snazziness"));
-        args.BindToParameter(new CommandLineBool("roll"));
-        args.BindToParameter(new CommandLineString("take"));
-        
-        args.GetCommandLineValue<CommandLineInt>("snazziness")!.Value.Should().Be(4);
-        args.GetCommandLineValue<CommandLineBool>("roll")!.Value.Should().BeTrue();
-        args.GetCommandLineValue<CommandLineString>("take")!.Value.Should().Be("never");
+        var args = new CommandLineArguments("--level=4", "--roll", "--foo=bar");
+        args.AddParameter<int>("level");
+        args.AddParameter<bool>("roll");
+        args.AddParameter<string>("foo");
+
+        args.GetValue<int>("level").Should().Be(4);
+        args.GetValue<bool>("roll").Should().BeTrue();
+        args.GetValue<string>("foo").Should().Be("bar");
     }
 
     [Fact]
-    public void unset_value_is_default()
+    public void user_provides_arg_that_is_not_used()
     {
-        var args = new CommandLineArguments("--snazziness=4", "--roll", "--take=never");
+        var args = new CommandLineArguments("--nudge=mega");
 
-        args.GetCommandLineValue<CommandLineBool>("neversetbool")!.Value.Should().BeFalse();
+        var act = () => { args.GetValue<string>("nudge"); };
+        act.Should().Throw<Exception>();
+    }
+
+    [Fact]
+    public void ask_for_bound_but_unset_parameter()
+    {
+        var args = new CommandLineArguments("--level=4", "--roll", "--take=never");
+        args.AddParameter<bool>("unset");
+        args.AddParameter<string>("strong");
+
+        args.GetValue<bool>("unset").Should().BeFalse();
+        args.GetValue<string>("strong").Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ask_for_value_that_is_not_set_or_bound()
+    {
+        var args = new CommandLineArguments("--level=4");
+        var func = () => { args.GetValue<bool>("never_set"); };
+        func.Should().Throw<Exception>();
+    }
+
+    [Fact]
+    public void asked_for_wrong_type()
+    {
+        var args = new CommandLineArguments("--level=4");
+        args.AddParameter<int>("level");
+
+        var action = () => { args.GetValue<bool>("level"); };
+        action.Should().Throw<Exception>();
+    }
+
+    [Fact]
+    public void same_parameter_bound_twice()
+    {
+        var args = new CommandLineArguments("--level=4");
+
+        var act = () =>
+        {
+            args.AddParameter<int>("level");
+            args.AddParameter<int>("level");
+        };
+
+        act.Should().Throw<Exception>();
     }
 }

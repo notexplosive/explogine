@@ -14,9 +14,6 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
     public void Update(float dt)
     {
         _totalTime += dt;
-
-        var demoVal = Client.CommandLineArguments.GetCommandLineValue<CommandLineString>("demo");
-        var snazzinessVal = Client.CommandLineArguments.GetCommandLineValue<CommandLineBool>("snazziness");
     }
 
     public void Draw(Painter painter)
@@ -71,8 +68,8 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
         };
     }
 
-    public IEnumerable<ICommandLineParameter> GetFormalParameters()
+    public void SetupFormalParameters(CommandLineArguments args)
     {
-        yield return new CommandLineBool("snazziness");
+        args.AddParameter<int>("level");
     }
 }

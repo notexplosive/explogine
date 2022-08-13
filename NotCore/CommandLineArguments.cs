@@ -6,8 +6,8 @@ namespace NotCore;
 
 public class CommandLineArguments
 {
-    private readonly Dictionary<string, string> _argTable = new();
-    private readonly Dictionary<string, ICommandLineParameter> _parameterValueTable = new();
+    private readonly Dictionary<string, string> _givenArgsTable = new();
+    private readonly Dictionary<string, object> _parametersWithValues = new();
 
     public CommandLineArguments(params string[] args)
     {
@@ -19,11 +19,11 @@ public class CommandLineArguments
                 if (HasValue(argWithoutDashes))
                 {
                     var split = argWithoutDashes.Split('=');
-                    _argTable.Add(split[0], split[1]);
+                    _givenArgsTable.Add(split[0], split[1]);
                 }
                 else
                 {
-                    _argTable.Add(argWithoutDashes, "true");
+                    _givenArgsTable.Add(argWithoutDashes, "true");
                 }
             }
         }
@@ -39,58 +39,71 @@ public class CommandLineArguments
         return arg.StartsWith("--");
     }
 
-    public void BindToParameter(ICommandLineParameter commandLineParameter)
+    public void AddParameter<T>(string parameterName)
     {
-        var name = commandLineParameter.Name;
-
-        var argValue = GetArgTableEntry(name);
-        if (argValue == null)
+        string value;
+        if (_givenArgsTable.ContainsKey(parameterName))
         {
-            Console.WriteLine($"Unknown arg {name}");
-            return;
+            value = _givenArgsTable[parameterName];
+            _givenArgsTable.Remove(parameterName);
+        }
+        else
+        {
+            value = CommandLineArguments.GetDefaultAsString<T>();
         }
 
-        try
+        if (typeof(T) == typeof(float))
         {
-            switch (commandLineParameter)
-            {
-                case CommandLineBool commandLineBool:
-                    commandLineBool.Value = bool.Parse(argValue);
-                    break;
-                case CommandLineInt commandLineInt:
-                    commandLineInt.Value = int.Parse(argValue);
-                    break;
-                case CommandLineString commandLineString:
-                    commandLineString.Value = argValue;
-                    break;
-            }
-        }catch(Exception)
-        {
-            Console.WriteLine($"Parse failed for argument {name}, {argValue} is invalid");
+            _parametersWithValues.Add(parameterName, float.Parse(value));
         }
-
-        _argTable.Remove(name);
-        _parameterValueTable.Add(commandLineParameter.Name, commandLineParameter);
+        else if (typeof(T) == typeof(string))
+        {
+            _parametersWithValues.Add(parameterName, value);
+        }
+        else if (typeof(T) == typeof(int))
+        {
+            _parametersWithValues.Add(parameterName, int.Parse(value));
+        }
+        else if (typeof(T) == typeof(bool))
+        {
+            _parametersWithValues.Add(parameterName, bool.Parse(value));
+        }
     }
 
-    public T? GetCommandLineValue<T>(string name) where T : class, ICommandLineParameter
+    private static string GetDefaultAsString<T>()
     {
-        if (_parameterValueTable.ContainsKey(name))
+        if (typeof(T) == typeof(int) || typeof(T) == typeof(float))
         {
-            return _parameterValueTable[name] as T;
+            return "0";
         }
 
-        return null;
+        if (typeof(T) == typeof(string))
+        {
+            return string.Empty;
+        }
+
+        if (typeof(T) == typeof(bool))
+        {
+            return "false";
+        }
+
+        throw new Exception("Unsupported type");
+    }
+
+    public T GetValue<T>(string name)
+    {
+        if (_parametersWithValues.ContainsKey(name))
+        {
+            return _parametersWithValues[name] is T
+                ? (T) _parametersWithValues[name]
+                : throw new Exception($"Wrong type requested for {name}");
+        }
+
+        throw new Exception($"Value is never set for {name}");
     }
 
     internal List<string> UnboundArgs()
     {
-        return _argTable.Keys.ToList();
-    }
-
-    private string? GetArgTableEntry(string name)
-    {
-        _argTable.TryGetValue(name, out var value);
-        return value;
+        return _givenArgsTable.Keys.ToList();
     }
 }

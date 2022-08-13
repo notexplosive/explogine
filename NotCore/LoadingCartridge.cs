@@ -78,10 +78,10 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         _progressSliceGraphic.Dispose();
     }
 
-    public IEnumerable<ICommandLineParameter> GetFormalParameters()
+    public void SetupFormalParameters(CommandLineArguments args)
     {
-        yield return new CommandLineBool("fullscreen");
-        yield return new CommandLineBool("skipsnapshot");
-        yield return new CommandLineString("demo");
+        args.AddParameter<bool>("fullscreen");
+        args.AddParameter<bool>("skipsnapshot");
+        args.AddParameter<string>("demo");
     }
 }
