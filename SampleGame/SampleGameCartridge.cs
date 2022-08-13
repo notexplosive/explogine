@@ -8,6 +8,16 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
 {
     private float _totalTime;
 
+    public SampleGameCartridge()
+    {
+        Client.RunWhenReady(ClientReady);
+    }
+
+    private void ClientReady()
+    {
+        
+    }
+
     public void Update(float dt)
     {
         _totalTime += dt;

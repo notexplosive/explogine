@@ -17,10 +17,29 @@ public static class Client
     public static Assets Assets { get; } = new();
     public static SoundPlayer SoundPlayer { get; } = new();
 
+    public static bool IsReady { get; set; }
+
     public static string ContentBaseDirectory => "Content";
 
-    public static event Action? Initialized;
-    public static event Action? ContentLoaded;
+    public static event Action? Readied;
+
+    public static void RunWhenReady(Action action)
+    {
+        if (Client.IsReady)
+        {
+            action();
+        }
+        else
+        {
+            Client.Readied += action;
+        }
+    }
+
+    private static void RunAndClearReadyEvents()
+    {
+        Client.Readied?.Invoke();
+        Client.Readied = null;
+    }
 
     public static void Exit()
     {
@@ -30,7 +49,6 @@ public static class Client
     internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
-        Client.Initialized?.Invoke();
     }
 
     internal static void LoadContent(ContentManager contentManager)
@@ -44,6 +62,8 @@ public static class Client
         {
             Console.WriteLine($"Unknown arg: {arg}");
         }
+
+        Client.IsReady = true;
     }
 
     internal static void UnloadContent()
@@ -87,6 +107,7 @@ public static class Client
 
     internal static void TriggerDoneLoading()
     {
-        Client.ContentLoaded?.Invoke();
+        Client.IsReady = true;
+        Client.RunAndClearReadyEvents();
     }
 }

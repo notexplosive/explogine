@@ -9,6 +9,10 @@ public class Assets
 {
     private readonly Dictionary<string, IAsset> _lookupTable = new();
 
+    internal Assets()
+    {
+    }
+
     private T GetAsset<T>(string key) where T : class, IAsset
     {
         if (!_lookupTable.ContainsKey(key))
@@ -56,7 +60,7 @@ public class Assets
         return GetAsset<SpriteFontAsset>(key).SpriteFont;
     }
 
-    public void AddAsset(IAsset asset)
+    internal void AddAsset(IAsset asset)
     {
         _lookupTable.Add(asset.Key, asset);
     }
