@@ -11,7 +11,7 @@ public interface ICartridge
 
 public interface ILoadEventProvider
 {
-    public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter);
+    public IEnumerable<LoadEvent> LoadEvents(Painter painter);
 }
 
 public interface ICommandLineParameterProvider

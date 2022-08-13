@@ -37,7 +37,7 @@ public class SampleCartridge : SimpleGameCartridge
         args.AddParameter<int>("level");
     }
 
-    public override IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
+    public override IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
         yield return () =>
         {

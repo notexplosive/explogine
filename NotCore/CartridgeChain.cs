@@ -10,7 +10,7 @@ internal class CartridgeChain : ILoadEventProvider
 
     private ICartridge Current => _list.First!.Value;
 
-    public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
+    public IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
         foreach (var cartridge in GetAllCartridges())
         {
@@ -64,7 +64,7 @@ internal class CartridgeChain : ILoadEventProvider
         }
     }
 
-    public void ForeachPreload(Action<Loader.LoadEvent> callback)
+    public void ForeachPreload(Action<LoadEvent> callback)
     {
         foreach (var loadEvent in LoadEvents(Client.Graphics.Painter))
         {

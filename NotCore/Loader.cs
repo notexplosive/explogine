@@ -9,10 +9,10 @@ using NotCore.AssetManagement;
 
 namespace NotCore;
 
+public delegate IAsset LoadEvent();
+
 public class Loader
 {
-    public delegate IAsset LoadEvent();
-
     private readonly ContentManager _content;
     private readonly List<LoadEvent> _loadEvents = new();
     private int _loadEventIndex;

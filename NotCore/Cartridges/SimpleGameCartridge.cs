@@ -18,7 +18,7 @@ public abstract class SimpleGameCartridge : ICartridge, ILoadEventProvider, ICom
     }
 
     public abstract void SetupFormalParameters(CommandLineArguments args);
-    public abstract IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter);
+    public abstract IEnumerable<LoadEvent> LoadEvents(Painter painter);
 
     protected abstract void Load();
 }
