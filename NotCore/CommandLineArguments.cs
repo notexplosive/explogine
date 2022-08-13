@@ -7,7 +7,13 @@ namespace NotCore;
 public class CommandLineArguments
 {
     private readonly Dictionary<string, string> _argTable = new();
+    private readonly Dictionary<string, ICommandLineParameter> _parameterValueTable = new();
 
+    public CommandLineArguments() : this(Array.Empty<string>())
+    {
+        
+    }
+    
     public CommandLineArguments(string[] args)
     {
         foreach (var arg in args)
@@ -38,7 +44,7 @@ public class CommandLineArguments
         return arg.StartsWith("--");
     }
 
-    public void BindToParameter(ICommandLineParameter commandLineParameter)
+    internal void BindToParameter(ICommandLineParameter commandLineParameter)
     {
         var name = commandLineParameter.Name;
 
@@ -69,9 +75,20 @@ public class CommandLineArguments
         }
 
         _argTable.Remove(name);
+        _parameterValueTable.Add(commandLineParameter.Name, commandLineParameter);
     }
 
-    public List<string> UnboundArgs()
+    public T? GetCommandLineValue<T>(string name) where T : class, ICommandLineParameter
+    {
+        if (_parameterValueTable.ContainsKey(name))
+        {
+            return _parameterValueTable[name] as T;
+        }
+
+        return null;
+    }
+
+    internal List<string> UnboundArgs()
     {
         return _argTable.Keys.ToList();
     }

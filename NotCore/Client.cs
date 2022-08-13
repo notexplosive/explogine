@@ -13,10 +13,12 @@ public static class Client
     public static Graphics Graphics { get; private set; } = null!;
     public static InputState Input { get; private set; }
     public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
+    public static CommandLineArguments CommandLineArguments { get; private set; } = new();
     public static Assets Assets { get; } = new();
     public static SoundPlayer SoundPlayer { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
+
 
     public static event Action? Initialized;
     public static event Action? ContentLoaded;
@@ -73,16 +75,16 @@ public static class Client
         Client.CartridgeChain.Append(gameCartridge);
 
         var givenArgs = new CommandLineArguments(args);
-        
-        Client.CartridgeChain.ForeachCommandLine(parameter =>
-        {
-            givenArgs.BindToParameter(parameter);
-        });
+
+        Client.CartridgeChain.ValidateParameters();
+        Client.CartridgeChain.ForeachCommandLineParam(parameter => { givenArgs.BindToParameter(parameter); });
 
         foreach (var arg in givenArgs.UnboundArgs())
         {
             Console.WriteLine($"Unknown arg: {arg}");
         }
+
+        Client.CommandLineArguments = givenArgs;
 
         using var game = new NotGame();
         Client.currentGame = game;

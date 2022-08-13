@@ -18,5 +18,5 @@ public interface ILoadEventProvider
 
 public interface ICommandLineParameterProvider
 {
-    public IEnumerable<ICommandLineParameter> CommandLineArguments();
+    public IEnumerable<ICommandLineParameter> GetFormalParameters();
 }

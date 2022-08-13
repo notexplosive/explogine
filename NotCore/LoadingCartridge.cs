@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace NotCore;
 
-public class LoadingCartridge : ICartridge
+public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 {
     private const int ProgressBarHeight = 40;
     private const int ProgressBarWidth = 400;
@@ -75,5 +76,12 @@ public class LoadingCartridge : ICartridge
     {
         _loadingBarGraphic.Dispose();
         _progressSliceGraphic.Dispose();
+    }
+
+    public IEnumerable<ICommandLineParameter> GetFormalParameters()
+    {
+        yield return new CommandLineBool("fullscreen");
+        yield return new CommandLineBool("skipsnapshot");
+        yield return new CommandLineString("demo");
     }
 }

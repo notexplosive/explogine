@@ -40,7 +40,7 @@ internal class CartridgeChain
         _list.AddFirst(cartridge);
     }
 
-    public IEnumerable<ICartridge> GetAll()
+    public IEnumerable<ICartridge> GetAllCartridges()
     {
         foreach (var cartridge in _list)
         {
@@ -50,7 +50,7 @@ internal class CartridgeChain
 
     public void ForeachPreload(Action<Loader.LoadEvent> callback)
     {
-        foreach (var cartridge in GetAll())
+        foreach (var cartridge in GetAllCartridges())
         {
             if (cartridge is not ILoadEventProvider preloadCartridge)
             {
@@ -64,18 +64,34 @@ internal class CartridgeChain
         }
     }
 
-    public void ForeachCommandLine(Action<ICommandLineParameter> callback)
+    public void ForeachCommandLineParam(Action<ICommandLineParameter> callback)
     {
-        foreach (var cartridge in GetAll())
+        foreach (var cartridge in GetAllCartridges())
         {
             if (cartridge is not ICommandLineParameterProvider provider)
             {
                 continue;
             }
 
-            foreach (var arg in provider.CommandLineArguments())
+            foreach (var arg in provider.GetFormalParameters())
             {
                 callback(arg);
+            }
+        }
+    }
+
+    public void ValidateParameters()
+    {
+        var parameters = new List<ICommandLineParameter>();
+        ForeachCommandLineParam(param => parameters.Add(param));
+
+        HashSet<string> names = new();
+
+        foreach (var parameter in parameters)
+        {
+            if (!names.Add(parameter.Name))
+            {
+                throw new Exception($"Command line Parameter {parameter.Name} is defined twice");
             }
         }
     }
