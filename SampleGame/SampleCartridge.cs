@@ -1,28 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using NotCore;
 
 namespace SampleGame;
 
-public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
+public class SampleCartridge : SimpleGameCartridge
 {
     private float _totalTime;
 
-    public SampleGameCartridge()
+    protected override void Load()
     {
-        Client.RunWhenReady(ClientReady);
+        Console.WriteLine("Sample Cart Loaded");
     }
 
-    private void ClientReady()
-    {
-    }
-
-    public void Update(float dt)
+    public override void Update(float dt)
     {
         _totalTime += dt;
     }
 
-    public void Draw(Painter painter)
+    public override void Draw(Painter painter)
     {
         painter.Clear(Color.CornflowerBlue);
         painter.BeginSpriteBatch();
@@ -33,17 +30,12 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
         painter.EndSpriteBatch();
     }
 
-    public bool ShouldLoadNextCartridge()
-    {
-        return false;
-    }
-
-    public void SetupFormalParameters(CommandLineArguments args)
+    public override void SetupFormalParameters(CommandLineArguments args)
     {
         args.AddParameter<int>("level");
     }
 
-    public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
+    public override IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
     {
         yield return () =>
         {
