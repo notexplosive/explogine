@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using NotCore;
 
 namespace SampleGame;
-
 
 public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
@@ -32,6 +29,11 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
         return false;
     }
 
+    public void SetupFormalParameters(CommandLineArguments args)
+    {
+        args.AddParameter<int>("level");
+    }
+
     public IEnumerable<Loader.LoadEvent> LoadEvents(Painter painter)
     {
         yield return () =>
@@ -43,7 +45,7 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
 
             return canvas.AsAsset("dynamic-asset");
         };
-        
+
         yield return () =>
         {
             var canvas = new Canvas(100, 100);
@@ -53,7 +55,7 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
             Client.Graphics.PushCanvas(canvas2);
             painter.Clear(Color.IndianRed);
             Client.Graphics.PopCanvas();
-            
+
             var texture = canvas2.Texture;
             painter.BeginSpriteBatch();
             painter.Clear(Color.Transparent);
@@ -61,15 +63,10 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
             painter.Draw(texture, new Vector2(25, 50));
             painter.Draw(texture, new Vector2(50, 25));
             painter.EndSpriteBatch();
-            
+
             Client.Graphics.PopCanvas();
 
             return canvas.AsAsset("dynamic-asset2");
         };
-    }
-
-    public void SetupFormalParameters(CommandLineArguments args)
-    {
-        args.AddParameter<int>("level");
     }
 }

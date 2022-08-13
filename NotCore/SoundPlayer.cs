@@ -2,4 +2,9 @@
 
 public class SoundPlayer
 {
+    internal SoundPlayer()
+    {
+    }
+    
+    
 }

@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:nesto/nesty/amongus.PNG
 
+#begin ouch.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:ouch.ogg
+
 #begin winking jack.PNG
 /importer:TextureImporter
 /processor:TextureProcessor
