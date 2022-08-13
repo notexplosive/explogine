@@ -65,7 +65,7 @@ public class Assets
         _lookupTable.Add(asset.Key, asset);
     }
 
-    public void UnloadAllDynamicContent()
+    internal void UnloadAllDynamicContent()
     {
         foreach (var asset in _lookupTable.Values)
         {

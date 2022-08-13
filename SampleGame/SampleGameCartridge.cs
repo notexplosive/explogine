@@ -15,7 +15,6 @@ public class SampleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineP
 
     private void ClientReady()
     {
-        
     }
 
     public void Update(float dt)

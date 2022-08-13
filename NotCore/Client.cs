@@ -17,7 +17,7 @@ public static class Client
     public static Assets Assets { get; } = new();
     public static SoundPlayer SoundPlayer { get; } = new();
 
-    public static bool IsReady { get; set; }
+    private static bool IsReady { get; set; }
 
     public static string ContentBaseDirectory => "Content";
 
