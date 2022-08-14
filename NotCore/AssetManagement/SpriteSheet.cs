@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NotCore.Data;
 
 namespace NotCore.AssetManagement;
 
@@ -19,8 +18,8 @@ public abstract class SpriteSheet : Asset
 
     public abstract int FrameCount { get; }
 
-    public abstract void DrawFrame(Painter painter, int index, Vector2 position, float scale, float angle,
-        XyBool flip, Depth layerDepth, Color tintColor, bool isCentered = true);
+    public abstract void DrawFrame(Painter painter, int index, Vector2 position, Scale2D scale,
+        DrawSettings drawSettings);
 
     public abstract Rectangle GetSourceRectForFrame(int index);
 }

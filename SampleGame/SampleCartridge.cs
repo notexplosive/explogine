@@ -32,8 +32,14 @@ public class SampleCartridge : SimpleGameCartridge
 
         var player = Client.Assets.GetAsset<SpriteSheet>("player");
         painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Scale2D(0.25f), new DrawSettings {Origin = DrawOrigin.Center});
-        player.DrawFrame(painter, 0, Client.Input.Mouse.Position, 1f, new Random().NextSingle(), new XyBool(),
-            Depth.Max, Color.White);
+        
+        var drawSettings = new DrawSettings
+        {
+            Angle = new Random().NextSingle(),
+            Origin = DrawOrigin.Center,
+        };
+        
+        player.DrawFrame(painter, 0, Client.Input.Mouse.Position, new Scale2D(1f), drawSettings);
 
         painter.EndSpriteBatch();
     }

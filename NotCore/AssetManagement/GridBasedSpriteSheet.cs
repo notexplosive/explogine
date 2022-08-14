@@ -45,8 +45,7 @@ public class GridBasedSpriteSheet : SpriteSheet
         return new Rectangle(new Point(x * _frameSize.X, y * _frameSize.Y), _frameSize);
     }
 
-    public override void DrawFrame(Painter painter, int index, Vector2 position, float scale, float angle,
-        XyBool flip, Depth layerDepth, Color tintColor, bool isCentered = true)
+    public override void DrawFrame(Painter painter, int index, Vector2 position, Scale2D scale, DrawSettings drawSettings)
     {
         var isValid = index >= 0 && index <= _frameCount;
         if (!isValid)
@@ -54,18 +53,10 @@ public class GridBasedSpriteSheet : SpriteSheet
             throw new IndexOutOfRangeException();
         }
 
-        var adjustedFrameSize = _frameSize.ToVector2() * scale;
+        var adjustedFrameSize = _frameSize.ToVector2() * scale.Value;
         var destinationRect = new Rectangle(position.ToPoint(), adjustedFrameSize.ToPoint());
 
-        var drawSettings = new DrawSettings
-        {
-            Color = tintColor,
-            Angle = angle,
-            Origin = isCentered ? DrawOrigin.Center : new DrawOrigin(Vector2.Zero),
-            Flip = flip,
-            Depth = layerDepth,
-            SourceRectangle = GetSourceRectForFrame(index)
-        };
+        drawSettings.SourceRectangle ??= GetSourceRectForFrame(index);
 
         painter.Draw(Texture, destinationRect, drawSettings);
     }
