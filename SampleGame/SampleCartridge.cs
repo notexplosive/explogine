@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using NotCore;
 using NotCore.AssetManagement;
 using NotCore.Cartridges;
+using NotCore.Data;
 
 namespace SampleGame;
 
@@ -27,8 +28,12 @@ public class SampleCartridge : SimpleGameCartridge
         painter.BeginSpriteBatch();
         painter.Draw(Client.Assets.GetTexture("nesto/nesty/amongus"), new Vector2(100, _totalTime));
         painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position);
-        painter.Draw(Client.Assets.GetDynamicAsset<Canvas>("dynamic-asset").Texture, new Vector2(90, 90));
-        painter.Draw(Client.Assets.GetDynamicAsset<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
+        painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset").Texture, new Vector2(90, 90));
+        painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
+
+        var player = Client.Assets.GetAsset<SpriteSheet>("player");
+        player.DrawFrame(painter.DebugSpriteBatch, 0, Client.Input.Mouse.Position - new Vector2(-50, -50), 1f, 0f, new XyBool(), Depth.Max, Color.White, true);
+        
         painter.EndSpriteBatch();
     }
 
@@ -39,6 +44,7 @@ public class SampleCartridge : SimpleGameCartridge
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
+        yield return () => new GridBasedSpriteSheet("player", "player_new", new Point(32));
         yield return () =>
         {
             var canvas = new Canvas(25, 25);
@@ -71,5 +77,6 @@ public class SampleCartridge : SimpleGameCartridge
 
             return canvas.AsAsset("dynamic-asset2");
         };
+
     }
 }

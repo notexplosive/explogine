@@ -8,6 +8,8 @@ public class Painter
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
 
+    public SpriteBatch DebugSpriteBatch => _spriteBatch;
+
     public Painter(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;

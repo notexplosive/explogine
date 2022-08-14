@@ -2,14 +2,12 @@
 
 namespace NotCore.AssetManagement;
 
-public class SpriteFontAsset : IAsset
+public class SpriteFontAsset : Asset
 {
-    public SpriteFontAsset(string key, SpriteFont spriteFont)
+    public SpriteFontAsset(string key, SpriteFont spriteFont) : base(key)
     {
-        Key = key;
         SpriteFont = spriteFont;
     }
 
     public SpriteFont SpriteFont { get; }
-    public string Key { get; }
 }

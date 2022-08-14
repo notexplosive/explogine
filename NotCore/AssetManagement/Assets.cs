@@ -13,7 +13,7 @@ public class Assets
     {
     }
 
-    private T GetAsset<T>(string key) where T : class, IAsset
+    public T GetAsset<T>(string key) where T : class, IAsset
     {
         if (!_lookupTable.ContainsKey(key))
         {
@@ -28,7 +28,7 @@ public class Assets
         return result;
     }
 
-    public T GetDynamicAsset<T>(string key) where T : class
+    public T GetPreloadedObject<T>(string key) where T : class
     {
         var result = GetAsset<DynamicAsset>(key).Content as T;
 

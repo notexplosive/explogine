@@ -2,17 +2,14 @@
 
 namespace NotCore.AssetManagement;
 
-public class DynamicAsset : IAsset
+public class DynamicAsset : Asset
 {
-    public DynamicAsset(string key, IDisposable disposable)
+    public DynamicAsset(string key, IDisposable disposable) : base(key)
     {
         Content = disposable;
-        Key = key;
     }
 
     public IDisposable Content { get; }
-
-    public string Key { get; }
 
     public void Unload()
     {

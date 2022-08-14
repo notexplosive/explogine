@@ -2,14 +2,12 @@
 
 namespace NotCore.AssetManagement;
 
-public class TextureAsset : IAsset
+public class TextureAsset : Asset
 {
-    public TextureAsset(string key, Texture2D texture)
+    public TextureAsset(string key, Texture2D texture) : base(key)
     {
-        Key = key;
         Texture = texture;
     }
 
     public Texture2D Texture { get; }
-    public string Key { get; }
 }

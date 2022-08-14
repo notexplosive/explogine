@@ -2,16 +2,14 @@
 
 namespace NotCore.AssetManagement;
 
-public class SoundAsset : IAsset
+public class SoundAsset : Asset
 {
-    public SoundAsset(string key, SoundEffect soundEffect)
+    public SoundAsset(string key, SoundEffect soundEffect) : base(key)
     {
-        Key = key;
         SoundEffect = soundEffect;
         SoundEffectInstance = soundEffect.CreateInstance();
     }
 
     public SoundEffectInstance SoundEffectInstance { get; }
     public SoundEffect SoundEffect { get; }
-    public string Key { get; }
 }
