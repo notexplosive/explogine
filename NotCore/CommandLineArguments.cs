@@ -11,6 +11,16 @@ public class CommandLineArguments
 
     public CommandLineArguments(params string[] args)
     {
+        bool HasValue(string s)
+        {
+            return s.Contains('=');
+        }
+
+        bool IsCommand(string arg)
+        {
+            return arg.StartsWith("--");
+        }
+        
         foreach (var arg in args)
         {
             if (IsCommand(arg))
@@ -27,16 +37,6 @@ public class CommandLineArguments
                 }
             }
         }
-    }
-
-    private bool HasValue(string s)
-    {
-        return s.Contains('=');
-    }
-
-    private bool IsCommand(string arg)
-    {
-        return arg.StartsWith("--");
     }
 
     public void AddParameter<T>(string parameterName)
