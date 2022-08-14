@@ -65,6 +65,17 @@ public class GridBasedSpriteSheet : SpriteSheet
             offset = _frameSize.ToVector2() / 2;
         }
 
-        painter.Draw(Texture, destRect, sourceRect, tintColor, angle, offset, flip, layerDepth);
+        var drawSettings = new RectangleDrawSettings
+        {
+            DestinationRect = destRect,
+            SourceRectangle = sourceRect,
+            Color = tintColor,
+            Angle = angle,
+            Origin = offset,
+            Flip = flip,
+            Depth = layerDepth
+        };
+        
+        painter.Draw(Texture, drawSettings);
     }
 }

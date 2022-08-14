@@ -1,3 +1,3 @@
 ﻿namespace NotCore.Data;
 
-public record XyBool(bool X = false, bool Y = false);
+public record struct XyBool(bool X = false, bool Y = false);
