@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NotCore.Data;
 
-namespace NotCore;
+namespace NotCore.Data;
 
 public struct DrawSettings
 {

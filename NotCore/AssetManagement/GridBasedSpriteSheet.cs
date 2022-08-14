@@ -58,6 +58,6 @@ public class GridBasedSpriteSheet : SpriteSheet
 
         drawSettings.SourceRectangle ??= GetSourceRectForFrame(index);
 
-        painter.Draw(Texture, destinationRect, drawSettings);
+        painter.DrawAsRectangle(Texture, destinationRect, drawSettings);
     }
 }

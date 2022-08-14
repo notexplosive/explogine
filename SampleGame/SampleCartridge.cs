@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using NotCore;
 using NotCore.AssetManagement;
 using NotCore.Cartridges;
+using NotCore.Data;
 
 namespace SampleGame;
 
@@ -25,12 +26,12 @@ public class SampleCartridge : SimpleGameCartridge
     {
         painter.Clear(Color.CornflowerBlue);
         painter.BeginSpriteBatch();
-        painter.Draw(Client.Assets.GetTexture("nesto/nesty/amongus"), new Vector2(100, _totalTime));
-        painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset").Texture, new Vector2(90, 90));
-        painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
+        painter.DrawAtPosition(Client.Assets.GetTexture("nesto/nesty/amongus"), new Vector2(100, _totalTime));
+        painter.DrawAtPosition(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset").Texture, new Vector2(90, 90));
+        painter.DrawAtPosition(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
 
         var player = Client.Assets.GetAsset<SpriteSheet>("player");
-        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Scale2D(0.25f),
+        painter.DrawAtPosition(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Scale2D(0.25f),
             new DrawSettings {Origin = DrawOrigin.Center});
 
         var drawSettings = new DrawSettings
@@ -75,9 +76,9 @@ public class SampleCartridge : SimpleGameCartridge
             var texture = canvas2.Texture;
             painter.BeginSpriteBatch();
             painter.Clear(Color.Transparent);
-            painter.Draw(texture, new Vector2(50, 50));
-            painter.Draw(texture, new Vector2(25, 50));
-            painter.Draw(texture, new Vector2(50, 25));
+            painter.DrawAtPosition(texture, new Vector2(50, 50));
+            painter.DrawAtPosition(texture, new Vector2(25, 50));
+            painter.DrawAtPosition(texture, new Vector2(50, 25));
             painter.EndSpriteBatch();
 
             Client.Graphics.PopCanvas();

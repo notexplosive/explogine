@@ -1,4 +1,4 @@
-﻿namespace NotCore;
+﻿namespace NotCore.Data;
 
 public struct SoundEffectOptions
 {

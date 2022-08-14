@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NotCore.Data;
 
 namespace NotCore;
 
@@ -29,19 +30,24 @@ public class Painter
         _spriteBatch.End();
     }
 
-    public void Draw(Texture2D texture, Vector2 position)
+    public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle)
     {
-        Draw(texture, position, new Scale2D(), new DrawSettings());
+        DrawAsRectangle(texture, destinationRectangle, new DrawSettings());
+    }
+    
+    public void DrawAtPosition(Texture2D texture, Vector2 position)
+    {
+        DrawAtPosition(texture, position, Scale2D.One, new DrawSettings());
     }
 
-    public void Draw(Texture2D texture, Rectangle destinationRectangle, DrawSettings settings)
+    public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, destinationRectangle, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Value(destinationRectangle.Size), settings.FlipEffect, settings.Depth);
     }
 
-    public void Draw(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
+    public void DrawAtPosition(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,

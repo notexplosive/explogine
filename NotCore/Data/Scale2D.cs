@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace NotCore;
+namespace NotCore.Data;
 
 public readonly struct Scale2D
 {

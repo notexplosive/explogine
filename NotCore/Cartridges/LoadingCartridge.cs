@@ -54,7 +54,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 
         for (var i = 0; i < LoadingCartridge.ProgressBarWidth * _loader.Percent; i++)
         {
-            painter.Draw(_progressSliceGraphic.Texture, new Vector2(i, 0));
+            painter.DrawAtPosition(_progressSliceGraphic.Texture, new Vector2(i, 0));
         }
 
         painter.EndSpriteBatch();
@@ -63,7 +63,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         // main canvas draw
         painter.Clear(Color.Black);
         painter.BeginSpriteBatch();
-        painter.Draw(_loadingBarGraphic.Texture,
+        painter.DrawAtPosition(_loadingBarGraphic.Texture,
             Client.Graphics.ScreenSize.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
         painter.EndSpriteBatch();
     }
