@@ -45,7 +45,7 @@ public class SampleCartridge : SimpleGameCartridge
         painter.EndSpriteBatch();
     }
 
-    public override void SetupFormalParameters(CommandLineArguments args)
+    public override void SetupFormalParameters(ParsedCommandLineArguments args)
     {
         args.AddParameter<int>("level");
     }

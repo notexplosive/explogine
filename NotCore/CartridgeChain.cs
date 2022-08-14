@@ -72,7 +72,7 @@ internal class CartridgeChain : ILoadEventProvider
         }
     }
 
-    public void ValidateParameters(CommandLineArguments args)
+    public void ValidateParameters(ParsedCommandLineArguments args)
     {
         foreach (var cartridge in GetAllCartridges())
         {

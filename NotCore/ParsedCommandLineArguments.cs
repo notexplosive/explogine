@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace NotCore;
 
-public class CommandLineArguments
+public class ParsedCommandLineArguments
 {
     private readonly Dictionary<string, string> _givenArgsTable = new();
     private readonly Dictionary<string, object> _parametersWithValues = new();
 
-    public CommandLineArguments(params string[] args)
+    public ParsedCommandLineArguments(params string[] args)
     {
         bool HasValue(string s)
         {
@@ -49,7 +49,7 @@ public class CommandLineArguments
         }
         else
         {
-            value = CommandLineArguments.GetDefaultAsString<T>();
+            value = ParsedCommandLineArguments.GetDefaultAsString<T>();
         }
 
         if (typeof(T) == typeof(float))

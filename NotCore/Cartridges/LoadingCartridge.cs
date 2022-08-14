@@ -73,7 +73,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         return _loader.IsDone();
     }
 
-    public void SetupFormalParameters(CommandLineArguments args)
+    public void SetupFormalParameters(ParsedCommandLineArguments args)
     {
         args.AddParameter<bool>("fullscreen");
         args.AddParameter<bool>("skipsnapshot");
