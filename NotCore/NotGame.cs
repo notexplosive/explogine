@@ -31,7 +31,6 @@ public class NotGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        Client.UpdateInputState();
         Client.Update((float) gameTime.ElapsedGameTime.TotalSeconds);
 
         base.Update(gameTime);

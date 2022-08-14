@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using NotCore;
 using NotCore.AssetManagement;
 using NotCore.Cartridges;
 using NotCore.Data;
+using NotCore.Input;
 
 namespace SampleGame;
 
@@ -12,7 +14,7 @@ public class SampleCartridge : SimpleGameCartridge
 {
     private float _totalTime;
 
-    public override void OnCartridgeStarted()
+    protected override void OnStarted()
     {
         Console.WriteLine("Sample Cart Loaded");
     }
@@ -20,6 +22,11 @@ public class SampleCartridge : SimpleGameCartridge
     public override void Update(float dt)
     {
         _totalTime += dt;
+
+        if (Client.Input.Keyboard.WasKeyPressed(Keys.P) && !Client.DemoRecorder.IsPlaying)
+        {
+            Client.DemoRecorder.BeginPlayback();
+        }
     }
 
     public override void Draw(Painter painter)

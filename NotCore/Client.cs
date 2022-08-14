@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NotCore.AssetManagement;
 using NotCore.Cartridges;
+using NotCore.Input;
 
 namespace NotCore;
 
@@ -13,11 +14,12 @@ public static class Client
     private static Loader loader = null!;
     private static readonly CartridgeChain CartridgeChain = new();
     public static Graphics Graphics { get; private set; } = null!;
-    public static InputState Input { get; private set; }
+    public static InputFrameState Input { get; private set; }
     public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
     public static ParsedCommandLineArguments ParsedCommandLineArguments { get; private set; } = new();
     public static Assets Assets { get; } = new();
     public static SoundPlayer SoundPlayer { get; } = new();
+    public static Demo DemoRecorder { get; } = new();
 
     private static bool IsReady { get; set; }
 
@@ -83,6 +85,7 @@ public static class Client
             Console.WriteLine($"Unknown arg: {arg}");
         }
 
+        Client.Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
         Client.IsReady = true;
     }
 
@@ -92,13 +95,23 @@ public static class Client
         Client.Assets.UnloadAllDynamicContent();
     }
 
-    internal static void UpdateInputState()
-    {
-        Client.Input = InputState.ComputeHumanInputState(Client.Input);
-    }
-
     internal static void Update(float dt)
     {
+        if (Client.DemoRecorder.IsPlaying)
+        {
+            var state = Client.DemoRecorder.GetNextRecordedState();
+            Client.Input = Client.Input.Next(state);
+        }
+        else
+        {
+            var humanState = InputSnapshot.Human;
+            if (Client.DemoRecorder.IsRecording)
+            {
+                Client.DemoRecorder.AddRecord(humanState);
+            }
+            Client.Input = Client.Input.Next(humanState);
+        }
+
         Client.CartridgeChain.Update(dt);
     }
 

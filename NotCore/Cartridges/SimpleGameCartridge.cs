@@ -4,7 +4,25 @@ namespace NotCore.Cartridges;
 
 public abstract class SimpleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
-    public abstract void OnCartridgeStarted();
+    public void OnCartridgeStarted()
+    {
+        var demoVal = Client.ParsedCommandLineArguments.GetValue<string>("demo");
+        if (!string.IsNullOrEmpty(demoVal))
+        {
+            switch(demoVal)
+            {
+                case "record":
+                    Client.DemoRecorder.BeginRecording();
+                    break;
+                case "playback":
+                    Client.DemoRecorder.BeginPlayback();
+                    break;
+            }
+        }
+        OnStarted();
+    }
+
+    protected abstract void OnStarted();
     public abstract void Update(float dt);
     public abstract void Draw(Painter painter);
 
