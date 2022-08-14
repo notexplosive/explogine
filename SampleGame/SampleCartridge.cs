@@ -32,7 +32,7 @@ public class SampleCartridge : SimpleGameCartridge
         painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
 
         var player = Client.Assets.GetAsset<SpriteSheet>("player");
-        player.DrawFrame(painter.DebugSpriteBatch, 0, Client.Input.Mouse.Position - new Vector2(-50, -50), 1f, 0f, new XyBool(), Depth.Max, Color.White, true);
+        player.DrawFrame(painter, 0, Client.Input.Mouse.Position + new Vector2(0, -100), 1f, 0f, new XyBool(), Depth.Max, Color.White, true);
         
         painter.EndSpriteBatch();
     }

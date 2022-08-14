@@ -19,7 +19,7 @@ public abstract class SpriteSheet : Asset
 
     public abstract int FrameCount { get; }
 
-    public abstract void DrawFrame(SpriteBatch spriteBatch, int index, Vector2 position, float scale, float angle,
+    public abstract void DrawFrame(Painter painter, int index, Vector2 position, float scale, float angle,
         XyBool flip, Depth layerDepth, Color tintColor, bool isCentered = true);
 
     public abstract Rectangle GetSourceRectForFrame(int index);

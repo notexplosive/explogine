@@ -45,7 +45,7 @@ public class GridBasedSpriteSheet : SpriteSheet
         return new Rectangle(new Point(x * _frameSize.X, y * _frameSize.Y), _frameSize);
     }
 
-    public override void DrawFrame(SpriteBatch spriteBatch, int index, Vector2 position, float scale, float angle,
+    public override void DrawFrame(Painter painter, int index, Vector2 position, float scale, float angle,
         XyBool flip, Depth layerDepth, Color tintColor, bool isCentered = true)
     {
         var isValid = index >= 0 && index <= _frameCount;
@@ -65,8 +65,6 @@ public class GridBasedSpriteSheet : SpriteSheet
             offset = _frameSize.ToVector2() / 2;
         }
 
-        spriteBatch.Draw(Texture, destRect, sourceRect, tintColor, angle, offset,
-            (flip.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None) |
-            (flip.Y ? SpriteEffects.FlipVertically : SpriteEffects.None), layerDepth.AsFloat);
+        painter.Draw(Texture, destRect, sourceRect, tintColor, angle, offset, flip, layerDepth);
     }
 }
