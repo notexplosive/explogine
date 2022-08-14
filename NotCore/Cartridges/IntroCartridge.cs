@@ -18,4 +18,8 @@ public class IntroCartridge : ICartridge
     {
         return true;
     }
+
+    public void OnCartridgeStarted()
+    {
+    }
 }

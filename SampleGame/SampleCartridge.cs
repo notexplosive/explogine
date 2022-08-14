@@ -12,7 +12,7 @@ public class SampleCartridge : SimpleGameCartridge
 {
     private float _totalTime;
 
-    protected override void Load()
+    public override void OnCartridgeStarted()
     {
         Console.WriteLine("Sample Cart Loaded");
     }

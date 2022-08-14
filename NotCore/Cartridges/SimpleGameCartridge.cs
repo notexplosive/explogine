@@ -4,11 +4,7 @@ namespace NotCore.Cartridges;
 
 public abstract class SimpleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
-    protected SimpleGameCartridge()
-    {
-        Client.RunWhenReady(Load);
-    }
-
+    public abstract void OnCartridgeStarted();
     public abstract void Update(float dt);
     public abstract void Draw(Painter painter);
 
@@ -20,5 +16,4 @@ public abstract class SimpleGameCartridge : ICartridge, ILoadEventProvider, ICom
     public abstract void SetupFormalParameters(ParsedCommandLineArguments args);
     public abstract IEnumerable<LoadEvent> LoadEvents(Painter painter);
 
-    protected abstract void Load();
 }

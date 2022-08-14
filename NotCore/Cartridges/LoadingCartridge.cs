@@ -25,6 +25,10 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         Client.Graphics.PopCanvas();
     }
 
+    public void OnCartridgeStarted()
+    {
+    }
+
     public void Update(float dt)
     {
         var expectedFrameDuration = 1 / 60f;

@@ -44,6 +44,7 @@ internal class CartridgeChain : ILoadEventProvider
     private void IncrementCartridge()
     {
         _list.RemoveFirst();
+        _list.First?.Value.OnCartridgeStarted();
     }
 
     public void Append(ICartridge cartridge)
