@@ -54,10 +54,8 @@ public class GridBasedSpriteSheet : SpriteSheet
             throw new IndexOutOfRangeException();
         }
 
-        var sourceRect = GetSourceRectForFrame(index);
-
         var adjustedFrameSize = _frameSize.ToVector2() * scale;
-        var destRect = new Rectangle(position.ToPoint(), adjustedFrameSize.ToPoint());
+        var destinationRect = new Rectangle(position.ToPoint(), adjustedFrameSize.ToPoint());
 
         var offset = Vector2.Zero;
         if (isCentered)
@@ -65,17 +63,16 @@ public class GridBasedSpriteSheet : SpriteSheet
             offset = _frameSize.ToVector2() / 2;
         }
 
-        var drawSettings = new RectangleDrawSettings
+        var drawSettings = new DrawSettings
         {
-            DestinationRect = destRect,
-            SourceRectangle = sourceRect,
             Color = tintColor,
             Angle = angle,
             Origin = offset,
             Flip = flip,
-            Depth = layerDepth
+            Depth = layerDepth,
+            SourceRectangle = GetSourceRectForFrame(index)
         };
         
-        painter.Draw(Texture, drawSettings);
+        painter.Draw(Texture, destinationRect, drawSettings);
     }
 }
