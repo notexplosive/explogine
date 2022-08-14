@@ -31,7 +31,7 @@ public class Painter
 
     public void Draw(Texture2D texture, Vector2 position)
     {
-        Draw(texture, position, Vector2.One, new DrawSettings());
+        Draw(texture, position, new Scale2D(), new DrawSettings());
     }
 
     public void Draw(Texture2D texture, Rectangle destinationRectangle, DrawSettings settings)
@@ -41,10 +41,10 @@ public class Painter
             settings.Origin.Value(destinationRectangle.Size), settings.FlipEffect, settings.Depth);
     }
 
-    public void Draw(Texture2D texture, Vector2 position, Vector2 scale, DrawSettings settings)
+    public void Draw(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin.Value(texture.Bounds.Size), scale, settings.FlipEffect, settings.Depth);
+            settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
 }

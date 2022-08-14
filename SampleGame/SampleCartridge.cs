@@ -31,10 +31,9 @@ public class SampleCartridge : SimpleGameCartridge
         painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
 
         var player = Client.Assets.GetAsset<SpriteSheet>("player");
+        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Scale2D(0.25f), new DrawSettings {Origin = DrawOrigin.Center});
         player.DrawFrame(painter, 0, Client.Input.Mouse.Position, 1f, new Random().NextSingle(), new XyBool(),
             Depth.Max, Color.White);
-
-        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Vector2(0.25f), new DrawSettings {Origin = DrawOrigin.Center});
 
         painter.EndSpriteBatch();
     }
