@@ -27,13 +27,15 @@ public class SampleCartridge : SimpleGameCartridge
         painter.Clear(Color.CornflowerBlue);
         painter.BeginSpriteBatch();
         painter.Draw(Client.Assets.GetTexture("nesto/nesty/amongus"), new Vector2(100, _totalTime));
-        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position);
         painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset").Texture, new Vector2(90, 90));
         painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
 
         var player = Client.Assets.GetAsset<SpriteSheet>("player");
-        player.DrawFrame(painter, 0, Client.Input.Mouse.Position + new Vector2(0, -100), 1f, 0f, new XyBool(), Depth.Max, Color.White, true);
-        
+        player.DrawFrame(painter, 0, Client.Input.Mouse.Position, 1f, new Random().NextSingle(), new XyBool(),
+            Depth.Max, Color.White);
+
+        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Vector2(0.25f), new DrawSettings {Origin = DrawOrigin.Center});
+
         painter.EndSpriteBatch();
     }
 
@@ -77,6 +79,5 @@ public class SampleCartridge : SimpleGameCartridge
 
             return canvas.AsAsset("dynamic-asset2");
         };
-
     }
 }

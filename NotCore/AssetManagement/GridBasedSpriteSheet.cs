@@ -12,8 +12,8 @@ public class GridBasedSpriteSheet : SpriteSheet
 {
     private readonly int _columnCount;
     private readonly int _frameCount;
-    private Point _frameSize;
     private readonly int _rowCount;
+    private Point _frameSize;
 
     public GridBasedSpriteSheet(string key, string textureName, Point frameSize) : this(
         key, Client.Assets.GetTexture(textureName), frameSize)
@@ -57,22 +57,16 @@ public class GridBasedSpriteSheet : SpriteSheet
         var adjustedFrameSize = _frameSize.ToVector2() * scale;
         var destinationRect = new Rectangle(position.ToPoint(), adjustedFrameSize.ToPoint());
 
-        var offset = Vector2.Zero;
-        if (isCentered)
-        {
-            offset = _frameSize.ToVector2() / 2;
-        }
-
         var drawSettings = new DrawSettings
         {
             Color = tintColor,
             Angle = angle,
-            Origin = offset,
+            Origin = isCentered ? DrawOrigin.Center : new DrawOrigin(Vector2.Zero),
             Flip = flip,
             Depth = layerDepth,
             SourceRectangle = GetSourceRectForFrame(index)
         };
-        
+
         painter.Draw(Texture, destinationRect, drawSettings);
     }
 }

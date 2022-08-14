@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NotCore.Data;
 
 namespace NotCore;
 
@@ -39,36 +38,13 @@ public class Painter
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, destinationRectangle, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin, settings.FlipEffect, settings.Depth);
+            settings.Origin.Value(destinationRectangle.Size), settings.FlipEffect, settings.Depth);
     }
 
     public void Draw(Texture2D texture, Vector2 position, Vector2 scale, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin, scale, settings.FlipEffect, settings.Depth);
+            settings.Origin.Value(texture.Bounds.Size), scale, settings.FlipEffect, settings.Depth);
     }
-}
-
-public struct DrawSettings
-{
-    public DrawSettings()
-    {
-        Depth = default;
-        Angle = 0;
-        Origin = default;
-        Flip = default;
-        Color = Color.White;
-        SourceRectangle = null;
-    }
-
-    public Color Color { get; set; }
-    public Rectangle? SourceRectangle { get; set; }
-    public Depth Depth { get; set; }
-    public float Angle { get; set; }
-    public Vector2 Origin { get; set; }
-    public XyBool Flip { get; set; }
-
-    public SpriteEffects FlipEffect => (Flip.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None) |
-                                       (Flip.Y ? SpriteEffects.FlipVertically : SpriteEffects.None);
 }
