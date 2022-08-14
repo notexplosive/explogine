@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using NotCore;
 using NotCore.AssetManagement;
 using NotCore.Cartridges;
-using NotCore.Data;
 
 namespace SampleGame;
 
@@ -31,15 +30,16 @@ public class SampleCartridge : SimpleGameCartridge
         painter.Draw(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
 
         var player = Client.Assets.GetAsset<SpriteSheet>("player");
-        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Scale2D(0.25f), new DrawSettings {Origin = DrawOrigin.Center});
-        
+        painter.Draw(Client.Assets.GetTexture("winking jack"), Client.Input.Mouse.Position, new Scale2D(0.25f),
+            new DrawSettings {Origin = DrawOrigin.Center});
+
         var drawSettings = new DrawSettings
         {
             Angle = new Random().NextSingle(),
-            Origin = DrawOrigin.Center,
+            Origin = DrawOrigin.Center
         };
-        
-        player.DrawFrame(painter, 0, Client.Input.Mouse.Position, new Scale2D(1f), drawSettings);
+
+        player.DrawFrame(painter, 0, Client.Input.Mouse.Position, Scale2D.One, drawSettings);
 
         painter.EndSpriteBatch();
     }

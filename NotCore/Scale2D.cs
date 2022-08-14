@@ -20,4 +20,6 @@ public readonly struct Scale2D
     {
         Value = new Vector2(scale);
     }
+
+    public static Scale2D One => new Scale2D(1);
 }
