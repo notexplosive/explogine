@@ -27,6 +27,11 @@ public class SampleCartridge : SimpleGameCartridge
         {
             Client.DemoRecorder.BeginPlayback();
         }
+        
+        if (Client.Input.Keyboard.WasKeyPressed(Keys.D) && !Client.DemoRecorder.IsPlaying)
+        {
+            Client.DemoRecorder.DumpRecording();
+        }
     }
 
     public override void Draw(Painter painter)

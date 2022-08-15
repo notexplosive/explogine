@@ -50,7 +50,7 @@ public class DesktopFileSystem : IFileSystem
         throw new FileNotFoundException();
     }
 
-    public async Task<string> ReadTextFile(string path)
+    public async Task<string> ReadTextFileInWorkingDirectory(string path)
     {
         if (File.Exists(path))
         {
@@ -59,5 +59,10 @@ public class DesktopFileSystem : IFileSystem
         }
 
         throw new FileNotFoundException();
+    }
+
+    public async void WriteFileToWorkingDirectory(string path, string contents)
+    {
+        await File.WriteAllTextAsync(path, contents);
     }
 }

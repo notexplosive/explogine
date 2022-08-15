@@ -21,12 +21,16 @@ public readonly struct InputSnapshot
             {
                 var pressedKeys = new List<Keys>();
                 var data = segment.Split(":")[1];
-                foreach (var keyCode in data.Split(","))
-                {
-                    pressedKeys.Add(Enum.Parse<Keys>(keyCode));
-                }
 
-                PressedKeys = pressedKeys.ToArray();
+                if (!string.IsNullOrEmpty(data))
+                {
+                    foreach (var keyCode in data.Split(","))
+                    {
+                        pressedKeys.Add(Enum.Parse<Keys>(keyCode));
+                    }
+
+                    PressedKeys = pressedKeys.ToArray();
+                }
             }
             else if (segment.StartsWith("M"))
             {

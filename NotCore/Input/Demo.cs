@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace NotCore.Input;
 
@@ -41,6 +43,58 @@ public class Demo
     public void AddRecord(InputSnapshot humanSnapshot)
     {
         _records.Add(humanSnapshot);
+    }
+
+    public void DumpRecording()
+    {
+        var stringBuilder = new StringBuilder();
+        foreach (var record in _records)
+        {
+            stringBuilder.AppendLine(record.Serialize());
+        }
+
+        Client.FileSystem.WriteFileToWorkingDirectory("default.demo", stringBuilder.ToString());
+    }
+    
+    public void LoadFile(string path)
+    {
+        var file = Client.FileSystem.ReadTextFileInWorkingDirectory(path);
+        file.Wait();
+        LoadText(file.Result);
+    }
+
+    private void LoadText(string data)
+    {
+        var startIndex = 0;
+        var length = 0;
+        for (int currentIndex = 0; currentIndex < data.Length; currentIndex++)
+        {
+            bool isAtNewline = true;
+
+            for(int offset = 0; offset < Environment.NewLine.Length; offset++)
+            {
+                var currentIndexWithOffset = currentIndex + offset;
+                if (data.Length <= currentIndexWithOffset)
+                {
+                    isAtNewline = false;
+                    break;
+                }
+                if (data[currentIndexWithOffset] != Environment.NewLine[offset])
+                {
+                    isAtNewline = false;
+                }
+            }
+
+            length++;
+            
+            if (isAtNewline)
+            {
+                var serializedData = data.Substring(startIndex, length);
+                _records.Add(new InputSnapshot(serializedData));
+                startIndex = currentIndex + Environment.NewLine.Length;
+                length = 0;
+            }
+        }
     }
 
     public InputSnapshot GetNextRecordedState()

@@ -15,6 +15,7 @@ public abstract class SimpleGameCartridge : ICartridge, ILoadEventProvider, ICom
                     Client.DemoRecorder.BeginRecording();
                     break;
                 case "playback":
+                    Client.DemoRecorder.LoadFile("default.demo");
                     Client.DemoRecorder.BeginPlayback();
                     break;
             }

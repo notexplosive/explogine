@@ -15,9 +15,13 @@ public class EmptyFileSystem : IFileSystem
         return Task.FromResult(string.Empty);
     }
 
-    public Task<string> ReadTextFile(string path)
+    public Task<string> ReadTextFileInWorkingDirectory(string path)
     {
         return Task.FromResult(string.Empty);
+    }
+
+    public void WriteFileToWorkingDirectory(string path, string contents)
+    {
     }
 
     public string ContentPath => string.Empty;
