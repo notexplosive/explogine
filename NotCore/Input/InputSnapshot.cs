@@ -1,12 +1,66 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace NotCore.Input;
 
-[Serializable]
 public readonly struct InputSnapshot
 {
+    public InputSnapshot(string serializedString)
+    {
+        GamePadButtonStates = Array.Empty<ButtonState>();
+        MouseButtonStates = Array.Empty<ButtonState>();
+        PressedKeys = Array.Empty<Keys>();
+        
+        var split = serializedString.Split('|');
+
+        foreach (var segment in split)
+        {
+            if (segment.StartsWith("K"))
+            {
+                var pressedKeys = new List<Keys>();
+                var data = segment.Split(":")[1];
+                foreach (var keyCode in data.Split(","))
+                {
+                    pressedKeys.Add(Enum.Parse<Keys>(keyCode));
+                }
+                PressedKeys = pressedKeys.ToArray();
+            }
+
+            if (segment.StartsWith("M"))
+            {
+                var data = segment.Split(":")[1].Split(',');
+                var mousePosition = new Vector2
+                {
+                    X = float.Parse(data[0]),
+                    Y = float.Parse(data[1])
+                };
+                MousePosition = mousePosition;
+                MouseButtonStates = InputSerialization.IntToStates(int.Parse(data[2]), InputSerialization.NumberOfMouseButtons);
+            }
+
+            if (segment.StartsWith("G"))
+            {
+                var data = segment.Split(":")[1].Split(',');
+                GamePadLeftTrigger = float.Parse(data[0]);
+                GamePadRightTrigger = float.Parse(data[1]);
+                LeftThumbstick = new Vector2
+                {
+                    X = float.Parse(data[2]),
+                    Y = float.Parse(data[3])
+                };
+                RightThumbstick = new Vector2
+                {
+                    X = float.Parse(data[4]),
+                    Y = float.Parse(data[5])
+                };
+                GamePadButtonStates = InputSerialization.IntToStates(int.Parse(data[6]), InputSerialization.NumberOfGamepadButtons);
+            }
+        }
+    }
+    
     public InputSnapshot()
     {
         PressedKeys = Array.Empty<Keys>();
@@ -23,14 +77,12 @@ public readonly struct InputSnapshot
         }
 
         MousePosition = mouseState.Position.ToVector2();
-        MouseButtonStates = new[]
-        {
-            mouseState.LeftButton,
-            mouseState.RightButton,
-            mouseState.MiddleButton
-        };
+        MouseButtonStates = new ButtonState[InputSerialization.NumberOfMouseButtons];
+        MouseButtonStates[0] = mouseState.LeftButton;
+        MouseButtonStates[1] = mouseState.RightButton;
+        MouseButtonStates[2] = mouseState.MiddleButton;
 
-        var gamePadButtons = Enum.GetValues<GamePadButton>();
+        var gamePadButtons = InputSerialization.AllGamePadButtons;
         GamePadButtonStates = new ButtonState[gamePadButtons.Length];
         foreach (var value in gamePadButtons)
         {
@@ -58,4 +110,10 @@ public readonly struct InputSnapshot
 
     public static InputSnapshot Empty =>
         new(new KeyboardState(), new MouseState(), new GamePadState());
+
+    public override string ToString()
+    {
+        return InputSerialization.AsString(this);
+    }
 }
+
