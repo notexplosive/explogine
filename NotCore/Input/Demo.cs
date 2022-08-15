@@ -48,9 +48,27 @@ public class Demo
     public void DumpRecording()
     {
         var stringBuilder = new StringBuilder();
+        string? mostRecent = null;
+        var duplicateCount = 0;
         foreach (var record in _records)
         {
-            stringBuilder.AppendLine(record.Serialize());
+            var serial = record.Serialize();
+            if (mostRecent == serial)
+            {
+                duplicateCount++;
+            }
+            else
+            {
+                if (duplicateCount > 0)
+                {
+                    stringBuilder.AppendLine($"wait:{duplicateCount}");
+                    duplicateCount = 0;
+                }
+
+                stringBuilder.AppendLine(serial);
+            }
+
+            mostRecent = serial;
         }
 
         Client.FileSystem.WriteFileToWorkingDirectory("default.demo", stringBuilder.ToString());
@@ -63,23 +81,25 @@ public class Demo
         LoadText(file.Result);
     }
 
-    private void LoadText(string data)
+    private void LoadText(string text)
     {
         var startIndex = 0;
         var length = 0;
-        for (int currentIndex = 0; currentIndex < data.Length; currentIndex++)
+        InputSnapshot mostRecent = new InputSnapshot();
+        
+        for (int currentIndex = 0; currentIndex < text.Length; currentIndex++)
         {
             bool isAtNewline = true;
 
             for(int offset = 0; offset < Environment.NewLine.Length; offset++)
             {
                 var currentIndexWithOffset = currentIndex + offset;
-                if (data.Length <= currentIndexWithOffset)
+                if (text.Length <= currentIndexWithOffset)
                 {
                     isAtNewline = false;
                     break;
                 }
-                if (data[currentIndexWithOffset] != Environment.NewLine[offset])
+                if (text[currentIndexWithOffset] != Environment.NewLine[offset])
                 {
                     isAtNewline = false;
                 }
@@ -89,8 +109,22 @@ public class Demo
             
             if (isAtNewline)
             {
-                var serializedData = data.Substring(startIndex, length);
-                _records.Add(new InputSnapshot(serializedData));
+                var line = text.Substring(startIndex, length);
+
+                if (line.StartsWith("wait"))
+                {
+                    var waitFrames = int.Parse(line.Split(':')[1]);
+                    for (int i = 0; i < waitFrames; i++)
+                    {
+                        _records.Add(mostRecent);
+                    }
+                }
+                else
+                {
+                    mostRecent = new InputSnapshot(line);
+                    _records.Add(mostRecent);
+                }
+
                 startIndex = currentIndex + Environment.NewLine.Length;
                 length = 0;
             }
