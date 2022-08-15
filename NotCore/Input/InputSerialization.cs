@@ -46,12 +46,16 @@ public static class InputSerialization
         return result;
     }
 
+    public static string AsString(GamePadSnapshot input)
+    {
+        return
+            $"{input.GamePadLeftTrigger},{input.GamePadRightTrigger},{input.LeftThumbstick.X},{input.LeftThumbstick.Y},{input.RightThumbstick.X},{input.RightThumbstick.Y},{InputSerialization.StatesToInt(input.GamePadButtonStates)}";
+    }
+
     public static string AsString(InputSnapshot input)
     {
         var mouse =
             $"{input.MousePosition.X},{input.MousePosition.Y},{InputSerialization.StatesToInt(input.MouseButtonStates)}";
-        var gamepad =
-            $"{input.GamePadLeftTrigger},{input.GamePadRightTrigger},{input.LeftThumbstick.X},{input.LeftThumbstick.Y},{input.RightThumbstick.X},{input.RightThumbstick.Y},{InputSerialization.StatesToInt(input.GamePadButtonStates)}";
 
         var keyboardBuilder = new StringBuilder();
         for (var i = 0; i < input.PressedKeys.Length; i++)
@@ -66,6 +70,6 @@ public static class InputSerialization
         }
 
         return
-            $"M:{mouse}|K:{keyboardBuilder}|G:{gamepad}";
+            $"M:{mouse}|K:{keyboardBuilder}|G:{InputSerialization.AsString(input.GamePadSnapshotOne)}|G:{InputSerialization.AsString(input.GamePadSnapshotTwo)}|G:{InputSerialization.AsString(input.GamePadSnapshotThree)}|G:{InputSerialization.AsString(input.GamePadSnapshotFour)}";
     }
 }

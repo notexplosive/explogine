@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace NotCore.Input;
 
@@ -10,32 +11,32 @@ public readonly struct GamePadFrameState
         Previous = previous;
     }
 
-    public bool IsButtonDown(GamePadButton button)
+    public bool IsButtonDown(GamePadButton button, PlayerIndex playerIndex)
     {
-        return InputUtil.CheckIsDown(Current.GamePadButtonStates, button);
+        return InputUtil.CheckIsDown(Current.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
     }
 
-    public bool IsButtonUp(GamePadButton button)
+    public bool IsButtonUp(GamePadButton button, PlayerIndex playerIndex)
     {
-        return !IsButtonDown(button);
+        return !IsButtonDown(button, playerIndex);
     }
 
-    public bool WasButtonPressed(GamePadButton button)
+    public bool WasButtonPressed(GamePadButton button, PlayerIndex playerIndex)
     {
-        return IsButtonDown(button) && !InputUtil.CheckIsDown(Previous.GamePadButtonStates, button);
+        return IsButtonDown(button, playerIndex) && !InputUtil.CheckIsDown(Previous.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
     }
-    
-    public bool WasButtonReleased(GamePadButton button)
+
+    public bool WasButtonReleased(GamePadButton button, PlayerIndex playerIndex)
     {
-        return IsButtonUp(button) && InputUtil.CheckIsDown(Previous.GamePadButtonStates, button);
-    } 
-    
+        return IsButtonUp(button, playerIndex) && InputUtil.CheckIsDown(Previous.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
+    }
+
     private InputSnapshot Previous { get; }
     private InputSnapshot Current { get; }
 
-    public bool IsAnyButtonDown()
+    public bool IsAnyButtonDown(PlayerIndex playerIndex)
     {
-        foreach (var state in Current.GamePadButtonStates)
+        foreach (var state in Current.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates)
         {
             if (state == ButtonState.Pressed)
             {
@@ -44,5 +45,11 @@ public readonly struct GamePadFrameState
         }
 
         return false;
+    }
+
+    public bool IsAnyButtonDownOnAnyGamePad()
+    {
+        return IsAnyButtonDown(PlayerIndex.One) || IsAnyButtonDown(PlayerIndex.Two) ||
+               IsAnyButtonDown(PlayerIndex.Three) || IsAnyButtonDown(PlayerIndex.Four);
     }
 }

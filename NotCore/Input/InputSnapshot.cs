@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -10,11 +9,11 @@ public readonly struct InputSnapshot
 {
     public InputSnapshot(string serializedString)
     {
-        GamePadButtonStates = Array.Empty<ButtonState>();
         MouseButtonStates = Array.Empty<ButtonState>();
         PressedKeys = Array.Empty<Keys>();
-        
+
         var split = serializedString.Split('|');
+        var playerIndex = 0;
 
         foreach (var segment in split)
         {
@@ -26,6 +25,7 @@ public readonly struct InputSnapshot
                 {
                     pressedKeys.Add(Enum.Parse<Keys>(keyCode));
                 }
+
                 PressedKeys = pressedKeys.ToArray();
             }
 
@@ -38,37 +38,44 @@ public readonly struct InputSnapshot
                     Y = float.Parse(data[1])
                 };
                 MousePosition = mousePosition;
-                MouseButtonStates = InputSerialization.IntToStates(int.Parse(data[2]), InputSerialization.NumberOfMouseButtons);
+                MouseButtonStates =
+                    InputSerialization.IntToStates(int.Parse(data[2]), InputSerialization.NumberOfMouseButtons);
             }
 
             if (segment.StartsWith("G"))
             {
                 var data = segment.Split(":")[1].Split(',');
-                GamePadLeftTrigger = float.Parse(data[0]);
-                GamePadRightTrigger = float.Parse(data[1]);
-                LeftThumbstick = new Vector2
+                var gamePadSnapshot = new GamePadSnapshot(data);
+
+                switch (playerIndex)
                 {
-                    X = float.Parse(data[2]),
-                    Y = float.Parse(data[3])
-                };
-                RightThumbstick = new Vector2
-                {
-                    X = float.Parse(data[4]),
-                    Y = float.Parse(data[5])
-                };
-                GamePadButtonStates = InputSerialization.IntToStates(int.Parse(data[6]), InputSerialization.NumberOfGamepadButtons);
+                    case 0:
+                        GamePadSnapshotOne = gamePadSnapshot;
+                        break;
+                    case 1:
+                        GamePadSnapshotTwo = gamePadSnapshot;
+                        break;
+                    case 2:
+                        GamePadSnapshotThree = gamePadSnapshot;
+                        break;
+                    case 3:
+                        GamePadSnapshotFour = gamePadSnapshot;
+                        break;
+                    default:
+                        throw new Exception("Serialized input came in with more than 4 players");
+                }
+
+                playerIndex++;
             }
         }
     }
-    
+
     public InputSnapshot()
     {
-        PressedKeys = Array.Empty<Keys>();
-        GamePadButtonStates = Array.Empty<ButtonState>();
-        MouseButtonStates = Array.Empty<ButtonState>();
     }
 
-    public InputSnapshot(KeyboardState keyboardState, MouseState mouseState, GamePadState gamePadState)
+    public InputSnapshot(KeyboardState keyboardState, MouseState mouseState, GamePadState gamePadStateP1,
+        GamePadState gamePadStateP2, GamePadState gamePadStateP3, GamePadState gamePadStateP4)
     {
         PressedKeys = new Keys[keyboardState.GetPressedKeyCount()];
         for (var i = 0; i < keyboardState.GetPressedKeyCount(); i++)
@@ -82,38 +89,62 @@ public readonly struct InputSnapshot
         MouseButtonStates[1] = mouseState.RightButton;
         MouseButtonStates[2] = mouseState.MiddleButton;
 
-        var gamePadButtons = InputSerialization.AllGamePadButtons;
-        GamePadButtonStates = new ButtonState[gamePadButtons.Length];
-        foreach (var value in gamePadButtons)
-        {
-            GamePadButtonStates[(int) value] = gamePadState.ButtonLookup(value);
-        }
-
-        GamePadLeftTrigger = gamePadState.Triggers.Left;
-        GamePadRightTrigger = gamePadState.Triggers.Right;
-
-        LeftThumbstick = gamePadState.ThumbSticks.Left;
-        RightThumbstick = gamePadState.ThumbSticks.Right;
+        GamePadSnapshotOne = new GamePadSnapshot(gamePadStateP1);
+        GamePadSnapshotTwo = new GamePadSnapshot(gamePadStateP2);
+        GamePadSnapshotThree = new GamePadSnapshot(gamePadStateP3);
+        GamePadSnapshotFour = new GamePadSnapshot(gamePadStateP4);
     }
 
-    public Vector2 RightThumbstick { get; } = Vector2.Zero;
-    public Vector2 LeftThumbstick { get; } = Vector2.Zero;
-    public float GamePadRightTrigger { get; } = 0f;
-    public float GamePadLeftTrigger { get; } = 0f;
-    public ButtonState[] GamePadButtonStates { get; }
-    public ButtonState[] MouseButtonStates { get; }
-    public Keys[] PressedKeys { get; }
+    public GamePadSnapshot GamePadSnapshotOne { get; } = new();
+    public GamePadSnapshot GamePadSnapshotTwo { get; } = new();
+    public GamePadSnapshot GamePadSnapshotThree { get; } = new();
+    public GamePadSnapshot GamePadSnapshotFour { get; } = new();
+    public ButtonState[] MouseButtonStates { get; } = Array.Empty<ButtonState>();
+    public Keys[] PressedKeys { get; } = Array.Empty<Keys>();
     public Vector2 MousePosition { get; } = Vector2.Zero;
 
+    public IEnumerable<GamePadSnapshot> GamePadSnapshots()
+    {
+        yield return GamePadSnapshotOne;
+        yield return GamePadSnapshotTwo;
+        yield return GamePadSnapshotThree;
+        yield return GamePadSnapshotFour;
+    }
+
+    public GamePadSnapshot GamePadSnapshotOfPlayer(PlayerIndex playerIndex)
+    {
+        switch (playerIndex)
+        {
+            case PlayerIndex.One:
+                return GamePadSnapshotOne;
+            case PlayerIndex.Two:
+                return GamePadSnapshotTwo;
+            case PlayerIndex.Three:
+                return GamePadSnapshotThree;
+            case PlayerIndex.Four:
+                return GamePadSnapshotFour;
+            default:
+                throw new Exception("PlayerIndex out of range");
+        }
+    }
+
     public static InputSnapshot Human =>
-        new(Keyboard.GetState(), Mouse.GetState(), GamePad.GetState(PlayerIndex.One));
+        new(Keyboard.GetState(), Mouse.GetState(),
+            GamePad.GetState(PlayerIndex.One), GamePad.GetState(PlayerIndex.Two),
+            GamePad.GetState(PlayerIndex.Three), GamePad.GetState(PlayerIndex.Four)
+        );
 
     public static InputSnapshot Empty =>
-        new(new KeyboardState(), new MouseState(), new GamePadState());
+        new(new KeyboardState(), new MouseState(), new GamePadState(), new GamePadState(), new GamePadState(),
+            new GamePadState());
 
     public override string ToString()
+    {
+        return Serialize();
+    }
+
+    public string Serialize()
     {
         return InputSerialization.AsString(this);
     }
 }
-
