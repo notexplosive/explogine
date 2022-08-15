@@ -28,8 +28,7 @@ public readonly struct InputSnapshot
 
                 PressedKeys = pressedKeys.ToArray();
             }
-
-            if (segment.StartsWith("M"))
+            else if (segment.StartsWith("M"))
             {
                 var data = segment.Split(":")[1].Split(',');
                 var mousePosition = new Vector2
@@ -41,8 +40,7 @@ public readonly struct InputSnapshot
                 MouseButtonStates =
                     InputSerialization.IntToStates(int.Parse(data[2]), InputSerialization.NumberOfMouseButtons);
             }
-
-            if (segment.StartsWith("G"))
+            else if (segment.StartsWith("G"))
             {
                 var data = segment.Split(":")[1].Split(',');
                 var gamePadSnapshot = new GamePadSnapshot(data);
