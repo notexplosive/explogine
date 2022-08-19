@@ -13,8 +13,6 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Assets", "Assets\Assets.shp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotCoreTests", "NotCoreTests\NotCoreTests.csproj", "{A9011C57-EBE3-4578-A642-41B5C8E3828A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetupTool", "SetupTool\SetupTool.csproj", "{BD75323A-9056-40F3-883E-298F71E0039B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineCore", "ExplogineCore\ExplogineCore.csproj", "{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}"
 EndProject
 Global
@@ -42,10 +40,6 @@ Global
 		{A9011C57-EBE3-4578-A642-41B5C8E3828A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9011C57-EBE3-4578-A642-41B5C8E3828A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9011C57-EBE3-4578-A642-41B5C8E3828A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD75323A-9056-40F3-883E-298F71E0039B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD75323A-9056-40F3-883E-298F71E0039B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD75323A-9056-40F3-883E-298F71E0039B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD75323A-9056-40F3-883E-298F71E0039B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
