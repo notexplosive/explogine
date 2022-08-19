@@ -10,7 +10,7 @@ using NotCore.Input;
 
 namespace SampleGame;
 
-public class SampleCartridge : SimpleGameCartridge
+public class SampleGameCartridge : BasicGameCartridge
 {
     private float _totalTime;
 

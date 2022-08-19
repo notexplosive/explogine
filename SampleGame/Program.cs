@@ -1,4 +1,4 @@
 ﻿using NotDesktop;
 using SampleGame;
 
-Bootstrap.Run(args, new SampleCartridge());
+Bootstrap.Run(args, new SampleGameCartridge());

@@ -2,7 +2,7 @@
 
 namespace NotCore.Cartridges;
 
-public abstract class SimpleGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
+public abstract class BasicGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
     public void OnCartridgeStarted()
     {
