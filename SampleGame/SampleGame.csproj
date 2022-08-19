@@ -24,7 +24,7 @@
         <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\NotCore\NotCore.csproj" />
+      <ProjectReference Include="..\ExplogineMonoGame\ExplogineMonoGame.csproj" />
       <ProjectReference Include="..\NotDesktop\NotDesktop.csproj" />
     </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">

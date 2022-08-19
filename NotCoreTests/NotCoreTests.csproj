@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NotCore\NotCore.csproj" />
+    <ProjectReference Include="..\ExplogineMonoGame\ExplogineMonoGame.csproj" />
   </ItemGroup>
 
 </Project>

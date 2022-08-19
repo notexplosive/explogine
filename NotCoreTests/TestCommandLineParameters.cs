@@ -1,6 +1,7 @@
 using System;
+using ExplogineCore;
+using ExplogineMonoGame;
 using FluentAssertions;
-using NotCore;
 using Xunit;
 
 namespace NotCoreTests;
@@ -11,9 +12,9 @@ public class TestCommandLineParameters
     public void happy_path()
     {
         var args = new ParsedCommandLineArguments("--level=4", "--roll", "--foo=bar");
-        args.AddParameter<int>("level");
-        args.AddParameter<bool>("roll");
-        args.AddParameter<string>("foo");
+        args.RegisterParameter<int>("level");
+        args.RegisterParameter<bool>("roll");
+        args.RegisterParameter<string>("foo");
 
         args.GetValue<int>("level").Should().Be(4);
         args.GetValue<bool>("roll").Should().BeTrue();
@@ -33,8 +34,8 @@ public class TestCommandLineParameters
     public void ask_for_bound_but_unset_parameter()
     {
         var args = new ParsedCommandLineArguments("--level=4", "--roll", "--take=never");
-        args.AddParameter<bool>("unset");
-        args.AddParameter<string>("strong");
+        args.RegisterParameter<bool>("unset");
+        args.RegisterParameter<string>("strong");
 
         args.GetValue<bool>("unset").Should().BeFalse();
         args.GetValue<string>("strong").Should().BeEmpty();
@@ -52,7 +53,7 @@ public class TestCommandLineParameters
     public void asked_for_wrong_type()
     {
         var args = new ParsedCommandLineArguments("--level=4");
-        args.AddParameter<int>("level");
+        args.RegisterParameter<int>("level");
 
         var action = () => { args.GetValue<bool>("level"); };
         action.Should().Throw<Exception>();
@@ -65,8 +66,8 @@ public class TestCommandLineParameters
 
         var act = () =>
         {
-            args.AddParameter<int>("level");
-            args.AddParameter<int>("level");
+            args.RegisterParameter<int>("level");
+            args.RegisterParameter<int>("level");
         };
 
         act.Should().Throw<Exception>();

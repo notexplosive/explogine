@@ -1,5 +1,5 @@
-﻿using NotCore;
-using NotCore.Cartridges;
+﻿using ExplogineMonoGame;
+using ExplogineMonoGame.Cartridges;
 
 namespace NotDesktop;
 

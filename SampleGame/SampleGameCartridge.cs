@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExplogineCore;
+using ExplogineCore.Data;
+using ExplogineMonoGame;
+using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Cartridges;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using NotCore;
-using NotCore.AssetManagement;
-using NotCore.Cartridges;
-using NotCore.Data;
-using NotCore.Input;
 
 namespace SampleGame;
 
@@ -59,7 +60,7 @@ public class SampleGameCartridge : BasicGameCartridge
 
     public override void SetupFormalParameters(ParsedCommandLineArguments args)
     {
-        args.AddParameter<int>("level");
+        args.RegisterParameter<int>("level");
     }
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)

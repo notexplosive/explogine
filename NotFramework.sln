@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotCore", "NotCore\NotCore.csproj", "{6D0968C8-F3BA-4F76-8BDD-144214809ADB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineMonoGame", "ExplogineMonoGame\ExplogineMonoGame.csproj", "{6D0968C8-F3BA-4F76-8BDD-144214809ADB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotDesktop", "NotDesktop\NotDesktop.csproj", "{0C16EB35-2701-4D0D-B33C-2CCEE9E5AAF9}"
 EndProject
@@ -12,6 +12,10 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Assets", "Assets\Assets.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotCoreTests", "NotCoreTests\NotCoreTests.csproj", "{A9011C57-EBE3-4578-A642-41B5C8E3828A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetupTool", "SetupTool\SetupTool.csproj", "{BD75323A-9056-40F3-883E-298F71E0039B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineCore", "ExplogineCore\ExplogineCore.csproj", "{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,5 +42,13 @@ Global
 		{A9011C57-EBE3-4578-A642-41B5C8E3828A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9011C57-EBE3-4578-A642-41B5C8E3828A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9011C57-EBE3-4578-A642-41B5C8E3828A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD75323A-9056-40F3-883E-298F71E0039B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD75323A-9056-40F3-883E-298F71E0039B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD75323A-9056-40F3-883E-298F71E0039B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD75323A-9056-40F3-883E-298F71E0039B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

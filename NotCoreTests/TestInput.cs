@@ -1,8 +1,8 @@
 ﻿using System;
+using ExplogineMonoGame.Input;
 using FluentAssertions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using NotCore.Input;
 using Xunit;
 
 namespace NotCoreTests;
