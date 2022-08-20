@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineMonoGame", "ExplogineMonoGame\ExplogineMonoGame.csproj", "{6D0968C8-F3BA-4F76-8BDD-144214809ADB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotDesktop", "NotDesktop\NotDesktop.csproj", "{0C16EB35-2701-4D0D-B33C-2CCEE9E5AAF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineDesktop", "ExplogineDesktop\ExplogineDesktop.csproj", "{0C16EB35-2701-4D0D-B33C-2CCEE9E5AAF9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleGame", "SampleGame\SampleGame.csproj", "{C545AE5F-FDEB-4B19-8277-5FAFE2804A0F}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Assets", "Assets\Assets.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotCoreTests", "NotCoreTests\NotCoreTests.csproj", "{A9011C57-EBE3-4578-A642-41B5C8E3828A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineCoreTests", "ExplogineCoreTests\ExplogineCoreTests.csproj", "{A9011C57-EBE3-4578-A642-41B5C8E3828A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineCore", "ExplogineCore\ExplogineCore.csproj", "{DF89D799-8E2D-4EB0-9CA6-F6FB559E6E62}"
 EndProject

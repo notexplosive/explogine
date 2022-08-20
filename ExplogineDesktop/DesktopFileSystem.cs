@@ -1,7 +1,7 @@
 ﻿using ExplogineCore;
 using ExplogineMonoGame;
 
-namespace NotDesktop;
+namespace ExplogineDesktop;
 
 public class DesktopFileSystem : IFileSystem
 {

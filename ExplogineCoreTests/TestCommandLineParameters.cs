@@ -1,10 +1,9 @@
 using System;
 using ExplogineCore;
-using ExplogineMonoGame;
 using FluentAssertions;
 using Xunit;
 
-namespace NotCoreTests;
+namespace ExplogineCoreTests;
 
 public class TestCommandLineParameters
 {

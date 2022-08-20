@@ -25,7 +25,7 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\ExplogineMonoGame\ExplogineMonoGame.csproj" />
-      <ProjectReference Include="..\NotDesktop\NotDesktop.csproj" />
+      <ProjectReference Include="..\ExplogineDesktop\ExplogineDesktop.csproj" />
     </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
         <Message Text="Restoring dotnet tools" Importance="High" />

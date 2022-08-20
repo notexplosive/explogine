@@ -1,4 +1,4 @@
-﻿namespace NotDesktop;
+﻿namespace ExplogineDesktop;
 
 public class Extensions
 {

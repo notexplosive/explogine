@@ -1,7 +1,7 @@
 ﻿using ExplogineMonoGame;
 using ExplogineMonoGame.Cartridges;
 
-namespace NotDesktop;
+namespace ExplogineDesktop;
 
 public static class Bootstrap
 {

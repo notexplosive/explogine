@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Xunit;
 
-namespace NotCoreTests;
+namespace ExplogineCoreTests;
 
 public class TestInput
 {
