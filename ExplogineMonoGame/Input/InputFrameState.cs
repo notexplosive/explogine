@@ -17,8 +17,8 @@ public readonly struct InputFrameState
     public GamePadFrameState GamePad { get; }
     public KeyboardFrameState Keyboard { get; }
     public MouseFrameState Mouse { get; }
-
-    public InputFrameState Next(InputSnapshot newSnapshot)
+    
+    internal InputFrameState Next(InputSnapshot newSnapshot)
     {
         return new InputFrameState(newSnapshot, Current);
     }
