@@ -14,6 +14,7 @@ public readonly struct MouseFrameState
     private InputSnapshot Previous { get; }
     private InputSnapshot Current { get; }
     public Vector2 Position => Current.MousePosition;
+    public Vector2 Delta => Current.MousePosition - Previous.MousePosition;
 
     public bool IsButtonDown(MouseButton mouseButton)
     {
