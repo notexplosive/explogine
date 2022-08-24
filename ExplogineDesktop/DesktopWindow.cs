@@ -65,7 +65,7 @@ public class DesktopWindow : IWindow
         if (state)
         {
             _rememberedBounds = new Rectangle(Position, Size);
-            SetSize(Client.Graphics.ScreenSize);
+            SetSize(Client.Graphics.DisplaySize);
             _window.IsBorderless = true;
             _window.Position = Point.Zero;
         }

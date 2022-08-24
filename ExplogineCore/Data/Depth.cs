@@ -4,7 +4,7 @@ public struct Depth
 {
     public const int MaxAsInt = 10569646;
     public static Depth Middle = new(Depth.MaxAsInt / 2);
-    public static Depth Max = new(Depth.MaxAsInt);
+    public static Depth Back = new(Depth.MaxAsInt);
 
     public Depth(int val)
     {
@@ -37,9 +37,12 @@ public struct Depth
             {
                 throw new Exception("Invalid Depth");
             }
+
             return (float) AsInt / Depth.MaxAsInt;
         }
     }
+
+    public static Depth Front => new(0);
 
     public static Depth operator +(Depth a, Depth b)
     {

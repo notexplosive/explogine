@@ -1,6 +1,6 @@
 ﻿namespace ExplogineCore.Data;
 
-public class WhenReady
+public class OnceReady
 {
     private event Action? Readied;
 

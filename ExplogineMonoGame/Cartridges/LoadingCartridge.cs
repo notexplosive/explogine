@@ -46,7 +46,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 
         if (_loader.IsDone())
         {
-            Client.TriggerDoneLoading();
+            Client.FinishedLoading.BecomeReady();
         }
     }
 

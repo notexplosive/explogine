@@ -24,7 +24,7 @@ public class Graphics
     public GraphicsDevice Device { get; }
     public Painter Painter { get; }
     public Point WindowSize => Device.Viewport.Bounds.Size;
-    public Point ScreenSize => new(Client.Graphics.Device.DisplayMode.Width, Client.Graphics.Device.DisplayMode.Height);
+    public Point DisplaySize => new(Client.Graphics.Device.DisplayMode.Width, Client.Graphics.Device.DisplayMode.Height);
 
     public Texture2D CropTexture(Rectangle rect, Texture2D sourceTexture)
     {

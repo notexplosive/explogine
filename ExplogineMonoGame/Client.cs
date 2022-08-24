@@ -24,10 +24,10 @@ public static class Client
     public static Assets Assets { get; } = new();
     public static SoundPlayer SoundPlayer { get; } = new();
     public static Demo DemoRecorder { get; } = new();
-    private static bool IsReady { get; set; }
+    public static ClientDebug Debug { get; } = new();
     public static string ContentBaseDirectory => "Content";
-    public static readonly WhenReady Initialized = new();
-    public static readonly WhenReady FinishedLoading = new();
+    public static readonly OnceReady Initialized = new();
+    public static readonly OnceReady FinishedLoading = new();
 
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
@@ -44,12 +44,15 @@ public static class Client
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
         Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
-
+        
+        Client.FinishedLoading.Add(Client.Debug.Cartridge.OnCartridgeStarted);
         // We don't use the property here on purpose, Client isn't ready yet.
         Client.startingConfig = windowConfig;
 
         using var game = new NotGame();
         Client.currentGame = game;
+        
+        // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
         game.Run();
     }
 
@@ -68,6 +71,10 @@ public static class Client
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
+        foreach (var loadEvent in Debug.Cartridge.LoadEvents(Client.Graphics.Painter))
+        {
+            Client.loader.AddDynamicLoadEvent(loadEvent);
+        }
         Client.CartridgeChain.ForeachPreload(loadEvent => Client.loader.AddDynamicLoadEvent(loadEvent));
         Client.CartridgeChain.Prepend(new LoadingCartridge(Client.loader));
 
@@ -78,7 +85,6 @@ public static class Client
         }
 
         Client.Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
-        Client.IsReady = true;
     }
 
     internal static void UnloadContent()
@@ -105,17 +111,13 @@ public static class Client
             Client.Input = Client.Input.Next(humanState);
         }
 
+        Client.Debug.Cartridge.Update(dt);
         Client.CartridgeChain.Update(dt);
     }
 
     internal static void Draw()
     {
         Client.CartridgeChain.Draw(Client.Graphics.Painter);
-    }
-
-    internal static void TriggerDoneLoading()
-    {
-        Client.IsReady = true;
-        Client.FinishedLoading.BecomeReady();
+        Client.Debug.Cartridge.Draw(Client.Graphics.Painter);
     }
 }

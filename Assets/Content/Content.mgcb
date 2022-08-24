@@ -46,6 +46,18 @@
 /processorParam:TextureFormat=Color
 /build:winking jack.PNG
 
+#begin engine/DemoIndicators.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:engine/DemoIndicators.png
+
 #begin nesto/nesty/amongus.PNG
 /importer:TextureImporter
 /processor:TextureProcessor
