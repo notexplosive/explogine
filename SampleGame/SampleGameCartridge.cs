@@ -24,6 +24,7 @@ public class SampleGameCartridge : BasicGameCartridge
     {
         _totalTime += dt;
 
+        // move to debug cart
         if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.DemoRecorder.IsPlaying)
         {
             Client.DemoRecorder.BeginPlayback();
@@ -32,6 +33,12 @@ public class SampleGameCartridge : BasicGameCartridge
         if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.DemoRecorder.IsPlaying)
         {
             Client.DemoRecorder.DumpRecording();
+        }
+        // /move to debug cart
+        
+        if (Client.Input.Keyboard.GetButton(Keys.F).WasPressed)
+        {
+            Client.Window.SetFullscreen(!Client.Window.IsFullscreen);
         }
     }
 

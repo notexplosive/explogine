@@ -69,7 +69,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         painter.Clear(Color.Black);
         painter.BeginSpriteBatch();
         painter.DrawAtPosition(_loadingBarGraphic.Texture,
-            Client.Graphics.ScreenSize.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
+            Client.Graphics.WindowSize.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
         painter.EndSpriteBatch();
     }
 

@@ -15,7 +15,7 @@ public class NotGame : Game
 
     protected override void Initialize()
     {
-        Client.Initialize(GraphicsDevice, _graphics);
+        Client.Initialize(GraphicsDevice, _graphics, this);
         base.Initialize();
     }
 

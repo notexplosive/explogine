@@ -7,6 +7,7 @@ public abstract class BasicGameCartridge : ICartridge, ILoadEventProvider, IComm
 {
     public void OnCartridgeStarted()
     {
+        // move this to DebugCartridge. OnCartridgeStarted should be abstract and OnStarted should go away.
         var demoVal = Client.ParsedCommandLineArguments.GetValue<string>("demo");
         if (!string.IsNullOrEmpty(demoVal))
         {

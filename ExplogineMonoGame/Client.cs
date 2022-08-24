@@ -13,17 +13,17 @@ public static class Client
 {
     private static Game currentGame = null!;
     private static Loader loader = null!;
+    private static WindowConfig startingConfig;
     private static readonly CartridgeChain CartridgeChain = new();
     public static Graphics Graphics { get; private set; } = null!;
     public static InputFrameState Input { get; private set; }
     public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
+    public static IWindow Window { get; private set; } = null!;
     public static ParsedCommandLineArguments ParsedCommandLineArguments { get; private set; } = new();
     public static Assets Assets { get; } = new();
     public static SoundPlayer SoundPlayer { get; } = new();
     public static Demo DemoRecorder { get; } = new();
-
     private static bool IsReady { get; set; }
-
     public static string ContentBaseDirectory => "Content";
 
     public static event Action? Readied;
@@ -32,14 +32,20 @@ public static class Client
     ///     Entrypoint for Platform (ie: Desktop)
     /// </summary>
     /// <param name="args">Args passed via command line</param>
+    /// <param name="windowConfig">Config object for client startup</param>
     /// <param name="gameCartridge">Cartridge for your game</param>
-    /// <param name="fileSystem">FileSystem plugin for your platform</param>
-    public static void Start(string[] args, ICartridge gameCartridge, IFileSystem fileSystem)
+    /// <param name="platform">Platform plugin for your platform</param>
+    public static void Start(string[] args, WindowConfig windowConfig, ICartridge gameCartridge,
+        IPlatformInterface platform)
     {
-        Client.FileSystem = fileSystem;
+        Client.Window = platform.Window;
+        Client.FileSystem = platform.FileSystem;
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
         Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
+
+        // We don't use the property here on purpose, Client isn't ready yet.
+        Client.startingConfig = windowConfig;
 
         using var game = new NotGame();
         Client.currentGame = game;
@@ -69,9 +75,10 @@ public static class Client
         Client.currentGame.Exit();
     }
 
-    internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
+    internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, Game game)
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
+        Client.Window.Setup(game.Window, Client.startingConfig);
     }
 
     internal static void LoadContent(ContentManager contentManager)
@@ -110,6 +117,7 @@ public static class Client
             {
                 Client.DemoRecorder.AddRecord(humanState);
             }
+
             Client.Input = Client.Input.Next(humanState);
         }
 

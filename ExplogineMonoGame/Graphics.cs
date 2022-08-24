@@ -8,13 +8,13 @@ namespace ExplogineMonoGame;
 
 public class Graphics
 {
-    private readonly GraphicsDeviceManager _graphicsDeviceManager;
+    public GraphicsDeviceManager DeviceManager { get; }
     private readonly Stack<RenderTarget2D> _renderTargetStack = new();
     private RenderTarget2D? _currentRenderTarget;
 
     public Graphics(GraphicsDeviceManager graphicsDeviceManager, GraphicsDevice graphicsDevice)
     {
-        _graphicsDeviceManager = graphicsDeviceManager;
+        DeviceManager = graphicsDeviceManager;
         Device = graphicsDevice;
         Painter = new Painter(graphicsDevice);
 
@@ -23,7 +23,8 @@ public class Graphics
 
     public GraphicsDevice Device { get; }
     public Painter Painter { get; }
-    public Point ScreenSize => Device.Viewport.Bounds.Size;
+    public Point WindowSize => Device.Viewport.Bounds.Size;
+    public Point ScreenSize => new(Client.Graphics.Device.DisplayMode.Width, Client.Graphics.Device.DisplayMode.Height);
 
     public Texture2D CropTexture(Rectangle rect, Texture2D sourceTexture)
     {
