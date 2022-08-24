@@ -4,11 +4,11 @@ public class OnceReady
 {
     private event Action? Readied;
 
-    private bool _isReady; 
-    
+    public bool IsReady { get; private set; }
+
     public void Add(Action action)
     {
-        if (_isReady)
+        if (IsReady)
         {
             action();
         }
@@ -20,7 +20,7 @@ public class OnceReady
     
     public void BecomeReady()
     {
-        _isReady = true;
+        IsReady = true;
         Readied?.Invoke();
         Readied = null;
     }

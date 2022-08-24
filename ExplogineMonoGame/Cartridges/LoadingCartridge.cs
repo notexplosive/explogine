@@ -13,6 +13,9 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
     private readonly Loader _loader;
     private readonly Canvas _loadingBarGraphic;
     private readonly Canvas _progressSliceGraphic;
+    private bool _doneLoading;
+    private float _endingDelay;
+    private float _startingDelay = 0.25f;
 
     public LoadingCartridge(Loader loader)
     {
@@ -23,17 +26,24 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         var painter = Client.Graphics.Painter;
 
         Client.Graphics.PushCanvas(_progressSliceGraphic);
-        painter.Clear(Color.Yellow);
+        painter.Clear(Color.LightBlue);
         Client.Graphics.PopCanvas();
     }
 
     public void OnCartridgeStarted()
     {
+        Client.FinishedLoading.Add(() => _doneLoading = true);
     }
 
     public void Update(float dt)
     {
-        var expectedFrameDuration = 1 / 60f;
+        if (_startingDelay > 0)
+        {
+            _startingDelay -= dt;
+            return;
+        }
+
+        var expectedFrameDuration = 1 / 30f;
         var timeAtStartOfUpdate = DateTime.Now;
         while (!_loader.IsDone())
         {
@@ -47,6 +57,12 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 
         if (_loader.IsDone())
         {
+            if (_endingDelay > 0)
+            {
+                _endingDelay -= dt;
+                return;
+            }
+
             Client.FinishedLoading.BecomeReady();
         }
     }
@@ -76,7 +92,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 
     public bool ShouldLoadNextCartridge()
     {
-        return _loader.IsDone();
+        return _doneLoading;
     }
 
     public void SetupFormalParameters(ParsedCommandLineArguments args)

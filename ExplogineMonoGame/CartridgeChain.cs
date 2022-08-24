@@ -10,6 +10,7 @@ internal class CartridgeChain : ILoadEventProvider
     private readonly LinkedList<ICartridge> _list = new();
 
     private ICartridge Current => _list.First!.Value;
+    public DebugCartridge DebugCartridge { get; } = new();
 
     public IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
@@ -29,6 +30,7 @@ internal class CartridgeChain : ILoadEventProvider
 
     public void Update(float dt)
     {
+        DebugCartridge.Update(dt);
         Current.Update(dt);
 
         if (Current.ShouldLoadNextCartridge())
@@ -40,6 +42,11 @@ internal class CartridgeChain : ILoadEventProvider
     public void Draw(Painter painter)
     {
         Current.Draw(painter);
+        
+        if (Client.FinishedLoading.IsReady)
+        {
+            DebugCartridge.Draw(Client.Graphics.Painter);
+        }
     }
 
     private void IncrementCartridge()
@@ -64,6 +71,8 @@ internal class CartridgeChain : ILoadEventProvider
         {
             yield return cartridge;
         }
+
+        yield return DebugCartridge;
     }
 
     public void ForeachPreload(Action<LoadEvent> callback)
@@ -85,5 +94,14 @@ internal class CartridgeChain : ILoadEventProvider
 
             provider.SetupFormalParameters(args);
         }
+    }
+
+    public void SetupLoadingCartridge(Loader loader)
+    {
+        ForeachPreload(loader.AddDynamicLoadEvent);
+        var loadingCartridge = new LoadingCartridge(loader);
+        loadingCartridge.OnCartridgeStarted();
+        Prepend(loadingCartridge);
+        Client.FinishedLoading.Add(DebugCartridge.OnCartridgeStarted);
     }
 }

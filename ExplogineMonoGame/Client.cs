@@ -44,8 +44,7 @@ public static class Client
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
         Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
-        
-        Client.FinishedLoading.Add(Client.Debug.Cartridge.OnCartridgeStarted);
+
         // We don't use the property here on purpose, Client isn't ready yet.
         Client.startingConfig = windowConfig;
 
@@ -71,15 +70,9 @@ public static class Client
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
-        foreach (var loadEvent in Debug.Cartridge.LoadEvents(Client.Graphics.Painter))
-        {
-            Client.loader.AddDynamicLoadEvent(loadEvent);
-        }
-        Client.CartridgeChain.ForeachPreload(loadEvent => Client.loader.AddDynamicLoadEvent(loadEvent));
-        Client.CartridgeChain.Prepend(new LoadingCartridge(Client.loader));
+        Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
 
         Client.CartridgeChain.ValidateParameters(Client.ParsedCommandLineArguments);
-        Client.Debug.Cartridge.SetupFormalParameters(Client.ParsedCommandLineArguments);
         
         foreach (var arg in Client.ParsedCommandLineArguments.UnboundArgs())
         {
@@ -113,13 +106,11 @@ public static class Client
             Client.Input = Client.Input.Next(humanState);
         }
 
-        Client.Debug.Cartridge.Update(dt);
         Client.CartridgeChain.Update(dt);
     }
 
     internal static void Draw()
     {
         Client.CartridgeChain.Draw(Client.Graphics.Painter);
-        Client.Debug.Cartridge.Draw(Client.Graphics.Painter);
     }
 }
