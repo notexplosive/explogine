@@ -26,8 +26,8 @@ public static class Client
     public static Demo DemoRecorder { get; } = new();
     private static bool IsReady { get; set; }
     public static string ContentBaseDirectory => "Content";
-    public static readonly When Initialized = new();
-    public static readonly When FinishedLoading = new();
+    public static readonly WhenReady Initialized = new();
+    public static readonly WhenReady FinishedLoading = new();
 
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
@@ -62,7 +62,7 @@ public static class Client
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
         Client.Window.Setup(game.Window, Client.startingConfig);
-        Client.Initialized.Invoke();
+        Client.Initialized.BecomeReady();
     }
 
     internal static void LoadContent(ContentManager contentManager)
@@ -116,6 +116,6 @@ public static class Client
     internal static void TriggerDoneLoading()
     {
         Client.IsReady = true;
-        Client.FinishedLoading.Invoke();
+        Client.FinishedLoading.BecomeReady();
     }
 }

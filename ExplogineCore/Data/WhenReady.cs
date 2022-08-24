@@ -1,6 +1,6 @@
 ﻿namespace ExplogineCore.Data;
 
-public class When
+public class WhenReady
 {
     private event Action? Readied;
 
@@ -18,7 +18,7 @@ public class When
         }
     }
     
-    public void Invoke()
+    public void BecomeReady()
     {
         _isReady = true;
         Readied?.Invoke();
