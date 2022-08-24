@@ -11,24 +11,11 @@ public readonly struct GamePadFrameState
         Previous = previous;
     }
 
-    public bool IsButtonDown(GamePadButton button, PlayerIndex playerIndex)
+    public ButtonFrameState GetButton(GamePadButton button, PlayerIndex playerIndex)
     {
-        return InputUtil.CheckIsDown(Current.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
-    }
-
-    public bool IsButtonUp(GamePadButton button, PlayerIndex playerIndex)
-    {
-        return !IsButtonDown(button, playerIndex);
-    }
-
-    public bool WasButtonPressed(GamePadButton button, PlayerIndex playerIndex)
-    {
-        return IsButtonDown(button, playerIndex) && !InputUtil.CheckIsDown(Previous.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
-    }
-
-    public bool WasButtonReleased(GamePadButton button, PlayerIndex playerIndex)
-    {
-        return IsButtonUp(button, playerIndex) && InputUtil.CheckIsDown(Previous.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
+        var isDown = InputUtil.CheckIsDown(Current.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
+        var wasDown = InputUtil.CheckIsDown(Previous.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates, button);
+        return new ButtonFrameState(isDown, wasDown);
     }
 
     private InputSnapshot Previous { get; }

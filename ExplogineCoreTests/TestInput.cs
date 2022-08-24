@@ -43,13 +43,13 @@ public class TestInput
         input.GamePad.IsAnyButtonDown(PlayerIndex.One).Should().BeTrue();
         input.GamePad.IsAnyButtonDownOnAnyGamePad().Should().BeTrue();
 
-        input.Keyboard.IsKeyDown(Keys.Space).Should().BeTrue();
-        input.Mouse.IsButtonDown(MouseButton.Left).Should().BeTrue();
-        input.GamePad.IsButtonDown(GamePadButton.A, PlayerIndex.One).Should().BeTrue();
+        input.Keyboard.GetButton(Keys.Space).IsDown.Should().BeTrue();
+        input.Mouse.GetButton(MouseButton.Left).IsDown.Should().BeTrue();
+        input.GamePad.GetButton(GamePadButton.A,PlayerIndex.One).IsDown.Should().BeTrue();
 
-        input.Keyboard.WasKeyPressed(Keys.Space).Should().BeTrue();
-        input.Mouse.WasButtonPressed(MouseButton.Left).Should().BeTrue();
-        input.GamePad.WasButtonPressed(GamePadButton.A, PlayerIndex.One).Should().BeTrue();
+        input.Keyboard.GetButton(Keys.Space).WasPressed.Should().BeTrue();
+        input.Mouse.GetButton(MouseButton.Left).WasPressed.Should().BeTrue();
+        input.GamePad.GetButton(GamePadButton.A,PlayerIndex.One).WasPressed.Should().BeTrue();
     }
 
     [Fact]
@@ -76,19 +76,19 @@ public class TestInput
         input.Mouse.IsAnyButtonDown().Should().BeFalse();
         input.GamePad.IsAnyButtonDownOnAnyGamePad().Should().BeFalse();
 
-        input.Keyboard.IsKeyDown(Keys.Space).Should().BeFalse();
-        input.Mouse.IsButtonDown(MouseButton.Left).Should().BeFalse();
-        input.GamePad.IsButtonDown(GamePadButton.A, PlayerIndex.One).Should().BeFalse();
-        input.GamePad.IsButtonDown(GamePadButton.B, PlayerIndex.Two).Should().BeFalse();
-        input.GamePad.IsButtonDown(GamePadButton.X, PlayerIndex.Three).Should().BeFalse();
-        input.GamePad.IsButtonDown(GamePadButton.Y, PlayerIndex.Four).Should().BeFalse();
+        input.Keyboard.GetButton(Keys.Space).IsDown.Should().BeFalse();
+        input.Mouse.GetButton(MouseButton.Left).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(GamePadButton.A,PlayerIndex.One).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(GamePadButton.B,PlayerIndex.Two).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(GamePadButton.X,PlayerIndex.Three).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(GamePadButton.Y,PlayerIndex.Four).IsDown.Should().BeFalse();
 
-        input.Keyboard.WasKeyReleased(Keys.Space).Should().BeTrue();
-        input.Mouse.WasButtonReleased(MouseButton.Left).Should().BeTrue();
-        input.GamePad.WasButtonReleased(GamePadButton.A, PlayerIndex.One).Should().BeTrue();
-        input.GamePad.WasButtonReleased(GamePadButton.B, PlayerIndex.Two).Should().BeTrue();
-        input.GamePad.WasButtonReleased(GamePadButton.X, PlayerIndex.Three).Should().BeTrue();
-        input.GamePad.WasButtonReleased(GamePadButton.Y, PlayerIndex.Four).Should().BeTrue();
+        input.Keyboard.GetButton(Keys.Space).WasReleased.Should().BeTrue();
+        input.Mouse.GetButton(MouseButton.Left).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(GamePadButton.A,PlayerIndex.One).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(GamePadButton.B,PlayerIndex.Two).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(GamePadButton.X,PlayerIndex.Three).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(GamePadButton.Y,PlayerIndex.Four).WasReleased.Should().BeTrue();
     }
 
     [Fact]

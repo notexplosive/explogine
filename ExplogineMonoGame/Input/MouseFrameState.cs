@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Input;
@@ -16,36 +17,16 @@ public readonly struct MouseFrameState
     public Vector2 Position => Current.MousePosition;
     public Vector2 Delta => Current.MousePosition - Previous.MousePosition;
 
-    public bool IsButtonDown(MouseButton mouseButton)
+    public ButtonFrameState GetButton(MouseButton mouseButton)
     {
-        return InputUtil.CheckIsDown(Current.MouseButtonStates, mouseButton);
-    }
-    
-    public bool IsButtonUp(MouseButton mouseButton)
-    {
-        return !IsButtonDown(mouseButton);
-    }
+        var isDown = InputUtil.CheckIsDown(Current.MouseButtonStates, mouseButton);
+        var wasDown = InputUtil.CheckIsDown(Previous.MouseButtonStates, mouseButton);
 
-    public bool WasButtonPressed(MouseButton mouseButton)
-    {
-        return IsButtonDown(mouseButton) && !InputUtil.CheckIsDown(Previous.MouseButtonStates, mouseButton);
-    }
-    
-    public bool WasButtonReleased(MouseButton mouseButton)
-    {
-        return IsButtonUp(mouseButton) && InputUtil.CheckIsDown(Previous.MouseButtonStates, mouseButton);
+        return new ButtonFrameState(isDown, wasDown);
     }
 
     public bool IsAnyButtonDown()
     {
-        foreach (var state in Current.MouseButtonStates)
-        {
-            if (state == ButtonState.Pressed)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return Current.MouseButtonStates.Any(state => state == ButtonState.Pressed);
     }
 }

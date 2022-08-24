@@ -24,12 +24,12 @@ public class SampleGameCartridge : BasicGameCartridge
     {
         _totalTime += dt;
 
-        if (Client.Input.Keyboard.WasKeyPressed(Keys.P) && !Client.DemoRecorder.IsPlaying)
+        if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.DemoRecorder.IsPlaying)
         {
             Client.DemoRecorder.BeginPlayback();
         }
         
-        if (Client.Input.Keyboard.WasKeyPressed(Keys.D) && !Client.DemoRecorder.IsPlaying)
+        if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.DemoRecorder.IsPlaying)
         {
             Client.DemoRecorder.DumpRecording();
         }

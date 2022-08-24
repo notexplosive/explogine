@@ -11,24 +11,11 @@ public readonly struct KeyboardFrameState
         Previous = previous;
     }
 
-    public bool IsKeyDown(Keys key)
+    public ButtonFrameState GetButton(Keys key)
     {
-        return Current.PressedKeys.Contains(key);
-    }
-    
-    public bool WasKeyPressed(Keys key)
-    {
-        return IsKeyDown(key) && !Previous.PressedKeys.Contains(key);
-    }
-    
-    public bool WasKeyReleased(Keys key)
-    {
-        return IsKeyUp(key) && Previous.PressedKeys.Contains(key);
-    }
-
-    public bool IsKeyUp(Keys key)
-    {
-        return !IsKeyDown(key);
+        var isDown = Current.PressedKeys.Contains(key);
+        var wasDown = Previous.PressedKeys.Contains(key);
+        return new ButtonFrameState(isDown, wasDown);
     }
 
     private InputSnapshot Previous { get; }
