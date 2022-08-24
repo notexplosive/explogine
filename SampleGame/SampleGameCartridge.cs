@@ -7,6 +7,7 @@ using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace SampleGame;
@@ -45,7 +46,7 @@ public class SampleGameCartridge : BasicGameCartridge
     public override void Draw(Painter painter)
     {
         painter.Clear(Color.CornflowerBlue);
-        painter.BeginSpriteBatch();
+        painter.BeginSpriteBatch(SamplerState.PointWrap);
         painter.DrawAtPosition(Client.Assets.GetTexture("nesto/nesty/amongus"), new Vector2(100, _totalTime));
         painter.DrawAtPosition(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset").Texture, new Vector2(90, 90));
         painter.DrawAtPosition(Client.Assets.GetPreloadedObject<Canvas>("dynamic-asset2").Texture, new Vector2(150, 150));
@@ -94,7 +95,7 @@ public class SampleGameCartridge : BasicGameCartridge
             Client.Graphics.PopCanvas();
 
             var texture = canvas2.Texture;
-            painter.BeginSpriteBatch();
+            painter.BeginSpriteBatch(SamplerState.PointWrap);
             painter.Clear(Color.Transparent);
             painter.DrawAtPosition(texture, new Vector2(50, 50));
             painter.DrawAtPosition(texture, new Vector2(25, 50));

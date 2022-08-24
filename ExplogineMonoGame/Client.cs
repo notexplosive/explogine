@@ -79,6 +79,8 @@ public static class Client
         Client.CartridgeChain.Prepend(new LoadingCartridge(Client.loader));
 
         Client.CartridgeChain.ValidateParameters(Client.ParsedCommandLineArguments);
+        Client.Debug.Cartridge.SetupFormalParameters(Client.ParsedCommandLineArguments);
+        
         foreach (var arg in Client.ParsedCommandLineArguments.UnboundArgs())
         {
             Console.WriteLine($"Unknown arg: {arg}");

@@ -5,6 +5,7 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -12,8 +13,22 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 {
     private float _totalTime;
 
+    private Depth DemoStatusDepth { get; } = Depth.Front + 15;
+
     public void OnCartridgeStarted()
     {
+#if DEBUG
+        Client.Debug.DebugLevel = DebugLevel.Passive;
+#endif
+
+        if (Client.ParsedCommandLineArguments.GetValue<bool>("debug"))
+        {
+            Client.Debug.DebugLevel = DebugLevel.Passive;
+        }
+        else
+        {
+            Client.Debug.DebugLevel = DebugLevel.None;
+        }
     }
 
     public void Update(float dt)
@@ -23,9 +38,27 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 
     public void Draw(Painter painter)
     {
-        painter.BeginSpriteBatch();
+        painter.BeginSpriteBatch(SamplerState.LinearWrap);
         DrawDemoRecordingOverlay(painter);
+
+        painter.DrawString(Client.Assets.GetSpriteFont("engine/console-font"), "Debug text goes here", Vector2.Zero,
+            Scale2D.One / 2, new DrawSettings());
         painter.EndSpriteBatch();
+    }
+
+    public bool ShouldLoadNextCartridge()
+    {
+        return false;
+    }
+
+    public void SetupFormalParameters(ParsedCommandLineArguments args)
+    {
+        args.RegisterParameter<bool>("debug");
+    }
+
+    public IEnumerable<LoadEvent> LoadEvents(Painter painter)
+    {
+        yield return () => new GridBasedSpriteSheet("demo-indicators", "engine/demo-indicators", new Point(67, 23));
     }
 
     private void DrawDemoRecordingOverlay(Painter painter)
@@ -41,7 +74,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
             {
                 frame = 1;
             }
-            
+
             if (MathF.Sin(_totalTime * 10) > 0)
             {
                 spriteSheet.DrawFrame(
@@ -49,23 +82,15 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
                     frame,
                     new Vector2(Client.Graphics.WindowSize.X - spriteSheet.GetSourceRectForFrame(0).Width, 0),
                     Scale2D.One,
-                    new DrawSettings {Depth = Depth.Front});
+                    new DrawSettings {Depth = DemoStatusDepth});
             }
         }
     }
+}
 
-    public bool ShouldLoadNextCartridge()
-    {
-        return false;
-    }
-
-    public void SetupFormalParameters(ParsedCommandLineArguments args)
-    {
-        args.RegisterParameter<bool>("debug");
-    }
-
-    public IEnumerable<LoadEvent> LoadEvents(Painter painter)
-    {
-        yield return () => new GridBasedSpriteSheet("demo-indicators", "engine/DemoIndicators", new Point(67, 23));
-    }
+public enum DebugLevel
+{
+    None,
+    Passive,
+    Active
 }

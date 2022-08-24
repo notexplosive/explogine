@@ -1,6 +1,6 @@
 ﻿namespace AssetBuilder;
 
-interface IContentWriter
+internal interface IContentWriter
 {
     IEnumerable<string> GetContentLines(string relativePath);
 }
@@ -9,7 +9,6 @@ public class TextureContentWriter : IContentWriter
 {
     public IEnumerable<string> GetContentLines(string relativePath)
     {
-
         yield return $"#begin {relativePath}";
         yield return "/importer:TextureImporter";
         yield return "/processor:TextureProcessor";
@@ -42,5 +41,18 @@ public class CopyContentWriter : IContentWriter
     {
         yield return $"#begin {relativePath}";
         yield return $"/copy:{relativePath}";
+    }
+}
+
+public class SpriteFontContentWriter : IContentWriter
+{
+    public IEnumerable<string> GetContentLines(string relativePath)
+    {
+        yield return $"#begin {relativePath}";
+        yield return "/importer:FontDescriptionImporter";
+        yield return "/processor:FontDescriptionProcessor";
+        yield return "/processorParam:PremultiplyAlpha=True";
+        yield return "/processorParam:TextureFormat=Compressed";
+        yield return $"/build:{relativePath}";
     }
 }

@@ -1,5 +1,4 @@
-﻿using ExplogineCore.Data;
-using ExplogineMonoGame.Data;
+﻿using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -21,9 +20,9 @@ public class Painter
         _graphicsDevice.Clear(color);
     }
 
-    public void BeginSpriteBatch()
+    public void BeginSpriteBatch(SamplerState samplerState)
     {
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, null, null);
     }
 
     public void EndSpriteBatch()
@@ -35,7 +34,7 @@ public class Painter
     {
         DrawAsRectangle(texture, destinationRectangle, new DrawSettings());
     }
-    
+
     public void DrawAtPosition(Texture2D texture, Vector2 position)
     {
         DrawAtPosition(texture, position, Scale2D.One, new DrawSettings());
@@ -53,5 +52,11 @@ public class Painter
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
+    }
+
+    public void DrawString(SpriteFont font, string text, Vector2 position, Scale2D scale2D, DrawSettings settings)
+    {
+        _spriteBatch.DrawString(font, text, position, settings.Color, settings.Angle, settings.Origin.Value(Point.Zero),
+            scale2D.Value, settings.FlipEffect, settings.Depth);
     }
 }

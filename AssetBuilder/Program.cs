@@ -22,6 +22,7 @@ IContentWriter GetContentWriter(string extension)
     {
         ".png" => new TextureContentWriter(),
         ".ogg" => new OggContentWriter(),
+        ".spritefont" => new SpriteFontContentWriter(),
         _ => new CopyContentWriter()
     };
 }
