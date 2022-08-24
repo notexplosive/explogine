@@ -1,5 +1,6 @@
 ﻿using System;
 using ExplogineCore;
+using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Input;
@@ -25,8 +26,8 @@ public static class Client
     public static Demo DemoRecorder { get; } = new();
     private static bool IsReady { get; set; }
     public static string ContentBaseDirectory => "Content";
-
-    public static event Action? Readied;
+    public static readonly When Initialized = new();
+    public static readonly When FinishedLoading = new();
 
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
@@ -52,24 +53,6 @@ public static class Client
         game.Run();
     }
 
-    public static void RunWhenReady(Action action)
-    {
-        if (Client.IsReady)
-        {
-            action();
-        }
-        else
-        {
-            Client.Readied += action;
-        }
-    }
-
-    private static void RunAndClearReadyEvents()
-    {
-        Client.Readied?.Invoke();
-        Client.Readied = null;
-    }
-
     public static void Exit()
     {
         Client.currentGame.Exit();
@@ -79,6 +62,7 @@ public static class Client
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
         Client.Window.Setup(game.Window, Client.startingConfig);
+        Client.Initialized.Invoke();
     }
 
     internal static void LoadContent(ContentManager contentManager)
@@ -132,6 +116,6 @@ public static class Client
     internal static void TriggerDoneLoading()
     {
         Client.IsReady = true;
-        Client.RunAndClearReadyEvents();
+        Client.FinishedLoading.Invoke();
     }
 }
