@@ -24,8 +24,8 @@ public sealed class Canvas : IDisposable
         RenderTarget.Dispose();
     }
 
-    public DynamicAsset AsAsset(string key)
+    public TextureAsset AsAsset(string key)
     {
-        return new DynamicAsset(key, this);
+        return new TextureAsset(key, Texture);
     }
 }
