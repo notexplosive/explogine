@@ -35,15 +35,18 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     public void Update(float dt)
     {
         _totalTime += dt;
-        
-        if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.Demo.IsPlaying)
+
+        if (Client.Input.Keyboard.Modifiers.Control)
         {
-            Client.Demo.BeginPlayback();
-        }
-        
-        if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.Demo.IsPlaying)
-        {
-            Client.Demo.DumpRecording();
+            if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.Demo.IsPlaying)
+            {
+                Client.Demo.BeginPlayback();
+            }
+
+            if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.Demo.IsPlaying)
+            {
+                Client.Demo.DumpRecording();
+            }
         }
 
         if (Client.Demo.IsPlaying)
