@@ -150,4 +150,45 @@ public class Demo
         Recording,
         Playing
     }
+
+    public InputFrameState ProcessInput(InputFrameState input)
+    {
+        InputFrameState result;
+        
+        if (Client.DemoRecorder.IsPlaying)
+        {
+            var state = GetNextRecordedState();
+            result = input.Next(state);
+        }
+        else
+        {
+            var humanState = InputSnapshot.Human;
+            if (IsRecording)
+            {
+                AddRecord(humanState);
+            }
+
+            result = input.Next(humanState);
+        }
+
+        return result;
+    }
+
+    public void OnStartup()
+    {
+        var demoVal = Client.ParsedCommandLineArguments.GetValue<string>("demo");
+        if (!string.IsNullOrEmpty(demoVal))
+        {
+            switch(demoVal)
+            {
+                case "record":
+                    BeginRecording();
+                    break;
+                case "playback":
+                    LoadFile("default.demo");
+                    BeginPlayback();
+                    break;
+            }
+        }
+    }
 }

@@ -16,7 +16,7 @@ public class SampleGameCartridge : BasicGameCartridge
 {
     private float _totalTime;
 
-    protected override void OnStarted()
+    public override void OnCartridgeStarted()
     {
         Console.WriteLine("Sample Cart Loaded");
     }
@@ -25,18 +25,6 @@ public class SampleGameCartridge : BasicGameCartridge
     {
         _totalTime += dt;
 
-        // move to debug cart
-        if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.DemoRecorder.IsPlaying)
-        {
-            Client.DemoRecorder.BeginPlayback();
-        }
-        
-        if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.DemoRecorder.IsPlaying)
-        {
-            Client.DemoRecorder.DumpRecording();
-        }
-        // /move to debug cart
-        
         if (Client.Input.Keyboard.GetButton(Keys.F).WasPressed)
         {
             Client.Window.SetFullscreen(!Client.Window.IsFullscreen);

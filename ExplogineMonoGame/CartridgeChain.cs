@@ -10,7 +10,8 @@ internal class CartridgeChain : ILoadEventProvider
     private readonly LinkedList<ICartridge> _list = new();
 
     private ICartridge Current => _list.First!.Value;
-    public DebugCartridge DebugCartridge { get; } = new();
+    private DebugCartridge DebugCartridge { get; } = new();
+    public event Action? LoadedLastCartridge;
 
     public IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
@@ -53,6 +54,11 @@ internal class CartridgeChain : ILoadEventProvider
     {
         _list.RemoveFirst();
         _list.First?.Value.OnCartridgeStarted();
+
+        if (_list.Last == _list.First)
+        {
+            LoadedLastCartridge?.Invoke();
+        }
     }
 
     public void Append(ICartridge cartridge)

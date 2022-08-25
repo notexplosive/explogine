@@ -6,6 +6,7 @@ using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -34,6 +35,16 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     public void Update(float dt)
     {
         _totalTime += dt;
+        
+        if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.DemoRecorder.IsPlaying)
+        {
+            Client.DemoRecorder.BeginPlayback();
+        }
+        
+        if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.DemoRecorder.IsPlaying)
+        {
+            Client.DemoRecorder.DumpRecording();
+        }
     }
 
     public void Draw(Painter painter)

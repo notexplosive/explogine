@@ -112,7 +112,7 @@ public class ParsedCommandLineArguments
                 : throw new Exception($"Wrong type requested for {name}");
         }
 
-        throw new Exception($"Value is never set for {name}");
+        throw new Exception($"{name} was never registered");
     }
 
     public List<string> UnboundArgs()

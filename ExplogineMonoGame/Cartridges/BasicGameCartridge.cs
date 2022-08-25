@@ -5,27 +5,7 @@ namespace ExplogineMonoGame.Cartridges;
 
 public abstract class BasicGameCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
-    public void OnCartridgeStarted()
-    {
-        // move this to... somewhere else. OnCartridgeStarted should be abstract and OnStarted should go away.
-        var demoVal = Client.ParsedCommandLineArguments.GetValue<string>("demo");
-        if (!string.IsNullOrEmpty(demoVal))
-        {
-            switch(demoVal)
-            {
-                case "record":
-                    Client.DemoRecorder.BeginRecording();
-                    break;
-                case "playback":
-                    Client.DemoRecorder.LoadFile("default.demo");
-                    Client.DemoRecorder.BeginPlayback();
-                    break;
-            }
-        }
-        OnStarted();
-    }
-
-    protected abstract void OnStarted();
+    public abstract void OnCartridgeStarted();
     public abstract void Update(float dt);
     public abstract void Draw(Painter painter);
 

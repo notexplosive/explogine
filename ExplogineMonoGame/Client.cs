@@ -26,7 +26,6 @@ public static class Client
     public static Demo DemoRecorder { get; } = new();
     public static ClientDebug Debug { get; } = new();
     public static string ContentBaseDirectory => "Content";
-    public static readonly OnceReady Initialized = new();
     public static readonly OnceReady FinishedLoading = new();
 
     /// <summary>
@@ -44,9 +43,8 @@ public static class Client
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
         Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
-
-        // We don't use the property here on purpose, Client isn't ready yet.
         Client.startingConfig = windowConfig;
+        Client.CartridgeChain.LoadedLastCartridge += Client.DemoRecorder.OnStartup;
 
         using var game = new NotGame();
         Client.currentGame = game;
@@ -64,19 +62,17 @@ public static class Client
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
         Client.Window.Setup(game.Window, Client.startingConfig);
-        Client.Initialized.BecomeReady();
     }
 
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
-
         Client.CartridgeChain.ValidateParameters(Client.ParsedCommandLineArguments);
-        
+
         foreach (var arg in Client.ParsedCommandLineArguments.UnboundArgs())
         {
-            Console.WriteLine($"Unknown arg: {arg}");
+            Console.WriteLine($"Was passed unregistered arg: {arg}");
         }
 
         Client.Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
@@ -90,22 +86,7 @@ public static class Client
 
     internal static void Update(float dt)
     {
-        if (Client.DemoRecorder.IsPlaying)
-        {
-            var state = Client.DemoRecorder.GetNextRecordedState();
-            Client.Input = Client.Input.Next(state);
-        }
-        else
-        {
-            var humanState = InputSnapshot.Human;
-            if (Client.DemoRecorder.IsRecording)
-            {
-                Client.DemoRecorder.AddRecord(humanState);
-            }
-
-            Client.Input = Client.Input.Next(humanState);
-        }
-
+        Client.Input = Client.DemoRecorder.ProcessInput(Client.Input);
         Client.CartridgeChain.Update(dt);
     }
 
