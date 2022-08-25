@@ -2,12 +2,7 @@
 
 namespace ExplogineMonoGame.AssetManagement;
 
-public interface IAsset
-{
-    public string Key { get; }
-}
-
-public abstract class Asset : IAsset, IDisposable
+public abstract class Asset : IDisposable
 {
     private readonly IDisposable? _ownedContent;
     public string Key { get; }

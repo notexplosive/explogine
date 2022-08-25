@@ -7,13 +7,13 @@ namespace ExplogineMonoGame.AssetManagement;
 
 public class Assets
 {
-    private readonly Dictionary<string, IAsset> _lookupTable = new();
+    private readonly Dictionary<string, Asset> _lookupTable = new();
 
     internal Assets()
     {
     }
 
-    public T GetAsset<T>(string key) where T : class, IAsset
+    public T GetAsset<T>(string key) where T : Asset
     {
         if (!_lookupTable.ContainsKey(key))
         {
@@ -48,7 +48,7 @@ public class Assets
         return GetAsset<SpriteFontAsset>(key).SpriteFont;
     }
 
-    internal void AddAsset(IAsset asset)
+    internal void AddAsset(Asset asset)
     {
         _lookupTable.Add(asset.Key, asset);
     }

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame;
 
-public delegate IAsset LoadEvent();
+public delegate Asset LoadEvent();
 
 public class Loader
 {
@@ -50,7 +50,7 @@ public class Loader
         }
     }
 
-    private IAsset LoadAsset(string key)
+    private Asset LoadAsset(string key)
     {
         var texture2D = AttemptLoad<Texture2D>(key);
         if (texture2D != null)
