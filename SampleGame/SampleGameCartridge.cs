@@ -20,7 +20,7 @@ public class SampleGameCartridge : BasicGameCartridge
 
     public override void OnCartridgeStarted()
     {
-        Console.WriteLine("Sample Cart Loaded");
+        Client.Debug.Log("Sample Cart Loaded");
         
         _c1 = new HitTestTarget(new Rectangle(100, 100, 500, 500), new Depth(50));
         _c2 = new HitTestTarget(new Rectangle(150, 150, 500, 500), new Depth(25));

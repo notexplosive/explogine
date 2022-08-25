@@ -21,5 +21,13 @@ public class EmptyFileSystem : IFileSystem
     {
     }
 
+    public void CreateFileInWorkingDirectory(string path)
+    {
+    }
+
+    public void AppendToFileInWorkingDirectory(string path, string contents)
+    {
+    }
+
     public string ContentPath => string.Empty;
 }

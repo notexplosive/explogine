@@ -39,7 +39,7 @@ public class Loader
         var asset = _loadEvents[_loadEventIndex].Invoke();
         Client.Assets.AddAsset(asset);
         _loadEventIndex++;
-        Console.WriteLine("Loading: " + MathF.Floor(Percent * 100f) + "%");
+        Client.Debug.Log("Loading: " + MathF.Floor(Percent * 100f) + "%");
     }
 
     private IEnumerable<LoadEvent> StaticContentLoadEvents()

@@ -4,6 +4,7 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,6 +18,7 @@ public static class Client
     private static WindowConfig startingConfig;
     private static readonly CartridgeChain CartridgeChain = new();
     public static readonly OnceReady FinishedLoading = new();
+    public static readonly OnceReady Exited = new();
 
     /// <summary>
     ///     Wrapper around the MonoGame Graphics objects (Device & DeviceManager)
@@ -87,17 +89,35 @@ public static class Client
     public static void Start(string[] args, WindowConfig windowConfig, ICartridge gameCartridge,
         IPlatformInterface platform)
     {
+        // Setup Platform
         Client.Window = platform.Window;
         Client.FileSystem = platform.FileSystem;
+        Client.startingConfig = windowConfig;
+
+        // Setup Logging
+        Client.Debug.Output.PushToStack(new ConsoleLogCapture());
+        Client.Debug.Output.AddParallel(new FileLogCapture());
+        
+        // Setup Cartridges
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
-        Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
-        Client.startingConfig = windowConfig;
         Client.CartridgeChain.LoadedLastCartridge += Client.Demo.OnStartup;
-
+        
+        // Setup Command Line
+        Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
+        
+        
+        // Setup Game
         using var game = new NotGame();
         Client.currentGame = game;
-
+        
+        // Setup Exit Handler
+        Client.currentGame.Exiting += (_, _) =>
+        {
+            Client.Exited.BecomeReady();
+        };
+        
+        // Launch
         // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
         game.Run();
     }
@@ -121,7 +141,7 @@ public static class Client
 
         foreach (var arg in Client.ParsedCommandLineArguments.UnboundArgs())
         {
-            Console.WriteLine($"Was passed unregistered arg: {arg}");
+            Client.Debug.Log($"Was passed unregistered arg: {arg}");
         }
 
         Client.Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);

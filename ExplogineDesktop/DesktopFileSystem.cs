@@ -66,4 +66,14 @@ public class DesktopFileSystem : IFileSystem
     {
         await File.WriteAllTextAsync(path, contents);
     }
+
+    public void CreateFileInWorkingDirectory(string path)
+    {
+        File.Create(path);
+    }
+
+    public async void AppendToFileInWorkingDirectory(string path, string contents)
+    {
+        await File.AppendAllTextAsync(path, contents);
+    }
 }
