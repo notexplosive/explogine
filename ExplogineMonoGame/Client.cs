@@ -16,18 +16,61 @@ public static class Client
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static readonly CartridgeChain CartridgeChain = new();
-    public static Graphics Graphics { get; private set; } = null!;
-    public static InputFrameState Input { get; private set; }
-    public static InputFrameState HumanInput { get; private set; }
-    public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
-    public static IWindow Window { get; private set; } = null!;
-    public static ParsedCommandLineArguments ParsedCommandLineArguments { get; private set; } = new();
-    public static Assets Assets { get; } = new();
-    public static SoundPlayer SoundPlayer { get; } = new();
-    public static Demo Demo { get; } = new();
-    public static ClientDebug Debug { get; } = new();
-    public static string ContentBaseDirectory => "Content";
     public static readonly OnceReady FinishedLoading = new();
+
+    /// <summary>
+    ///     Wrapper around the MonoGame Graphics objects (Device & DeviceManager)
+    /// </summary>
+    public static Graphics Graphics { get; private set; } = null!;
+
+    /// <summary>
+    ///     The current user input state for this frame, use this to get Keyboard, Mouse, or Gamepad input state.
+    ///     This value is provided by either the human user pressing buttons, or by the Demo playback.
+    /// </summary>
+    public static InputFrameState Input { get; private set; }
+
+    /// <summary>
+    ///     Same as Client.Input, except it's unaffected to Demo Playback.
+    ///     Prefer Client.Input if you don't understand/care about the difference.
+    /// </summary>
+    public static InputFrameState HumanInput { get; private set; }
+
+    /// <summary>
+    ///     Wrapper for accessing the Filesystem of your platform.
+    /// </summary>
+    public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
+
+    /// <summary>
+    ///     Wrapper for accessing the Window of your platform.
+    /// </summary>
+    public static IWindow Window { get; private set; } = null!;
+
+    /// <summary>
+    ///     The Args passed via command line.
+    /// </summary>
+    public static ParsedCommandLineArguments ParsedCommandLineArguments { get; private set; } = new();
+
+    /// <summary>
+    ///     Gives you access to static Assets (aka: Content), as well as dynamic assets.
+    /// </summary>
+    public static Assets Assets { get; } = new();
+
+    /// <summary>
+    ///     Convenient way to play one-off sounds.
+    /// </summary>
+    public static SoundPlayer SoundPlayer { get; } = new();
+
+    /// <summary>
+    ///     Demo Recorder/Playback.
+    /// </summary>
+    public static Demo Demo { get; } = new();
+
+    /// <summary>
+    ///     Debug tools.
+    /// </summary>
+    public static ClientDebug Debug { get; } = new();
+
+    public static string ContentBaseDirectory => "Content";
 
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
@@ -49,7 +92,7 @@ public static class Client
 
         using var game = new NotGame();
         Client.currentGame = game;
-        
+
         // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
         game.Run();
     }
