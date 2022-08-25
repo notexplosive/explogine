@@ -125,8 +125,7 @@ public static class Client
 
     internal static void UnloadContent()
     {
-        Client.loader.Unload();
-        Client.Assets.UnloadAllDynamicContent();
+        Client.Assets.UnloadAll();
     }
 
     internal static void Update(float dt)

@@ -28,18 +28,6 @@ public class Assets
         return result;
     }
 
-    public T GetPreloadedObject<T>(string key) where T : class
-    {
-        var result = GetAsset<DynamicAsset>(key).Content as T;
-
-        if (result == null)
-        {
-            throw new Exception($"Asset with key {key} cannot be casted as {typeof(T).Name}");
-        }
-
-        return result;
-    }
-
     public Texture2D GetTexture(string key)
     {
         return GetAsset<TextureAsset>(key).Texture;
@@ -65,13 +53,13 @@ public class Assets
         _lookupTable.Add(asset.Key, asset);
     }
 
-    internal void UnloadAllDynamicContent()
+    public void UnloadAll()
     {
-        foreach (var asset in _lookupTable.Values)
+        foreach (var item in _lookupTable.Values)
         {
-            if (asset is DynamicAsset dynamicAsset)
+            if (item is IDisposable disposable)
             {
-                dynamicAsset.Unload();
+                disposable.Dispose();
             }
         }
     }

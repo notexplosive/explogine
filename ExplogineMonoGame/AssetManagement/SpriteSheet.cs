@@ -7,7 +7,7 @@ namespace ExplogineMonoGame.AssetManagement;
 
 public abstract class SpriteSheet : Asset
 {
-    public SpriteSheet(string key, Texture2D texture) : base(key)
+    public SpriteSheet(string key, Texture2D texture) : base(key, null)
     {
         Texture = texture;
     }
