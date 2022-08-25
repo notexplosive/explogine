@@ -36,7 +36,7 @@ public class Loader
 
     public void LoadNext()
     {
-        var asset = _loadEvents[_loadEventIndex]();
+        var asset = _loadEvents[_loadEventIndex].Invoke();
         Client.Assets.AddAsset(asset);
         _loadEventIndex++;
         Console.WriteLine("Loading: " + MathF.Floor(Percent * 100f) + "%");
