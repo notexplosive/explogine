@@ -155,7 +155,7 @@ public class Demo
     {
         InputFrameState result;
         
-        if (Client.DemoRecorder.IsPlaying)
+        if (Client.Demo.IsPlaying)
         {
             var state = GetNextRecordedState();
             result = input.Next(state);

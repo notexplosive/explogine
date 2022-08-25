@@ -36,14 +36,14 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     {
         _totalTime += dt;
         
-        if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.DemoRecorder.IsPlaying)
+        if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.Demo.IsPlaying)
         {
-            Client.DemoRecorder.BeginPlayback();
+            Client.Demo.BeginPlayback();
         }
         
-        if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.DemoRecorder.IsPlaying)
+        if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.Demo.IsPlaying)
         {
-            Client.DemoRecorder.DumpRecording();
+            Client.Demo.DumpRecording();
         }
     }
 
@@ -75,8 +75,8 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     private void DrawDemoRecordingOverlay(Painter painter)
     {
         var spriteSheet = Client.Assets.GetAsset<SpriteSheet>("demo-indicators");
-        var isPlaying = Client.DemoRecorder.IsPlaying;
-        var isRecording = Client.DemoRecorder.IsRecording;
+        var isPlaying = Client.Demo.IsPlaying;
+        var isRecording = Client.Demo.IsRecording;
 
         if (isRecording || isPlaying)
         {

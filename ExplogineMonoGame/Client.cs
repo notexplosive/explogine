@@ -23,7 +23,7 @@ public static class Client
     public static ParsedCommandLineArguments ParsedCommandLineArguments { get; private set; } = new();
     public static Assets Assets { get; } = new();
     public static SoundPlayer SoundPlayer { get; } = new();
-    public static Demo DemoRecorder { get; } = new();
+    public static Demo Demo { get; } = new();
     public static ClientDebug Debug { get; } = new();
     public static string ContentBaseDirectory => "Content";
     public static readonly OnceReady FinishedLoading = new();
@@ -44,7 +44,7 @@ public static class Client
         Client.CartridgeChain.Append(gameCartridge);
         Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
         Client.startingConfig = windowConfig;
-        Client.CartridgeChain.LoadedLastCartridge += Client.DemoRecorder.OnStartup;
+        Client.CartridgeChain.LoadedLastCartridge += Client.Demo.OnStartup;
 
         using var game = new NotGame();
         Client.currentGame = game;
@@ -86,7 +86,7 @@ public static class Client
 
     internal static void Update(float dt)
     {
-        Client.Input = Client.DemoRecorder.ProcessInput(Client.Input);
+        Client.Input = Client.Demo.ProcessInput(Client.Input);
         Client.CartridgeChain.Update(dt);
     }
 
