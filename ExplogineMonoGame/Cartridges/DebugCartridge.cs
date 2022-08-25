@@ -14,6 +14,8 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 {
     private float _totalTime;
 
+    private readonly HitTestTarget _testTarget = new(new Rectangle(100, 100, 500, 500), new Depth(600), HitTestLayer.DebugOverlay);
+    
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
 
     public void OnCartridgeStarted()
@@ -56,6 +58,8 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
                 Client.Demo.Stop();
             }
         }
+        
+        Client.HitTesting.Add(_testTarget);
     }
 
     public void Draw(Painter painter)
@@ -65,6 +69,15 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 
         painter.DrawString(Client.Assets.GetSpriteFont("engine/console-font"), "Debug text goes here", Vector2.Zero,
             Scale2D.One / 2, new DrawSettings());
+        
+        var colliderColor = Color.Orange;
+        if (Client.HitTesting.LastTopHit == _testTarget)
+        {
+            colliderColor = Color.Blue;
+        }
+        painter.DrawAsRectangle(Client.Assets.GetTexture("white-pixel"), _testTarget.Rectangle,
+            new DrawSettings {Color = colliderColor, Depth = _testTarget.Depth});
+        
         painter.EndSpriteBatch();
     }
 
