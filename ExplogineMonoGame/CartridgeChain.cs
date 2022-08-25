@@ -81,14 +81,6 @@ internal class CartridgeChain : ILoadEventProvider
         yield return DebugCartridge;
     }
 
-    public void ForeachPreload(Action<LoadEvent> callback)
-    {
-        foreach (var loadEvent in LoadEvents(Client.Graphics.Painter))
-        {
-            callback(loadEvent);
-        }
-    }
-
     public void ValidateParameters(ParsedCommandLineArguments args)
     {
         foreach (var cartridge in GetAllCartridges())
@@ -104,7 +96,11 @@ internal class CartridgeChain : ILoadEventProvider
 
     public void SetupLoadingCartridge(Loader loader)
     {
-        ForeachPreload(loader.AddDynamicLoadEvent);
+        foreach (var loadEvent in LoadEvents(Client.Graphics.Painter))
+        {
+            loader.AddDynamicLoadEvent(loadEvent);
+        }
+
         var loadingCartridge = new LoadingCartridge(loader);
         loadingCartridge.OnCartridgeStarted();
         Prepend(loadingCartridge);
