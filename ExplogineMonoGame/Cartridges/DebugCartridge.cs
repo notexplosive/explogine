@@ -45,6 +45,14 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         {
             Client.Demo.DumpRecording();
         }
+
+        if (Client.Demo.IsPlaying)
+        {
+            if (Client.HumanInput.Keyboard.GetButton(Keys.Escape).WasPressed)
+            {
+                Client.Demo.Stop();
+            }
+        }
     }
 
     public void Draw(Painter painter)

@@ -18,6 +18,7 @@ public static class Client
     private static readonly CartridgeChain CartridgeChain = new();
     public static Graphics Graphics { get; private set; } = null!;
     public static InputFrameState Input { get; private set; }
+    public static InputFrameState HumanInput { get; private set; }
     public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
     public static IWindow Window { get; private set; } = null!;
     public static ParsedCommandLineArguments ParsedCommandLineArguments { get; private set; } = new();
@@ -76,6 +77,7 @@ public static class Client
         }
 
         Client.Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
+        Client.HumanInput = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
     }
 
     internal static void UnloadContent()
@@ -86,6 +88,7 @@ public static class Client
 
     internal static void Update(float dt)
     {
+        Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
         Client.Input = Client.Demo.ProcessInput(Client.Input);
         Client.CartridgeChain.Update(dt);
     }
