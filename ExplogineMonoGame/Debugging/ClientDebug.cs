@@ -10,11 +10,11 @@ public class ClientDebug
     public bool IsActive => Level == DebugLevel.Active;
     public bool IsPassive => Level == DebugLevel.Passive || IsActive;
 
-    public void Log(object firstObject, params object[] paramsObjects)
+    public void Log(object message, params object[] paramsObjects)
     {
         var output = new StringBuilder();
 
-        output.Append(firstObject);
+        output.Append(message);
 
         foreach (var param in paramsObjects)
         {

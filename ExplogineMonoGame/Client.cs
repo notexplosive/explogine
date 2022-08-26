@@ -1,5 +1,4 @@
-﻿using System;
-using ExplogineCore;
+﻿using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
@@ -17,6 +16,7 @@ public static class Client
     private static Game currentGame = null!;
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
+
     private static readonly CartridgeChain CartridgeChain = new();
     public static readonly OnceReady FinishedLoading = new();
     public static readonly OnceReady Exited = new();
@@ -77,6 +77,11 @@ public static class Client
     ///     Debug tools.
     /// </summary>
     public static ClientDebug Debug { get; } = new();
+    
+    /// <summary>
+    ///     The Canvas that renders the actual game content to the screen.
+    /// </summary>
+    private static RenderCanvas RenderCanvas { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
 
@@ -98,26 +103,22 @@ public static class Client
         // Setup Logging
         Client.Debug.Output.PushToStack(new ConsoleLogCapture());
         Client.Debug.Output.AddParallel(new FileLogCapture());
-        
+
         // Setup Cartridges
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
         Client.CartridgeChain.LoadedLastCartridge += Client.Demo.OnStartup;
-        
+
         // Setup Command Line
         Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
-        
-        
+
         // Setup Game
         using var game = new NotGame();
         Client.currentGame = game;
-        
+
         // Setup Exit Handler
-        Client.currentGame.Exiting += (_, _) =>
-        {
-            Client.Exited.BecomeReady();
-        };
-        
+        Client.currentGame.Exiting += (_, _) => { Client.Exited.BecomeReady(); };
+
         // Launch
         // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
         game.Run();
@@ -131,6 +132,8 @@ public static class Client
     internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, Game game)
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
+        Client.RenderCanvas.Setup();
+        Client.Window.Resized += RenderCanvas.OnWindowResized;
         Client.Window.Setup(game.Window, Client.startingConfig);
     }
 
@@ -165,6 +168,11 @@ public static class Client
 
     internal static void Draw()
     {
-        Client.CartridgeChain.Draw(Client.Graphics.Painter);
+        Client.RenderCanvas.DrawWithin((painter) =>
+        {
+            Client.CartridgeChain.Draw(painter);
+        });
+
+        Client.RenderCanvas.Draw(Client.Graphics.Painter);
     }
 }

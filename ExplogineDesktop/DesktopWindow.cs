@@ -5,9 +5,11 @@ namespace ExplogineDesktop;
 
 public class DesktopWindow : IWindow
 {
-    private static WindowConfig _currentConfig;
+    private WindowConfig _currentConfig;
     private Rectangle _rememberedBounds;
     private GameWindow _window = null!;
+    public Point RenderResolution { get; private set; }
+    public event Action? ConfigChanged;
 
     public Point Position
     {
@@ -27,6 +29,7 @@ public class DesktopWindow : IWindow
     {
         Client.Graphics.DeviceManager.PreferredBackBufferWidth = windowSize.X;
         Client.Graphics.DeviceManager.PreferredBackBufferHeight = windowSize.Y;
+        Resized?.Invoke(windowSize);
         Client.Graphics.DeviceManager.ApplyChanges();
     }
 
@@ -35,6 +38,7 @@ public class DesktopWindow : IWindow
         void OnResize(object? sender, EventArgs e)
         {
             var windowSize = new Point(_window.ClientBounds.Width, _window.ClientBounds.Height);
+            ChangeRenderResolution(windowSize);
             Resized?.Invoke(windowSize);
         }
 
@@ -61,7 +65,7 @@ public class DesktopWindow : IWindow
         {
             return;
         }
-        
+
         if (state)
         {
             _rememberedBounds = new Rectangle(Position, Size);
@@ -82,14 +86,16 @@ public class DesktopWindow : IWindow
 
     public WindowConfig Config
     {
-        get => DesktopWindow._currentConfig;
+        get => _currentConfig;
         set
         {
-            DesktopWindow._currentConfig = value;
+            _currentConfig = value;
             // Always allow window resizing because MonoGame handles heterogeneous DPIs poorly
             // also just generally QoL. Window Resizing should always be legal.
             AllowResizing = true;
 
+            ChangeRenderResolution(_currentConfig.WindowSize);
+            
             if (Config.Fullscreen)
             {
                 SetFullscreen(true);
@@ -97,10 +103,26 @@ public class DesktopWindow : IWindow
             else
             {
                 SetFullscreen(false);
-                SetSize(Config.WindowSize);                
+                SetSize(Config.WindowSize);
             }
 
             Title = Config.Title;
+
+            Client.Graphics.DeviceManager.ApplyChanges();
+            ConfigChanged?.Invoke();
+        }
+    }
+
+    private void ChangeRenderResolution(Point windowSize)
+    {
+        // We use _currentConfig instead of Config because this is happening during Config._set
+        if (_currentConfig.RenderResolution.HasValue)
+        {
+            RenderResolution = _currentConfig.RenderResolution.Value;
+        }
+        else
+        {
+            RenderResolution = windowSize;
         }
     }
 }

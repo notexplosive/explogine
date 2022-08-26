@@ -1,10 +1,16 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.AssetManagement;
 
 public sealed class Canvas : IDisposable
 {
+    public Canvas(Point size) : this(size.X, size.Y)
+    {
+        // See other constructor
+    }
+
     public Canvas(int width, int height)
     {
         RenderTarget = new RenderTarget2D(
@@ -18,6 +24,7 @@ public sealed class Canvas : IDisposable
 
     internal RenderTarget2D RenderTarget { get; }
     public Texture2D Texture => RenderTarget;
+    public Point Size => new(RenderTarget.Width, RenderTarget.Height);
 
     public void Dispose()
     {
