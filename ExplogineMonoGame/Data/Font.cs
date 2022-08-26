@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,7 +26,6 @@ public class Font
             return SpriteFont.MeasureString(text) * ScaleFactor;
         }
 
-
         return GetRestrictedString(text, restrictedWidth.Value).Size;
     }
 
@@ -41,7 +40,7 @@ public class Font
         var maxWidth = 0f;
         var height = 0f;
         var heightOfOneLine = SpriteFont.LineSpacing * ScaleFactor;
-        var lineBrokenString = string.Empty;
+        var lineBrokenString = new StringBuilder();
 
         if (text.Length > 0)
         {
@@ -49,24 +48,59 @@ public class Font
         }
 
         var spaceWidth = SpriteFont.MeasureString(" ").X;
-        
-        foreach (var token in text.Split())
-        {
-            var tokenWidth = (SpriteFont.MeasureString(token).X + spaceWidth) * ScaleFactor;
 
-            if (currentLineWidth + tokenWidth >= restrictedWidth)
-            {
-                maxWidth = MathF.Max(maxWidth, currentLineWidth);
-                height += heightOfOneLine;
-                currentLineWidth = 0;
-                lineBrokenString += '\n';
-            }
-            
-            currentLineWidth += tokenWidth;
-            lineBrokenString += token + ' ';
+        var token = new StringBuilder();
+
+        void StartNewLine()
+        {
+            maxWidth = MathF.Max(maxWidth, currentLineWidth);
+            height += heightOfOneLine;
+            currentLineWidth = 0;
+            lineBrokenString.Append('\n');
         }
 
-        return new RestrictedString(lineBrokenString, new Vector2(MathF.Max(maxWidth, currentLineWidth), height));
+        void AppendToken()
+        {
+            currentLineWidth += TokenWidth();
+            lineBrokenString.Append(token);
+            token = new StringBuilder(); // can we just call token.Clear()?
+        }
+
+        float TokenWidth()
+        {
+            return SpriteFont.MeasureString(token).X * ScaleFactor;
+        }
+
+        for (var i = 0; i < text.Length; i++)
+        {
+            var character = text[i];
+            if (character == '\t')
+            {
+                token.Append("   ");
+            }
+            else if (character == '\n')
+            {
+                AppendToken();
+                StartNewLine();
+                continue;
+            }
+            else
+            {
+                token.Append(character);
+            }
+
+            if (char.IsWhiteSpace(character) || i == text.Length - 1)
+            {
+                if (currentLineWidth + TokenWidth() >= restrictedWidth)
+                {
+                    StartNewLine();
+                }
+                AppendToken();
+            }
+        }
+
+        return new RestrictedString(lineBrokenString.ToString(),
+            new Vector2(MathF.Max(maxWidth, currentLineWidth), height));
     }
 
     private readonly record struct RestrictedString(string Text, Vector2 Size);
