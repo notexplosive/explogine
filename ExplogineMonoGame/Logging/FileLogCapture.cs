@@ -12,9 +12,9 @@ public class FileLogCapture : ILogCapture
         Client.Exited.Add(WriteBuffer);
     }
     
-    public void CaptureMessage(string message)
+    public void CaptureMessage(string text)
     {
-        _buffer.Add(message);
+        _buffer.Add(text);
     }
 
     private void WriteBuffer()

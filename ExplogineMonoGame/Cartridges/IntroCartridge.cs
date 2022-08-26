@@ -6,8 +6,8 @@ public class IntroCartridge : ICartridge
 {
     public void Update(float dt)
     {
-        Client.Debug.Log("Made with NotFramework by NotExplosive");
-        Client.Debug.Log("-- NotExplosive.net --");
+        Client.Debug.Log("Made with Explogine by NotExplosive");
+        Client.Debug.Log("NotExplosive.net");
     }
 
     public void Draw(Painter painter)

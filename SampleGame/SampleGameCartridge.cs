@@ -38,6 +38,12 @@ public class SampleGameCartridge : BasicGameCartridge
         Client.HitTesting.Add(_c1);
         Client.HitTesting.Add(_c2);
         Client.HitTesting.Add(_c3);
+
+        if (Client.Input.Keyboard.GetButton(Keys.Space).WasPressed)
+        {
+            Client.Debug.Log(DateTime.UtcNow.Second);
+            Client.Debug.Log("very\n very\n very\n very long message");
+        }
     }
 
     public override void Draw(Painter painter)

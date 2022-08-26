@@ -18,20 +18,17 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 
     public void OnCartridgeStarted()
     {
-#if DEBUG
-        Client.Debug.DebugLevel = DebugLevel.Passive;
-#endif
+        Client.Debug.Output.PushToStack(_logOverlay);
 
+#if DEBUG
+        Client.Debug.Level = DebugLevel.Passive;
+        Client.Debug.Log("~~ Debug Build ~~");
+#endif
+        
         if (Client.ParsedCommandLineArguments.GetValue<bool>("debug"))
         {
-            Client.Debug.DebugLevel = DebugLevel.Passive;
+            Client.Debug.Level = DebugLevel.Passive;
         }
-        else
-        {
-            Client.Debug.DebugLevel = DebugLevel.None;
-        }
-
-        Client.Debug.Output.PushToStack(_logOverlay);
     }
 
     public void Update(float dt)
@@ -45,7 +42,11 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         painter.BeginSpriteBatch(SamplerState.LinearWrap);
 
         _demoInterface.Draw(painter, DemoStatusDepth);
-        _logOverlay.Draw(painter, ConsoleOverlayDepth);
+
+        if (Client.Debug.IsPassive)
+        {
+            _logOverlay.Draw(painter, ConsoleOverlayDepth);
+        }
 
         painter.EndSpriteBatch();
     }
