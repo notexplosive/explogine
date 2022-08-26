@@ -54,9 +54,9 @@ public class Painter
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
 
-    public void DrawString(SpriteFont font, string text, Vector2 position, Scale2D scale2D, DrawSettings settings)
+    public void DrawString(SpriteFont font, string text, Point position, Scale2D scale2D, DrawSettings settings)
     {
-        _spriteBatch.DrawString(font, text, position, settings.Color, settings.Angle, settings.Origin.Value(Point.Zero),
+        _spriteBatch.DrawString(font, text, position.ToVector2(), settings.Color, settings.Angle, settings.Origin.Value(Point.Zero),
             scale2D.Value, settings.FlipEffect, settings.Depth);
     }
 }

@@ -5,7 +5,7 @@ namespace ExplogineMonoGame.Logging;
 
 public class FileLogCapture : ILogCapture
 {
-    private List<string> _buffer = new();
+    private readonly List<string> _buffer = new();
 
     public FileLogCapture()
     {

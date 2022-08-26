@@ -3,6 +3,7 @@ using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
+using ExplogineMonoGame.Debugging;
 using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Logging;
 using Microsoft.Xna.Framework;

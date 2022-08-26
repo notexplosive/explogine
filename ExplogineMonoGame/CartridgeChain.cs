@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ExplogineCore;
 using ExplogineMonoGame.Cartridges;
+using ExplogineMonoGame.Debugging;
 
 namespace ExplogineMonoGame;
 

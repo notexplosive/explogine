@@ -1,8 +1,7 @@
 ﻿using System.Text;
-using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Logging;
 
-namespace ExplogineMonoGame;
+namespace ExplogineMonoGame.Debugging;
 
 public class ClientDebug
 {
