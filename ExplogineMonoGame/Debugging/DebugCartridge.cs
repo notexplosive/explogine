@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
-using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -17,6 +14,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     private readonly LogOverlay _logOverlay = new();
 
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
+    private Depth ConsoleOverlayDepth { get; } = Depth.Front + 5;
 
     public void OnCartridgeStarted()
     {
@@ -47,7 +45,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         painter.BeginSpriteBatch(SamplerState.LinearWrap);
 
         _demoInterface.Draw(painter, DemoStatusDepth);
-        _logOverlay.Draw(painter);
+        _logOverlay.Draw(painter, ConsoleOverlayDepth);
 
         painter.EndSpriteBatch();
     }
@@ -65,41 +63,5 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     public IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
         yield return () => new GridBasedSpriteSheet("demo-indicators", "engine/demo-indicators", new Point(67, 23));
-    }
-}
-
-internal class LogOverlay : ILogCapture
-{
-    private readonly List<string> _linesBuffer = new();
-    private float _timer;
-
-    private float Opacity => Math.Clamp(_timer, 0f, 1f);
-
-    public void CaptureMessage(string message)
-    {
-        _linesBuffer.Add(message);
-        _timer = 5;
-    }
-
-    public void Update(float dt)
-    {
-        _timer -= dt;
-    }
-
-    public void Draw(Painter painter)
-    {
-        var font = Client.Assets.GetSpriteFont("engine/console-font");
-        var scale = 0.5f;
-        var heightOfOneLine = font.LineSpacing * scale;
-        var currentY = 0;
-        foreach (var message in _linesBuffer)
-        {
-            painter.DrawString(font, message, new Point(0, currentY),
-                Scale2D.One * scale, new DrawSettings {Color = Color.White.WithMultipliedOpacity(Opacity)});
-
-            // todo: calculate height of each line, render linebreaks for long lines
-
-            currentY += (int) heightOfOneLine;
-        }
     }
 }

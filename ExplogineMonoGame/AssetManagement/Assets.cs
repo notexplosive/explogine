@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -43,9 +44,10 @@ public class Assets
         return GetAsset<SoundAsset>(key).SoundEffectInstance;
     }
 
-    public SpriteFont GetSpriteFont(string key)
+    public Font GetFont(string key, int desiredSize)
     {
-        return GetAsset<SpriteFontAsset>(key).SpriteFont;
+        var spriteFont = GetAsset<SpriteFontAsset>(key).SpriteFont;
+        return new Font(spriteFont, desiredSize);
     }
 
     internal void AddAsset(Asset asset)

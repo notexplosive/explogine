@@ -53,10 +53,18 @@ public class Painter
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
-
-    public void DrawString(SpriteFont font, string text, Point position, Scale2D scale2D, DrawSettings settings)
+    
+    public void DrawStringAtPosition(Font font, string text, Point position, DrawSettings settings)
     {
-        _spriteBatch.DrawString(font, text, position.ToVector2(), settings.Color, settings.Angle, settings.Origin.Value(Point.Zero),
-            scale2D.Value, settings.FlipEffect, settings.Depth);
+        _spriteBatch.DrawString(font.SpriteFont, text, position.ToVector2(), settings.Color, settings.Angle, settings.Origin.Value(Point.Zero),
+            Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
+    }
+
+    public void DrawStringWithinRectangle(Font font, string text, Rectangle rectangle, DrawSettings settings)
+    {
+        var brokenText = font.Linebreak(text, rectangle.Width);
+        var origin = settings.Origin.Value(rectangle.Size);
+        _spriteBatch.DrawString(font.SpriteFont, brokenText, rectangle.Location.ToVector2(), settings.Color, settings.Angle,
+            origin, Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
     }
 }
