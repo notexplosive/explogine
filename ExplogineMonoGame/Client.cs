@@ -170,9 +170,10 @@ public static class Client
     {
         Client.RenderCanvas.DrawWithin(painter =>
         {
-            Client.CartridgeChain.Draw(painter);
+            Client.CartridgeChain.DrawCurrentCartridge(painter);
         });
 
         Client.RenderCanvas.Draw(Client.Graphics.Painter);
+        Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
     }
 }

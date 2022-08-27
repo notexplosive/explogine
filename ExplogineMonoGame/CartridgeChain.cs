@@ -41,13 +41,16 @@ internal class CartridgeChain : ILoadEventProvider
         }
     }
 
-    public void Draw(Painter painter)
+    public void DrawCurrentCartridge(Painter painter)
     {
         Current.Draw(painter);
-        
+    }
+
+    public void DrawDebugCartridge(Painter painter)
+    {
         if (Client.FinishedLoading.IsReady)
         {
-            DebugCartridge.Draw(Client.Graphics.Painter);
+            DebugCartridge.Draw(painter);
         }
     }
 

@@ -15,8 +15,8 @@ internal class LogOverlay : ILogCapture
 
     private float Opacity => Math.Clamp(_timer, 0f, 1f);
 
-    private int TotalWidth => Client.Window.RenderResolution.X;
-    private int MaxHeight => Client.Window.RenderResolution.Y;
+    private int TotalWidth => Client.Window.Size.X;
+    private int MaxHeight => Client.Window.Size.Y;
 
     public void CaptureMessage(string text)
     {

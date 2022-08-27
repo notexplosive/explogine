@@ -30,7 +30,7 @@ internal class DemoInterface
                 spriteSheet.DrawFrame(
                     painter,
                     frame,
-                    new Vector2(Client.Window.RenderResolution.X - spriteSheet.GetSourceRectForFrame(0).Width, 0),
+                    new Vector2(Client.Window.Size.X - spriteSheet.GetSourceRectForFrame(0).Width, 0),
                     Scale2D.One,
                     new DrawSettings {Depth = depth});
             }
