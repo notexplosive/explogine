@@ -81,7 +81,7 @@ public static class Client
     /// <summary>
     ///     The Canvas that renders the actual game content to the screen.
     /// </summary>
-    private static RenderCanvas RenderCanvas { get; } = new();
+    public static RenderCanvas RenderCanvas { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
 
@@ -163,12 +163,12 @@ public static class Client
         Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
         Client.Input = Client.Demo.ProcessInput(Client.Input);
         Client.CartridgeChain.Update(dt);
-        Client.HitTesting.Resolve(Client.Input.Mouse.Position);
+        Client.HitTesting.Resolve(Client.Input.Mouse.Position(Client.RenderCanvas.ScreenToCanvas));
     }
 
     internal static void Draw()
     {
-        Client.RenderCanvas.DrawWithin((painter) =>
+        Client.RenderCanvas.DrawWithin(painter =>
         {
             Client.CartridgeChain.Draw(painter);
         });

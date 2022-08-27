@@ -14,14 +14,14 @@ namespace SampleGame;
 
 public class SampleGameCartridge : BasicGameCartridge
 {
-    private HitTestTarget _c3;
-    private HitTestTarget _c2;
     private HitTestTarget _c1;
+    private HitTestTarget _c2;
+    private HitTestTarget _c3;
 
     public override void OnCartridgeStarted()
     {
         Client.Debug.Log("Sample Cart Loaded");
-        
+
         _c1 = new HitTestTarget(new Rectangle(100, 100, 500, 500), new Depth(50));
         _c2 = new HitTestTarget(new Rectangle(150, 150, 500, 500), new Depth(25));
         _c3 = new HitTestTarget(new Rectangle(200, 200, 500, 500), new Depth(15));
@@ -29,12 +29,11 @@ public class SampleGameCartridge : BasicGameCartridge
 
     public override void Update(float dt)
     {
-        
         if (Client.Input.Keyboard.GetButton(Keys.F).WasPressed)
         {
             Client.Window.SetFullscreen(!Client.Window.IsFullscreen);
         }
-        
+
         Client.HitTesting.Add(_c1);
         Client.HitTesting.Add(_c2);
         Client.HitTesting.Add(_c3);
@@ -57,6 +56,7 @@ public class SampleGameCartridge : BasicGameCartridge
             {
                 color = Color.Blue;
             }
+
             painter.DrawAsRectangle(Client.Assets.GetTexture("white-pixel"), collider.Rectangle,
                 new DrawSettings {Color = color, Depth = collider.Depth});
         }
@@ -64,7 +64,14 @@ public class SampleGameCartridge : BasicGameCartridge
         DrawCollider(_c1, Color.SeaGreen);
         DrawCollider(_c2, Color.Aqua);
         DrawCollider(_c3, Color.Coral);
-        
+
+        var mousePosition = Client.Input.Mouse.Position(Client.RenderCanvas.ScreenToCanvas);
+
+        painter.DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 20),
+            mousePosition.ToPoint().ToString(), Point.Zero, new DrawSettings());
+        painter.DrawAsRectangle(Client.Assets.GetTexture("white-pixel"),
+            new Rectangle(mousePosition.ToPoint(), new Point(10, 10)), new DrawSettings());
+
         painter.EndSpriteBatch();
     }
 

@@ -1,4 +1,6 @@
-﻿using ExplogineMonoGame.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -22,7 +24,12 @@ public class Painter
 
     public void BeginSpriteBatch(SamplerState samplerState)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, null, null);
+        BeginSpriteBatch(samplerState, Matrix.Identity);
+    }
+
+    public void BeginSpriteBatch(SamplerState samplerState, Matrix matrix)
+    {
+        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, null, matrix);
     }
 
     public void EndSpriteBatch()
@@ -53,10 +60,11 @@ public class Painter
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
-    
+
     public void DrawStringAtPosition(Font font, string text, Point position, DrawSettings settings)
     {
-        _spriteBatch.DrawString(font.SpriteFont, text, position.ToVector2(), settings.Color, settings.Angle, settings.Origin.Value(Point.Zero),
+        _spriteBatch.DrawString(font.SpriteFont, text, position.ToVector2(), settings.Color, settings.Angle,
+            settings.Origin.Value(Point.Zero),
             Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
     }
 
@@ -64,7 +72,8 @@ public class Painter
     {
         var brokenText = font.Linebreak(text, rectangle.Width);
         var origin = settings.Origin.Value(rectangle.Size);
-        _spriteBatch.DrawString(font.SpriteFont, brokenText, rectangle.Location.ToVector2(), settings.Color, settings.Angle,
+        _spriteBatch.DrawString(font.SpriteFont, brokenText, rectangle.Location.ToVector2(), settings.Color,
+            settings.Angle,
             origin, Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
     }
 }

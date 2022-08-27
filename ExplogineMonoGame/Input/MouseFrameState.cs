@@ -14,8 +14,17 @@ public readonly struct MouseFrameState
 
     private InputSnapshot Previous { get; }
     private InputSnapshot Current { get; }
-    public Vector2 Position => Current.MousePosition;
-    public Vector2 Delta => Current.MousePosition - Previous.MousePosition;
+
+    public Vector2 Position(Matrix transform)
+    {
+        return Vector2.Transform(Current.MousePosition, transform);
+    }
+
+    public Vector2 Delta(Matrix transform)
+    {
+        return Vector2.Transform(Current.MousePosition, transform) -
+               Vector2.Transform(Previous.MousePosition, transform);
+    }
 
     public ButtonFrameState GetButton(MouseButton mouseButton)
     {
