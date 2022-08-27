@@ -17,7 +17,7 @@ public class RenderCanvas
 
     public Matrix ScreenToCanvas => Matrix.Invert(Client.RenderCanvas.CanvasToScreen);
 
-    public void OnWindowResized(Point newWindowSize)
+    public void ResizeCanvas(Point newWindowSize)
     {
         if (_internalCanvas.Size == Client.Window.RenderResolution)
         {

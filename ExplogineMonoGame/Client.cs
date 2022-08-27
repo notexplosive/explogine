@@ -46,7 +46,7 @@ public static class Client
     /// <summary>
     ///     Wrapper for accessing the Window of your platform.
     /// </summary>
-    public static IWindow Window { get; private set; } = null!;
+    public static AbstractWindow Window { get; private set; } = null!;
 
     /// <summary>
     ///     The Args passed via command line.
@@ -96,7 +96,7 @@ public static class Client
         IPlatformInterface platform)
     {
         // Setup Platform
-        Client.Window = platform.Window;
+        Client.Window = platform.AbstractWindow;
         Client.FileSystem = platform.FileSystem;
         Client.startingConfig = windowConfig;
 
@@ -133,7 +133,7 @@ public static class Client
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
         Client.RenderCanvas.Setup();
-        Client.Window.Resized += RenderCanvas.OnWindowResized;
+        Client.Window.Resized += RenderCanvas.ResizeCanvas;
         Client.Window.Setup(game.Window, Client.startingConfig);
     }
 
