@@ -16,12 +16,11 @@ public class GridBasedSpriteSheet : SpriteSheet
     private readonly int _rowCount;
     private Point _frameSize;
 
-    public GridBasedSpriteSheet(string key, string textureName, Point frameSize) : this(
-        key, Client.Assets.GetTexture(textureName), frameSize)
+    public GridBasedSpriteSheet(string textureName, Point frameSize) : this(Client.Assets.GetTexture(textureName), frameSize)
     {
     }
 
-    public GridBasedSpriteSheet(string key, Texture2D texture, Point frameSize) : base(key, texture)
+    public GridBasedSpriteSheet(Texture2D texture, Point frameSize) : base(texture)
     {
         var isValid = texture.Width % frameSize.X == 0;
         isValid = isValid && texture.Height % frameSize.Y == 0;

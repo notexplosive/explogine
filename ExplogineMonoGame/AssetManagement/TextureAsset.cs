@@ -4,7 +4,7 @@ namespace ExplogineMonoGame.AssetManagement;
 
 public class TextureAsset : Asset
 {
-    public TextureAsset(string key, Texture2D texture) : base(key, texture)
+    public TextureAsset(Texture2D texture) : base(texture)
     {
         Texture = texture;
     }

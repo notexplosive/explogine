@@ -82,7 +82,7 @@ public class SampleGameCartridge : BasicGameCartridge
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
-        yield return () =>
+        yield return new LoadEvent("white-pixel",() =>
         {
             var canvas = new Canvas(1, 1);
             Client.Graphics.PushCanvas(canvas);
@@ -94,6 +94,6 @@ public class SampleGameCartridge : BasicGameCartridge
             Client.Graphics.PopCanvas();
 
             return canvas.AsAsset("white-pixel");
-        };
+        });
     }
 }

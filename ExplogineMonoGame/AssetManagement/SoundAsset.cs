@@ -4,7 +4,7 @@ namespace ExplogineMonoGame.AssetManagement;
 
 public class SoundAsset : Asset
 {
-    public SoundAsset(string key, SoundEffect soundEffect) : base(key, soundEffect)
+    public SoundAsset(SoundEffect soundEffect) : base(soundEffect)
     {
         SoundEffect = soundEffect;
         SoundEffectInstance = soundEffect.CreateInstance();

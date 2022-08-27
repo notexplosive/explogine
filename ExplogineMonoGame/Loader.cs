@@ -9,7 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame;
 
-public delegate Asset LoadEvent();
+public delegate Asset LoadEventFunction();
+
+public readonly record struct LoadEvent(string Key, LoadEventFunction Function);
 
 public class Loader
 {
@@ -36,8 +38,9 @@ public class Loader
 
     public void LoadNext()
     {
-        var asset = _loadEvents[_loadEventIndex].Invoke();
-        Client.Assets.AddAsset(asset);
+        var loadEvent = _loadEvents[_loadEventIndex];
+        var asset = loadEvent.Function.Invoke();
+        Client.Assets.AddAsset(loadEvent.Key, asset);
         _loadEventIndex++;
         Client.Debug.Log("Loading: " + MathF.Floor(Percent * 100f) + "%");
     }
@@ -46,7 +49,7 @@ public class Loader
     {
         foreach (var key in Loader.GetKeysFromContentDirectory())
         {
-            yield return () => LoadAsset(key);
+            yield return new LoadEvent(key, () => LoadAsset(key));
         }
     }
 
@@ -55,19 +58,19 @@ public class Loader
         var texture2D = AttemptLoad<Texture2D>(key);
         if (texture2D != null)
         {
-            return new TextureAsset(key, texture2D);
+            return new TextureAsset(texture2D);
         }
 
         var soundEffect = AttemptLoad<SoundEffect>(key);
         if (soundEffect != null)
         {
-            return new SoundAsset(key, soundEffect);
+            return new SoundAsset(soundEffect);
         }
 
         var spriteFont = AttemptLoad<SpriteFont>(key);
         if (spriteFont != null)
         {
-            return new SpriteFontAsset(key, spriteFont);
+            return new SpriteFontAsset(spriteFont);
         }
 
         throw new Exception($"Unsupported/Unidentified Asset: {key}");

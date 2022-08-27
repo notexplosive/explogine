@@ -4,7 +4,7 @@ namespace ExplogineMonoGame.AssetManagement;
 
 public class SpriteFontAsset : Asset
 {
-    public SpriteFontAsset(string key, SpriteFont spriteFont) : base(key, null)
+    public SpriteFontAsset(SpriteFont spriteFont) : base(null)
     {
         SpriteFont = spriteFont;
     }

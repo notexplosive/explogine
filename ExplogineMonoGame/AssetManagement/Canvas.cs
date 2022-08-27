@@ -33,6 +33,6 @@ public sealed class Canvas : IDisposable
 
     public TextureAsset AsAsset(string key)
     {
-        return new TextureAsset(key, Texture);
+        return new TextureAsset(Texture);
     }
 }
