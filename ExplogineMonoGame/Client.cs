@@ -17,7 +17,7 @@ public static class Client
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
 
-    private static readonly CartridgeChain CartridgeChain = new();
+    internal static readonly CartridgeChain CartridgeChain = new();
     public static readonly OnceReady FinishedLoading = new();
     public static readonly OnceReady Exited = new();
 
@@ -77,7 +77,7 @@ public static class Client
     ///     Debug tools.
     /// </summary>
     public static ClientDebug Debug { get; } = new();
-    
+
     /// <summary>
     ///     The Canvas that renders the actual game content to the screen.
     /// </summary>
@@ -99,10 +99,6 @@ public static class Client
         Client.Window = platform.AbstractWindow;
         Client.FileSystem = platform.FileSystem;
         Client.startingConfig = windowConfig;
-
-        // Setup Logging
-        Client.Debug.Output.PushToStack(new ConsoleLogCapture());
-        Client.Debug.Output.AddParallel(new FileLogCapture());
 
         // Setup Cartridges
         Client.CartridgeChain.Append(new IntroCartridge());
@@ -133,7 +129,7 @@ public static class Client
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
         Client.RenderCanvas.Setup();
-        Client.Window.Resized += RenderCanvas.ResizeCanvas;
+        Client.Window.Resized += Client.RenderCanvas.ResizeCanvas;
         Client.Window.Setup(game.Window, Client.startingConfig);
     }
 
@@ -168,10 +164,7 @@ public static class Client
 
     internal static void Draw()
     {
-        Client.RenderCanvas.DrawWithin(painter =>
-        {
-            Client.CartridgeChain.DrawCurrentCartridge(painter);
-        });
+        Client.RenderCanvas.DrawWithin(painter => { Client.CartridgeChain.DrawCurrentCartridge(painter); });
 
         Client.RenderCanvas.Draw(Client.Graphics.Painter);
         Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);

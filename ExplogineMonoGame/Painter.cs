@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ExplogineMonoGame.Data;
+﻿using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,6 +8,7 @@ public class Painter
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
+    private bool _spriteBatchIsInProgress;
 
     public Painter(GraphicsDevice graphicsDevice)
     {
@@ -30,11 +29,29 @@ public class Painter
     public void BeginSpriteBatch(SamplerState samplerState, Matrix matrix)
     {
         _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, null, matrix);
+        _spriteBatchIsInProgress = true;
     }
 
     public void EndSpriteBatch()
     {
         _spriteBatch.End();
+        _spriteBatchIsInProgress = false;
+    }
+
+    /// <summary>
+    ///     Only to be used by the CrashCartridge if we threw an exception
+    /// </summary>
+    internal void ResetToCleanState()
+    {
+        if (_spriteBatchIsInProgress)
+        {
+            EndSpriteBatch();
+        }
+
+        while (!Client.Graphics.IsAtTopCanvas())
+        {
+            Client.Graphics.PopCanvas();
+        }
     }
 
     public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle)

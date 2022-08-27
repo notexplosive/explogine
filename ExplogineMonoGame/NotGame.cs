@@ -1,4 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+#if !DEBUG
+using System;
+#endif
 
 namespace ExplogineMonoGame;
 
@@ -31,14 +34,43 @@ public class NotGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        Client.Update((float) gameTime.ElapsedGameTime.TotalSeconds);
-
-        base.Update(gameTime);
+        void UpdateInternal()
+        {
+            Client.Update((float) gameTime.ElapsedGameTime.TotalSeconds);
+            base.Update(gameTime);
+        }
+#if DEBUG
+        UpdateInternal();
+#else
+        try
+        {
+            UpdateInternal();
+        }
+        catch (Exception e)
+        {
+            Client.CartridgeChain.Crash(e);
+        }
+#endif
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        Client.Draw();
-        base.Draw(gameTime);
+        void DrawInternal()
+        {
+            Client.Draw();
+            base.Draw(gameTime);
+        }
+#if DEBUG
+        DrawInternal();
+#else
+        try
+        {
+            DrawInternal();
+        }
+        catch (Exception e)
+        {
+            Client.CartridgeChain.Crash(e);
+        }
+#endif
     }
 }

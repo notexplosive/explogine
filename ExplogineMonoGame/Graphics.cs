@@ -66,4 +66,9 @@ public class Graphics
 
         Device.SetRenderTarget(_currentRenderTarget);
     }
+
+    public bool IsAtTopCanvas()
+    {
+        return _currentRenderTarget == null;
+    }
 }

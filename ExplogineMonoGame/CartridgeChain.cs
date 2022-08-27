@@ -11,7 +11,7 @@ internal class CartridgeChain : ILoadEventProvider
     private readonly LinkedList<ICartridge> _list = new();
 
     private ICartridge Current => _list.First!.Value;
-    private DebugCartridge DebugCartridge { get; } = new();
+    private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
     public event Action? LoadedLastCartridge;
 
     public IEnumerable<LoadEvent> LoadEvents(Painter painter)
@@ -109,5 +109,14 @@ internal class CartridgeChain : ILoadEventProvider
         loadingCartridge.OnCartridgeStarted();
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(DebugCartridge.OnCartridgeStarted);
+    }
+
+    public void Crash(Exception exception)
+    {
+        _list.Clear();
+        _list.AddFirst(new BlankCartridge());
+        var crashCartridge = new CrashCartridge(exception);
+        crashCartridge.OnCartridgeStarted();
+        DebugCartridge = crashCartridge;
     }
 }

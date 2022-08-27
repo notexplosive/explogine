@@ -9,7 +9,7 @@ public class FileLogCapture : ILogCapture
 
     public FileLogCapture()
     {
-        Client.Exited.Add(WriteBuffer);
+        Client.Exited.Add(DumpBufferWithTimestamp);
     }
     
     public void CaptureMessage(string text)
@@ -17,11 +17,16 @@ public class FileLogCapture : ILogCapture
         _buffer.Add(text);
     }
 
-    private void WriteBuffer()
+    private void DumpBufferWithTimestamp()
     {
         var timeSpan = DateTime.Now - DateTime.UnixEpoch;
         var fileName = $"explogine-{Math.Floor(timeSpan.TotalMilliseconds)}.log";
         
+        WriteBufferAsFilename(fileName);
+    }
+
+    public void WriteBufferAsFilename(string fileName)
+    {
         Client.Debug.Log($"Creating file {fileName}");
         Client.FileSystem.WriteFileToWorkingDirectory(fileName, string.Join(Environment.NewLine, _buffer));
     }
