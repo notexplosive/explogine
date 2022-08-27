@@ -1,6 +1,7 @@
 ﻿using System;
 using ExplogineCore;
 using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,6 +17,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
     private bool _doneLoading;
     private float _endingDelay;
     private float _startingDelay = 0.25f;
+    private readonly Font _font;
 
     public LoadingCartridge(Loader loader)
     {
@@ -28,6 +30,9 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         Client.Graphics.PushCanvas(_progressSliceGraphic);
         painter.Clear(Color.LightBlue);
         Client.Graphics.PopCanvas();
+
+        var spriteFont = loader.ForceLoad<SpriteFontAsset>("engine/console-font");
+        _font = new Font(spriteFont.SpriteFont, 24);
     }
 
     public void OnCartridgeStarted()
@@ -87,6 +92,8 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         painter.BeginSpriteBatch(SamplerState.PointWrap);
         painter.DrawAtPosition(_loadingBarGraphic.Texture,
             Client.Window.RenderResolution.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
+        
+        painter.DrawStringAtPosition(_font, "Loading...", Point.Zero, new DrawSettings());
         painter.EndSpriteBatch();
     }
 

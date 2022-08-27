@@ -11,7 +11,15 @@ namespace ExplogineMonoGame;
 
 public delegate Asset LoadEventFunction();
 
-public readonly record struct LoadEvent(string Key, LoadEventFunction Function);
+public readonly record struct LoadEvent(string Key, LoadEventFunction Function)
+{
+    public Asset Execute()
+    {
+        var asset = Function.Invoke();
+        Client.Assets.AddAsset(Key, asset);
+        return asset;
+    }
+}
 
 public class Loader
 {
@@ -28,6 +36,34 @@ public class Loader
         }
     }
 
+    public T ForceLoad<T>(string key) where T : Asset
+    {
+        LoadEvent? found = null;
+        foreach (var loadEvent in _loadEvents)
+        {
+            if (loadEvent.Key == key)
+            {
+                found = loadEvent;
+            }
+        }
+
+        if (found.HasValue)
+        {
+            _loadEvents.Remove(found.Value);
+            var asset = found.Value.Execute();
+            var result = asset as T;
+
+            if (result == null)
+            {
+                throw new InvalidCastException($"{key} refers to {asset} which cannot be cast as {typeof(T)}");
+            }
+            
+            return result;
+        }
+
+        throw new KeyNotFoundException($"No LoadEvent with key {key}, maybe preload hasn't been completed?");
+    }
+
     private int LoadEventCount => _loadEvents.Count;
     public float Percent => (float) _loadEventIndex / LoadEventCount;
 
@@ -38,9 +74,7 @@ public class Loader
 
     public void LoadNext()
     {
-        var loadEvent = _loadEvents[_loadEventIndex];
-        var asset = loadEvent.Function.Invoke();
-        Client.Assets.AddAsset(loadEvent.Key, asset);
+        _loadEvents[_loadEventIndex].Execute();
         _loadEventIndex++;
         Client.Debug.Log("Loading: " + MathF.Floor(Percent * 100f) + "%");
     }
@@ -113,7 +147,7 @@ public class Loader
         _content.Unload();
     }
 
-    public void AddDynamicLoadEvent(LoadEvent loadEvent)
+    public void AddLoadEvent(LoadEvent loadEvent)
     {
         _loadEvents.Add(loadEvent);
     }

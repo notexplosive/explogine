@@ -102,7 +102,7 @@ internal class CartridgeChain : ILoadEventProvider
     {
         foreach (var loadEvent in LoadEvents(Client.Graphics.Painter))
         {
-            loader.AddDynamicLoadEvent(loadEvent);
+            loader.AddLoadEvent(loadEvent);
         }
 
         var loadingCartridge = new LoadingCartridge(loader);
