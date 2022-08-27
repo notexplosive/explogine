@@ -38,6 +38,11 @@ public class Loader
 
     public T ForceLoad<T>(string key) where T : Asset
     {
+        if (IsDone())
+        {
+            return Client.Assets.GetAsset<T>(key);
+        }
+        
         LoadEvent? found = null;
         foreach (var loadEvent in _loadEvents)
         {
