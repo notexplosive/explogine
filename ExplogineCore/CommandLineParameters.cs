@@ -25,18 +25,17 @@ public class CommandLineParameters
 
         foreach (var arg in args)
         {
-            var sanitizedArg = arg.ToLower();
-            if (IsCommand(sanitizedArg))
+            if (IsCommand(arg))
             {
-                var argWithoutDashes = sanitizedArg.Remove(0, 2);
+                var argWithoutDashes = arg.Remove(0, 2);
                 if (CommandHasValue(argWithoutDashes))
                 {
                     var split = argWithoutDashes.Split('=');
-                    _givenArgsTable.Add(split[0], split[1]);
+                    _givenArgsTable.Add(split[0].ToLower(), split[1]);
                 }
                 else
                 {
-                    _givenArgsTable.Add(argWithoutDashes, "true");
+                    _givenArgsTable.Add(argWithoutDashes.ToLower(), "true");
                 }
             }
         }

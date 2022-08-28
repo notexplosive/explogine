@@ -73,11 +73,11 @@ public class TestCommandLineParameters
     }
 
     [Fact]
-    public void ignore_capital_letters()
+    public void ignore_capital_letters_when_appropriate()
     {
-        var parameters = new CommandLineParameters("--Mode=eDitOr");
+        var parameters = new CommandLineParameters("--Mode=eDiTor");
         parameters.RegisterParameter<string>("mode");
 
-        parameters.Args.GetValue<string>("MODE").Should().Be("editor");
+        parameters.Args.GetValue<string>("MODE").Should().Be("eDiTor");
     }
 }
