@@ -90,11 +90,11 @@ internal class CartridgeChain
         yield return DebugCartridge;
     }
 
-    public void ValidateParameters(CommandLineParameters args)
+    public void ValidateParameters(CommandLineParametersWriter writer)
     {
         foreach (var provider in GetAllCartridgesDerivedFrom<ICommandLineParameterProvider>())
         {
-            provider.AddCommandLineParameters(args);
+            provider.AddCommandLineParameters(writer);
         }
     }
 

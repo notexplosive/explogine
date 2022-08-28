@@ -6,9 +6,11 @@ public class CommandLineParameters
     private readonly HashSet<string> _boundArgs = new();
     
     public CommandLineArguments Args { get; }
+    public CommandLineParametersWriter Writer { get; }
 
     public CommandLineParameters(params string[] args)
     {
+        Writer = new CommandLineParametersWriter(this);
         Args = new CommandLineArguments(this);
         
         bool CommandHasValue(string s)

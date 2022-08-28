@@ -89,7 +89,7 @@ public class SampleGameCartridge : BasicGameCartridge
         painter.EndSpriteBatch();
     }
 
-    public override void AddCommandLineParameters(CommandLineParameters parameters)
+    public override void AddCommandLineParameters(CommandLineParametersWriter parameters)
     {
         parameters.RegisterParameter<string>("echo");
     }

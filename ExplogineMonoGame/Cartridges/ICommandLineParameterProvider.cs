@@ -4,5 +4,9 @@ namespace ExplogineMonoGame.Cartridges;
 
 public interface ICommandLineParameterProvider
 {
-    public void AddCommandLineParameters(CommandLineParameters parameters);
+    /// <summary>
+    /// Dynamically add new command line parameters
+    /// </summary>
+    /// <param name="parameters"></param>
+    public void AddCommandLineParameters(CommandLineParametersWriter parameters);
 }

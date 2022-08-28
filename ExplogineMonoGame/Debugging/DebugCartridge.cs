@@ -78,7 +78,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         return false;
     }
 
-    public void AddCommandLineParameters(CommandLineParameters parameters)
+    public void AddCommandLineParameters(CommandLineParametersWriter parameters)
     {
         parameters.RegisterParameter<bool>("debug");
         parameters.RegisterParameter<bool>("skipSnapshot");

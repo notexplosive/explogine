@@ -114,7 +114,7 @@ public static class Client
 
         // Setup Command Line
         Client.commandLineParameters = new CommandLineParameters(argsArray);
-        Client.Essentials.AddCommandLineParameters(Client.commandLineParameters);
+        Client.Essentials.AddCommandLineParameters(Client.commandLineParameters.Writer);
         Client.Essentials.ExecuteCommandLineArgs(Client.commandLineParameters.Args);
 
         // Setup Cartridges
@@ -155,7 +155,7 @@ public static class Client
         Client.loader.AddLoadEvents(Client.Essentials);
         Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
-        Client.CartridgeChain.ValidateParameters(Client.commandLineParameters);
+        Client.CartridgeChain.ValidateParameters(Client.commandLineParameters.Writer);
 
         foreach (var arg in Client.commandLineParameters.Args.UnboundArgs())
         {
