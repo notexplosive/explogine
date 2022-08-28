@@ -158,6 +158,14 @@ public class Loader
         _loadEvents.Add(loadEvent);
     }
 
+    public void AddLoadEvents(IEnumerable<ILoadEventProvider> providers)
+    {
+        foreach (var provider in providers)
+        {
+            AddLoadEvents(provider);
+        }
+    }
+
     public void AddLoadEvents(ILoadEventProvider provider)
     {
         foreach (var loadEvent in provider.LoadEvents(Client.Graphics.Painter))

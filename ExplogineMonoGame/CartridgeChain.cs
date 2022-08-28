@@ -103,19 +103,6 @@ internal class CartridgeChain
         }
     }
 
-    public void AddLoadEventsForAllCartridge(Loader loader)
-    {
-        foreach (var cartridge in GetAllCartridges())
-        {
-            if (cartridge is not ILoadEventProvider preloadCartridge)
-            {
-                continue;
-            }
-
-            loader.AddLoadEvents(preloadCartridge);
-        }
-    }
-    
     public void SetupLoadingCartridge(Loader loader)
     {
         var loadingCartridge = new LoadingCartridge(loader);
@@ -132,11 +119,23 @@ internal class CartridgeChain
             Client.Exit();
             return;
         }
+
         _hasCrashed = true;
         var crashCartridge = new CrashCartridge(exception);
         _list.Clear();
         _list.AddFirst(crashCartridge);
         CartridgeChain.StartCartridge(crashCartridge);
         DebugCartridge = new BlankCartridge();
+    }
+
+    public IEnumerable<T> GetAllCartridgesDerivedFrom<T>()
+    {
+        foreach (var cartridge in GetAllCartridges())
+        {
+            if (cartridge is T derivedCartridge)
+            {
+                yield return derivedCartridge;
+            }
+        }
     }
 }

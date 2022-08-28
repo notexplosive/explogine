@@ -152,7 +152,7 @@ public static class Client
     {
         Client.loader = new Loader(contentManager);
         Client.loader.AddLoadEvents(Client.Essentials);
-        Client.CartridgeChain.AddLoadEventsForAllCartridge(Client.loader);
+        Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
         Client.CartridgeChain.ValidateParameters(Client.CommandLineArgs);
 
