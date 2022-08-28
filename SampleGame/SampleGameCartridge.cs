@@ -18,6 +18,8 @@ public class SampleGameCartridge : BasicGameCartridge
     private HitTestTarget _c2;
     private HitTestTarget _c3;
 
+    public override CartridgeConfig CartridgeConfig { get; } = new(new Point(1600 / 2, 900 / 2));
+
     public override void OnCartridgeStarted()
     {
         Client.Debug.Log("Sample Cart Loaded");

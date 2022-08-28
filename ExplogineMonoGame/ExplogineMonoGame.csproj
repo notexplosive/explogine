@@ -15,9 +15,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ExplogineCore\ExplogineCore.csproj"/>
-        <ProjectReference Include="..\ExTween\ExTweenMonoGame\ExTweenMonoGame.csproj"/>
-        <ProjectReference Include="..\ExTween\ExTween\ExTween.csproj"/>
+        <ProjectReference Include="..\ExplogineCore\ExplogineCore.csproj" />
+        <ProjectReference Include="..\ExTween\ExTweenMonoGame\ExTweenMonoGame.csproj" />
+        <ProjectReference Include="..\ExTween\ExTween\ExTween.csproj" />
     </ItemGroup>
 
 </Project>

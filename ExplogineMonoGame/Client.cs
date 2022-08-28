@@ -155,6 +155,7 @@ public static class Client
         Client.Graphics = new Graphics(graphics, graphicsDevice);
         Client.RenderCanvas.Setup();
         Client.Window.Resized += Client.RenderCanvas.ResizeCanvas;
+        Client.Window.RenderResolutionChanged += Client.RenderCanvas.ResizeCanvas;
         Client.Window.Setup(game.Window, Client.startingConfig);
 
         // move this somewhere else

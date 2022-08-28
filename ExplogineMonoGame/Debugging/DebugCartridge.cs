@@ -89,4 +89,6 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         yield return new LoadEvent("demo-indicators",
             () => new GridBasedSpriteSheet("engine/demo-indicators", new Point(67, 23)));
     }
+    
+    public CartridgeConfig CartridgeConfig { get; } = new();
 }

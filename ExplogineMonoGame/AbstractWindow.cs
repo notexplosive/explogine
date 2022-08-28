@@ -6,10 +6,19 @@ namespace ExplogineMonoGame;
 public abstract class AbstractWindow
 {
     private WindowConfig _currentConfig;
-    protected Rectangle _rememberedBounds;
+    private Rectangle _rememberedBounds;
     protected GameWindow _window = null!;
+    private Point _renderResolution;
 
-    public Point RenderResolution { get; protected set; }
+    public Point RenderResolution
+    {
+        get { return _renderResolution; }
+        private set
+        {
+            _renderResolution = value;
+            RenderResolutionChanged?.Invoke(RenderResolution);
+        }
+    }
 
     public string Title
     {
@@ -42,8 +51,6 @@ public abstract class AbstractWindow
             // also just generally QoL. Window Resizing should always be legal.
             AllowResizing = true;
 
-            ChangeRenderResolution(_currentConfig.WindowSize, _currentConfig.RenderResolution);
-
             if (Config.Fullscreen)
             {
                 SetFullscreen(true);
@@ -62,9 +69,10 @@ public abstract class AbstractWindow
     }
 
     public event Action<Point>? Resized;
+    public event Action<Point>? RenderResolutionChanged;
     public event Action? ConfigChanged;
 
-    protected void ChangeRenderResolution(Point windowSize, Point? renderResolution)
+    public void ChangeRenderResolution(Point windowSize, Point? renderResolution)
     {
         // If the renderResolution is set, use that, if not, use the windowSize
         if (renderResolution.HasValue && renderResolution.Value != windowSize)
@@ -81,7 +89,7 @@ public abstract class AbstractWindow
     {
         _window = window;
         _rememberedBounds = new Rectangle(Position, Size);
-
+        RenderResolution = Size;
         LateSetup(config);
 
         Config = config;

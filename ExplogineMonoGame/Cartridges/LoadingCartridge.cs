@@ -35,6 +35,8 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         _font = new Font(spriteFont.SpriteFont, 24);
     }
 
+    public CartridgeConfig CartridgeConfig { get; } = new();
+
     public void OnCartridgeStarted()
     {
         Client.FinishedLoading.Add(() => _doneLoading = true);

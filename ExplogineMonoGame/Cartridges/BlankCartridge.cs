@@ -18,4 +18,6 @@ public class BlankCartridge : ICartridge
     {
         return false;
     }
+    
+    public CartridgeConfig CartridgeConfig { get; } = new();
 }

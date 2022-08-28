@@ -58,4 +58,6 @@ public class CrashCartridge : ICartridge
     {
         return false;
     }
+    
+    public CartridgeConfig CartridgeConfig { get; } = new();
 }

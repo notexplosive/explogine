@@ -9,6 +9,7 @@ namespace ExplogineMonoGame;
 internal class CartridgeChain : ILoadEventProvider
 {
     private readonly LinkedList<ICartridge> _list = new();
+    private bool HasCurrent => _list.First != null;
     private ICartridge Current => _list.First!.Value;
     private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
     public bool IsFrozen { get; set; }
@@ -67,12 +68,21 @@ internal class CartridgeChain : ILoadEventProvider
     private void IncrementCartridge()
     {
         _list.RemoveFirst();
-        _list.First?.Value.OnCartridgeStarted();
+        if (HasCurrent)
+        {
+            CartridgeChain.StartCartridge(Current);
+        }
 
         if (_list.Last == _list.First)
         {
             LoadedLastCartridge?.Invoke();
         }
+    }
+
+    private static void StartCartridge(ICartridge cartridge)
+    {
+        Client.Window.ChangeRenderResolution(Client.Window.Size, cartridge.CartridgeConfig.RenderResolution);
+        cartridge.OnCartridgeStarted();
     }
 
     public void Append(ICartridge cartridge)
@@ -116,7 +126,7 @@ internal class CartridgeChain : ILoadEventProvider
         }
 
         var loadingCartridge = new LoadingCartridge(loader);
-        loadingCartridge.OnCartridgeStarted();
+        CartridgeChain.StartCartridge(loadingCartridge);
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(DebugCartridge.OnCartridgeStarted);
     }
@@ -133,7 +143,7 @@ internal class CartridgeChain : ILoadEventProvider
         _list.Clear();
         _list.AddFirst(new BlankCartridge());
         var crashCartridge = new CrashCartridge(exception);
-        crashCartridge.OnCartridgeStarted();
+        StartCartridge(crashCartridge);
         DebugCartridge = crashCartridge;
     }
 }

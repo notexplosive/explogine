@@ -34,7 +34,7 @@ public class IntroCartridge : ICartridge
             Ouch,
             ZoomAndRotate,
             FlyInLetters,
-            FlyInLettersRandom,
+            FlyInLettersRandom
         })();
         _tween.Add(new WaitSecondsTween(0.75f));
     }
@@ -96,6 +96,8 @@ public class IntroCartridge : ICartridge
         return _tween.IsDone();
     }
 
+    public CartridgeConfig CartridgeConfig { get; } = new();
+
     private SequenceTween FlyInLetters()
     {
         _useWholeWord = false;
@@ -137,7 +139,7 @@ public class IntroCartridge : ICartridge
 
         return result;
     }
-    
+
     private SequenceTween FlyInLettersRandom()
     {
         _useWholeWord = false;
