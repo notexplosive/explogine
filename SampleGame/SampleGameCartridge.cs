@@ -27,6 +27,11 @@ public class SampleGameCartridge : BasicGameCartridge
         _c1 = new HitTestTarget(new Rectangle(100, 100, 500, 500), new Depth(50));
         _c2 = new HitTestTarget(new Rectangle(150, 150, 500, 500), new Depth(25));
         _c3 = new HitTestTarget(new Rectangle(200, 200, 500, 500), new Depth(15));
+
+        if (Client.CommandLineArgs.HasValue("echo"))
+        {
+            Client.Debug.Log("echo:", Client.CommandLineArgs.GetValue<string>("echo"));
+        }
     }
 
     public override void Update(float dt)
@@ -84,8 +89,9 @@ public class SampleGameCartridge : BasicGameCartridge
         painter.EndSpriteBatch();
     }
 
-    public override void SetupFormalParameters(ParsedCommandLineArguments args)
+    public override void SetupFormalParameters(CommandLineParameters args)
     {
+        args.RegisterParameter<string>("echo");
     }
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)

@@ -1,5 +1,4 @@
-﻿using System;
-using ExplogineCore;
+﻿using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
@@ -52,7 +51,7 @@ public static class Client
     /// <summary>
     ///     The Args passed via command line.
     /// </summary>
-    public static ParsedCommandLineArguments CommandLineArgs { get; private set; } = new();
+    public static CommandLineArguments CommandLineArgs { get; private set; } = new();
 
     /// <summary>
     ///     Gives you access to static Assets (aka: Content), as well as dynamic assets.
@@ -113,8 +112,9 @@ public static class Client
         Client.startingConfig = windowConfig;
 
         // Setup Command Line
-        Client.CommandLineArgs = new ParsedCommandLineArguments(argsArray);
-        Client.Essentials.SetupFormalParameters(Client.CommandLineArgs);
+        Client.CommandLineArgs = new CommandLineArguments(argsArray);
+        Client.Essentials.SetupFormalParameters(Client.CommandLineArgs.Registry);
+        Client.Essentials.ExecuteCommandLineArgs(Client.CommandLineArgs);
 
         // Setup Cartridges
         Client.CartridgeChain.Append(new IntroCartridge());
@@ -154,7 +154,7 @@ public static class Client
         Client.loader.AddLoadEvents(Client.Essentials);
         Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
-        Client.CartridgeChain.ValidateParameters(Client.CommandLineArgs);
+        Client.CartridgeChain.ValidateParameters(Client.CommandLineArgs.Registry);
 
         foreach (var arg in Client.CommandLineArgs.UnboundArgs())
         {

@@ -90,7 +90,7 @@ internal class CartridgeChain
         yield return DebugCartridge;
     }
 
-    public void ValidateParameters(ParsedCommandLineArguments args)
+    public void ValidateParameters(CommandLineParameters args)
     {
         foreach (var provider in GetAllCartridgesDerivedFrom<ICommandLineParameterProvider>())
         {

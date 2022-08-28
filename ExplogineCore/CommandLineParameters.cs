@@ -1,14 +1,11 @@
-﻿using System.Text;
+﻿namespace ExplogineCore;
 
-namespace ExplogineCore;
-
-public class ParsedCommandLineArguments
+public class CommandLineParameters
 {
     private readonly Dictionary<string, string> _givenArgsTable = new();
-    private readonly Dictionary<string, object> _registeredParameters = new();
-    private readonly HashSet<string> _usedArgs = new();
+    private readonly HashSet<string> _boundArgs = new();
 
-    public ParsedCommandLineArguments(params string[] args)
+    internal CommandLineParameters(string[] args)
     {
         bool CommandHasValue(string s)
         {
@@ -37,23 +34,9 @@ public class ParsedCommandLineArguments
                 }
             }
         }
-
-        RegisterParameter<bool>("help");
     }
 
-    public string HelpOutput()
-    {
-        var stringBuilder = new StringBuilder();
-
-        stringBuilder.AppendLine("Help:");
-        foreach (var parameterPair in _registeredParameters)
-        {
-            stringBuilder.AppendLine(
-                $"--{parameterPair.Key}=<{parameterPair.Value.GetType().Name}> (default: \"{parameterPair.Value}\")");
-        }
-
-        return stringBuilder.ToString();
-    }
+    internal Dictionary<string, object> RegisteredParameters { get; } = new();
 
     public void RegisterParameter<T>(string parameterName)
     {
@@ -61,30 +44,30 @@ public class ParsedCommandLineArguments
         var sanitizedParameterName = parameterName.ToLower();
         if (_givenArgsTable.ContainsKey(sanitizedParameterName))
         {
-            _usedArgs.Add(sanitizedParameterName);
+            _boundArgs.Add(sanitizedParameterName);
             value = _givenArgsTable[sanitizedParameterName];
             _givenArgsTable.Remove(sanitizedParameterName);
         }
         else
         {
-            value = ParsedCommandLineArguments.GetDefaultAsString<T>();
+            value = CommandLineParameters.GetDefaultAsString<T>();
         }
 
         if (typeof(T) == typeof(float))
         {
-            _registeredParameters.Add(sanitizedParameterName, float.Parse(value));
+            RegisteredParameters.Add(sanitizedParameterName, float.Parse(value));
         }
         else if (typeof(T) == typeof(string))
         {
-            _registeredParameters.Add(sanitizedParameterName, value);
+            RegisteredParameters.Add(sanitizedParameterName, value);
         }
         else if (typeof(T) == typeof(int))
         {
-            _registeredParameters.Add(sanitizedParameterName, int.Parse(value));
+            RegisteredParameters.Add(sanitizedParameterName, int.Parse(value));
         }
         else if (typeof(T) == typeof(bool))
         {
-            _registeredParameters.Add(sanitizedParameterName, bool.Parse(value));
+            RegisteredParameters.Add(sanitizedParameterName, bool.Parse(value));
         }
     }
 
@@ -108,26 +91,13 @@ public class ParsedCommandLineArguments
         throw new Exception("Unsupported type");
     }
 
-    public bool HasValue(string name)
+    internal bool HasValue(string name)
     {
         var sanitizedName = name.ToLower();
-        return _usedArgs.Contains(sanitizedName);
+        return _boundArgs.Contains(sanitizedName);
     }
-
-    public T GetValue<T>(string name)
-    {
-        var sanitizedName = name.ToLower();
-        if (_registeredParameters.ContainsKey(sanitizedName))
-        {
-            return _registeredParameters[sanitizedName] is T
-                ? (T) _registeredParameters[sanitizedName]
-                : throw new Exception($"Wrong type requested for {sanitizedName}");
-        }
-
-        throw new Exception($"{sanitizedName} was never registered");
-    }
-
-    public List<string> UnboundArgs()
+    
+    internal List<string> UnboundArgs()
     {
         return _givenArgsTable.Keys.ToList();
     }
