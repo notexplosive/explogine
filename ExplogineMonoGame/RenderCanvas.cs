@@ -44,7 +44,7 @@ public class RenderCanvas
     public void Draw(Painter painter)
     {
         // this renders the whole canvas, does it need to be the same SamplerState as everything else?
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, CanvasToScreen);
+        painter.BeginSpriteBatch(SamplerState.PointWrap, CanvasToScreen);
         painter.DrawAtPosition(_internalCanvas.Texture, Vector2.Zero);
         painter.EndSpriteBatch();
     }

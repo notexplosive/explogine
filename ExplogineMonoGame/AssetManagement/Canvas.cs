@@ -31,7 +31,7 @@ public sealed class Canvas : IDisposable
         RenderTarget.Dispose();
     }
 
-    public TextureAsset AsAsset(string key)
+    public TextureAsset AsTextureAsset()
     {
         return new TextureAsset(Texture);
     }

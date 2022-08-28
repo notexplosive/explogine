@@ -65,6 +65,8 @@ public class SampleGameCartridge : BasicGameCartridge
         DrawCollider(_c2, Color.Aqua);
         DrawCollider(_c3, Color.Coral);
 
+        painter.DrawAtPosition(Client.Assets.GetTexture("noise"), Vector2.Zero);
+
         var mousePosition = Client.Input.Mouse.Position(Client.RenderCanvas.ScreenToCanvas);
 
         painter.DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 20),
@@ -82,7 +84,7 @@ public class SampleGameCartridge : BasicGameCartridge
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
-        yield return new LoadEvent("white-pixel",() =>
+        yield return new LoadEvent("white-pixel", () =>
         {
             var canvas = new Canvas(1, 1);
             Client.Graphics.PushCanvas(canvas);
@@ -93,7 +95,34 @@ public class SampleGameCartridge : BasicGameCartridge
 
             Client.Graphics.PopCanvas();
 
-            return canvas.AsAsset("white-pixel");
+            return canvas.AsTextureAsset();
+        });
+
+        yield return new LoadEvent("noise", () =>
+        {
+            var canvas = new Canvas(100, 100);
+            Client.Graphics.PushCanvas(canvas);
+
+            painter.BeginSpriteBatch(SamplerState.LinearWrap);
+            painter.Clear(Color.Transparent);
+            var noise = new Noise(0);
+
+            for (var x = 0; x < canvas.Size.X; x++)
+            {
+                for (var y = 0; y < canvas.Size.Y; y++)
+                {
+                    painter.DrawAtPosition(Client.Assets.GetTexture("white-pixel"), new Vector2(x, y), Scale2D.One,
+                        new DrawSettings
+                        {
+                            Color = new Color(noise.NoiseAt(0).NoiseAt(x).ByteAt(y), noise.NoiseAt(1).NoiseAt(x).ByteAt(y), noise.NoiseAt(2).NoiseAt(x).ByteAt(y))
+                        });
+                }
+            }
+
+            painter.EndSpriteBatch();
+
+            Client.Graphics.PopCanvas();
+            return canvas.AsTextureAsset();
         });
     }
 }
