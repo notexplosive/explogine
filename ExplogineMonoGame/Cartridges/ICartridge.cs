@@ -19,5 +19,5 @@ public interface ILoadEventProvider
 
 public interface ICommandLineParameterProvider
 {
-    public void SetupFormalParameters(CommandLineParameters args);
+    public void SetupFormalParameters(CommandLineParameters parameters);
 }

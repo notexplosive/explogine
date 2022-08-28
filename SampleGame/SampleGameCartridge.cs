@@ -89,9 +89,9 @@ public class SampleGameCartridge : BasicGameCartridge
         painter.EndSpriteBatch();
     }
 
-    public override void SetupFormalParameters(CommandLineParameters args)
+    public override void SetupFormalParameters(CommandLineParameters parameters)
     {
-        args.RegisterParameter<string>("echo");
+        parameters.RegisterParameter<string>("echo");
     }
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)

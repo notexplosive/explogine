@@ -78,10 +78,10 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         return false;
     }
 
-    public void SetupFormalParameters(CommandLineParameters args)
+    public void SetupFormalParameters(CommandLineParameters parameters)
     {
-        args.RegisterParameter<bool>("debug");
-        args.RegisterParameter<bool>("skipSnapshot");
+        parameters.RegisterParameter<bool>("debug");
+        parameters.RegisterParameter<bool>("skipSnapshot");
     }
 
     public IEnumerable<LoadEvent> LoadEvents(Painter painter)
