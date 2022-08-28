@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ExplogineMonoGame.Logging;
 
@@ -19,7 +20,9 @@ public class FileLogCapture : ILogCapture
 
     private void DumpBufferWithTimestamp()
     {
-        var fileName = $"explogine-{DateTime.Now.ToFileTimeUtc()}.log";
+        var directory = "logs";
+        Directory.CreateDirectory(directory);
+        var fileName = Path.Join(directory,$"{DateTime.Now.ToFileTimeUtc()}.log");
         
         WriteBufferAsFilename(fileName);
     }
