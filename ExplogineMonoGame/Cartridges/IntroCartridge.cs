@@ -9,20 +9,23 @@ namespace ExplogineMonoGame.Cartridges;
 
 public class IntroCartridge : ICartridge
 {
-    private Figure _figure;
     private Font? _logoFont;
     private SequenceTween _tween = new();
+    private Figure _wholeWord;
 
     public void OnCartridgeStarted()
     {
         Client.Debug.Log("Intro loaded");
         _logoFont = Client.Assets.GetFont("engine/logo-font", 72);
-        _figure = new Figure();
-        _tween = Client.Random.Dirty.GetRandomElement(new Func<SequenceTween>[] {ZoomAndRotate})();
-        _tween.Add(new WaitSecondsTween(0.5f));
+        _wholeWord = new Figure();
+        _tween = Client.Random.Dirty.GetRandomElement(new Func<SequenceTween>[]
+        {
+            Tada,
+            Ouch,
+            ZoomAndRotate
+        })();
+        _tween.Add(new WaitSecondsTween(0.75f));
     }
-
-    
 
     public void Update(float dt)
     {
@@ -33,7 +36,7 @@ public class IntroCartridge : ICartridge
     {
         painter.BeginSpriteBatch(SamplerState.LinearClamp,
             Matrix.CreateTranslation(new Vector3(-Client.Window.RenderResolution.ToVector2() / 2, 0))
-            * Matrix.CreateScale(new Vector3(new Vector2(_figure.Scale), 1))
+            * Matrix.CreateScale(new Vector3(new Vector2(_wholeWord.Scale), 1))
             * Matrix.CreateTranslation(new Vector3(Client.Window.RenderResolution.ToVector2() / 2, 0))
         );
         painter.Clear(Color.Navy);
@@ -41,8 +44,12 @@ public class IntroCartridge : ICartridge
         var centerOfScreen = (Client.Window.RenderResolution.ToVector2() / 2).ToPoint();
 
         var text = "NotExplosive.net";
-        painter.DrawStringAtPosition(_logoFont!, text, centerOfScreen + _figure.Position.Value.ToPoint(),
-            new DrawSettings {Origin = DrawOrigin.Center, Angle = _figure.Angle, Color = Color.White.WithMultipliedOpacity(_figure.Opacity)});
+        painter.DrawStringAtPosition(_logoFont!, text, centerOfScreen + _wholeWord.Position.Value.ToPoint(),
+            new DrawSettings
+            {
+                Origin = DrawOrigin.Center, Angle = _wholeWord.Angle,
+                Color = Color.White.WithMultipliedOpacity(_wholeWord.Opacity)
+            });
 
         painter.EndSpriteBatch();
     }
@@ -54,43 +61,42 @@ public class IntroCartridge : ICartridge
 
     private SequenceTween ZoomAndRotate()
     {
-        _figure.Scale.Value = 10f;
-        _figure.Angle.Value = MathF.PI / 2f;
-        _figure.Opacity.Value = 0f;
+        _wholeWord.Scale.Value = 10f;
+        _wholeWord.Angle.Value = MathF.PI / 2f;
+        _wholeWord.Opacity.Value = 0f;
 
         var duration = 1.5f;
         return
             new SequenceTween()
                 .Add(
                     new MultiplexTween()
-                        .AddChannel(new Tween<float>(_figure.Scale, 1f, duration, Ease.QuadFastSlow))
-                        .AddChannel(new Tween<float>(_figure.Angle, 0f, duration, Ease.QuadFastSlow))
-                        .AddChannel(new Tween<float>(_figure.Opacity, 1f, duration, Ease.QuadFastSlow))
+                        .AddChannel(new Tween<float>(_wholeWord.Scale, 1f, duration, Ease.QuadFastSlow))
+                        .AddChannel(new Tween<float>(_wholeWord.Angle, 0f, duration, Ease.QuadFastSlow))
+                        .AddChannel(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.QuadFastSlow))
                 )
-                .Add(new WaitSecondsTween(0.5f))
             ;
     }
-    
+
     private SequenceTween Tada()
     {
         var increment = 0.05f;
 
         return
             new SequenceTween()
-                .Add(new Tween<float>(_figure.Scale, 1.25f, 0.5f, Ease.QuadFastSlow))
+                .Add(new Tween<float>(_wholeWord.Scale, 1.3f, 0.25f, Ease.QuadFastSlow))
+                .Add(new Tween<float>(_wholeWord.Scale, 1.25f, 0.25f, Ease.QuadSlowFast))
                 .Add(new MultiplexTween()
                     .AddChannel(new DynamicTween(() =>
                         {
                             var sequence = new SequenceTween();
                             var flip = 0;
-                            var shakeDistance = 15f;
                             var angleRange = 0.05f;
                             for (var i = 0f; i < 0.5f; i += increment)
                             {
                                 flip++;
                                 var even = flip % 2 == 0;
                                 sequence.Add(new MultiplexTween()
-                                    .AddChannel(new Tween<float>(_figure.Angle, even ? angleRange : -angleRange,
+                                    .AddChannel(new Tween<float>(_wholeWord.Angle, even ? angleRange : -angleRange,
                                         increment,
                                         Ease.Linear))
                                 );
@@ -101,13 +107,49 @@ public class IntroCartridge : ICartridge
                     )
                 )
                 .Add(new MultiplexTween()
-                    .AddChannel(new Tween<Vector2>(_figure.Position,
+                    .AddChannel(new Tween<Vector2>(_wholeWord.Position,
                         new Vector2(0, 0), increment, Ease.Linear))
-                    .AddChannel(new Tween<float>(_figure.Angle, 0, increment,
+                    .AddChannel(new Tween<float>(_wholeWord.Angle, 0, increment,
                         Ease.Linear))
                 )
                 .Add(new WaitSecondsTween(0.05f))
-                .Add(new Tween<float>(_figure.Scale, 1f, 0.5f, Ease.QuadFastSlow))
+                .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.25f, Ease.QuadSlowFast))
+            ;
+    }
+
+    private SequenceTween Ouch()
+    {
+        _wholeWord.Scale.Value = 0.1f;
+        _wholeWord.Opacity.Value = 0f;
+        _wholeWord.Position.Value = new Vector2(-200, 800);
+
+        var duration = 1f;
+
+        return
+            new SequenceTween()
+                .Add(
+                    new MultiplexTween()
+                        .AddChannel(
+                            new Tween<float>(_wholeWord.Scale, 1.1f, duration, Ease.QuadSlowFast)
+                        )
+                        .AddChannel(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.QuadSlowFast))
+                        .AddChannel(
+                            new SequenceTween()
+                                .Add(new Tween<float>(_wholeWord.Angle, 1f, duration / 3, Ease.QuadFastSlow))
+                                .Add(new Tween<float>(_wholeWord.Angle, -1f, duration / 3, Ease.QuadFastSlow))
+                                .Add(new Tween<float>(_wholeWord.Angle, MathF.PI * 2, duration / 3, Ease.QuadFastSlow))
+                        )
+                        .AddChannel(
+                            new SequenceTween()
+                                .Add(new Tween<Vector2>(_wholeWord.Position, new Vector2(300, 500), duration / 3,
+                                    Ease.QuadFastSlow))
+                                .Add(new Tween<Vector2>(_wholeWord.Position, new Vector2(-300, -200), duration / 3,
+                                    Ease.QuadFastSlow))
+                                .Add(new Tween<Vector2>(_wholeWord.Position, Vector2.Zero, duration / 3,
+                                    Ease.QuadSlowFast))
+                        )
+                )
+                .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.1f, Ease.QuadSlowFast))
             ;
     }
 
