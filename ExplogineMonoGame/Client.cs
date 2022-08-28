@@ -114,7 +114,7 @@ public static class Client
 
         // Setup Command Line
         Client.commandLineParameters = new CommandLineParameters(argsArray);
-        Client.Essentials.SetupFormalParameters(Client.commandLineParameters);
+        Client.Essentials.AddCommandLineParameters(Client.commandLineParameters);
         Client.Essentials.ExecuteCommandLineArgs(Client.commandLineParameters.Args);
 
         // Setup Cartridges

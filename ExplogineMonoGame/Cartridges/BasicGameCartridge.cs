@@ -15,6 +15,6 @@ public abstract class BasicGameCartridge : ICartridge, ILoadEventProvider, IComm
     }
 
     public abstract CartridgeConfig CartridgeConfig { get; }
-    public abstract void SetupFormalParameters(CommandLineParameters parameters);
+    public abstract void AddCommandLineParameters(CommandLineParameters parameters);
     public abstract IEnumerable<LoadEvent> LoadEvents(Painter painter);
 }

@@ -4,12 +4,12 @@ namespace ExplogineCore;
 
 public class CommandLineArguments
 {
+    private readonly CommandLineParameters _parameters;
+
     internal CommandLineArguments(CommandLineParameters parameters)
     {
         _parameters = parameters;
     }
-
-    private readonly CommandLineParameters _parameters;
 
     public string HelpOutput()
     {

@@ -94,7 +94,7 @@ internal class CartridgeChain
     {
         foreach (var provider in GetAllCartridgesDerivedFrom<ICommandLineParameterProvider>())
         {
-            provider.SetupFormalParameters(args);
+            provider.AddCommandLineParameters(args);
         }
     }
 

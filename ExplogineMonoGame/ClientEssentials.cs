@@ -10,7 +10,7 @@ namespace ExplogineMonoGame;
 
 internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvider
 {
-    public void SetupFormalParameters(CommandLineParameters parameters)
+    public void AddCommandLineParameters(CommandLineParameters parameters)
     {
         parameters.RegisterParameter<int>("randomSeed");
         parameters.RegisterParameter<bool>("fullscreen");
