@@ -9,6 +9,7 @@ namespace ExplogineMonoGame;
 internal class CartridgeChain : ILoadEventProvider
 {
     private readonly LinkedList<ICartridge> _list = new();
+    private bool _hasCrashed;
     private bool HasCurrent => _list.First != null;
     private ICartridge Current => _list.First!.Value;
     private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
@@ -81,7 +82,7 @@ internal class CartridgeChain : ILoadEventProvider
 
     private static void StartCartridge(ICartridge cartridge)
     {
-        Client.Window.ChangeRenderResolution(Client.Window.Size, cartridge.CartridgeConfig.RenderResolution);
+        Client.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
         cartridge.OnCartridgeStarted();
     }
 
@@ -133,17 +134,17 @@ internal class CartridgeChain : ILoadEventProvider
 
     public void Crash(Exception exception)
     {
-        if (DebugCartridge is CrashCartridge)
+        if (_hasCrashed)
         {
             // If we crashed while crashing, just exit
             Client.Exit();
             return;
         }
-
-        _list.Clear();
-        _list.AddFirst(new BlankCartridge());
+        _hasCrashed = true;
         var crashCartridge = new CrashCartridge(exception);
-        StartCartridge(crashCartridge);
-        DebugCartridge = crashCartridge;
+        _list.Clear();
+        _list.AddFirst(crashCartridge);
+        CartridgeChain.StartCartridge(crashCartridge);
+        DebugCartridge = new BlankCartridge();
     }
 }

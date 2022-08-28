@@ -7,18 +7,10 @@ public abstract class AbstractWindow
 {
     private WindowConfig _currentConfig;
     private Rectangle _rememberedBounds;
+    private Point? _specifiedRenderResolution;
     protected GameWindow _window = null!;
-    private Point _renderResolution;
 
-    public Point RenderResolution
-    {
-        get { return _renderResolution; }
-        private set
-        {
-            _renderResolution = value;
-            RenderResolutionChanged?.Invoke(RenderResolution);
-        }
-    }
+    public Point RenderResolution => _specifiedRenderResolution ?? Size;
 
     public string Title
     {
@@ -68,28 +60,28 @@ public abstract class AbstractWindow
         }
     }
 
-    public event Action<Point>? Resized;
-    public event Action<Point>? RenderResolutionChanged;
-    public event Action? ConfigChanged;
-
-    public void ChangeRenderResolution(Point windowSize, Point? renderResolution)
+    public void SetRenderResolution(Point? optionalSize)
     {
-        // If the renderResolution is set, use that, if not, use the windowSize
-        if (renderResolution.HasValue && renderResolution.Value != windowSize)
+        if (optionalSize.HasValue)
         {
-            RenderResolution = renderResolution.Value;
+            _specifiedRenderResolution = optionalSize.Value;
+            RenderResolutionChanged?.Invoke(optionalSize.Value);
         }
         else
         {
-            RenderResolution = windowSize;
+            _specifiedRenderResolution = null;
+            RenderResolutionChanged?.Invoke(Size);
         }
     }
+
+    public event Action<Point>? Resized;
+    public event Action<Point>? RenderResolutionChanged;
+    public event Action? ConfigChanged;
 
     public void Setup(GameWindow window, WindowConfig config)
     {
         _window = window;
         _rememberedBounds = new Rectangle(Position, Size);
-        RenderResolution = Size;
         LateSetup(config);
 
         Config = config;
@@ -126,12 +118,18 @@ public abstract class AbstractWindow
     {
         Client.Graphics.DeviceManager.PreferredBackBufferWidth = windowSize.X;
         Client.Graphics.DeviceManager.PreferredBackBufferHeight = windowSize.Y;
-        Resized?.Invoke(windowSize);
+
+        InvokeResized(windowSize);
         Client.Graphics.DeviceManager.ApplyChanges();
     }
 
     protected void InvokeResized(Point windowSize)
     {
+        if (!_specifiedRenderResolution.HasValue)
+        {
+            RenderResolutionChanged?.Invoke(windowSize);
+        }
+
         Resized?.Invoke(windowSize);
     }
 }

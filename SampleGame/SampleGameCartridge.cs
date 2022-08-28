@@ -45,6 +45,11 @@ public class SampleGameCartridge : BasicGameCartridge
             Client.Debug.Log(DateTime.UtcNow.Second);
             Client.Debug.Log("very\n very\n very\n very long message");
         }
+
+        if (Client.Input.Keyboard.GetButton(Keys.A).WasPressed)
+        {
+            throw new Exception("died during update loop");
+        }
     }
 
     public override void Draw(Painter painter)

@@ -105,4 +105,9 @@ public class Font
     }
 
     private readonly record struct RestrictedString(string Text, Vector2 Size);
+
+    public Font WithFontSize(int size)
+    {
+        return new Font(SpriteFont, size);
+    }
 }

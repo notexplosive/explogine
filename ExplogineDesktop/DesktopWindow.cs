@@ -10,7 +10,6 @@ public class DesktopWindow : AbstractWindow
         void OnResize(object? sender, EventArgs e)
         {
             var newWindowSize = new Point(_window.ClientBounds.Width, _window.ClientBounds.Height);
-            ChangeRenderResolution(newWindowSize, RenderResolution);
             InvokeResized(newWindowSize);
         }
 
