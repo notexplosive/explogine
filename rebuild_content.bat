@@ -1,1 +1,1 @@
-dotnet run --project .\AssetBuilder\AssetBuilder.csproj -- .\Assets\Content\Content.mgcb
+dotnet run --project .\Tools\AssetBuilder\AssetBuilder.csproj -- .\Library\Assets\Content\Content.mgcb
