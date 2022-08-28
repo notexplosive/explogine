@@ -29,13 +29,13 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         _useSnapshotTimer = true;
 #endif
 
-        if (Client.CommandLineArgs.GetValue<bool>("skipSnapshot"))
+        if (Client.Args.GetValue<bool>("skipSnapshot"))
         {
             _useSnapshotTimer = false;
             Client.Debug.Log("Snapshot timer disabled");
         }
 
-        if (Client.CommandLineArgs.GetValue<bool>("debug"))
+        if (Client.Args.GetValue<bool>("debug"))
         {
             Client.Debug.Level = DebugLevel.Passive;
         }

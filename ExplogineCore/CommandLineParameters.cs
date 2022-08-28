@@ -4,9 +4,13 @@ public class CommandLineParameters
 {
     private readonly Dictionary<string, string> _givenArgsTable = new();
     private readonly HashSet<string> _boundArgs = new();
+    
+    public CommandLineArguments Args { get; }
 
-    internal CommandLineParameters(string[] args)
+    public CommandLineParameters(params string[] args)
     {
+        Args = new CommandLineArguments(this);
+        
         bool CommandHasValue(string s)
         {
             return s.Contains('=');

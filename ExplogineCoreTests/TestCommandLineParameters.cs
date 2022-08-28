@@ -10,63 +10,63 @@ public class TestCommandLineParameters
     [Fact]
     public void happy_path()
     {
-        var args = new CommandLineArguments("--level=4", "--roll", "--foo=bar");
-        args.Registry.RegisterParameter<int>("level");
-        args.Registry.RegisterParameter<bool>("roll");
-        args.Registry.RegisterParameter<string>("foo");
+        var commandLine = new CommandLineParameters("--level=4", "--roll", "--foo=bar");
+        commandLine.RegisterParameter<int>("level");
+        commandLine.RegisterParameter<bool>("roll");
+        commandLine.RegisterParameter<string>("foo");
 
-        args.GetValue<int>("level").Should().Be(4);
-        args.GetValue<bool>("roll").Should().BeTrue();
-        args.GetValue<string>("foo").Should().Be("bar");
+        commandLine.Args.GetValue<int>("level").Should().Be(4);
+        commandLine.Args.GetValue<bool>("roll").Should().BeTrue();
+        commandLine.Args.GetValue<string>("foo").Should().Be("bar");
     }
 
     [Fact]
     public void user_provides_arg_that_is_not_used()
     {
-        var args = new CommandLineArguments("--nudge=mega");
+        var commandLine = new CommandLineParameters("--nudge=mega");
 
-        var act = () => { args.GetValue<string>("nudge"); };
+        var act = () => { commandLine.Args.GetValue<string>("nudge"); };
         act.Should().Throw<Exception>();
     }
 
     [Fact]
     public void ask_for_bound_but_unset_parameter()
     {
-        var args = new CommandLineArguments("--level=4", "--roll", "--take=never");
-        args.Registry.RegisterParameter<bool>("unset");
-        args.Registry.RegisterParameter<string>("strong");
+        var args = new CommandLineParameters("--level=4", "--roll", "--take=never");
+        args.RegisterParameter<bool>("unset");
+        args.RegisterParameter<string>("strong");
 
-        args.GetValue<bool>("unset").Should().BeFalse();
-        args.GetValue<string>("strong").Should().BeEmpty();
+        args.Args.GetValue<bool>("unset").Should().BeFalse();
+        args.Args.GetValue<string>("strong").Should().BeEmpty();
     }
 
     [Fact]
     public void ask_for_value_that_is_not_set_or_bound()
     {
-        var args = new CommandLineArguments("--level=4");
-        var func = () => { args.GetValue<bool>("never_set"); };
+        var commandLine = new CommandLineParameters("--level=4");
+        var func = () => { commandLine.Args.GetValue<bool>("never_set"); };
         func.Should().Throw<Exception>();
     }
 
     [Fact]
     public void asked_for_wrong_type()
     {
-        var args = new CommandLineArguments("--level=4");
-        args.Registry.RegisterParameter<int>("level");
+        var parameters = new CommandLineParameters("--level=4");
+        parameters.RegisterParameter<int>("level");
 
-        var action = () => { args.GetValue<bool>("level"); };
+        var action = () => { parameters.Args.GetValue<bool>("level"); };
         action.Should().Throw<Exception>();
     }
 
     [Fact]
     public void same_parameter_bound_twice()
     {
-        var args = new CommandLineArguments("--level=4");
+        var commandLineParams = new CommandLineParameters("--level=4");
 
         var act = () =>
         {
-            args.Registry.RegisterParameter<int>("level");
-            args.Registry.RegisterParameter<int>("level");
+            commandLineParams.RegisterParameter<int>("level");
+            commandLineParams.RegisterParameter<int>("level");
         };
 
         act.Should().Throw<Exception>();
@@ -75,9 +75,9 @@ public class TestCommandLineParameters
     [Fact]
     public void ignore_capital_letters()
     {
-        var args = new CommandLineArguments("--Mode=eDitOr");
-        args.Registry.RegisterParameter<string>("mode");
+        var parameters = new CommandLineParameters("--Mode=eDitOr");
+        parameters.RegisterParameter<string>("mode");
 
-        args.GetValue<string>("MODE").Should().Be("editor");
+        parameters.Args.GetValue<string>("MODE").Should().Be("editor");
     }
 }

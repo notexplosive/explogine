@@ -180,7 +180,7 @@ public class Demo
 
     public void OnStartup()
     {
-        var demoVal = Client.CommandLineArgs.GetValue<string>("demo");
+        var demoVal = Client.Args.GetValue<string>("demo");
         if (!string.IsNullOrEmpty(demoVal))
         {
             switch (demoVal)

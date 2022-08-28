@@ -28,9 +28,9 @@ public class SampleGameCartridge : BasicGameCartridge
         _c2 = new HitTestTarget(new Rectangle(150, 150, 500, 500), new Depth(25));
         _c3 = new HitTestTarget(new Rectangle(200, 200, 500, 500), new Depth(15));
 
-        if (Client.CommandLineArgs.HasValue("echo"))
+        if (Client.Args.HasValue("echo"))
         {
-            Client.Debug.Log("echo:", Client.CommandLineArgs.GetValue<string>("echo"));
+            Client.Debug.Log("echo:", Client.Args.GetValue<string>("echo"));
         }
     }
 

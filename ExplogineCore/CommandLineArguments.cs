@@ -4,19 +4,19 @@ namespace ExplogineCore;
 
 public class CommandLineArguments
 {
-    public CommandLineArguments(params string[] args)
+    internal CommandLineArguments(CommandLineParameters parameters)
     {
-        Registry = new CommandLineParameters(args);
+        _parameters = parameters;
     }
 
-    public CommandLineParameters Registry { get; }
+    private readonly CommandLineParameters _parameters;
 
     public string HelpOutput()
     {
         var stringBuilder = new StringBuilder();
 
         stringBuilder.AppendLine("Help:");
-        foreach (var parameterPair in Registry.RegisteredParameters)
+        foreach (var parameterPair in _parameters.RegisteredParameters)
         {
             stringBuilder.AppendLine(
                 $"--{parameterPair.Key}=<{parameterPair.Value.GetType().Name}> (default: \"{parameterPair.Value}\")");
@@ -28,10 +28,10 @@ public class CommandLineArguments
     public T GetValue<T>(string name)
     {
         var sanitizedName = name.ToLower();
-        if (Registry.RegisteredParameters.ContainsKey(sanitizedName))
+        if (_parameters.RegisteredParameters.ContainsKey(sanitizedName))
         {
-            return Registry.RegisteredParameters[sanitizedName] is T
-                ? (T) Registry.RegisteredParameters[sanitizedName]
+            return _parameters.RegisteredParameters[sanitizedName] is T
+                ? (T) _parameters.RegisteredParameters[sanitizedName]
                 : throw new Exception($"Wrong type requested for {sanitizedName}");
         }
 
@@ -40,11 +40,11 @@ public class CommandLineArguments
 
     public bool HasValue(string arg)
     {
-        return Registry.HasValue(arg);
+        return _parameters.HasValue(arg);
     }
 
     public List<string> UnboundArgs()
     {
-        return Registry.UnboundArgs();
+        return _parameters.UnboundArgs();
     }
 }

@@ -15,6 +15,7 @@ public static class Client
     private static Game currentGame = null!;
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
+    private static CommandLineParameters commandLineParameters = new();
 
     internal static readonly CartridgeChain CartridgeChain = new();
     public static readonly OnceReady FinishedLoading = new();
@@ -49,10 +50,10 @@ public static class Client
     public static AbstractWindow Window { get; private set; } = null!;
 
     /// <summary>
-    ///     The Args passed via command line.
+    ///     Args passed via command line
     /// </summary>
-    public static CommandLineArguments CommandLineArgs { get; private set; } = new();
-
+    public static CommandLineArguments Args => Client.commandLineParameters.Args;
+    
     /// <summary>
     ///     Gives you access to static Assets (aka: Content), as well as dynamic assets.
     /// </summary>
@@ -112,9 +113,9 @@ public static class Client
         Client.startingConfig = windowConfig;
 
         // Setup Command Line
-        Client.CommandLineArgs = new CommandLineArguments(argsArray);
-        Client.Essentials.SetupFormalParameters(Client.CommandLineArgs.Registry);
-        Client.Essentials.ExecuteCommandLineArgs(Client.CommandLineArgs);
+        Client.commandLineParameters = new CommandLineParameters(argsArray);
+        Client.Essentials.SetupFormalParameters(Client.commandLineParameters);
+        Client.Essentials.ExecuteCommandLineArgs(Client.commandLineParameters.Args);
 
         // Setup Cartridges
         Client.CartridgeChain.Append(new IntroCartridge());
@@ -154,9 +155,9 @@ public static class Client
         Client.loader.AddLoadEvents(Client.Essentials);
         Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
-        Client.CartridgeChain.ValidateParameters(Client.CommandLineArgs.Registry);
+        Client.CartridgeChain.ValidateParameters(Client.commandLineParameters);
 
-        foreach (var arg in Client.CommandLineArgs.UnboundArgs())
+        foreach (var arg in Client.commandLineParameters.Args.UnboundArgs())
         {
             Client.Debug.Log($"Was passed unregistered arg: {arg}");
         }
