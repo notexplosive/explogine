@@ -62,6 +62,19 @@
 /processorParam:TextureFormat=Color
 /build:engine/demo-indicators.png
 
+#begin engine/FredokaOne.ttf
+/copy:engine/FredokaOne.ttf
+
+#begin engine/logo-font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:engine/logo-font.spritefont
+
+#begin engine/OFL.txt
+/copy:engine/OFL.txt
+
 #begin engine/pointfree.ttf
 /copy:engine/pointfree.ttf
 

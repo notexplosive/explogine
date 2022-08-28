@@ -59,4 +59,20 @@ public class NoiseBasedRng
     {
         return new Noise(NextPositiveInt());
     }
+    
+    public void Shuffle<T>(IList<T> list)
+    {
+        var n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            var k = NextPositiveInt(n + 1);
+            (list[k], list[n]) = (list[n], list[k]);
+        }
+    }
+
+    public T GetRandomElement<T>(IList<T> list)
+    {
+        return list[NextPositiveInt(list.Count)];
+    }
 }
