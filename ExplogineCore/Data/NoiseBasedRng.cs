@@ -75,4 +75,9 @@ public class NoiseBasedRng
     {
         return list[NextPositiveInt(list.Count)];
     }
+
+    public int NextSign()
+    {
+        return NextBool() ? 1 : -1;
+    }
 }
