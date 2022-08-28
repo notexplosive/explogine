@@ -18,9 +18,11 @@ public class IntroCartridge : ICartridge
         Client.Debug.Log("Intro loaded");
         _logoFont = Client.Assets.GetFont("engine/logo-font", 72);
         _figure = new Figure();
-        _tween = Client.Random.Dirty.GetRandomElement(new Func<SequenceTween>[] {Tada})();
+        _tween = Client.Random.Dirty.GetRandomElement(new Func<SequenceTween>[] {ZoomAndRotate})();
         _tween.Add(new WaitSecondsTween(0.5f));
     }
+
+    
 
     public void Update(float dt)
     {
@@ -40,7 +42,7 @@ public class IntroCartridge : ICartridge
 
         var text = "NotExplosive.net";
         painter.DrawStringAtPosition(_logoFont!, text, centerOfScreen + _figure.Position.Value.ToPoint(),
-            new DrawSettings {Origin = DrawOrigin.Center, Angle = _figure.Angle});
+            new DrawSettings {Origin = DrawOrigin.Center, Angle = _figure.Angle, Color = Color.White.WithMultipliedOpacity(_figure.Opacity)});
 
         painter.EndSpriteBatch();
     }
@@ -50,6 +52,25 @@ public class IntroCartridge : ICartridge
         return _tween.IsDone();
     }
 
+    private SequenceTween ZoomAndRotate()
+    {
+        _figure.Scale.Value = 10f;
+        _figure.Angle.Value = MathF.PI / 2f;
+        _figure.Opacity.Value = 0f;
+
+        var duration = 1.5f;
+        return
+            new SequenceTween()
+                .Add(
+                    new MultiplexTween()
+                        .AddChannel(new Tween<float>(_figure.Scale, 1f, duration, Ease.QuadFastSlow))
+                        .AddChannel(new Tween<float>(_figure.Angle, 0f, duration, Ease.QuadFastSlow))
+                        .AddChannel(new Tween<float>(_figure.Opacity, 1f, duration, Ease.QuadFastSlow))
+                )
+                .Add(new WaitSecondsTween(0.5f))
+            ;
+    }
+    
     private SequenceTween Tada()
     {
         var increment = 0.05f;
@@ -95,6 +116,7 @@ public class IntroCartridge : ICartridge
         public TweenableFloat Angle { get; } = new();
         public TweenableVector2 Position { get; } = new();
         public TweenableFloat Scale { get; } = new(1);
+        public TweenableFloat Opacity { get; } = new(1);
 
         public Figure()
         {
