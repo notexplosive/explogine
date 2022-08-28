@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
+public class LoadingCartridge : ICartridge
 {
     private const int ProgressBarHeight = 40;
     private const int ProgressBarWidth = 400;
@@ -102,12 +102,6 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
     public bool ShouldLoadNextCartridge()
     {
         return _doneLoading;
-    }
-
-    public void SetupFormalParameters(ParsedCommandLineArguments args)
-    {
-        args.RegisterParameter<string>(
-            "demo"); // todo: move this to client, loading cart doesn't need to implement this interface
     }
 
     ~LoadingCartridge()

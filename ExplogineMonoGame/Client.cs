@@ -79,6 +79,13 @@ public static class Client
     /// </summary>
     public static ClientDebug Debug { get; } = new();
 
+    /// <summary>
+    ///     Gives access to Clean and Dirty random and noise.
+    ///     Clean Random is seeded and can be globally set, anything you want to be reproducible should derive from Clean
+    ///     Random.
+    ///     Dirty Random has no guaranteed seed. Any time you just need "a random number" and don't care where it came from,
+    ///     use Dirty Random.
+    /// </summary>
     public static ClientRandom Random { get; } = new();
 
     /// <summary>
@@ -86,16 +93,18 @@ public static class Client
     /// </summary>
     public static RenderCanvas RenderCanvas { get; } = new();
 
+    private static ClientEssentials Essentials { get; } = new();
+
     public static string ContentBaseDirectory => "Content";
 
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
     /// </summary>
-    /// <param name="args">Args passed via command line</param>
+    /// <param name="argsArray">Args passed via command line</param>
     /// <param name="windowConfig">Config object for client startup</param>
     /// <param name="gameCartridge">Cartridge for your game</param>
     /// <param name="platform">Platform plugin for your platform</param>
-    public static void Start(string[] args, WindowConfig windowConfig, ICartridge gameCartridge,
+    public static void Start(string[] argsArray, WindowConfig windowConfig, ICartridge gameCartridge,
         IPlatformInterface platform)
     {
         // Setup Platform
@@ -103,14 +112,14 @@ public static class Client
         Client.FileSystem = platform.FileSystem;
         Client.startingConfig = windowConfig;
 
+        // Setup Command Line
+        Client.CommandLineArgs = new ParsedCommandLineArguments(argsArray);
+        Client.Essentials.SetupFormalParameters(Client.CommandLineArgs);
+
         // Setup Cartridges
         Client.CartridgeChain.Append(new IntroCartridge());
         Client.CartridgeChain.Append(gameCartridge);
         Client.CartridgeChain.LoadedLastCartridge += Client.Demo.OnStartup;
-
-        // Setup Command Line
-        Client.CommandLineArgs = new ParsedCommandLineArguments(args);
-        Client.SetupInitialCommandLineParams();
 
         // Setup Game
         using var game = new NotGame();
@@ -122,27 +131,6 @@ public static class Client
         // Launch
         // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
         game.Run();
-    }
-
-    private static void SetupInitialCommandLineParams()
-    {
-        // move this somewhere else
-        Client.CommandLineArgs.RegisterParameter<int>("randomSeed");
-        Client.CommandLineArgs.RegisterParameter<bool>("fullscreen");
-
-        if (Client.CommandLineArgs.HasValue("randomSeed"))
-        {
-            Client.Random.Seed = Client.CommandLineArgs.GetValue<int>("randomSeed");
-        }
-        else
-        {
-            Client.Random.Seed = (int) DateTime.Now.ToFileTimeUtc();
-        }
-
-        if (Client.CommandLineArgs.GetValue<bool>("fullscreen"))
-        {
-            Client.InitializedGraphics.Add(() => Client.Window.SetFullscreen(true));
-        }
     }
 
     public static void Exit()
@@ -157,27 +145,13 @@ public static class Client
         Client.Window.RenderResolutionChanged += Client.RenderCanvas.ResizeCanvas;
         Client.Window.Setup(game.Window, Client.startingConfig);
 
-        // move this somewhere else
-        new LoadEvent("white-pixel", () =>
-        {
-            var canvas = new Canvas(1, 1);
-            Client.Graphics.PushCanvas(canvas);
-
-            Client.Graphics.Painter.BeginSpriteBatch(SamplerState.PointWrap);
-            Client.Graphics.Painter.Clear(Color.White);
-            Client.Graphics.Painter.EndSpriteBatch();
-
-            Client.Graphics.PopCanvas();
-
-            return canvas.AsTextureAsset();
-        }).Execute();
-
         Client.InitializedGraphics.BecomeReady();
     }
 
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
+        Client.Essentials.SetupLoadEvents(Client.loader);
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
         Client.CartridgeChain.ValidateParameters(Client.CommandLineArgs);
 
