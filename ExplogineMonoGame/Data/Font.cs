@@ -23,7 +23,7 @@ public class Font
     {
         if (!restrictedWidth.HasValue)
         {
-            return SpriteFont.MeasureString(text) * ScaleFactor;
+            restrictedWidth = float.MaxValue;
         }
 
         return GetRestrictedString(text, restrictedWidth.Value).Size;
@@ -95,6 +95,7 @@ public class Font
                 {
                     StartNewLine();
                 }
+
                 AppendToken();
             }
         }

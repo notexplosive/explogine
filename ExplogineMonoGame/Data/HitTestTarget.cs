@@ -14,12 +14,14 @@ public readonly record struct HitTestTarget(Rectangle Rectangle, Depth Depth, Hi
     public HitTestTarget(Rectangle rectangle, Depth depth) : this(rectangle, depth, HitTestLayer.Game, Matrix.Identity)
     {
     }
-    
-    public HitTestTarget(Rectangle rectangle, Depth depth, Matrix matrix) : this(rectangle, depth, HitTestLayer.Game, matrix)
+
+    public HitTestTarget(Rectangle rectangle, Depth depth, Matrix matrix) : this(rectangle, depth, HitTestLayer.Game,
+        matrix)
     {
     }
-    
-    public HitTestTarget(Rectangle rectangle, Depth depth, HitTestLayer layer) : this(rectangle, depth, layer, Matrix.Identity)
+
+    public HitTestTarget(Rectangle rectangle, Depth depth, HitTestLayer layer) : this(rectangle, depth, layer,
+        Matrix.Identity)
     {
     }
 

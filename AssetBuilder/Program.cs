@@ -1,7 +1,7 @@
 ﻿using AssetBuilder;
 
 const string contentSectionHeader = "#---------------------------------- Content ---------------------------------#";
-var excludedDirectories = new HashSet<string>() { "bin", "obj" };
+var excludedDirectories = new HashSet<string> {"bin", "obj"};
 var pathToContentFile = Path.Join(args[0]);
 
 Console.WriteLine($"Path to content file: {pathToContentFile}");
@@ -27,12 +27,12 @@ IContentWriter GetContentWriter(string extension)
     };
 }
 
-
 void RegisterFile(FileInfo fileInfo)
 {
     var relativePath = Path.GetRelativePath(contentDirectoryInfo!.FullName, fileInfo.FullName);
     Console.WriteLine($"Registering {relativePath}");
-    resultLines.AddRange(GetContentWriter(fileInfo.Extension.ToLower()).GetContentLines(relativePath.Replace(Path.DirectorySeparatorChar, '/')));
+    resultLines.AddRange(GetContentWriter(fileInfo.Extension.ToLower())
+        .GetContentLines(relativePath.Replace(Path.DirectorySeparatorChar, '/')));
     resultLines.Add(string.Empty);
 }
 

@@ -11,13 +11,13 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 {
     private const int ProgressBarHeight = 40;
     private const int ProgressBarWidth = 400;
+    private readonly Font _font;
     private readonly Loader _loader;
     private readonly Canvas _loadingBarGraphic;
     private readonly Canvas _progressSliceGraphic;
     private bool _doneLoading;
     private float _endingDelay = 0.25f;
     private float _startingDelay = 0.25f;
-    private readonly Font _font;
 
     public LoadingCartridge(Loader loader)
     {
@@ -92,7 +92,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
         painter.BeginSpriteBatch(SamplerState.PointWrap);
         painter.DrawAtPosition(_loadingBarGraphic.Texture,
             Client.Window.RenderResolution.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
-        
+
         painter.DrawStringAtPosition(_font, "Loading...", Point.Zero, new DrawSettings());
         painter.EndSpriteBatch();
     }
@@ -104,7 +104,8 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 
     public void SetupFormalParameters(ParsedCommandLineArguments args)
     {
-        args.RegisterParameter<string>("demo");
+        args.RegisterParameter<string>(
+            "demo"); // todo: move this to client, loading cart doesn't need to implement this interface
     }
 
     ~LoadingCartridge()

@@ -77,7 +77,7 @@ public class TestCommandLineParameters
     {
         var args = new ParsedCommandLineArguments("--Mode=eDitOr");
         args.RegisterParameter<string>("mode");
-        
+
         args.GetValue<string>("MODE").Should().Be("editor");
     }
 }

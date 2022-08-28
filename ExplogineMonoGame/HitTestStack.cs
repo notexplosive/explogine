@@ -8,6 +8,8 @@ public class HitTestStack
 {
     private readonly List<HitTestTarget> _list = new();
 
+    public HitTestTarget? LastTopHit { get; private set; }
+
     public void Add(HitTestTarget target)
     {
         _list.Add(target);
@@ -17,8 +19,6 @@ public class HitTestStack
     {
         LastTopHit = GetTopHit(position);
     }
-
-    public HitTestTarget? LastTopHit { get; private set; }
 
     public HitTestTarget? GetTopHit(Vector2 position)
     {
@@ -32,7 +32,7 @@ public class HitTestStack
                 return item;
             }
         }
-        
+
         // Second pass, allow anything
         foreach (var item in _list)
         {

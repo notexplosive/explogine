@@ -33,7 +33,7 @@ internal class DemoInterface
                 {
                     text = "Press ^P to dump recording";
                 }
-                
+
                 painter.DrawStringAtPosition(consoleFont, text,
                     new Point(
                         Client.Window.Size.X

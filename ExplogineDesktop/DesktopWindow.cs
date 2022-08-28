@@ -13,6 +13,7 @@ public class DesktopWindow : AbstractWindow
             ChangeRenderResolution(windowSize);
             InvokeResized(windowSize);
         }
+
         _window.ClientSizeChanged += OnResize;
     }
 }

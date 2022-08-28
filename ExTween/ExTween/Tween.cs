@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace ExTween
 {
@@ -18,7 +17,7 @@ namespace ExTween
         public void Reset();
         public void JumpTo(float time);
     }
-    
+
     public class Tween<T> : ITween
     {
         private readonly Ease.Delegate ease;
@@ -31,7 +30,7 @@ namespace ExTween
             this.tweenable = tweenable;
             this.targetValue = targetValue;
             this.ease = ease;
-            this.startingValue = tweenable.Value;
+            startingValue = tweenable.Value;
             TotalDuration = new KnownTweenDuration(duration);
             CurrentTime = 0;
         }
@@ -46,7 +45,7 @@ namespace ExTween
             {
                 // Re-set the starting value, it might have changed since constructor
                 // (or we might be running the tween a second time)
-                this.startingValue = this.tweenable.Value;
+                startingValue = tweenable.Value;
             }
 
             CurrentTime += dt;
@@ -61,16 +60,6 @@ namespace ExTween
             ApplyTimeToValue();
 
             return Math.Max(overflow, 0);
-        }
-
-        private void ApplyTimeToValue()
-        {
-            var percent = CurrentTime / TotalDuration.Get();
-
-            this.tweenable.Value = this.tweenable.Lerp(
-                this.startingValue,
-                this.targetValue,
-                this.ease(percent));
         }
 
         public bool IsDone()
@@ -89,6 +78,16 @@ namespace ExTween
             ApplyTimeToValue();
         }
 
+        private void ApplyTimeToValue()
+        {
+            var percent = CurrentTime / TotalDuration.Get();
+
+            tweenable.Value = tweenable.Lerp(
+                startingValue,
+                targetValue,
+                ease(percent));
+        }
+
         public override string ToString()
         {
             var result = $"({startingValue}) -> ({targetValue}), Progress: ";
@@ -101,17 +100,17 @@ namespace ExTween
                 result += "Unknown";
             }
 
-            result += $" Value: {this.tweenable.Value}";
+            result += $" Value: {tweenable.Value}";
 
             return result;
         }
     }
-    
+
     public interface ITweenDuration
     {
         public float Get();
     }
-    
+
     public readonly struct KnownTweenDuration : ITweenDuration
     {
         public KnownTweenDuration(float duration)
@@ -136,8 +135,7 @@ namespace ExTween
             return Value.ToString("N4");
         }
     }
-    
-    
+
     public readonly struct UnknownTweenDuration : ITweenDuration
     {
         public float Get()

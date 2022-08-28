@@ -16,5 +16,4 @@ public abstract class BasicGameCartridge : ICartridge, ILoadEventProvider, IComm
 
     public abstract void SetupFormalParameters(ParsedCommandLineArguments args);
     public abstract IEnumerable<LoadEvent> LoadEvents(Painter painter);
-
 }

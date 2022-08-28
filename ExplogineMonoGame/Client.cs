@@ -126,6 +126,7 @@ public static class Client
 
     private static void SetupInitialCommandLineParams()
     {
+        // move this somewhere else
         Client.CommandLineArgs.RegisterParameter<int>("randomSeed");
         Client.CommandLineArgs.RegisterParameter<bool>("fullscreen");
 
@@ -155,6 +156,22 @@ public static class Client
         Client.RenderCanvas.Setup();
         Client.Window.Resized += Client.RenderCanvas.ResizeCanvas;
         Client.Window.Setup(game.Window, Client.startingConfig);
+
+        // move this somewhere else
+        new LoadEvent("white-pixel", () =>
+        {
+            var canvas = new Canvas(1, 1);
+            Client.Graphics.PushCanvas(canvas);
+
+            Client.Graphics.Painter.BeginSpriteBatch(SamplerState.PointWrap);
+            Client.Graphics.Painter.Clear(Color.White);
+            Client.Graphics.Painter.EndSpriteBatch();
+
+            Client.Graphics.PopCanvas();
+
+            return canvas.AsTextureAsset();
+        }).Execute();
+
         Client.InitializedGraphics.BecomeReady();
     }
 

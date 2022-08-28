@@ -2,9 +2,8 @@
 
 public class OnceReady
 {
-    private event Action? Readied;
-
     public bool IsReady { get; private set; }
+    private event Action? Readied;
 
     public void Add(Action action)
     {
@@ -17,7 +16,7 @@ public class OnceReady
             Readied += action;
         }
     }
-    
+
     public void BecomeReady()
     {
         IsReady = true;

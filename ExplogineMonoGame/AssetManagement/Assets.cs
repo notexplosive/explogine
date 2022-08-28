@@ -50,7 +50,7 @@ public class Assets
         return new Font(spriteFont, desiredSize);
     }
 
-    internal void AddAsset(string key,Asset asset)
+    internal void AddAsset(string key, Asset asset)
     {
         _lookupTable.Add(key, asset);
     }

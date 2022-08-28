@@ -43,10 +43,10 @@ public readonly struct LinearFrameAnimation : IFrameAnimation
         if (Loop)
         {
             var alongDuration = elapsedTime % Length;
-            return (int)(alongDuration + _firstFrame);
+            return (int) (alongDuration + _firstFrame);
         }
 
-        var frame = (int)elapsedTime + _firstFrame;
+        var frame = (int) elapsedTime + _firstFrame;
         return Math.Min(LastFrame, frame);
     }
 }

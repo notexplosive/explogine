@@ -13,7 +13,7 @@ public class FrameStep
                 Client.CartridgeChain.UpdateCurrentCartridge(dt);
             }
         }
-        
+
         if (Client.Input.Keyboard.GetButton(Keys.Space).WasPressed && Client.Input.Keyboard.Modifiers.Control)
         {
             Client.CartridgeChain.IsFrozen = !Client.CartridgeChain.IsFrozen;

@@ -36,13 +36,16 @@ public class Loader
         }
     }
 
+    private int LoadEventCount => _loadEvents.Count;
+    public float Percent => (float) _loadEventIndex / LoadEventCount;
+
     public T ForceLoad<T>(string key) where T : Asset
     {
         if (IsDone())
         {
             return Client.Assets.GetAsset<T>(key);
         }
-        
+
         LoadEvent? found = null;
         foreach (var loadEvent in _loadEvents)
         {
@@ -62,15 +65,12 @@ public class Loader
             {
                 throw new InvalidCastException($"{key} refers to {asset} which cannot be cast as {typeof(T)}");
             }
-            
+
             return result;
         }
 
         throw new KeyNotFoundException($"No LoadEvent with key {key}, maybe preload hasn't been completed?");
     }
-
-    private int LoadEventCount => _loadEvents.Count;
-    public float Percent => (float) _loadEventIndex / LoadEventCount;
 
     public bool IsDone()
     {

@@ -1,25 +1,23 @@
-﻿using System;
-
-namespace ExTween
+﻿namespace ExTween
 {
     public class SequenceTween : TweenCollection, ITween
     {
         private int currentItemIndex;
-        
-        public bool IsLooping { get; set; }
 
         public SequenceTween()
         {
-            this.currentItemIndex = 0;
+            currentItemIndex = 0;
         }
-        
+
+        public bool IsLooping { get; set; }
+
         public float Update(float dt)
         {
-            if (this.Items.Count == 0)
+            if (Items.Count == 0)
             {
                 return dt;
             }
-            
+
             if (IsAtEnd())
             {
                 if (IsLooping)
@@ -32,11 +30,11 @@ namespace ExTween
                 }
             }
 
-            var overflow = this.Items[this.currentItemIndex].Update(dt);
+            var overflow = Items[currentItemIndex].Update(dt);
 
-            if (this.Items[this.currentItemIndex].IsDone())
+            if (Items[currentItemIndex].IsDone())
             {
-                this.currentItemIndex++;
+                currentItemIndex++;
                 return Update(overflow);
             }
 
@@ -48,15 +46,10 @@ namespace ExTween
             return IsAtEnd() && !IsLooping;
         }
 
-        private bool IsAtEnd()
-        {
-            return this.currentItemIndex >= this.Items.Count || this.Items.Count == 0;
-        }
-
         public void Reset()
         {
             ResetAllItems();
-            this.currentItemIndex = 0;
+            currentItemIndex = 0;
         }
 
         public ITweenDuration TotalDuration
@@ -71,15 +64,9 @@ namespace ExTween
                         total += itemDuration;
                     }
                 });
-                
+
                 return new KnownTweenDuration(total);
             }
-        }
-
-        public SequenceTween Add(ITween tween)
-        {
-            this.Items.Add(tween);
-            return this;
         }
 
         public void JumpTo(float targetTime)
@@ -87,36 +74,48 @@ namespace ExTween
             Reset();
 
             var adjustedTargetTime = targetTime;
-            
-            for (int i = 0; i < this.Items.Count; i++)
+
+            for (var i = 0; i < Items.Count; i++)
             {
-                var itemDuration = this.Items[i].TotalDuration;
+                var itemDuration = Items[i].TotalDuration;
                 if (itemDuration is UnknownTweenDuration)
                 {
                     // We don't know how long this tween is, so we have to update it manually
-                    var overflow = this.Items[i].Update(adjustedTargetTime);
+                    var overflow = Items[i].Update(adjustedTargetTime);
                     adjustedTargetTime -= overflow;
 
-                    if (!this.Items[i].IsDone())
+                    if (!Items[i].IsDone())
                     {
                         break;
                     }
                 }
                 else
                 {
-                    if (itemDuration is KnownTweenDuration exactTweenDuration && adjustedTargetTime >= exactTweenDuration)
+                    if (itemDuration is KnownTweenDuration exactTweenDuration &&
+                        adjustedTargetTime >= exactTweenDuration)
                     {
                         adjustedTargetTime -= exactTweenDuration;
-                        this.Items[i].Update(exactTweenDuration);
+                        Items[i].Update(exactTweenDuration);
                     }
                     else
                     {
-                        this.Items[i].Update(adjustedTargetTime);
-                        this.currentItemIndex = i;
+                        Items[i].Update(adjustedTargetTime);
+                        currentItemIndex = i;
                         break;
                     }
                 }
             }
+        }
+
+        private bool IsAtEnd()
+        {
+            return currentItemIndex >= Items.Count || Items.Count == 0;
+        }
+
+        public SequenceTween Add(ITween tween)
+        {
+            Items.Add(tween);
+            return this;
         }
     }
 }

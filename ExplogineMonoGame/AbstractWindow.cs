@@ -5,13 +5,11 @@ namespace ExplogineMonoGame;
 
 public abstract class AbstractWindow
 {
-    protected GameWindow _window = null!;
     private WindowConfig _currentConfig;
     protected Rectangle _rememberedBounds;
+    protected GameWindow _window = null!;
 
     public Point RenderResolution { get; protected set; }
-    public event Action<Point>? Resized;
-    public event Action? ConfigChanged;
 
     public string Title
     {
@@ -63,6 +61,9 @@ public abstract class AbstractWindow
         }
     }
 
+    public event Action<Point>? Resized;
+    public event Action? ConfigChanged;
+
     protected void ChangeRenderResolution(Point windowSize)
     {
         // We use _currentConfig instead of Config because this is happening during Config._set
@@ -82,7 +83,7 @@ public abstract class AbstractWindow
         _rememberedBounds = new Rectangle(Position, Size);
 
         LateSetup();
-        
+
         Config = config;
     }
 
@@ -120,11 +121,9 @@ public abstract class AbstractWindow
         Resized?.Invoke(windowSize);
         Client.Graphics.DeviceManager.ApplyChanges();
     }
-    
+
     protected void InvokeResized(Point windowSize)
     {
         Resized?.Invoke(windowSize);
     }
-
-    
 }

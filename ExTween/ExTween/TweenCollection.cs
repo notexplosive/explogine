@@ -7,9 +7,26 @@ namespace ExTween
     {
         protected readonly List<ITween> Items = new List<ITween>();
 
+        public int ChildrenWithDurationCount
+        {
+            get
+            {
+                var i = 0;
+                foreach (var item in Items)
+                {
+                    if (item.TotalDuration is KnownTweenDuration known && known > 0)
+                    {
+                        i++;
+                    }
+                }
+
+                return i;
+            }
+        }
+
         protected void ForEachItem(Action<ITween> action)
         {
-            foreach (var item in this.Items)
+            foreach (var item in Items)
             {
                 action(item);
             }
@@ -22,29 +39,12 @@ namespace ExTween
 
         public void Clear()
         {
-            this.Items.Clear();
-        }
-
-        public int ChildrenWithDurationCount
-        {
-            get
-            {
-                var i = 0;
-                foreach (var item in this.Items)
-                {
-                    if (item.TotalDuration is KnownTweenDuration known && known > 0)
-                    {
-                        i++;
-                    }
-                }
-
-                return i;
-            }
+            Items.Clear();
         }
 
         public override string ToString()
         {
-            return $"TweenCollection[{this.Items.Count}]";
+            return $"TweenCollection[{Items.Count}]";
         }
     }
 }

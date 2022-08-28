@@ -9,16 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ExTween\ExTween.csproj" />
+        <ProjectReference Include="..\ExTween\ExTween.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MonoGame.Extended.Graphics" Version="3.8.0">
-        <PrivateAssets>All</PrivateAssets>
-      </PackageReference>
-      <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
-        <PrivateAssets>All</PrivateAssets>
-      </PackageReference>
+        <PackageReference Include="MonoGame.Extended.Graphics" Version="3.8.0">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

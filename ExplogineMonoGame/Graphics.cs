@@ -8,7 +8,6 @@ namespace ExplogineMonoGame;
 
 public class Graphics
 {
-    public GraphicsDeviceManager DeviceManager { get; }
     private readonly Stack<RenderTarget2D> _renderTargetStack = new();
     private RenderTarget2D? _currentRenderTarget;
 
@@ -21,9 +20,13 @@ public class Graphics
         Device.DepthStencilState = new DepthStencilState {DepthBufferEnable = true};
     }
 
+    public GraphicsDeviceManager DeviceManager { get; }
+
     public GraphicsDevice Device { get; }
     public Painter Painter { get; }
-    public Point DisplaySize => new(Client.Graphics.Device.DisplayMode.Width, Client.Graphics.Device.DisplayMode.Height);
+
+    public Point DisplaySize =>
+        new(Client.Graphics.Device.DisplayMode.Width, Client.Graphics.Device.DisplayMode.Height);
 
     public Texture2D CropTexture(Rectangle rect, Texture2D sourceTexture)
     {

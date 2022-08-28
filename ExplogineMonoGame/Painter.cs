@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Data;
+﻿using ExplogineCore.Data;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -81,16 +82,22 @@ public class Painter
     public void DrawStringAtPosition(Font font, string text, Point position, DrawSettings settings)
     {
         _spriteBatch.DrawString(font.SpriteFont, text, position.ToVector2(), settings.Color, settings.Angle,
-            settings.Origin.Value(Point.Zero),
+            settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
             Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
     }
 
     public void DrawStringWithinRectangle(Font font, string text, Rectangle rectangle, DrawSettings settings)
     {
         var brokenText = font.Linebreak(text, rectangle.Width);
-        var origin = settings.Origin.Value(rectangle.Size);
+        var origin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
         _spriteBatch.DrawString(font.SpriteFont, brokenText, rectangle.Location.ToVector2(), settings.Color,
             settings.Angle,
             origin, Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
+    }
+
+    public void FillRectangle(Rectangle rectangle, Color color, Depth depth)
+    {
+        DrawAsRectangle(Client.Assets.GetTexture("white-pixel"), rectangle,
+            new DrawSettings {Depth = depth, Color = color});
     }
 }

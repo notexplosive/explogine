@@ -4,9 +4,9 @@ namespace ExplogineCore;
 
 public class ParsedCommandLineArguments
 {
-    private readonly HashSet<string> _usedArgs = new();
     private readonly Dictionary<string, string> _givenArgsTable = new();
     private readonly Dictionary<string, object> _registeredParameters = new();
+    private readonly HashSet<string> _usedArgs = new();
 
     public ParsedCommandLineArguments(params string[] args)
     {
@@ -19,7 +19,7 @@ public class ParsedCommandLineArguments
         {
             return arg.StartsWith("--");
         }
-        
+
         foreach (var arg in args)
         {
             var sanitizedArg = arg.ToLower();
@@ -48,9 +48,10 @@ public class ParsedCommandLineArguments
         stringBuilder.AppendLine("Help:");
         foreach (var parameterPair in _registeredParameters)
         {
-            stringBuilder.AppendLine($"--{parameterPair.Key}=<{parameterPair.Value.GetType().Name}> (default: \"{parameterPair.Value}\")");
+            stringBuilder.AppendLine(
+                $"--{parameterPair.Key}=<{parameterPair.Value.GetType().Name}> (default: \"{parameterPair.Value}\")");
         }
-        
+
         return stringBuilder.ToString();
     }
 
@@ -112,7 +113,7 @@ public class ParsedCommandLineArguments
         var sanitizedName = name.ToLower();
         return _usedArgs.Contains(sanitizedName);
     }
-    
+
     public T GetValue<T>(string name)
     {
         var sanitizedName = name.ToLower();

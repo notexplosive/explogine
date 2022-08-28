@@ -143,7 +143,6 @@ public readonly struct InputSnapshot
         new(new KeyboardState(), new MouseState(), new GamePadState(), new GamePadState(), new GamePadState(),
             new GamePadState());
 
-
     public override string ToString()
     {
         return Serialize();

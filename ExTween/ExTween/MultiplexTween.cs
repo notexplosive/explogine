@@ -44,12 +44,6 @@ namespace ExTween
             ForEachItem(item => { item.JumpTo(time); });
         }
 
-        public MultiplexTween AddChannel(ITween tween)
-        {
-            this.Items.Add(tween);
-            return this;
-        }
-
         public ITweenDuration TotalDuration
         {
             get
@@ -62,9 +56,15 @@ namespace ExTween
                         result = Math.Max(result, itemDuration);
                     }
                 });
-                
+
                 return new KnownTweenDuration(result);
             }
+        }
+
+        public MultiplexTween AddChannel(ITween tween)
+        {
+            Items.Add(tween);
+            return this;
         }
     }
 }

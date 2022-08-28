@@ -4,20 +4,20 @@ namespace ExTween
 {
     public class CallbackTween : ITween
     {
-        private bool hasExecuted;
         private readonly Action behavior;
+        private bool hasExecuted;
 
         public CallbackTween(Action behavior)
         {
             this.behavior = behavior;
         }
-        
+
         public float Update(float dt)
         {
-            if (!this.hasExecuted)
+            if (!hasExecuted)
             {
-                this.behavior();
-                this.hasExecuted = true;
+                behavior();
+                hasExecuted = true;
             }
 
             // Instant tween, always overflows 100% of dt
@@ -26,14 +26,14 @@ namespace ExTween
 
         public bool IsDone()
         {
-            return this.hasExecuted;
+            return hasExecuted;
         }
 
         public void Reset()
         {
-            this.hasExecuted = false;
+            hasExecuted = false;
         }
-        
+
         public void JumpTo(float time)
         {
             Update(time);
@@ -50,10 +50,10 @@ namespace ExTween
         {
             this.condition = condition;
         }
-        
+
         public float Update(float dt)
         {
-            if (this.condition())
+            if (condition())
             {
                 // Instant tween, always overflows 100% of dt
                 return dt;
@@ -64,7 +64,7 @@ namespace ExTween
 
         public bool IsDone()
         {
-            return this.condition();
+            return condition();
         }
 
         public void Reset()

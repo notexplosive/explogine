@@ -10,36 +10,36 @@ namespace ExTween
         public WaitSecondsTween(float duration)
         {
             this.duration = duration;
-            this.timer = duration;
+            timer = duration;
         }
 
-        public ITweenDuration TotalDuration => new KnownTweenDuration(this.duration);
-        
+        public ITweenDuration TotalDuration => new KnownTweenDuration(duration);
+
         public float Update(float dt)
         {
             if (IsDone())
             {
                 return dt;
             }
-            
-            this.timer -= dt;
 
-            return Math.Max(-this.timer, 0);
+            timer -= dt;
+
+            return Math.Max(-timer, 0);
         }
 
         public bool IsDone()
         {
-            return this.timer <= 0;
+            return timer <= 0;
         }
 
         public void Reset()
         {
-            this.timer = this.duration;
+            timer = duration;
         }
 
         public void JumpTo(float time)
         {
-            this.timer = this.duration - time;
+            timer = duration - time;
         }
     }
 }

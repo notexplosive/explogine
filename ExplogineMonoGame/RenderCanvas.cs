@@ -8,35 +8,34 @@ namespace ExplogineMonoGame;
 
 public class RenderCanvas
 {
-    private Canvas _internalCanvas = null!;
+    public Canvas Canvas { get; private set; } = null!;
 
-    public Canvas Canvas => _internalCanvas;
     public Matrix CanvasToScreen => Matrix.CreateScale(new Vector3(
-                                            new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
-                                                Client.Window.RenderResolution)), 1))
-                                        * Matrix.CreateTranslation(new Vector3(CalculateTopLeftCorner(), 0));
+                                        new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
+                                            Client.Window.RenderResolution)), 1))
+                                    * Matrix.CreateTranslation(new Vector3(CalculateTopLeftCorner(), 0));
 
     public Matrix ScreenToCanvas => Matrix.Invert(Client.RenderCanvas.CanvasToScreen);
 
     public void ResizeCanvas(Point newWindowSize)
     {
-        if (_internalCanvas.Size == Client.Window.RenderResolution)
+        if (Canvas.Size == Client.Window.RenderResolution)
         {
             return;
         }
 
-        _internalCanvas.Dispose();
-        _internalCanvas = new Canvas(Client.Window.RenderResolution);
+        Canvas.Dispose();
+        Canvas = new Canvas(Client.Window.RenderResolution);
     }
 
     public void Setup()
     {
-        _internalCanvas = new Canvas(1, 1);
+        Canvas = new Canvas(1, 1);
     }
 
     public void DrawWithin(Action<Painter> drawAction)
     {
-        Client.Graphics.PushCanvas(_internalCanvas);
+        Client.Graphics.PushCanvas(Canvas);
         drawAction(Client.Graphics.Painter);
         Client.Graphics.PopCanvas();
     }
@@ -45,7 +44,7 @@ public class RenderCanvas
     {
         // this renders the whole canvas, does it need to be the same SamplerState as everything else?
         painter.BeginSpriteBatch(SamplerState.PointWrap, CanvasToScreen);
-        painter.DrawAtPosition(_internalCanvas.Texture, Vector2.Zero);
+        painter.DrawAtPosition(Canvas.Texture, Vector2.Zero);
         painter.EndSpriteBatch();
     }
 

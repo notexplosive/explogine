@@ -16,14 +16,14 @@ public static class PointExtensions
     }
 
     /// <summary>
-    /// Calculate the scalar sizeToEnclose needs to multiply by to fit within enclosingSize
+    ///     Calculate the scalar sizeToEnclose needs to multiply by to fit within enclosingSize
     /// </summary>
     /// <param name="enclosingSize">The "Window" rect that encloses the other rect</param>
     /// <param name="sizeToEnclose">The "Canvas" rect that will be scaled by the scalar</param>
     /// <returns>Scalar to multiply sizeToEnclose by</returns>
     public static float CalculateScalarDifference(Point enclosingSize, Point sizeToEnclose)
     {
-        var enclosingSizeIsTooWide = IsEnclosingSizeTooWide(enclosingSize, sizeToEnclose);
+        var enclosingSizeIsTooWide = PointExtensions.IsEnclosingSizeTooWide(enclosingSize, sizeToEnclose);
 
         if (enclosingSizeIsTooWide)
         {

@@ -14,7 +14,7 @@ public class CrashCartridge : ICartridge
     public CrashCartridge(Exception exception)
     {
         Client.Graphics.Painter.ResetToCleanState();
-        
+
         ThrownException = exception;
 
         var fileName = "explogine-crash.log";

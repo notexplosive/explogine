@@ -6,7 +6,7 @@ namespace ExplogineDesktop;
 public class DesktopFileSystem : IFileSystem
 {
     public string ContentPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Client.ContentBaseDirectory);
-    
+
     public List<string> GetFilesAtContentDirectory(string targetDirectory, string extension = "*")
     {
         var result = new List<string>();
@@ -24,7 +24,7 @@ public class DesktopFileSystem : IFileSystem
         {
             result.Add(file.FullName);
         }
-        
+
         var directories = infoAtTargetPath.GetDirectories();
         foreach (var directory in directories)
         {
@@ -41,7 +41,8 @@ public class DesktopFileSystem : IFileSystem
 
     public async Task<string> ReadFileInContentDirectory(string relativePath)
     {
-        var local = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Client.ContentBaseDirectory), relativePath);
+        var local = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Client.ContentBaseDirectory),
+            relativePath);
         if (File.Exists(local))
         {
             var result = await File.ReadAllTextAsync(local);

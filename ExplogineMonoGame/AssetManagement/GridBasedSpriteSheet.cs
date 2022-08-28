@@ -1,5 +1,4 @@
 ﻿using System;
-using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +15,8 @@ public class GridBasedSpriteSheet : SpriteSheet
     private readonly int _rowCount;
     private Point _frameSize;
 
-    public GridBasedSpriteSheet(string textureName, Point frameSize) : this(Client.Assets.GetTexture(textureName), frameSize)
+    public GridBasedSpriteSheet(string textureName, Point frameSize) : this(Client.Assets.GetTexture(textureName),
+        frameSize)
     {
     }
 
@@ -45,7 +45,8 @@ public class GridBasedSpriteSheet : SpriteSheet
         return new Rectangle(new Point(x * _frameSize.X, y * _frameSize.Y), _frameSize);
     }
 
-    public override void DrawFrame(Painter painter, int index, Vector2 position, Scale2D scale, DrawSettings drawSettings)
+    public override void DrawFrame(Painter painter, int index, Vector2 position, Scale2D scale,
+        DrawSettings drawSettings)
     {
         var isValid = index >= 0 && index <= _frameCount;
         if (!isValid)

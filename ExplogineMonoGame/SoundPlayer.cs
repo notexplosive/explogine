@@ -16,8 +16,7 @@ public class SoundPlayer
         {
             usedOptions = options.Value;
         }
-        
-        
+
         SoundEffectInstance instance;
         if (usedOptions.Cached)
         {

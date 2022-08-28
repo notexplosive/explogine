@@ -1,32 +1,20 @@
-﻿using System;
-
-namespace ExTween
+﻿namespace ExTween
 {
     public abstract class Tweenable<T>
     {
         public delegate T Getter();
+
         public delegate void Setter(T value);
 
         private readonly Getter getter;
         private readonly Setter setter;
 
-        public T Value
-        {
-            get => this.getter();
-            set => this.setter(value);
-        }
-
         protected Tweenable(T initializedValue)
         {
-            T capturedValue = initializedValue;
-            this.getter = () => capturedValue;
-            this.setter = value => capturedValue = value;
+            var capturedValue = initializedValue;
+            getter = () => capturedValue;
+            setter = value => capturedValue = value;
             Value = initializedValue;
-        }
-
-        public static implicit operator T(Tweenable<T> tweenable)
-        {
-            return tweenable.Value;
         }
 
         protected Tweenable(Getter getter, Setter setter)
@@ -35,8 +23,19 @@ namespace ExTween
             this.setter = setter;
         }
 
+        public T Value
+        {
+            get => getter();
+            set => setter(value);
+        }
+
+        public static implicit operator T(Tweenable<T> tweenable)
+        {
+            return tweenable.Value;
+        }
+
         /// <summary>
-        /// The equivalent of: `startingValue + (targetValue - startingValue) * percent` for the template type.
+        ///     The equivalent of: `startingValue + (targetValue - startingValue) * percent` for the template type.
         /// </summary>
         /// <param name="startingValue">Starting value of the interpolation</param>
         /// <param name="targetValue">Ending value of the interpolation</param>
@@ -50,10 +49,8 @@ namespace ExTween
             {
                 return $"Tweenable: {Value.ToString()}";
             }
-            else
-            {
-                return "Tweenable: (null value)";
-            }
+
+            return "Tweenable: (null value)";
         }
     }
 
@@ -66,14 +63,14 @@ namespace ExTween
         public TweenableInt(int i) : base(i)
         {
         }
-        
+
         public TweenableInt(Getter getter, Setter setter) : base(getter, setter)
         {
         }
-        
+
         public override int Lerp(int startingValue, int targetValue, float percent)
         {
-            return (int)(startingValue + (targetValue - startingValue) * percent);
+            return (int) (startingValue + (targetValue - startingValue) * percent);
         }
     }
 
@@ -86,11 +83,11 @@ namespace ExTween
         public TweenableFloat(float i) : base(i)
         {
         }
-        
+
         public TweenableFloat(Getter getter, Setter setter) : base(getter, setter)
         {
         }
-        
+
         public override float Lerp(float startingValue, float targetValue, float percent)
         {
             return startingValue + (targetValue - startingValue) * percent;

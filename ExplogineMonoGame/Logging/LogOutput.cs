@@ -4,9 +4,9 @@ namespace ExplogineMonoGame.Logging;
 
 public class LogOutput
 {
-    private List<ILogCapture> _stack = new();
-    private List<ILogCapture> _multiplex = new();
-    
+    private readonly List<ILogCapture> _multiplex = new();
+    private readonly List<ILogCapture> _stack = new();
+
     internal void Emit(string message)
     {
         if (_stack.Count > 0)

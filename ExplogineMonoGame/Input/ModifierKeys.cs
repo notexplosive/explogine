@@ -28,7 +28,7 @@ public readonly struct ModifierKeys
         {
             return "None";
         }
-        
+
         var ctrl = _control ? "Control" : "";
         var alt = _alt ? "Alt" : "";
         var shift = _shift ? "Shift" : "";

@@ -21,8 +21,8 @@ public readonly struct Scale2D
         Value = new Vector2(scale);
     }
 
-    public static Scale2D One => new Scale2D(1);
-    
+    public static Scale2D One => new(1);
+
     public static Scale2D operator *(Scale2D a, float b)
     {
         return new Scale2D(a.Value * b);

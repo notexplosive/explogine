@@ -12,7 +12,7 @@ public class FileLogCapture : ILogCapture
     {
         Client.Exited.Add(DumpBufferWithTimestamp);
     }
-    
+
     public void CaptureMessage(string text)
     {
         _buffer.Add(text);
@@ -22,8 +22,8 @@ public class FileLogCapture : ILogCapture
     {
         var directory = "logs";
         Directory.CreateDirectory(directory);
-        var fileName = Path.Join(directory,$"{DateTime.Now.ToFileTimeUtc()}.log");
-        
+        var fileName = Path.Join(directory, $"{DateTime.Now.ToFileTimeUtc()}.log");
+
         WriteBufferAsFilename(fileName);
     }
 

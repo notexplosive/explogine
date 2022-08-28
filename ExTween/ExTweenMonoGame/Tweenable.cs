@@ -12,16 +12,16 @@ namespace ExTweenMonoGame
         public TweenablePoint(Getter getter, Setter setter) : base(getter, setter)
         {
         }
-        
+
         public TweenablePoint() : base(Point.Zero)
         {
         }
 
         public override Point Lerp(Point startingValue, Point targetValue, float percent)
         {
-            return startingValue 
-                   +  new Point((int)(targetValue.X * percent), (int)(targetValue.Y * percent))
-                   -  new Point((int)(startingValue.X * percent), (int)(startingValue.Y * percent));
+            return startingValue
+                   + new Point((int) (targetValue.X * percent), (int) (targetValue.Y * percent))
+                   - new Point((int) (startingValue.X * percent), (int) (startingValue.Y * percent));
         }
     }
 
@@ -44,7 +44,7 @@ namespace ExTweenMonoGame
             return startingValue + (targetValue - startingValue) * percent;
         }
     }
-    
+
     public class TweenableVector3 : Tweenable<Vector3>
     {
         public TweenableVector3(Vector3 initializedValue) : base(initializedValue)
@@ -54,7 +54,7 @@ namespace ExTweenMonoGame
         public TweenableVector3(Getter getter, Setter setter) : base(getter, setter)
         {
         }
-        
+
         public TweenableVector3() : base(Vector3.Zero)
         {
         }

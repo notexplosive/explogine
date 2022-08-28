@@ -83,20 +83,6 @@ public class SampleGameCartridge : BasicGameCartridge
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
-        yield return new LoadEvent("white-pixel", () =>
-        {
-            var canvas = new Canvas(1, 1);
-            Client.Graphics.PushCanvas(canvas);
-
-            painter.BeginSpriteBatch(SamplerState.PointWrap);
-            painter.Clear(Color.White);
-            painter.EndSpriteBatch();
-
-            Client.Graphics.PopCanvas();
-
-            return canvas.AsTextureAsset();
-        });
-
         yield return new LoadEvent("noise", () =>
         {
             var canvas = new Canvas(100, 100);

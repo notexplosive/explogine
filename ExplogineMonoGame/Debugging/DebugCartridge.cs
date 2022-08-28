@@ -11,9 +11,9 @@ namespace ExplogineMonoGame.Debugging;
 public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
     private readonly DemoInterface _demoInterface = new();
+    private readonly FrameStep _frameStep = new();
     private readonly LogOverlay _logOverlay = new();
     private readonly SnapshotTaker _snapshotTaker = new();
-    private readonly FrameStep _frameStep = new();
     private bool _useSnapshotTimer;
 
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
@@ -34,7 +34,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
             _useSnapshotTimer = false;
             Client.Debug.Log("Snapshot timer disabled");
         }
-        
+
         if (Client.CommandLineArgs.GetValue<bool>("debug"))
         {
             Client.Debug.Level = DebugLevel.Passive;
@@ -65,7 +65,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         }
 
         painter.EndSpriteBatch();
-        
+
         if (_useSnapshotTimer)
         {
             // We don't let the snapshot timer start until after we're done with at least one draw
