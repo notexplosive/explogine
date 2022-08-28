@@ -6,7 +6,7 @@ using ExplogineMonoGame.Debugging;
 
 namespace ExplogineMonoGame;
 
-internal class CartridgeChain : ILoadEventProvider
+internal class CartridgeChain
 {
     private readonly LinkedList<ICartridge> _list = new();
     private bool _hasCrashed;
@@ -14,22 +14,6 @@ internal class CartridgeChain : ILoadEventProvider
     private ICartridge Current => _list.First!.Value;
     private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
     public bool IsFrozen { get; set; }
-
-    public IEnumerable<LoadEvent> LoadEvents(Painter painter)
-    {
-        foreach (var cartridge in GetAllCartridges())
-        {
-            if (cartridge is not ILoadEventProvider preloadCartridge)
-            {
-                continue;
-            }
-
-            foreach (var loadEvent in preloadCartridge.LoadEvents(Client.Graphics.Painter))
-            {
-                yield return loadEvent;
-            }
-        }
-    }
 
     public event Action? LoadedLastCartridge;
 
@@ -119,13 +103,21 @@ internal class CartridgeChain : ILoadEventProvider
         }
     }
 
+    public void AddLoadEventsForAllCartridge(Loader loader)
+    {
+        foreach (var cartridge in GetAllCartridges())
+        {
+            if (cartridge is not ILoadEventProvider preloadCartridge)
+            {
+                continue;
+            }
+
+            loader.AddLoadEvents(preloadCartridge);
+        }
+    }
+    
     public void SetupLoadingCartridge(Loader loader)
     {
-        foreach (var loadEvent in LoadEvents(Client.Graphics.Painter))
-        {
-            loader.AddLoadEvent(loadEvent);
-        }
-
         var loadingCartridge = new LoadingCartridge(loader);
         CartridgeChain.StartCartridge(loadingCartridge);
         Prepend(loadingCartridge);

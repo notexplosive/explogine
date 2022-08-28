@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -155,5 +156,13 @@ public class Loader
     public void AddLoadEvent(LoadEvent loadEvent)
     {
         _loadEvents.Add(loadEvent);
+    }
+
+    public void AddLoadEvents(ILoadEventProvider provider)
+    {
+        foreach (var loadEvent in provider.LoadEvents(Client.Graphics.Painter))
+        {
+            AddLoadEvent(loadEvent);
+        }
     }
 }

@@ -151,7 +151,8 @@ public static class Client
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
-        Client.Essentials.SetupLoadEvents(Client.loader);
+        Client.loader.AddLoadEvents(Client.Essentials);
+        Client.CartridgeChain.AddLoadEventsForAllCartridge(Client.loader);
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
         Client.CartridgeChain.ValidateParameters(Client.CommandLineArgs);
 

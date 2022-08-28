@@ -50,9 +50,6 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
 
     public void SetupLoadEvents(Loader loader)
     {
-        foreach (var loadEvent in LoadEvents(Client.Graphics.Painter))
-        {
-            loader.AddLoadEvent(loadEvent);
-        }
+        loader.AddLoadEvents(this);
     }
 }
