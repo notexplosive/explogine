@@ -71,4 +71,13 @@ public class TestCommandLineParameters
 
         act.Should().Throw<Exception>();
     }
+
+    [Fact]
+    public void ignore_capital_letters()
+    {
+        var args = new ParsedCommandLineArguments("--Mode=eDitOr");
+        args.RegisterParameter<string>("mode");
+        
+        args.GetValue<string>("MODE").Should().Be("editor");
+    }
 }

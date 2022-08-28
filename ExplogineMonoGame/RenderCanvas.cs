@@ -10,6 +10,7 @@ public class RenderCanvas
 {
     private Canvas _internalCanvas = null!;
 
+    public Canvas Canvas => _internalCanvas;
     public Matrix CanvasToScreen => Matrix.CreateScale(new Vector3(
                                             new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
                                                 Client.Window.RenderResolution)), 1))

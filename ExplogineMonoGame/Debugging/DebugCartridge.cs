@@ -12,6 +12,8 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 {
     private readonly DemoInterface _demoInterface = new();
     private readonly LogOverlay _logOverlay = new();
+    private readonly SnapshotTaker _snapshotTaker = new();
+    private bool _useSnapshotTimer;
 
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
     private Depth ConsoleOverlayDepth { get; } = Depth.Front + 5;
@@ -23,7 +25,14 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 #if DEBUG
         Client.Debug.Level = DebugLevel.Passive;
         Client.Debug.Log("~~ Debug Build ~~");
+        _useSnapshotTimer = true;
 #endif
+
+        if (Client.ParsedCommandLineArguments.GetValue<bool>("skipSnapshot"))
+        {
+            _useSnapshotTimer = false;
+            Client.Debug.Log("Snapshot timer disabled");
+        }
         
         if (Client.ParsedCommandLineArguments.GetValue<bool>("debug"))
         {
@@ -35,6 +44,11 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     {
         _demoInterface.Update(dt);
         _logOverlay.Update(dt);
+
+        if (Client.FinishedLoading.IsReady)
+        {
+            _snapshotTaker.Update(dt);
+        }
     }
 
     public void Draw(Painter painter)
@@ -49,6 +63,12 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         }
 
         painter.EndSpriteBatch();
+        
+        if (_useSnapshotTimer)
+        {
+            // We don't let the snapshot timer start until after we're done with at least one draw
+            _snapshotTaker.StartTimer();
+        }
     }
 
     public bool ShouldLoadNextCartridge()
@@ -59,10 +79,12 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     public void SetupFormalParameters(ParsedCommandLineArguments args)
     {
         args.RegisterParameter<bool>("debug");
+        args.RegisterParameter<bool>("skipSnapshot");
     }
 
     public IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
-        yield return new LoadEvent("demo-indicators",() => new GridBasedSpriteSheet("engine/demo-indicators", new Point(67, 23))) ;
+        yield return new LoadEvent("demo-indicators",
+            () => new GridBasedSpriteSheet("engine/demo-indicators", new Point(67, 23)));
     }
 }

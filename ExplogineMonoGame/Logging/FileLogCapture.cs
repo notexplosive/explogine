@@ -19,8 +19,7 @@ public class FileLogCapture : ILogCapture
 
     private void DumpBufferWithTimestamp()
     {
-        var timeSpan = DateTime.Now - DateTime.UnixEpoch;
-        var fileName = $"explogine-{Math.Floor(timeSpan.TotalMilliseconds)}.log";
+        var fileName = $"explogine-{DateTime.Now.ToFileTimeUtc()}.log";
         
         WriteBufferAsFilename(fileName);
     }

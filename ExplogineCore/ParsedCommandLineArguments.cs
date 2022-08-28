@@ -21,9 +21,10 @@ public class ParsedCommandLineArguments
         
         foreach (var arg in args)
         {
-            if (IsCommand(arg))
+            var sanitizedArg = arg.ToLower();
+            if (IsCommand(sanitizedArg))
             {
-                var argWithoutDashes = arg.Remove(0, 2);
+                var argWithoutDashes = sanitizedArg.Remove(0, 2);
                 if (HasValue(argWithoutDashes))
                 {
                     var split = argWithoutDashes.Split('=');
@@ -55,10 +56,11 @@ public class ParsedCommandLineArguments
     public void RegisterParameter<T>(string parameterName)
     {
         string value;
-        if (_givenArgsTable.ContainsKey(parameterName))
+        var sanitizedParameterName = parameterName.ToLower();
+        if (_givenArgsTable.ContainsKey(sanitizedParameterName))
         {
-            value = _givenArgsTable[parameterName];
-            _givenArgsTable.Remove(parameterName);
+            value = _givenArgsTable[sanitizedParameterName];
+            _givenArgsTable.Remove(sanitizedParameterName);
         }
         else
         {
@@ -67,19 +69,19 @@ public class ParsedCommandLineArguments
 
         if (typeof(T) == typeof(float))
         {
-            _registeredParameters.Add(parameterName, float.Parse(value));
+            _registeredParameters.Add(sanitizedParameterName, float.Parse(value));
         }
         else if (typeof(T) == typeof(string))
         {
-            _registeredParameters.Add(parameterName, value);
+            _registeredParameters.Add(sanitizedParameterName, value);
         }
         else if (typeof(T) == typeof(int))
         {
-            _registeredParameters.Add(parameterName, int.Parse(value));
+            _registeredParameters.Add(sanitizedParameterName, int.Parse(value));
         }
         else if (typeof(T) == typeof(bool))
         {
-            _registeredParameters.Add(parameterName, bool.Parse(value));
+            _registeredParameters.Add(sanitizedParameterName, bool.Parse(value));
         }
     }
 
@@ -105,14 +107,15 @@ public class ParsedCommandLineArguments
 
     public T GetValue<T>(string name)
     {
-        if (_registeredParameters.ContainsKey(name))
+        var sanitizedName = name.ToLower();
+        if (_registeredParameters.ContainsKey(sanitizedName))
         {
-            return _registeredParameters[name] is T
-                ? (T) _registeredParameters[name]
-                : throw new Exception($"Wrong type requested for {name}");
+            return _registeredParameters[sanitizedName] is T
+                ? (T) _registeredParameters[sanitizedName]
+                : throw new Exception($"Wrong type requested for {sanitizedName}");
         }
 
-        throw new Exception($"{name} was never registered");
+        throw new Exception($"{sanitizedName} was never registered");
     }
 
     public List<string> UnboundArgs()

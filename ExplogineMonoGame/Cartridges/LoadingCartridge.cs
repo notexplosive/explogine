@@ -105,7 +105,6 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
     public void SetupFormalParameters(ParsedCommandLineArguments args)
     {
         args.RegisterParameter<bool>("fullscreen");
-        args.RegisterParameter<bool>("skipsnapshot");
         args.RegisterParameter<string>("demo");
     }
 

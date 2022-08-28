@@ -113,6 +113,13 @@ internal class CartridgeChain : ILoadEventProvider
 
     public void Crash(Exception exception)
     {
+        if (DebugCartridge is CrashCartridge)
+        {
+            // If we crashed while crashing, just exit
+            Client.Exit();
+            return;
+        }
+        
         _list.Clear();
         _list.AddFirst(new BlankCartridge());
         var crashCartridge = new CrashCartridge(exception);
