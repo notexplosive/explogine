@@ -38,4 +38,9 @@ public readonly struct MouseFrameState
     {
         return Current.MouseButtonStates.Any(state => state == ButtonState.Pressed);
     }
+
+    public int ScrollDelta()
+    {
+        return Current.ScrollValue - Previous.ScrollValue;
+    }
 }

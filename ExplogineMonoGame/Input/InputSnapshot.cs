@@ -41,8 +41,9 @@ public readonly struct InputSnapshot
                     Y = float.Parse(data[1])
                 };
                 MousePosition = mousePosition;
+                ScrollValue = int.Parse(data[2]);
                 MouseButtonStates =
-                    InputSerialization.IntToStates(int.Parse(data[2]), InputSerialization.NumberOfMouseButtons);
+                    InputSerialization.IntToStates(int.Parse(data[3]), InputSerialization.NumberOfMouseButtons);
             }
             else if (segment.StartsWith("G"))
             {
@@ -86,6 +87,7 @@ public readonly struct InputSnapshot
         }
 
         MousePosition = mouseState.Position.ToVector2();
+        ScrollValue = mouseState.ScrollWheelValue;
         MouseButtonStates = new ButtonState[InputSerialization.NumberOfMouseButtons];
         MouseButtonStates[0] = mouseState.LeftButton;
         MouseButtonStates[1] = mouseState.RightButton;
@@ -104,6 +106,7 @@ public readonly struct InputSnapshot
     public ButtonState[] MouseButtonStates { get; } = Array.Empty<ButtonState>();
     public Keys[] PressedKeys { get; } = Array.Empty<Keys>();
     public Vector2 MousePosition { get; } = Vector2.Zero;
+    public int ScrollValue { get; } = 0;
 
     public IEnumerable<GamePadSnapshot> GamePadSnapshots()
     {
@@ -139,6 +142,7 @@ public readonly struct InputSnapshot
     public static InputSnapshot Empty =>
         new(new KeyboardState(), new MouseState(), new GamePadState(), new GamePadState(), new GamePadState(),
             new GamePadState());
+
 
     public override string ToString()
     {

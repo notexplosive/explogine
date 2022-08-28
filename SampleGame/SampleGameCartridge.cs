@@ -34,6 +34,10 @@ public class SampleGameCartridge : BasicGameCartridge
             Client.Window.SetFullscreen(!Client.Window.IsFullscreen);
         }
 
+        var rectangle = _c1.Rectangle;
+        rectangle.Location += new Point(0,1);
+        _c1 = new HitTestTarget(rectangle, _c1.Depth);
+        
         Client.HitTesting.Add(_c1);
         Client.HitTesting.Add(_c2);
         Client.HitTesting.Add(_c3);

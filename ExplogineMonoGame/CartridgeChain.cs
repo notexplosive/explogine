@@ -9,10 +9,9 @@ namespace ExplogineMonoGame;
 internal class CartridgeChain : ILoadEventProvider
 {
     private readonly LinkedList<ICartridge> _list = new();
-
     private ICartridge Current => _list.First!.Value;
     private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
-    public event Action? LoadedLastCartridge;
+    public bool IsFrozen { get; set; }
 
     public IEnumerable<LoadEvent> LoadEvents(Painter painter)
     {
@@ -30,9 +29,20 @@ internal class CartridgeChain : ILoadEventProvider
         }
     }
 
+    public event Action? LoadedLastCartridge;
+
     public void Update(float dt)
     {
         DebugCartridge.Update(dt);
+
+        if (!IsFrozen)
+        {
+            UpdateCurrentCartridge(dt);
+        }
+    }
+
+    public void UpdateCurrentCartridge(float dt)
+    {
         Current.Update(dt);
 
         if (Current.ShouldLoadNextCartridge())
@@ -119,7 +129,7 @@ internal class CartridgeChain : ILoadEventProvider
             Client.Exit();
             return;
         }
-        
+
         _list.Clear();
         _list.AddFirst(new BlankCartridge());
         var crashCartridge = new CrashCartridge(exception);

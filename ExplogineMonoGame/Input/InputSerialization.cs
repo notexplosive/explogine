@@ -55,7 +55,7 @@ public static class InputSerialization
     public static string AsString(InputSnapshot input)
     {
         var mouse =
-            $"{input.MousePosition.X},{input.MousePosition.Y},{InputSerialization.StatesToInt(input.MouseButtonStates)}";
+            $"{input.MousePosition.X},{input.MousePosition.Y},{input.ScrollValue},{InputSerialization.StatesToInt(input.MouseButtonStates)}";
 
         var keyboardBuilder = new StringBuilder();
         for (var i = 0; i < input.PressedKeys.Length; i++)

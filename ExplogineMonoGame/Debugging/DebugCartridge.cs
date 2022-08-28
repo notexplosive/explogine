@@ -13,6 +13,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     private readonly DemoInterface _demoInterface = new();
     private readonly LogOverlay _logOverlay = new();
     private readonly SnapshotTaker _snapshotTaker = new();
+    private readonly FrameStep _frameStep = new();
     private bool _useSnapshotTimer;
 
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
@@ -47,6 +48,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
 
         if (Client.FinishedLoading.IsReady)
         {
+            _frameStep.Update(dt);
             _snapshotTaker.Update(dt);
         }
     }

@@ -144,7 +144,7 @@ public class TestInput
         var snapshot = new InputSnapshot(
             new KeyboardState(Keys.Space, Keys.A),
             new MouseState(
-                0, 0, 0,
+                2, 4, 16,
                 ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
                 ButtonState.Released, ButtonState.Released),
             new GamePadState(
@@ -169,7 +169,7 @@ public class TestInput
                 new GamePadDPad())
         );
 
-        snapshot.Serialize().Should().Be("M:0,0,1|K:32,65|G:1,0.5,1,0,0,1,1|G:1,0.5,1,0,0,1,2|G:1,0.5,1,0,0,1,4|G:1,0.5,1,0,0,1,8");
+        snapshot.Serialize().Should().Be("M:2,4,16,1|K:32,65|G:1,0.5,1,0,0,1,1|G:1,0.5,1,0,0,1,2|G:1,0.5,1,0,0,1,4|G:1,0.5,1,0,0,1,8");
     }
 
     [Fact]
