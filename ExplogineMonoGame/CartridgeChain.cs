@@ -92,13 +92,8 @@ internal class CartridgeChain
 
     public void ValidateParameters(ParsedCommandLineArguments args)
     {
-        foreach (var cartridge in GetAllCartridges())
+        foreach (var provider in GetAllCartridgesDerivedFrom<ICommandLineParameterProvider>())
         {
-            if (cartridge is not ICommandLineParameterProvider provider)
-            {
-                continue;
-            }
-
             provider.SetupFormalParameters(args);
         }
     }
