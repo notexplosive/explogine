@@ -78,21 +78,40 @@ public class Painter
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
+    
+    public void DrawScaledStringAtPosition(Font font, string text, Point position, Scale2D scale, DrawSettings settings)
+    {
+        _spriteBatch.DrawString(
+            font.SpriteFont, 
+            text, 
+            position.ToVector2(), 
+            settings.Color, 
+            settings.Angle,
+            settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
+            scale.Value * font.ScaleFactor, 
+            settings.FlipEffect, 
+            settings.Depth);
+    }
 
     public void DrawStringAtPosition(Font font, string text, Point position, DrawSettings settings)
     {
-        _spriteBatch.DrawString(font.SpriteFont, text, position.ToVector2(), settings.Color, settings.Angle,
-            settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
-            Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
+        DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
     }
 
     public void DrawStringWithinRectangle(Font font, string text, Rectangle rectangle, DrawSettings settings)
     {
         var brokenText = font.Linebreak(text, rectangle.Width);
         var origin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
-        _spriteBatch.DrawString(font.SpriteFont, brokenText, rectangle.Location.ToVector2(), settings.Color,
+        _spriteBatch.DrawString(
+            font.SpriteFont, 
+            brokenText, 
+            rectangle.Location.ToVector2(), 
+            settings.Color,
             settings.Angle,
-            origin, Vector2.One * font.ScaleFactor, settings.FlipEffect, settings.Depth);
+            origin, 
+            Vector2.One * font.ScaleFactor, 
+            settings.FlipEffect, 
+            settings.Depth);
     }
 
     public void FillRectangle(Rectangle rectangle, Color color, Depth depth)

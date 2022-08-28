@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ExplogineMonoGame.Data;
 using ExTween;
 using ExTweenMonoGame;
@@ -9,20 +10,31 @@ namespace ExplogineMonoGame.Cartridges;
 
 public class IntroCartridge : ICartridge
 {
+    private readonly List<Figure> _letters = new();
     private Font? _logoFont;
     private SequenceTween _tween = new();
+    private bool _useWholeWord = true;
     private Figure _wholeWord;
 
     public void OnCartridgeStarted()
     {
         Client.Debug.Log("Intro loaded");
+        var text = "NotExplosive.net";
         _logoFont = Client.Assets.GetFont("engine/logo-font", 72);
-        _wholeWord = new Figure();
+        _wholeWord = new Figure(text);
+
+        foreach (var character in text)
+        {
+            _letters.Add(new Figure(character.ToString()));
+        }
+
         _tween = Client.Random.Dirty.GetRandomElement(new Func<SequenceTween>[]
         {
             Tada,
             Ouch,
-            ZoomAndRotate
+            ZoomAndRotate,
+            FlyInLetters,
+            FlyInLettersRandom,
         })();
         _tween.Add(new WaitSecondsTween(0.75f));
     }
@@ -41,15 +53,40 @@ public class IntroCartridge : ICartridge
         );
         painter.Clear(Color.Navy);
 
-        var centerOfScreen = (Client.Window.RenderResolution.ToVector2() / 2).ToPoint();
+        var centerOfScreen = Client.Window.RenderResolution.ToVector2() / 2;
 
-        var text = "NotExplosive.net";
-        painter.DrawStringAtPosition(_logoFont!, text, centerOfScreen + _wholeWord.Position.Value.ToPoint(),
-            new DrawSettings
+        if (_useWholeWord)
+        {
+            painter.DrawStringAtPosition(_logoFont!, _wholeWord.Text,
+                (centerOfScreen + _wholeWord.Position.Value).ToPoint(),
+                new DrawSettings
+                {
+                    Origin = DrawOrigin.Center, Angle = _wholeWord.Angle,
+                    Color = Color.White.WithMultipliedOpacity(_wholeWord.Opacity)
+                });
+        }
+        else
+        {
+            var runningWidth = 0f;
+            foreach (var letter in _letters)
             {
-                Origin = DrawOrigin.Center, Angle = _wholeWord.Angle,
-                Color = Color.White.WithMultipliedOpacity(_wholeWord.Opacity)
-            });
+                var myWidth = _logoFont!.MeasureString(letter.Text).X;
+                var textWidth = _logoFont!.MeasureString(_wholeWord.Text).X;
+                var startOffset = centerOfScreen - new Vector2(textWidth / 2f, 0) +
+                                  new Vector2(runningWidth + myWidth / 2, 0);
+                painter.DrawScaledStringAtPosition(_logoFont!,
+                    letter.Text,
+                    (startOffset + letter.Position.Value).ToPoint(),
+                    new Scale2D(letter.Scale),
+                    new DrawSettings
+                    {
+                        Origin = DrawOrigin.Center,
+                        Angle = letter.Angle,
+                        Color = Color.White.WithMultipliedOpacity(letter.Opacity)
+                    });
+                runningWidth += myWidth;
+            }
+        }
 
         painter.EndSpriteBatch();
     }
@@ -57,6 +94,88 @@ public class IntroCartridge : ICartridge
     public bool ShouldLoadNextCartridge()
     {
         return _tween.IsDone();
+    }
+
+    private SequenceTween FlyInLetters()
+    {
+        _useWholeWord = false;
+
+        foreach (var letter in _letters)
+        {
+            letter.Scale.Value = 2f;
+            letter.Opacity.Value = 0f;
+        }
+
+        var durationPerLetter = 0.5f;
+
+        var index = 0;
+        var result = new SequenceTween();
+        result.Add(new DynamicTween(() =>
+            {
+                var multi = new MultiplexTween();
+                foreach (var letter in _letters)
+                {
+                    multi.AddChannel(new SequenceTween()
+                        .Add(new WaitSecondsTween(index * 0.05f))
+                        .Add(new MultiplexTween()
+                            .AddChannel(
+                                new SequenceTween()
+                                    .Add(new Tween<float>(letter.Scale, 0.95f, durationPerLetter * 3 / 4,
+                                        Ease.QuadFastSlow))
+                                    .Add(new Tween<float>(letter.Scale, 1f, durationPerLetter * 1 / 4,
+                                        Ease.QuadSlowFast))
+                            )
+                            .AddChannel(new Tween<float>(letter.Opacity, 1f, durationPerLetter, Ease.Linear)))
+                    );
+                    index++;
+                }
+
+                return multi;
+            }))
+            .Add(new WaitSecondsTween(0.25f))
+            ;
+
+        return result;
+    }
+    
+    private SequenceTween FlyInLettersRandom()
+    {
+        _useWholeWord = false;
+
+        foreach (var letter in _letters)
+        {
+            letter.Scale.Value = 4f;
+            letter.Opacity.Value = 0f;
+        }
+
+        var durationPerLetter = 0.5f;
+
+        var result = new SequenceTween();
+        result.Add(new DynamicTween(() =>
+            {
+                var multi = new MultiplexTween();
+                foreach (var letter in _letters)
+                {
+                    multi.AddChannel(new SequenceTween()
+                        .Add(new WaitSecondsTween(Client.Random.Dirty.NextFloat()))
+                        .Add(new MultiplexTween()
+                            .AddChannel(
+                                new SequenceTween()
+                                    .Add(new Tween<float>(letter.Scale, 0.95f, durationPerLetter * 3 / 4,
+                                        Ease.QuadFastSlow))
+                                    .Add(new Tween<float>(letter.Scale, 1f, durationPerLetter * 1 / 4,
+                                        Ease.QuadSlowFast))
+                            )
+                            .AddChannel(new Tween<float>(letter.Opacity, 1f, durationPerLetter, Ease.Linear)))
+                    );
+                }
+
+                return multi;
+            }))
+            .Add(new WaitSecondsTween(0.25f))
+            ;
+
+        return result;
     }
 
     private SequenceTween ZoomAndRotate()
@@ -153,15 +272,18 @@ public class IntroCartridge : ICartridge
             ;
     }
 
-    private readonly struct Figure
+    private struct Figure
     {
         public TweenableFloat Angle { get; } = new();
         public TweenableVector2 Position { get; } = new();
         public TweenableFloat Scale { get; } = new(1);
         public TweenableFloat Opacity { get; } = new(1);
 
-        public Figure()
+        public Figure(string text)
         {
+            Text = text;
         }
+
+        public string Text { get; }
     }
 }
