@@ -42,7 +42,7 @@ public abstract class AbstractWindow
             // also just generally QoL. Window Resizing should always be legal.
             AllowResizing = true;
 
-            ChangeRenderResolution(_currentConfig.WindowSize);
+            ChangeRenderResolution(_currentConfig.WindowSize, _currentConfig.RenderResolution);
 
             if (Config.Fullscreen)
             {
@@ -64,12 +64,12 @@ public abstract class AbstractWindow
     public event Action<Point>? Resized;
     public event Action? ConfigChanged;
 
-    protected void ChangeRenderResolution(Point windowSize)
+    protected void ChangeRenderResolution(Point windowSize, Point? renderResolution)
     {
-        // We use _currentConfig instead of Config because this is happening during Config._set
-        if (_currentConfig.RenderResolution.HasValue)
+        // If the renderResolution is set, use that, if not, use the windowSize
+        if (renderResolution.HasValue && renderResolution.Value != windowSize)
         {
-            RenderResolution = _currentConfig.RenderResolution.Value;
+            RenderResolution = renderResolution.Value;
         }
         else
         {
@@ -82,12 +82,12 @@ public abstract class AbstractWindow
         _window = window;
         _rememberedBounds = new Rectangle(Position, Size);
 
-        LateSetup();
+        LateSetup(config);
 
         Config = config;
     }
 
-    protected abstract void LateSetup();
+    protected abstract void LateSetup(WindowConfig config);
 
     public void SetFullscreen(bool state)
     {
