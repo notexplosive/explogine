@@ -14,6 +14,7 @@ internal class DemoInterface
     public void Draw(Painter painter, Depth depth)
     {
         var spriteSheet = Client.Assets.GetAsset<SpriteSheet>("demo-indicators");
+        var consoleFont = Client.Assets.GetFont("engine/console-font", 24);
         var isPlaying = Client.Demo.IsPlaying;
         var isRecording = Client.Demo.IsRecording;
 
@@ -27,6 +28,19 @@ internal class DemoInterface
 
             if (MathF.Sin(_totalTime * 10) > 0)
             {
+                var text = "Press ESC to stop";
+                if (isRecording)
+                {
+                    text = "Press ^P to dump recording";
+                }
+                
+                painter.DrawStringAtPosition(consoleFont, text,
+                    new Point(
+                        Client.Window.Size.X
+                        - (int) consoleFont.MeasureString(text).X
+                        , spriteSheet.GetSourceRectForFrame(0).Height),
+                    new DrawSettings());
+
                 spriteSheet.DrawFrame(
                     painter,
                     frame,
@@ -44,12 +58,12 @@ internal class DemoInterface
         {
             if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.Demo.IsPlaying)
             {
-                Client.Demo.BeginPlayback();
+                Client.Demo.DumpRecording();
             }
 
             if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.Demo.IsPlaying)
             {
-                Client.Demo.DumpRecording();
+                Client.Demo.BeginPlayback();
             }
         }
 

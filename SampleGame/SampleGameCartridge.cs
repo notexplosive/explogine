@@ -79,7 +79,6 @@ public class SampleGameCartridge : BasicGameCartridge
 
     public override void SetupFormalParameters(ParsedCommandLineArguments args)
     {
-        args.RegisterParameter<int>("level");
     }
 
     public override IEnumerable<LoadEvent> LoadEvents(Painter painter)
@@ -105,16 +104,22 @@ public class SampleGameCartridge : BasicGameCartridge
 
             painter.BeginSpriteBatch(SamplerState.LinearWrap);
             painter.Clear(Color.Transparent);
-            var noise = new Noise(0);
+            var noise = new Noise(Client.Random.Seed);
 
             for (var x = 0; x < canvas.Size.X; x++)
             {
                 for (var y = 0; y < canvas.Size.Y; y++)
                 {
+                    var colors = new[]
+                    {
+                        Color.LightGreen, Color.LightGreen, Color.LightGreen, Color.LightGreen, Color.LightGreen,
+                        Color.DarkBlue
+                    };
+                    var randomColor = colors[noise.NoiseAt(x).PositiveIntAt(y, colors.Length)];
                     painter.DrawAtPosition(Client.Assets.GetTexture("white-pixel"), new Vector2(x, y), Scale2D.One,
                         new DrawSettings
                         {
-                            Color = new Color(noise.NoiseAt(0).NoiseAt(x).ByteAt(y), noise.NoiseAt(1).NoiseAt(x).ByteAt(y), noise.NoiseAt(2).NoiseAt(x).ByteAt(y))
+                            Color = randomColor
                         });
                 }
             }

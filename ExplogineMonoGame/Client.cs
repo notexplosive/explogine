@@ -1,10 +1,10 @@
-﻿using ExplogineCore;
+﻿using System;
+using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Debugging;
 using ExplogineMonoGame.Input;
-using ExplogineMonoGame.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +19,7 @@ public static class Client
 
     internal static readonly CartridgeChain CartridgeChain = new();
     public static readonly OnceReady FinishedLoading = new();
+    public static readonly OnceReady InitializedGraphics = new();
     public static readonly OnceReady Exited = new();
 
     /// <summary>
@@ -51,7 +52,7 @@ public static class Client
     /// <summary>
     ///     The Args passed via command line.
     /// </summary>
-    public static ParsedCommandLineArguments ParsedCommandLineArguments { get; private set; } = new();
+    public static ParsedCommandLineArguments CommandLineArgs { get; private set; } = new();
 
     /// <summary>
     ///     Gives you access to static Assets (aka: Content), as well as dynamic assets.
@@ -77,6 +78,8 @@ public static class Client
     ///     Debug tools.
     /// </summary>
     public static ClientDebug Debug { get; } = new();
+
+    public static ClientRandom Random { get; } = new();
 
     /// <summary>
     ///     The Canvas that renders the actual game content to the screen.
@@ -106,7 +109,8 @@ public static class Client
         Client.CartridgeChain.LoadedLastCartridge += Client.Demo.OnStartup;
 
         // Setup Command Line
-        Client.ParsedCommandLineArguments = new ParsedCommandLineArguments(args);
+        Client.CommandLineArgs = new ParsedCommandLineArguments(args);
+        Client.SetupInitialCommandLineParams();
 
         // Setup Game
         using var game = new NotGame();
@@ -120,6 +124,26 @@ public static class Client
         game.Run();
     }
 
+    private static void SetupInitialCommandLineParams()
+    {
+        Client.CommandLineArgs.RegisterParameter<int>("randomSeed");
+        Client.CommandLineArgs.RegisterParameter<bool>("fullscreen");
+
+        if (Client.CommandLineArgs.HasValue("randomSeed"))
+        {
+            Client.Random.Seed = Client.CommandLineArgs.GetValue<int>("randomSeed");
+        }
+        else
+        {
+            Client.Random.Seed = (int) DateTime.Now.ToFileTimeUtc();
+        }
+
+        if (Client.CommandLineArgs.GetValue<bool>("fullscreen"))
+        {
+            Client.InitializedGraphics.Add(() => Client.Window.SetFullscreen(true));
+        }
+    }
+
     public static void Exit()
     {
         Client.currentGame.Exit();
@@ -131,15 +155,16 @@ public static class Client
         Client.RenderCanvas.Setup();
         Client.Window.Resized += Client.RenderCanvas.ResizeCanvas;
         Client.Window.Setup(game.Window, Client.startingConfig);
+        Client.InitializedGraphics.BecomeReady();
     }
 
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
-        Client.CartridgeChain.ValidateParameters(Client.ParsedCommandLineArguments);
+        Client.CartridgeChain.ValidateParameters(Client.CommandLineArgs);
 
-        foreach (var arg in Client.ParsedCommandLineArguments.UnboundArgs())
+        foreach (var arg in Client.CommandLineArgs.UnboundArgs())
         {
             Client.Debug.Log($"Was passed unregistered arg: {arg}");
         }

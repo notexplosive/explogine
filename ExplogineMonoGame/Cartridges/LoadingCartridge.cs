@@ -15,7 +15,7 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
     private readonly Canvas _loadingBarGraphic;
     private readonly Canvas _progressSliceGraphic;
     private bool _doneLoading;
-    private float _endingDelay;
+    private float _endingDelay = 0.25f;
     private float _startingDelay = 0.25f;
     private readonly Font _font;
 
@@ -104,7 +104,6 @@ public class LoadingCartridge : ICartridge, ICommandLineParameterProvider
 
     public void SetupFormalParameters(ParsedCommandLineArguments args)
     {
-        args.RegisterParameter<bool>("fullscreen");
         args.RegisterParameter<string>("demo");
     }
 

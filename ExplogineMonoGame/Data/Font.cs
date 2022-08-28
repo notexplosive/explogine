@@ -19,7 +19,7 @@ public class Font
 
     public int LineSpacing { get; }
 
-    public Vector2 MeasureString(string text, float? restrictedWidth)
+    public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
         if (!restrictedWidth.HasValue)
         {

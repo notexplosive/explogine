@@ -47,9 +47,14 @@ public class Demo
 
     public void DumpRecording()
     {
+        var fileName = "default.demo";
+        Client.Debug.Log($"Recording dumped {fileName}");
         var stringBuilder = new StringBuilder();
         string? mostRecent = null;
         var duplicateCount = 0;
+
+        stringBuilder.AppendLine($"seed:{Client.Random.Seed}");
+
         foreach (var record in _records)
         {
             var serial = record.Serialize();
@@ -71,9 +76,9 @@ public class Demo
             mostRecent = serial;
         }
 
-        Client.FileSystem.WriteFileToWorkingDirectory("default.demo", stringBuilder.ToString());
+        Client.FileSystem.WriteFileToWorkingDirectory(fileName, stringBuilder.ToString());
     }
-    
+
     public void LoadFile(string path)
     {
         var file = Client.FileSystem.ReadTextFileInWorkingDirectory(path);
@@ -85,13 +90,13 @@ public class Demo
     {
         var startIndex = 0;
         var length = 0;
-        InputSnapshot mostRecent = new InputSnapshot();
-        
-        for (int currentIndex = 0; currentIndex < text.Length; currentIndex++)
-        {
-            bool isAtNewline = true;
+        var mostRecent = new InputSnapshot();
 
-            for(int offset = 0; offset < Environment.NewLine.Length; offset++)
+        for (var currentIndex = 0; currentIndex < text.Length; currentIndex++)
+        {
+            var isAtNewline = true;
+
+            for (var offset = 0; offset < Environment.NewLine.Length; offset++)
             {
                 var currentIndexWithOffset = currentIndex + offset;
                 if (text.Length <= currentIndexWithOffset)
@@ -99,6 +104,7 @@ public class Demo
                     isAtNewline = false;
                     break;
                 }
+
                 if (text[currentIndexWithOffset] != Environment.NewLine[offset])
                 {
                     isAtNewline = false;
@@ -106,15 +112,20 @@ public class Demo
             }
 
             length++;
-            
+
             if (isAtNewline)
             {
                 var line = text.Substring(startIndex, length);
 
-                if (line.StartsWith("wait"))
+                if (line.StartsWith("seed"))
+                {
+                    var seed = int.Parse(line.Split(':')[1]);
+                    Client.Random.Seed = seed;
+                }
+                else if (line.StartsWith("wait"))
                 {
                     var waitFrames = int.Parse(line.Split(':')[1]);
-                    for (int i = 0; i < waitFrames; i++)
+                    for (var i = 0; i < waitFrames; i++)
                     {
                         _records.Add(mostRecent);
                     }
@@ -139,22 +150,15 @@ public class Demo
         }
 
         Stop();
-        
+
         // If we just hit the end of the recording, feed in the latest human input
         return InputSnapshot.Human;
-    }
-
-    private enum DemoState
-    {
-        Stopped,
-        Recording,
-        Playing
     }
 
     public InputFrameState ProcessInput(InputFrameState input)
     {
         InputFrameState result;
-        
+
         if (Client.Demo.IsPlaying)
         {
             var state = GetNextRecordedState();
@@ -176,10 +180,10 @@ public class Demo
 
     public void OnStartup()
     {
-        var demoVal = Client.ParsedCommandLineArguments.GetValue<string>("demo");
+        var demoVal = Client.CommandLineArgs.GetValue<string>("demo");
         if (!string.IsNullOrEmpty(demoVal))
         {
-            switch(demoVal)
+            switch (demoVal)
             {
                 case "record":
                     BeginRecording();
@@ -190,5 +194,12 @@ public class Demo
                     break;
             }
         }
+    }
+
+    private enum DemoState
+    {
+        Stopped,
+        Recording,
+        Playing
     }
 }

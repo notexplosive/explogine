@@ -4,12 +4,13 @@ namespace ExplogineCore;
 
 public class ParsedCommandLineArguments
 {
+    private readonly HashSet<string> _usedArgs = new();
     private readonly Dictionary<string, string> _givenArgsTable = new();
     private readonly Dictionary<string, object> _registeredParameters = new();
 
     public ParsedCommandLineArguments(params string[] args)
     {
-        bool HasValue(string s)
+        bool CommandHasValue(string s)
         {
             return s.Contains('=');
         }
@@ -25,7 +26,7 @@ public class ParsedCommandLineArguments
             if (IsCommand(sanitizedArg))
             {
                 var argWithoutDashes = sanitizedArg.Remove(0, 2);
-                if (HasValue(argWithoutDashes))
+                if (CommandHasValue(argWithoutDashes))
                 {
                     var split = argWithoutDashes.Split('=');
                     _givenArgsTable.Add(split[0], split[1]);
@@ -59,6 +60,7 @@ public class ParsedCommandLineArguments
         var sanitizedParameterName = parameterName.ToLower();
         if (_givenArgsTable.ContainsKey(sanitizedParameterName))
         {
+            _usedArgs.Add(sanitizedParameterName);
             value = _givenArgsTable[sanitizedParameterName];
             _givenArgsTable.Remove(sanitizedParameterName);
         }
@@ -105,6 +107,12 @@ public class ParsedCommandLineArguments
         throw new Exception("Unsupported type");
     }
 
+    public bool HasValue(string name)
+    {
+        var sanitizedName = name.ToLower();
+        return _usedArgs.Contains(sanitizedName);
+    }
+    
     public T GetValue<T>(string name)
     {
         var sanitizedName = name.ToLower();
