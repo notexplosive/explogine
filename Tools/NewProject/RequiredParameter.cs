@@ -6,9 +6,8 @@ public class RequiredParameter<T> : RequiredParameter
 {
     private readonly string _description;
 
-    public RequiredParameter(string name, string description)
+    public RequiredParameter(string name, string description) : base(name)
     {
-        Name = name;
         _description = description;
     }
 
@@ -25,7 +24,12 @@ public class RequiredParameter<T> : RequiredParameter
 
 public abstract class RequiredParameter
 {
-    public string Name { get; protected set; }
+    protected RequiredParameter(string name)
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
     public abstract void Bind(CommandLineParametersWriter writer);
     public abstract string HelpString();
 }
