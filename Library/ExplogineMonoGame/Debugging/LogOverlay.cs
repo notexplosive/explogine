@@ -73,6 +73,7 @@ internal class LogOverlay : ILogCapture
             var color = Color.White;
 
             painter.DrawStringWithinRectangle(Font, message.Text, textRect,
+                Alignment.TopLeft, 
                 new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
 
             textRect.Location += new Point(0, (int) message.Size.Y);

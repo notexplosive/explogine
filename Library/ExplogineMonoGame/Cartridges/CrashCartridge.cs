@@ -49,12 +49,13 @@ public class CrashCartridge : ICartridge
         }
 
         painter.BeginSpriteBatch(SamplerState.LinearWrap, Matrix.Identity);
-        
+
         painter.Clear(Color.DarkBlue);
 
         painter.DrawStringAtPosition(_titleFont, "heck! :(", Point.Zero, new DrawSettings());
-        
-        painter.DrawStringWithinRectangle(_font, _reportText, new Rectangle(new Point(0,_titleFont.LineSpacing), Client.Window.Size),
+
+        painter.DrawStringWithinRectangle(_font, _reportText,
+            new Rectangle(new Point(0, _titleFont.LineSpacing), Client.Window.Size), Alignment.TopLeft,
             new DrawSettings());
 
         painter.EndSpriteBatch();
@@ -64,6 +65,6 @@ public class CrashCartridge : ICartridge
     {
         return false;
     }
-    
+
     public CartridgeConfig CartridgeConfig { get; } = new();
 }

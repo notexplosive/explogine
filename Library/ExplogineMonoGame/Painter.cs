@@ -106,14 +106,18 @@ public class Painter
         DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
     }
 
-    public void DrawStringWithinRectangle(Font font, string text, Rectangle rectangle, DrawSettings settings)
+    public void DrawStringWithinRectangle(Font font, string text, Rectangle rectangle, Alignment alignment,
+        DrawSettings settings)
     {
-        var brokenText = font.Linebreak(text, rectangle.Width);
+        var restrictedString = font.GetRestrictedString(text, rectangle.Width);
+        var size = restrictedString.Size;
+        var relativePosition = alignment.GetRelativePositionOfElement(rectangle.Size.ToVector2(), size);
+        var brokenText = restrictedString.Text;
         var origin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
         _spriteBatch.DrawString(
             font.SpriteFont,
             brokenText,
-            rectangle.Location.ToVector2(),
+            (rectangle.Location.ToVector2() + relativePosition).ToPoint().ToVector2(), // gross truncating
             settings.Color,
             settings.Angle,
             origin,

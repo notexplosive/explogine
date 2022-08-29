@@ -34,7 +34,7 @@ public class Font
         return GetRestrictedString(text, restrictedWidth).Text;
     }
 
-    private RestrictedString GetRestrictedString(string text, float restrictedWidth)
+    public RestrictedString GetRestrictedString(string text, float restrictedWidth)
     {
         var currentLineWidth = 0f;
         var maxWidth = 0f;
@@ -104,7 +104,7 @@ public class Font
             new Vector2(MathF.Max(maxWidth, currentLineWidth), height));
     }
 
-    private readonly record struct RestrictedString(string Text, Vector2 Size);
+    public readonly record struct RestrictedString(string Text, Vector2 Size);
 
     public Font WithFontSize(int size)
     {
