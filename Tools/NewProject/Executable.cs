@@ -60,11 +60,18 @@ public class Executable
                 Path.Join(projectDirectory, $"{projectName}.sln")
             );
         });
-        Phase("Copying template project", () =>
+        Phase("Copying Template project", () =>
         {
             CopyDirectory(
                 Path.Join(engineDirectory, "Templates", "TemplateGame"),
                 Path.Join(projectDirectory, projectName)
+            );
+        });
+        Phase("Copying Assets project", () =>
+        {
+            CopyDirectory(
+                Path.Join(engineDirectory, "Library", "Assets"),
+                Path.Join(projectDirectory, "Assets")
             );
         });
         Phase("Renaming copied .csproj", () =>

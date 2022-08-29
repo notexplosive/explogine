@@ -29,5 +29,5 @@
         <Message Text="Restoring dotnet tools" Importance="High" />
         <Exec Command="dotnet tool restore" />
     </Target>
-    <Import Project="..\explogine\Library\Assets\Assets.projitems" Label="Shared" />
+    <Import Project="..\Assets\Assets.projitems" Label="Shared" />
 </Project>

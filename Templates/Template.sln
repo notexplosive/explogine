@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
@@ -8,8 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{B91377D3-0DFD-4684-B6EC-5B648767A985}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineCore", "explogine\Library\ExplogineCore\ExplogineCore.csproj", "{AA733551-C51A-41F6-96BC-EBB148BEF24B}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Assets", "explogine\Library\Assets\Assets.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineDesktop", "explogine\Library\ExplogineDesktop\ExplogineDesktop.csproj", "{3A1E826A-7E2B-4BBD-AC9B-37032176AD3F}"
 EndProject
@@ -24,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineCoreTests", "explogine\Tests\ExplogineCoreTests\ExplogineCoreTests.csproj", "{FB8DC70E-D288-43C8-BD73-63545DA56B13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestExTween", "explogine\Tests\TestExTween\TestExTween.csproj", "{DA09B420-9E13-40E7-921C-ED02C143A2B5}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Assets", "Assets\Assets.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,7 +66,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B91377D3-0DFD-4684-B6EC-5B648767A985} = {2AAC9F48-EAE0-4DF3-A649-712824C3E893}
 		{AA733551-C51A-41F6-96BC-EBB148BEF24B} = {B91377D3-0DFD-4684-B6EC-5B648767A985}
-		{A0CDBD0E-3A41-42B7-9425-A838BC2C7383} = {B91377D3-0DFD-4684-B6EC-5B648767A985}
 		{3A1E826A-7E2B-4BBD-AC9B-37032176AD3F} = {B91377D3-0DFD-4684-B6EC-5B648767A985}
 		{EA1DD80D-54AF-4B34-AE8D-C701642256C5} = {B91377D3-0DFD-4684-B6EC-5B648767A985}
 		{784A80D7-A014-4D6E-A87B-80B639DB0777} = {B91377D3-0DFD-4684-B6EC-5B648767A985}
