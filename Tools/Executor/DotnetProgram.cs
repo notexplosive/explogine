@@ -49,9 +49,9 @@ public class DotnetProgram : ExternalProgram
         return RunWithArgs(ProgramOutputLevel.SuppressFromConsole, "--version").WasSuccessful;
     }
 
-    public void AddToSln(ProgramOutputLevel outputLevel, string path)
+    public ProgramOutput AddToSln(ProgramOutputLevel outputLevel, string pathToCsProj)
     {
-        RunWithArgs(outputLevel, "sln", "add", path);
+        return RunWithArgs(outputLevel, "sln", "add", pathToCsProj);
     }
 
     public void NewSln(ProgramOutputLevel outputLevel)

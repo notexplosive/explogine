@@ -20,10 +20,11 @@ public class Executable
         GitProgram git = null!;
         string engineDirectory = null!;
         string projectDirectory = null!;
+        string projectName = null!;
         Phase("Checking parameters", () => CollectParameters(commandLineParameters));
         Phase("Creating directory", () =>
         {
-            var projectName = commandLineParameters.Args.GetValue<string>("name");
+            projectName = commandLineParameters.Args.GetValue<string>("name");
             Directory.CreateDirectory(projectName);
             projectDirectory = Path.Join(".", projectName);
             git = new GitProgram(projectDirectory, _logger);
@@ -56,9 +57,58 @@ public class Executable
         {
             File.Copy(
                 Path.Join(engineDirectory, "Templates", "Template.sln"),
-                Path.Join(projectDirectory, $"{commandLineParameters.Args.GetValue<string>("name")}.sln")
+                Path.Join(projectDirectory, $"{projectName}.sln")
             );
         });
+        Phase("Copying template project", () =>
+        {
+            CopyDirectory(
+                Path.Join(engineDirectory, "Templates", "TemplateGame"),
+                Path.Join(projectDirectory, projectName)
+            );
+        });
+        Phase("Renaming copied .csproj", () =>
+        {
+            File.Move(
+                Path.Join(projectDirectory, projectName, "TemplateGame.csproj"),
+                Path.Join(projectDirectory, projectName, $"{projectName}.csproj")
+            );
+        });
+        Phase($"Adding project to {projectName}.csproj solution", () =>
+        {
+            var result = dotnet.AddToSln(ProgramOutputLevel.SuppressFromConsole, projectName);
+            if (!result.WasSuccessful)
+            {
+                Error($"Failed to add {projectName} to sln");
+            }
+        });
+        
+        LogErrors();
+    }
+
+    private void CopyDirectory(string source, string destination)
+    {
+        var sourceDirectory = new DirectoryInfo(source);
+
+        if (!sourceDirectory.Exists)
+        {
+            Error($"Cannot copy from {sourceDirectory.FullName} because it does not exist");
+            return;
+        }
+
+        var subDirectories = sourceDirectory.GetDirectories();
+        Directory.CreateDirectory(destination);
+
+        foreach (var file in sourceDirectory.GetFiles())
+        {
+            var targetFilePath = Path.Combine(destination, file.Name);
+            file.CopyTo(targetFilePath);
+        }
+
+        foreach (var subDirectory in subDirectories)
+        {
+            CopyDirectory(subDirectory.FullName, Path.Combine(destination, subDirectory.Name));
+        }
     }
 
     private void Phase(string message, Action phase)
@@ -75,11 +125,16 @@ public class Executable
         }
         else
         {
-            _terminated = true;
-            foreach (var error in _allErrors)
-            {
-                _logger.Error(error);
-            }
+            LogErrors();
+        }
+    }
+
+    private void LogErrors()
+    {
+        _terminated = true;
+        foreach (var error in _allErrors)
+        {
+            _logger.Error(error);
         }
     }
 
@@ -95,7 +150,7 @@ public class Executable
 
         foreach (var paramName in requiredParamNames)
         {
-            if(!commandLineParameters.Args.HasValue(paramName))
+            if (!commandLineParameters.Args.HasValue(paramName))
             {
                 Error($"Missing parameter {paramName}");
             }
