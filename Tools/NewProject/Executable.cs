@@ -1,7 +1,7 @@
 ﻿using Executor;
 using ExplogineCore;
 
-namespace ExplogineTemplateBuilder;
+namespace NewProject;
 
 public class Executable
 {

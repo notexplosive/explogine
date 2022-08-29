@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleGame", "Examples\Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executor", "Tools\Executor\Executor.csproj", "{F979CDC5-CCDF-4EBE-A53D-B3AB50E95CB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplogineTemplateBuilder", "Tools\ExplogineTemplateBuilder\ExplogineTemplateBuilder.csproj", "{D3B3F577-4FAF-4080-91C4-F76F3D0C22DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewProject", "Tools\NewProject\NewProject.csproj", "{D3B3F577-4FAF-4080-91C4-F76F3D0C22DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

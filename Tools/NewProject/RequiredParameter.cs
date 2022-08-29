@@ -1,6 +1,6 @@
 using ExplogineCore;
 
-namespace ExplogineTemplateBuilder;
+namespace NewProject;
 
 public class RequiredParameter<T> : RequiredParameter
 {

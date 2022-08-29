@@ -1,5 +1,5 @@
 ﻿using ExplogineCore;
-using ExplogineTemplateBuilder;
+using NewProject;
 
 var commandLineParameters = new CommandLineParameters(args);
 
