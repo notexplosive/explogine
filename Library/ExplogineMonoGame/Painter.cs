@@ -9,6 +9,7 @@ public class Painter
 {
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
+    private Texture2D? _pixelAsset;
     private bool _spriteBatchIsInProgress;
 
     public Painter(GraphicsDevice graphicsDevice)
@@ -16,6 +17,8 @@ public class Painter
         _graphicsDevice = graphicsDevice;
         _spriteBatch = new SpriteBatch(graphicsDevice);
     }
+
+    public Texture2D PixelAsset => _pixelAsset ??= Client.Assets.GetTexture("white-pixel");
 
     public void Clear(Color color)
     {
@@ -55,6 +58,11 @@ public class Painter
         }
     }
 
+    public void DrawRectangle(Rectangle rectangle, DrawSettings drawSettings)
+    {
+        DrawAsRectangle(PixelAsset, rectangle, drawSettings);
+    }
+
     public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle)
     {
         DrawAsRectangle(texture, destinationRectangle, new DrawSettings());
@@ -78,18 +86,18 @@ public class Painter
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
-    
+
     public void DrawScaledStringAtPosition(Font font, string text, Point position, Scale2D scale, DrawSettings settings)
     {
         _spriteBatch.DrawString(
-            font.SpriteFont, 
-            text, 
-            position.ToVector2(), 
-            settings.Color, 
+            font.SpriteFont,
+            text,
+            position.ToVector2(),
+            settings.Color,
             settings.Angle,
             settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
-            scale.Value * font.ScaleFactor, 
-            settings.FlipEffect, 
+            scale.Value * font.ScaleFactor,
+            settings.FlipEffect,
             settings.Depth);
     }
 
@@ -103,14 +111,14 @@ public class Painter
         var brokenText = font.Linebreak(text, rectangle.Width);
         var origin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
         _spriteBatch.DrawString(
-            font.SpriteFont, 
-            brokenText, 
-            rectangle.Location.ToVector2(), 
+            font.SpriteFont,
+            brokenText,
+            rectangle.Location.ToVector2(),
             settings.Color,
             settings.Angle,
-            origin, 
-            Vector2.One * font.ScaleFactor, 
-            settings.FlipEffect, 
+            origin,
+            Vector2.One * font.ScaleFactor,
+            settings.FlipEffect,
             settings.Depth);
     }
 

@@ -59,9 +59,4 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
             return canvas.AsTextureAsset();
         });
     }
-
-    public void SetupLoadEvents(Loader loader)
-    {
-        loader.AddLoadEvents(this);
-    }
 }
