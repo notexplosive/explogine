@@ -4,5 +4,5 @@ namespace ExplogineMonoGame.Cartridges;
 
 public interface ILoadEventProvider
 {
-    public IEnumerable<LoadEvent> LoadEvents(Painter painter);
+    public IEnumerable<LoadEvent?> LoadEvents(Painter painter);
 }

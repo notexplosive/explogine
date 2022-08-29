@@ -170,7 +170,10 @@ public class Loader
     {
         foreach (var loadEvent in provider.LoadEvents(Client.Graphics.Painter))
         {
-            AddLoadEvent(loadEvent);
+            if (loadEvent.HasValue)
+            {
+                AddLoadEvent(loadEvent.Value);
+            }
         }
     }
 }
