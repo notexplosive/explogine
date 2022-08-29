@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Debugging;
 
-public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParameterProvider
+public class DebugCartridge : ICartridge, ILoadEventProvider
 {
     private readonly DemoInterface _demoInterface = new();
     private readonly FrameStep _frameStep = new();
@@ -23,11 +23,12 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
     {
         Client.Debug.Output.PushToStack(_logOverlay);
 
-#if DEBUG
-        Client.Debug.Level = DebugLevel.Passive;
-        Client.Debug.Log("~~ Debug Build ~~");
-        _useSnapshotTimer = true;
-#endif
+        if (Client.Debug.LaunchedAsDebugMode())
+        {
+            Client.Debug.Log("~~ Debug Build ~~");
+            _useSnapshotTimer = true;
+            Client.Debug.Level = DebugLevel.Passive;
+        }
 
         if (Client.Args.GetValue<bool>("skipSnapshot"))
         {
@@ -35,10 +36,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
             Client.Debug.Log("Snapshot timer disabled");
         }
 
-        if (Client.Args.GetValue<bool>("debug"))
-        {
-            Client.Debug.Level = DebugLevel.Passive;
-        }
+        
     }
 
     public void Update(float dt)
@@ -78,13 +76,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, ICommandLineParame
         return false;
     }
 
-    public void AddCommandLineParameters(CommandLineParametersWriter parameters)
-    {
-        parameters.RegisterParameter<bool>("debug");
-        parameters.RegisterParameter<bool>("skipSnapshot");
-    }
-
-    public IEnumerable<LoadEvent> LoadEvents(Painter painter)
+    public IEnumerable<LoadEvent?> LoadEvents(Painter painter)
     {
         yield return new LoadEvent("demo-indicators",
             () => new GridBasedSpriteSheet("engine/demo-indicators", new Point(67, 23)));

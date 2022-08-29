@@ -16,6 +16,9 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         parameters.RegisterParameter<bool>("fullscreen");
         parameters.RegisterParameter<string>("demo");
         parameters.RegisterParameter<bool>("help");
+        parameters.RegisterParameter<bool>("skipIntro");
+        parameters.RegisterParameter<bool>("debug");
+        parameters.RegisterParameter<bool>("skipSnapshot");
     }
 
     public void ExecuteCommandLineArgs(CommandLineArguments args)
@@ -40,7 +43,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         }
     }
 
-    public IEnumerable<LoadEvent> LoadEvents(Painter painter)
+    public IEnumerable<LoadEvent?> LoadEvents(Painter painter)
     {
         yield return new LoadEvent("white-pixel", () =>
         {

@@ -18,6 +18,20 @@ public class ClientDebug
     public bool IsPassive => Level == DebugLevel.Passive || IsActive;
     public FileLogCapture LogFile { get; }
 
+    public bool LaunchedAsDebugMode()
+    {
+        if (Client.Args.HasValue("debug"))
+        {
+            return Client.Args.GetValue<bool>("debug");
+        }
+
+#if DEBUG
+        return true;
+#else
+        return false;
+#endif
+    }
+
     public void Log(object message, params object[] paramsObjects)
     {
         var output = new StringBuilder();

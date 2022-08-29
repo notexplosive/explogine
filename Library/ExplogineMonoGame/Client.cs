@@ -53,7 +53,7 @@ public static class Client
     ///     Args passed via command line
     /// </summary>
     public static CommandLineArguments Args => Client.commandLineParameters.Args;
-    
+
     /// <summary>
     ///     Gives you access to static Assets (aka: Content), as well as dynamic assets.
     /// </summary>
@@ -117,8 +117,14 @@ public static class Client
         Client.Essentials.AddCommandLineParameters(Client.commandLineParameters.Writer);
         Client.Essentials.ExecuteCommandLineArgs(Client.commandLineParameters.Args);
 
+        var skipIntro = Client.commandLineParameters.Args.GetValue<bool>("skipIntro") ||
+                        Client.Debug.LaunchedAsDebugMode();
         // Setup Cartridges
-        Client.CartridgeChain.Append(new IntroCartridge());
+        if (!skipIntro)
+        {
+            Client.CartridgeChain.Append(new IntroCartridge());
+        }
+
         Client.CartridgeChain.Append(gameCartridge);
         Client.CartridgeChain.LoadedLastCartridge += Client.Demo.OnStartup;
 
