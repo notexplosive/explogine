@@ -89,6 +89,11 @@ public class Executable
                 Error($"Failed to add {projectName} to sln");
             }
         });
+        Phase("Writing initial commit", () =>
+        {
+            git.AddAll(ProgramOutputLevel.SuppressFromConsole);
+            git.CommitWithMessage(ProgramOutputLevel.SuppressFromConsole,"(automated) Initial Commit");
+        });
         
         LogErrors();
     }

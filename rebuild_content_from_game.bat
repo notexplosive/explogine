@@ -1,1 +1,1 @@
-dotnet run --project .\explogine\Tools\AssetBuilder\AssetBuilder.csproj -- .\explogine\Library\Assets\Content\Content.mgcb
+dotnet run --project .\explogine\Tools\AssetBuilder\AssetBuilder.csproj -- .\Assets\Content\Content.mgcb
