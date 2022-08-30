@@ -94,7 +94,7 @@ public class SampleGameCartridge : BasicGameCartridge
         parameters.RegisterParameter<string>("echo");
     }
 
-    public override IEnumerable<LoadEvent> LoadEvents(Painter painter)
+    public override IEnumerable<LoadEvent?> LoadEvents(Painter painter)
     {
         yield return new LoadEvent("noise", () =>
         {
