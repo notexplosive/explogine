@@ -2,11 +2,11 @@
 
 public class SequenceTween : TweenCollection, ITween
 {
-    private int currentItemIndex;
+    private int _currentItemIndex;
 
     public SequenceTween()
     {
-        currentItemIndex = 0;
+        _currentItemIndex = 0;
     }
 
     public bool IsLooping { get; set; }
@@ -30,11 +30,11 @@ public class SequenceTween : TweenCollection, ITween
             }
         }
 
-        var overflow = Items[currentItemIndex].Update(dt);
+        var overflow = Items[_currentItemIndex].Update(dt);
 
-        if (Items[currentItemIndex].IsDone())
+        if (Items[_currentItemIndex].IsDone())
         {
-            currentItemIndex++;
+            _currentItemIndex++;
             return Update(overflow);
         }
 
@@ -46,10 +46,10 @@ public class SequenceTween : TweenCollection, ITween
         return IsAtEnd() && !IsLooping;
     }
 
-    public void Reset()
+    public override void Reset()
     {
         ResetAllItems();
-        currentItemIndex = 0;
+        _currentItemIndex = 0;
     }
 
     public ITweenDuration TotalDuration
@@ -91,8 +91,7 @@ public class SequenceTween : TweenCollection, ITween
             }
             else
             {
-                if (itemDuration is KnownTweenDuration exactTweenDuration &&
-                    adjustedTargetTime >= exactTweenDuration)
+                if (itemDuration is KnownTweenDuration exactTweenDuration && adjustedTargetTime >= exactTweenDuration)
                 {
                     adjustedTargetTime -= exactTweenDuration;
                     Items[i].Update(exactTweenDuration);
@@ -100,7 +99,7 @@ public class SequenceTween : TweenCollection, ITween
                 else
                 {
                     Items[i].Update(adjustedTargetTime);
-                    currentItemIndex = i;
+                    _currentItemIndex = i;
                     break;
                 }
             }
@@ -109,7 +108,7 @@ public class SequenceTween : TweenCollection, ITween
 
     private bool IsAtEnd()
     {
-        return currentItemIndex >= Items.Count || Items.Count == 0;
+        return _currentItemIndex >= Items.Count || Items.Count == 0;
     }
 
     public SequenceTween Add(ITween tween)

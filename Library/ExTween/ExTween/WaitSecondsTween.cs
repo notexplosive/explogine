@@ -1,45 +1,44 @@
 ﻿using System;
 
-namespace ExTween
+namespace ExTween;
+
+public class WaitSecondsTween : ITween
 {
-    public class WaitSecondsTween : ITween
+    private readonly float _duration;
+    private float _timer;
+
+    public WaitSecondsTween(float duration)
     {
-        private readonly float duration;
-        private float timer;
+        _duration = duration;
+        _timer = duration;
+    }
 
-        public WaitSecondsTween(float duration)
+    public ITweenDuration TotalDuration => new KnownTweenDuration(_duration);
+
+    public float Update(float dt)
+    {
+        if (IsDone())
         {
-            this.duration = duration;
-            timer = duration;
+            return dt;
         }
 
-        public ITweenDuration TotalDuration => new KnownTweenDuration(duration);
+        _timer -= dt;
 
-        public float Update(float dt)
-        {
-            if (IsDone())
-            {
-                return dt;
-            }
+        return Math.Max(-_timer, 0);
+    }
 
-            timer -= dt;
+    public bool IsDone()
+    {
+        return _timer <= 0;
+    }
 
-            return Math.Max(-timer, 0);
-        }
+    public void Reset()
+    {
+        _timer = _duration;
+    }
 
-        public bool IsDone()
-        {
-            return timer <= 0;
-        }
-
-        public void Reset()
-        {
-            timer = duration;
-        }
-
-        public void JumpTo(float time)
-        {
-            timer = duration - time;
-        }
+    public void JumpTo(float time)
+    {
+        _timer = _duration - time;
     }
 }

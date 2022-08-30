@@ -1,146 +1,129 @@
 ﻿using System;
 
-namespace ExTween
+namespace ExTween;
+
+public class Tween<T> : ITween
 {
-    public interface ITween
+    private readonly Ease.Delegate _ease;
+    private readonly T _targetValue;
+    private readonly Tweenable<T> _tweenable;
+    private T _startingValue;
+
+    public Tween(Tweenable<T> tweenable, T targetValue, float duration, Ease.Delegate ease)
     {
-        public ITweenDuration TotalDuration { get; }
-
-        /// <summary>
-        ///     Updates the tween and returns the overflow.
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns>The amount overflowed, eg: if a tween only had 0.1 seconds left but `dt` was 0.3, there is an overflow of 0.2. </returns>
-        public float Update(float dt);
-
-        public bool IsDone();
-        public void Reset();
-        public void JumpTo(float time);
+        _tweenable = tweenable;
+        _targetValue = targetValue;
+        _ease = ease;
+        _startingValue = tweenable.Value;
+        TotalDuration = new KnownTweenDuration(duration);
+        CurrentTime = 0;
     }
 
-    public class Tween<T> : ITween
+    public float CurrentTime { get; private set; }
+
+    public ITweenDuration TotalDuration { get; }
+
+    public float Update(float dt)
     {
-        private readonly Ease.Delegate ease;
-        private readonly T targetValue;
-        private readonly Tweenable<T> tweenable;
-        private T startingValue;
-
-        public Tween(Tweenable<T> tweenable, T targetValue, float duration, Ease.Delegate ease)
+        if (CurrentTime == 0)
         {
-            this.tweenable = tweenable;
-            this.targetValue = targetValue;
-            this.ease = ease;
-            startingValue = tweenable.Value;
-            TotalDuration = new KnownTweenDuration(duration);
-            CurrentTime = 0;
+            // Re-set the starting value, it might have changed since constructor
+            // (or we might be running the tween a second time)
+            _startingValue = _tweenable.Value;
         }
 
-        public float CurrentTime { get; private set; }
+        CurrentTime += dt;
 
-        public ITweenDuration TotalDuration { get; }
+        var overflow = CurrentTime - TotalDuration.Get();
 
-        public float Update(float dt)
+        if (overflow > 0)
         {
-            if (CurrentTime == 0)
-            {
-                // Re-set the starting value, it might have changed since constructor
-                // (or we might be running the tween a second time)
-                startingValue = tweenable.Value;
-            }
-
-            CurrentTime += dt;
-
-            var overflow = CurrentTime - TotalDuration.Get();
-
-            if (overflow > 0)
-            {
-                CurrentTime -= overflow;
-            }
-
-            ApplyTimeToValue();
-
-            return Math.Max(overflow, 0);
+            CurrentTime -= overflow;
         }
 
-        public bool IsDone()
-        {
-            return CurrentTime >= TotalDuration.Get();
-        }
+        ApplyTimeToValue();
 
-        public void Reset()
-        {
-            CurrentTime = 0;
-        }
-
-        public void JumpTo(float time)
-        {
-            CurrentTime = time;
-            ApplyTimeToValue();
-        }
-
-        private void ApplyTimeToValue()
-        {
-            var percent = CurrentTime / TotalDuration.Get();
-
-            tweenable.Value = tweenable.Lerp(
-                startingValue,
-                targetValue,
-                ease(percent));
-        }
-
-        public override string ToString()
-        {
-            var result = $"({startingValue}) -> ({targetValue}), Progress: ";
-            if (TotalDuration is KnownTweenDuration)
-            {
-                result += $"{(int) (CurrentTime / TotalDuration.Get() * 100)}%";
-            }
-            else
-            {
-                result += "Unknown";
-            }
-
-            result += $" Value: {tweenable.Value}";
-
-            return result;
-        }
+        return Math.Max(overflow, 0);
     }
 
-    public interface ITweenDuration
+    public bool IsDone()
     {
-        public float Get();
+        return CurrentTime >= TotalDuration.Get();
     }
 
-    public readonly struct KnownTweenDuration : ITweenDuration
+    public void Reset()
     {
-        public KnownTweenDuration(float duration)
-        {
-            Value = duration;
-        }
-
-        private float Value { get; }
-
-        public float Get()
-        {
-            return Value;
-        }
-
-        public static implicit operator float(KnownTweenDuration me)
-        {
-            return me.Get();
-        }
-
-        public override string ToString()
-        {
-            return Value.ToString("N4");
-        }
+        CurrentTime = 0;
     }
 
-    public readonly struct UnknownTweenDuration : ITweenDuration
+    public void JumpTo(float time)
     {
-        public float Get()
+        CurrentTime = time;
+        ApplyTimeToValue();
+    }
+
+    private void ApplyTimeToValue()
+    {
+        var percent = CurrentTime / TotalDuration.Get();
+
+        _tweenable.Value = _tweenable.Lerp(
+            _startingValue,
+            _targetValue,
+            _ease(percent));
+    }
+
+    public override string ToString()
+    {
+        var result = $"({_startingValue}) -> ({_targetValue}), Progress: ";
+        if (TotalDuration is KnownTweenDuration)
         {
-            throw new Exception("Value unknown");
+            result += $"{(int) (CurrentTime / TotalDuration.Get() * 100)}%";
         }
+        else
+        {
+            result += "Unknown";
+        }
+
+        result += $" Value: {_tweenable.Value}";
+
+        return result;
+    }
+}
+
+public interface ITweenDuration
+{
+    public float Get();
+}
+
+public readonly struct KnownTweenDuration : ITweenDuration
+{
+    public KnownTweenDuration(float duration)
+    {
+        Value = duration;
+    }
+
+    private float Value { get; }
+
+    public float Get()
+    {
+        return Value;
+    }
+
+    public static implicit operator float(KnownTweenDuration me)
+    {
+        return me.Get();
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("N4");
+    }
+}
+
+public readonly struct UnknownTweenDuration : ITweenDuration
+{
+    public float Get()
+    {
+        throw new Exception("Value unknown");
     }
 }

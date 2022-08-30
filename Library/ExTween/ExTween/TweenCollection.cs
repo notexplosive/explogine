@@ -1,50 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ExTween
+namespace ExTween;
+
+public abstract class TweenCollection
 {
-    public class TweenCollection
+    protected readonly List<ITween> Items = new();
+
+    public int ChildrenWithDurationCount
     {
-        protected readonly List<ITween> Items = new List<ITween>();
-
-        public int ChildrenWithDurationCount
+        get
         {
-            get
-            {
-                var i = 0;
-                foreach (var item in Items)
-                {
-                    if (item.TotalDuration is KnownTweenDuration known && known > 0)
-                    {
-                        i++;
-                    }
-                }
-
-                return i;
-            }
-        }
-
-        protected void ForEachItem(Action<ITween> action)
-        {
+            var i = 0;
             foreach (var item in Items)
             {
-                action(item);
+                if (item.TotalDuration is KnownTweenDuration known && known > 0)
+                {
+                    i++;
+                }
             }
-        }
 
-        public void ResetAllItems()
-        {
-            ForEachItem(item => item.Reset());
+            return i;
         }
+    }
 
-        public void Clear()
+    protected void ForEachItem(Action<ITween> action)
+    {
+        foreach (var item in Items)
         {
-            Items.Clear();
+            action(item);
         }
+    }
 
-        public override string ToString()
-        {
-            return $"TweenCollection[{Items.Count}]";
-        }
+    public void ResetAllItems()
+    {
+        ForEachItem(item => item.Reset());
+    }
+
+    public void Clear()
+    {
+        Reset();
+        Items.Clear();
+    }
+
+    public abstract void Reset();
+
+    public override string ToString()
+    {
+        return $"TweenCollection[{Items.Count}]";
     }
 }

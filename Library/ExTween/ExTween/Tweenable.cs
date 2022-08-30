@@ -1,96 +1,55 @@
-﻿namespace ExTween
+﻿namespace ExTween;
+
+public abstract class Tweenable<T>
 {
-    public abstract class Tweenable<T>
+    public delegate T Getter();
+
+    public delegate void Setter(T value);
+
+    private readonly Getter _getter;
+    private readonly Setter _setter;
+
+    protected Tweenable(T initializedValue)
     {
-        public delegate T Getter();
-
-        public delegate void Setter(T value);
-
-        private readonly Getter getter;
-        private readonly Setter setter;
-
-        protected Tweenable(T initializedValue)
-        {
-            var capturedValue = initializedValue;
-            getter = () => capturedValue;
-            setter = value => capturedValue = value;
-            Value = initializedValue;
-        }
-
-        protected Tweenable(Getter getter, Setter setter)
-        {
-            this.getter = getter;
-            this.setter = setter;
-        }
-
-        public T Value
-        {
-            get => getter();
-            set => setter(value);
-        }
-
-        public static implicit operator T(Tweenable<T> tweenable)
-        {
-            return tweenable.Value;
-        }
-
-        /// <summary>
-        ///     The equivalent of: `startingValue + (targetValue - startingValue) * percent` for the template type.
-        /// </summary>
-        /// <param name="startingValue">Starting value of the interpolation</param>
-        /// <param name="targetValue">Ending value of the interpolation</param>
-        /// <param name="percent">Progress along interpolation from 0f to 1f</param>
-        /// <returns>The interpolated value</returns>
-        public abstract T Lerp(T startingValue, T targetValue, float percent);
-
-        public override string ToString()
-        {
-            if (Value != null)
-            {
-                return $"Tweenable: {Value.ToString()}";
-            }
-
-            return "Tweenable: (null value)";
-        }
+        var capturedValue = initializedValue;
+        _getter = () => capturedValue;
+        _setter = value => capturedValue = value;
+        Value = initializedValue;
     }
 
-    public class TweenableInt : Tweenable<int>
+    protected Tweenable(Getter getter, Setter setter)
     {
-        public TweenableInt() : base(0)
-        {
-        }
-
-        public TweenableInt(int i) : base(i)
-        {
-        }
-
-        public TweenableInt(Getter getter, Setter setter) : base(getter, setter)
-        {
-        }
-
-        public override int Lerp(int startingValue, int targetValue, float percent)
-        {
-            return (int) (startingValue + (targetValue - startingValue) * percent);
-        }
+        _getter = getter;
+        _setter = setter;
     }
 
-    public class TweenableFloat : Tweenable<float>
+    public T Value
     {
-        public TweenableFloat() : base(0)
+        get => _getter();
+        set => _setter(value);
+    }
+
+    public static implicit operator T(Tweenable<T> tweenable)
+    {
+        return tweenable.Value;
+    }
+
+    /// <summary>
+    ///     The equivalent of: `startingValue + (targetValue - startingValue) * percent` for the template type.
+    /// </summary>
+    /// <param name="startingValue">Starting value of the interpolation</param>
+    /// <param name="targetValue">Ending value of the interpolation</param>
+    /// <param name="percent">Progress along interpolation from 0f to 1f</param>
+    /// <returns>The interpolated value</returns>
+    public abstract T Lerp(T startingValue, T targetValue, float percent);
+
+    public override string ToString()
+    {
+        if (Value != null)
         {
+            return $"Tweenable: {Value.ToString()}";
         }
 
-        public TweenableFloat(float i) : base(i)
-        {
-        }
-
-        public TweenableFloat(Getter getter, Setter setter) : base(getter, setter)
-        {
-        }
-
-        public override float Lerp(float startingValue, float targetValue, float percent)
-        {
-            return startingValue + (targetValue - startingValue) * percent;
-        }
+        return "Tweenable: (null value)";
     }
 }
