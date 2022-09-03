@@ -179,11 +179,14 @@ public static class Client
 
     internal static void Update(float dt)
     {
-        Client.HitTesting.Clear();
-        Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
-        Client.Input = Client.Demo.ProcessInput(Client.Input);
-        Client.CartridgeChain.Update(dt);
-        Client.HitTesting.Resolve(Client.Input.Mouse.Position(Client.RenderCanvas.ScreenToCanvas));
+        for (int i = 0; i < Client.Debug.GameSpeed; i++)
+        {
+            Client.HitTesting.Clear();
+            Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
+            Client.Input = Client.Demo.ProcessInput(Client.Input);
+            Client.CartridgeChain.Update(dt);
+            Client.HitTesting.Resolve(Client.Input.Mouse.Position(Client.RenderCanvas.ScreenToCanvas));
+        }
     }
 
     internal static void Draw()

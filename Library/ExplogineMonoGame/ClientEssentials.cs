@@ -15,6 +15,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         parameters.RegisterParameter<int>("randomSeed");
         parameters.RegisterParameter<bool>("fullscreen");
         parameters.RegisterParameter<string>("demo");
+        parameters.RegisterParameter<int>("gameSpeed");
         parameters.RegisterParameter<bool>("help");
         parameters.RegisterParameter<bool>("skipIntro");
         parameters.RegisterParameter<bool>("debug");
@@ -40,6 +41,11 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         if (args.GetValue<bool>("help"))
         {
             Client.Debug.Log(args.HelpOutput());
+        }
+
+        if (args.GetValue<int>("gameSpeed") > 0)
+        {
+            Client.Debug.GameSpeed = args.GetValue<int>("gameSpeed");
         }
     }
 

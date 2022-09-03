@@ -17,6 +17,7 @@ public class ClientDebug
     public bool IsActive => Level == DebugLevel.Active;
     public bool IsPassive => Level == DebugLevel.Passive || IsActive;
     public FileLogCapture LogFile { get; }
+    public int GameSpeed { get; set; } = 1;
 
     public bool LaunchedAsDebugMode()
     {
