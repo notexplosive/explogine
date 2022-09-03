@@ -32,6 +32,7 @@ public class Demo
     public void Stop()
     {
         _demoState = DemoState.Stopped;
+        Client.Debug.GameSpeed = 1;
     }
 
     public void BeginPlayback()

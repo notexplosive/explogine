@@ -72,7 +72,6 @@ internal class DemoInterface
             if (Client.HumanInput.Keyboard.GetButton(Keys.Escape).WasPressed)
             {
                 Client.Demo.Stop();
-                Client.Debug.GameSpeed = 1;
             }
         }
     }
