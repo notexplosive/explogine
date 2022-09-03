@@ -15,7 +15,7 @@ internal class CartridgeChain
     private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
     public bool IsFrozen { get; set; }
 
-    public event Action? LoadedLastCartridge;
+    public event Action? AboutToLoadLastCartridge;
 
     public void Update(float dt)
     {
@@ -53,14 +53,15 @@ internal class CartridgeChain
     private void IncrementCartridge()
     {
         _list.RemoveFirst();
+        
+        if (_list.Last == _list.First)
+        {
+            AboutToLoadLastCartridge?.Invoke();
+        }
+        
         if (HasCurrent)
         {
             CartridgeChain.StartCartridge(Current);
-        }
-
-        if (_list.Last == _list.First)
-        {
-            LoadedLastCartridge?.Invoke();
         }
     }
 

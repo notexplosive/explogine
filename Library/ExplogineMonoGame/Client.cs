@@ -126,7 +126,7 @@ public static class Client
         }
 
         Client.CartridgeChain.Append(gameCartridge);
-        Client.CartridgeChain.LoadedLastCartridge += Client.Demo.OnStartup;
+        Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.OnStartup;
 
         // Setup Game
         using var game = new NotGame();
