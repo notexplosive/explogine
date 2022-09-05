@@ -34,6 +34,59 @@ public readonly struct GamePadFrameState
         return false;
     }
 
+    private bool ThumbstickHit(Vector2 previousPosition, Vector2 currentPosition, Vector2 target, float tolerance)
+    {
+        var wasAtTarget = ApproximatelyEqual(previousPosition, target, tolerance);
+        var isAtTarget = ApproximatelyEqual(currentPosition, target, tolerance);
+
+        return isAtTarget && !wasAtTarget;
+    }
+
+    public bool LeftThumbstickHit(PlayerIndex playerIndex, Vector2 target, float tolerance = 0.05f)
+    {
+        return ThumbstickHit(
+            Previous.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick,
+            Current.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick,
+            target,
+            tolerance
+        );
+    }
+
+    public bool RightThumbstickHit(PlayerIndex playerIndex, Vector2 target, float tolerance = 0.05f)
+    {
+        return ThumbstickHit(
+            Previous.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick,
+            Current.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick,
+            target,
+            tolerance
+        );
+    }
+
+    private bool ApproximatelyEqual(Vector2 a, Vector2 b, float tolerance)
+    {
+        return (a - b).Length() < tolerance;
+    }
+
+    public Vector2 LeftThumbstickPosition(PlayerIndex playerIndex)
+    {
+        return Current.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick;
+    }
+
+    public Vector2 RightThumbstickPosition(PlayerIndex playerIndex)
+    {
+        return Current.GamePadSnapshotOfPlayer(playerIndex).RightThumbstick;
+    }
+
+    public float GetLeftTrigger(PlayerIndex playerIndex)
+    {
+        return Current.GamePadSnapshotOfPlayer(playerIndex).GamePadLeftTrigger;
+    }
+
+    public float GetRightTrigger(PlayerIndex playerIndex)
+    {
+        return Current.GamePadSnapshotOfPlayer(playerIndex).GamePadRightTrigger;
+    }
+
     public bool IsAnyButtonDownOnAnyGamePad()
     {
         return IsAnyButtonDown(PlayerIndex.One) || IsAnyButtonDown(PlayerIndex.Two) ||
