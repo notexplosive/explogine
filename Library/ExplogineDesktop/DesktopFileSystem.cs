@@ -7,18 +7,17 @@ public class DesktopFileSystem : IFileSystem
 {
     public string ContentPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Client.ContentBaseDirectory);
 
-    public List<string> GetFilesAtContentDirectory(string targetDirectory, string extension = "*")
+    public List<string> GetFilesAtDirectory(string targetFullPath, string extension = "*")
     {
         var result = new List<string>();
 
-        var contentPath = ContentPath;
-        var targetFullPath = Path.Join(contentPath, targetDirectory);
+        
         var infoAtTargetPath = new DirectoryInfo(targetFullPath);
         if (!infoAtTargetPath.Exists)
         {
-            throw new DirectoryNotFoundException($"Missing content directory {contentPath}");
+            throw new DirectoryNotFoundException($"Missing content directory {targetFullPath}");
         }
-
+        
         var files = infoAtTargetPath.GetFiles("*." + extension);
         foreach (var file in files)
         {
@@ -28,7 +27,7 @@ public class DesktopFileSystem : IFileSystem
         var directories = infoAtTargetPath.GetDirectories();
         foreach (var directory in directories)
         {
-            var subDirectoryResults = GetFilesAtContentDirectory(Path.Join(targetDirectory, directory.Name), extension);
+            var subDirectoryResults = GetFilesAtDirectory(Path.Join(targetFullPath, directory.Name), extension);
 
             foreach (var fileName in subDirectoryResults)
             {

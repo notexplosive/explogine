@@ -2,7 +2,7 @@
 
 public class EmptyFileSystem : IFileSystem
 {
-    public List<string> GetFilesAtContentDirectory(string targetDirectory, string extension)
+    public List<string> GetFilesAtDirectory(string targetDirectory, string extension)
     {
         return new List<string>();
     }
