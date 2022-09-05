@@ -14,4 +14,9 @@ public static class ColorExtensions
 
         return resultColor;
     }
+
+    public static Color FromRgbHex(uint hex)
+    {
+        return new Color((byte) ((hex & 0xFF0000) >> 16), (byte) ((hex & 0x00FF00) >> 8), (byte) (hex & 0x0000FF));
+    }
 }
