@@ -42,7 +42,19 @@ public readonly struct GamePadFrameState
         return isAtTarget && !wasAtTarget;
     }
 
-    public bool LeftThumbstickHit(PlayerIndex playerIndex, Vector2 target, float tolerance = 0.05f)
+    private const float Tolerance = 0.05f;
+    
+    public bool LeftThumbstickAt(PlayerIndex playerIndex, Vector2 target, float tolerance = GamePadFrameState.Tolerance)
+    {
+        return ApproximatelyEqual(Current.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick, target, tolerance);
+    }
+    
+    public bool RightThumbstickAt(PlayerIndex playerIndex, Vector2 target, float tolerance = GamePadFrameState.Tolerance)
+    {
+        return ApproximatelyEqual(Current.GamePadSnapshotOfPlayer(playerIndex).RightThumbstick, target, tolerance);
+    }
+
+    public bool LeftThumbstickHit(PlayerIndex playerIndex, Vector2 target, float tolerance = GamePadFrameState.Tolerance)
     {
         return ThumbstickHit(
             Previous.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick,
