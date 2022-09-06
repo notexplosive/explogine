@@ -15,10 +15,28 @@ public class ClientDebug
     public LogOutput Output { get; } = new();
     public DebugLevel Level { get; internal set; }
     public bool IsActive => Level == DebugLevel.Active;
-    public bool IsPassive => Level == DebugLevel.Passive || IsActive;
+    public bool IsPassiveOrActive => Level == DebugLevel.Passive || IsActive;
     public FileLogCapture LogFile { get; }
     public int GameSpeed { get; set; } = 1;
 
+    public void CycleDebugMode()
+    {
+        switch (Level)
+        {
+            case DebugLevel.None:
+                Level = DebugLevel.Passive;
+                break;
+            case DebugLevel.Passive:
+                Level = DebugLevel.Active;
+                break;
+            case DebugLevel.Active:
+                Level = DebugLevel.Passive;
+                break;
+        }
+        
+        Client.Debug.Log($"Debug level set to {Level}");
+    }
+    
     public bool LaunchedAsDebugMode()
     {
         if (Client.Args.HasValue("debug"))

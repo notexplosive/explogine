@@ -6,7 +6,7 @@ public class FrameStep
 {
     public void Update(float dt)
     {
-        if (Client.Debug.IsPassive)
+        if (Client.Debug.IsPassiveOrActive)
         {
             if (Client.CartridgeChain.IsFrozen)
             {

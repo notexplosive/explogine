@@ -57,7 +57,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
 
         _demoInterface.Draw(painter, DemoStatusDepth);
 
-        if (Client.Debug.IsPassive)
+        if (Client.Debug.IsPassiveOrActive)
         {
             _logOverlay.Draw(painter, ConsoleOverlayDepth);
         }
