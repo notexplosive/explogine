@@ -16,7 +16,7 @@ public enum HorizontalAlignment
     Right
 }
 
-public struct Alignment
+public readonly struct Alignment
 {
     public HorizontalAlignment Horizontal { get; }
     public VerticalAlignment Vertical { get; }
