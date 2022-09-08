@@ -25,7 +25,11 @@ public class EmptyFileSystem : IFileSystem
     {
     }
 
-    public void AppendFile(string path, string contents)
+    public void AppendFile(string path, params string[] lines)
+    {
+    }
+
+    public void ClearFile(string path)
     {
     }
 

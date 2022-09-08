@@ -8,8 +8,9 @@ public interface IFileSystem
     public Task<string> ReadFile(string path);
     public void WriteFile(string path, string contents);
     public void CreateFileIfNotExist(string path);
-    public void AppendFile(string path, string contents);
+    public void AppendFile(string path, params string[] lines);
     public string GetAppDataPath(string path);
+    public void ClearFile(string path);
 
     public List<string> GetFilesAtContentDirectory(string targetDirectory, string extension = "*")
     {

@@ -62,6 +62,14 @@ public class DesktopFileSystem : IFileSystem
         return string.Empty;
     }
 
+    public async void ClearFile(string path)
+    {
+        FileStream fileStream = File.Open(path, FileMode.Open);
+        fileStream.SetLength(0);
+        await fileStream.FlushAsync();
+        fileStream.Close();
+    }
+
     public async void WriteFile(string path, string contents)
     {
         await File.WriteAllTextAsync(path, contents);
@@ -81,9 +89,9 @@ public class DesktopFileSystem : IFileSystem
         }
     }
 
-    public async void AppendFile(string path, string contents)
+    public async void AppendFile(string path, params string[] lines)
     {
-        await File.AppendAllTextAsync(path, contents);
+        await File.AppendAllLinesAsync(path, lines);
     }
 
     public string GetAppDataPath(string path)
