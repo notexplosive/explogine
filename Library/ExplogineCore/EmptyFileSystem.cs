@@ -7,26 +7,31 @@ public class EmptyFileSystem : IFileSystem
         return new List<string>();
     }
 
-    public Task<string> ReadFileInContentDirectory(string relativePath)
+    public Task<string> ReadFileInContent(string relativePath)
     {
         return Task.FromResult(string.Empty);
     }
 
-    public Task<string> ReadTextFileInWorkingDirectory(string path)
+    public Task<string> ReadFile(string path)
     {
         return Task.FromResult(string.Empty);
     }
 
-    public void WriteFileToWorkingDirectory(string path, string contents)
+    public void WriteFile(string path, string contents)
     {
     }
 
-    public void CreateFileInWorkingDirectory(string path)
+    public void CreateFileIfNotExist(string path)
     {
     }
 
-    public void AppendToFileInWorkingDirectory(string path, string contents)
+    public void AppendFile(string path, string contents)
     {
+    }
+
+    public string GetAppDataPath(string path)
+    {
+        return "";
     }
 
     public string ContentPath => string.Empty;

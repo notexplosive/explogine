@@ -1,4 +1,5 @@
-﻿using ExplogineCore;
+﻿using System.Reflection;
+using ExplogineCore;
 using ExplogineMonoGame;
 
 namespace ExplogineDesktop;
@@ -11,13 +12,12 @@ public class DesktopFileSystem : IFileSystem
     {
         var result = new List<string>();
 
-        
         var infoAtTargetPath = new DirectoryInfo(targetFullPath);
         if (!infoAtTargetPath.Exists)
         {
             throw new DirectoryNotFoundException($"Missing content directory {targetFullPath}");
         }
-        
+
         var files = infoAtTargetPath.GetFiles("*." + extension);
         foreach (var file in files)
         {
@@ -38,7 +38,7 @@ public class DesktopFileSystem : IFileSystem
         return result;
     }
 
-    public async Task<string> ReadFileInContentDirectory(string relativePath)
+    public async Task<string> ReadFileInContent(string relativePath)
     {
         var local = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Client.ContentBaseDirectory),
             relativePath);
@@ -51,7 +51,7 @@ public class DesktopFileSystem : IFileSystem
         throw new FileNotFoundException();
     }
 
-    public async Task<string> ReadTextFileInWorkingDirectory(string path)
+    public async Task<string> ReadFile(string path)
     {
         if (File.Exists(path))
         {
@@ -59,21 +59,36 @@ public class DesktopFileSystem : IFileSystem
             return result;
         }
 
-        throw new FileNotFoundException();
+        return string.Empty;
     }
 
-    public async void WriteFileToWorkingDirectory(string path, string contents)
+    public async void WriteFile(string path, string contents)
     {
         await File.WriteAllTextAsync(path, contents);
     }
 
-    public void CreateFileInWorkingDirectory(string path)
+    public void CreateFileIfNotExist(string path)
     {
-        File.Create(path);
+        var fileInfo = new FileInfo(path);
+        if (fileInfo.Directory != null)
+        {
+            Directory.CreateDirectory(fileInfo.Directory.FullName);
+        }
+
+        if (!File.Exists(fileInfo.FullName))
+        {
+            File.Create(fileInfo.FullName).Close();
+        }
     }
 
-    public async void AppendToFileInWorkingDirectory(string path, string contents)
+    public async void AppendFile(string path, string contents)
     {
         await File.AppendAllTextAsync(path, contents);
+    }
+
+    public string GetAppDataPath(string path)
+    {
+        return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NotExplosive",
+            $"{Assembly.GetEntryAssembly()!.GetName().Name}", path);
     }
 }

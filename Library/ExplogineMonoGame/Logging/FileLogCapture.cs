@@ -30,6 +30,6 @@ public class FileLogCapture : ILogCapture
     public void WriteBufferAsFilename(string fileName)
     {
         Client.Debug.Log($"Creating file {fileName}");
-        Client.FileSystem.WriteFileToWorkingDirectory(fileName, string.Join(Environment.NewLine, _buffer));
+        Client.FileSystem.WriteFile(fileName, string.Join(Environment.NewLine, _buffer));
     }
 }
