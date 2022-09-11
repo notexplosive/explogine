@@ -80,4 +80,9 @@ public class NoiseBasedRng
     {
         return NextBool() ? 1 : -1;
     }
+
+    public int NextInt(int low, int high)
+    {
+        return NextPositiveInt(low + high - 1) + low;
+    }
 }
