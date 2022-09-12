@@ -42,6 +42,8 @@ public abstract class AbstractWindow
             // Always allow window resizing because MonoGame handles heterogeneous DPIs poorly
             // also just generally QoL. Window Resizing should always be legal.
             AllowResizing = true;
+            
+            SetSize(Config.WindowSize);
 
             if (Config.Fullscreen)
             {
