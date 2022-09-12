@@ -2,13 +2,15 @@
 
 namespace ExTween;
 
-public class DynamicTween : ITween
+public abstract class MultipleDynamicTween<T> : ITween where T : TweenCollection, ITween, new()
 {
-    private readonly Func<ITween> _generateFunction;
-    private ITween? _generated;
+    private readonly int _count;
+    private readonly Func<int, ITween> _generateFunction;
+    private T? _generated;
 
-    public DynamicTween(Func<ITween> generateFunction)
+    public MultipleDynamicTween(int count, Func<int, ITween> generateFunction)
     {
+        _count = count;
         _generateFunction = generateFunction;
     }
 
@@ -35,11 +37,17 @@ public class DynamicTween : ITween
         GenerateIfNotAlready().JumpTo(time);
     }
 
-    private ITween GenerateIfNotAlready()
+    private T GenerateIfNotAlready()
     {
         if (_generated == null)
         {
-            _generated = _generateFunction();
+            var result = new T();
+            for (var i = 0; i < _count; i++)
+            {
+                 result.AddItem(_generateFunction(i));
+            }
+
+            _generated = result;
         }
 
         return _generated;

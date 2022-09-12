@@ -113,7 +113,7 @@ public class SequenceTween : TweenCollection, ITween
 
     public SequenceTween Add(ITween tween)
     {
-        Items.Add(tween);
+        AddItem(tween);
         return this;
     }
 }
