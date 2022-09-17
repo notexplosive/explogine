@@ -5,6 +5,7 @@ namespace ExplogineDesktop;
 
 public class DesktopPlatform : IPlatformInterface
 {
-    public IFileSystem FileSystem { get; } = new DesktopFileSystem();
     public AbstractWindow AbstractWindow { get; } = new DesktopWindow();
+    public IFileSystem ContentFileSystem { get; } = new RealFileSystem(Client.ContentFullPath);
+    public IFileSystem LocalFileSystem { get; } = new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory);
 }

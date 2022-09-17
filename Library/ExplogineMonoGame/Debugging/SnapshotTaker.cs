@@ -39,7 +39,7 @@ internal class SnapshotTaker
     {
         var currentTime = DateTime.Now;
         var homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        var directory = Path.Join(homeDirectory, "screenshots", Assembly.GetEntryAssembly()!.GetName().Name);
+        var directory = Path.Join(homeDirectory, "Screenshots", Assembly.GetEntryAssembly()!.GetName().Name);
         Directory.CreateDirectory(directory);
         var screenshotFilePath = Path.Join(directory, $"{currentTime.ToFileTimeUtc()}.png");
         using var stream = File.Create(screenshotFilePath);

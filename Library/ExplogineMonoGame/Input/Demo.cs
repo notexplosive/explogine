@@ -77,14 +77,13 @@ public class Demo
             mostRecent = serial;
         }
 
-        Client.FileSystem.WriteFile(fileName, stringBuilder.ToString());
+        Client.FileSystem.Local.WriteToFile(fileName, stringBuilder.ToString());
     }
 
     public void LoadFile(string path)
     {
-        var file = Client.FileSystem.ReadFile(path);
-        file.Wait();
-        LoadText(file.Result);
+        var file = Client.FileSystem.Local.ReadFile(path);
+        LoadText(file);
     }
 
     private void LoadText(string text)

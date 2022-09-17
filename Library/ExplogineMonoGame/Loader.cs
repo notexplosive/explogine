@@ -130,19 +130,15 @@ public class Loader
 
     private static string[] GetKeysFromContentDirectory()
     {
-        var fileNames = Client.FileSystem.GetFilesAtContentDirectory(".", "xnb");
+        var fileNames = Client.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
         var keys = new List<string>();
 
         foreach (var fileName in fileNames)
         {
-            var file = new FileInfo(fileName);
-            var fullName = file.FullName;
-            var fullNameWithoutExtension = fullName.Substring(0, fullName.Length - file.Extension.Length);
-            var relativePath = fullNameWithoutExtension.Replace(Client.FileSystem.ContentPath, "");
-            var split = relativePath.Split(Path.DirectorySeparatorChar);
-            var list = split.ToList();
-            list.RemoveAll(string.IsNullOrEmpty);
-            keys.Add(string.Join('/', list));
+            var extension = new FileInfo(fileName).Extension;
+            var withoutExtension = fileName.Substring(0, fileName.Length - extension.Length);
+            var withoutPrefix = withoutExtension.Substring(Client.ContentBaseDirectory.Length);
+            keys.Add(withoutPrefix);
         }
 
         return keys.ToArray();

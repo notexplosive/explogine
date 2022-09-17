@@ -20,8 +20,7 @@ public class FileLogCapture : ILogCapture
 
     private void DumpBufferWithTimestamp()
     {
-        var directory = "logs";
-        Directory.CreateDirectory(directory);
+        var directory = "Logs";
         var fileName = Path.Join(directory, $"{DateTime.Now.ToFileTimeUtc()}.log");
 
         WriteBufferAsFilename(fileName);
@@ -30,6 +29,6 @@ public class FileLogCapture : ILogCapture
     public void WriteBufferAsFilename(string fileName)
     {
         Client.Debug.Log($"Creating file {fileName}");
-        Client.FileSystem.WriteFile(fileName, string.Join(Environment.NewLine, _buffer));
+        Client.FileSystem.Local.WriteToFile(fileName, _buffer.ToArray());
     }
 }

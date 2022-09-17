@@ -1,4 +1,6 @@
-﻿using ExplogineCore;
+﻿using System;
+using System.IO;
+using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
@@ -42,7 +44,7 @@ public static class Client
     /// <summary>
     ///     Wrapper for accessing the Filesystem of your platform.
     /// </summary>
-    public static IFileSystem FileSystem { get; private set; } = new EmptyFileSystem();
+    public static ClientFileSystem FileSystem { get; private set; } = new();
 
     /// <summary>
     ///     Wrapper for accessing the Window of your platform.
@@ -97,6 +99,11 @@ public static class Client
 
     public static string ContentBaseDirectory => "Content";
 
+    public static string ContentFullPath =>
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Client.ContentBaseDirectory);
+
+    public static string LocalFullPath => AppDomain.CurrentDomain.BaseDirectory;
+
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
     /// </summary>
@@ -109,7 +116,11 @@ public static class Client
     {
         // Setup Platform
         Client.Window = platform.AbstractWindow;
-        Client.FileSystem = platform.FileSystem;
+        Client.FileSystem =
+            new ClientFileSystem(
+                platform.LocalFileSystem,
+                new RealFileSystem(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData))
+            );
         Client.startingConfig = windowConfig;
 
         // Setup Command Line
@@ -179,7 +190,7 @@ public static class Client
 
     internal static void Update(float dt)
     {
-        for (int i = 0; i < Client.Debug.GameSpeed; i++)
+        for (var i = 0; i < Client.Debug.GameSpeed; i++)
         {
             Client.HitTesting.Clear();
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
