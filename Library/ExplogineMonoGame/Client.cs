@@ -118,7 +118,7 @@ public static class Client
         Client.Window = platform.AbstractWindow;
         Client.FileSystem =
             new ClientFileSystem(
-                platform.LocalFileSystem,
+                new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),
                 new RealFileSystem(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData))
             );
         Client.startingConfig = windowConfig;
