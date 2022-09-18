@@ -30,6 +30,11 @@ public class RealFileSystem : IFileSystem
         }
     }
 
+    public void DeleteFile(string relativePathToFile)
+    {
+        File.Delete(ToWorkingPath(relativePathToFile));
+    }
+
     public void CreateOrOverwriteFile(string relativePathToFile)
     {
         var info = FileInfoAt(relativePathToFile);
@@ -47,6 +52,10 @@ public class RealFileSystem : IFileSystem
 
     public string ReadFile(string relativePathToFile)
     {
+        if (!FileInfoAt(relativePathToFile).Exists)
+        {
+            return string.Empty;
+        }
         return File.ReadAllText(ToWorkingPath(relativePathToFile));
     }
 

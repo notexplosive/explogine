@@ -15,29 +15,30 @@ public abstract class TestFileSystem
     [Fact]
     public void basic_file_system_stuff()
     {
-        Temp.HasFile("hello.txt").Should().BeFalse();
-        Temp.CreateFile("hello.txt");
-        Temp.AppendToFile("hello.txt", "this is some text");
-        Temp.ReadFile("hello.txt").Trim().Should().Be("this is some text");
-        Temp.HasFile("hello.txt").Should().BeTrue();
+        Temp.HasFile("foo/hello.txt").Should().BeFalse();
+        Temp.CreateFile("foo/hello.txt");
+        Temp.AppendToFile("foo/hello.txt", "this is some text");
+        Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
+        Temp.HasFile("foo/hello.txt").Should().BeTrue();
     }
 
     [Fact]
     public void creating_a_file_does_not_overwrite_it()
     {
-        Temp.CreateFile("hello.txt");
-        Temp.AppendToFile("hello.txt", "this is some text");
-        Temp.CreateFile("hello.txt");
-        Temp.ReadFile("hello.txt").Trim().Should().Be("this is some text");
+        Temp.CreateFile("foo/hello.txt");
+        Temp.AppendToFile("foo/hello.txt", "this is some text");
+        Temp.CreateFile("foo/hello.txt");
+        Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
     }
 
     [Fact]
     public void creating_a_file_overwrites_if_requested()
     {
-        Temp.CreateFile("hello.txt");
-        Temp.AppendToFile("hello.txt", "this is some text");
-        Temp.CreateOrOverwriteFile("hello.txt");
-        Temp.ReadFile("hello.txt").Trim().Should().Be("");
+        Temp.CreateFile("foo/hello.txt");
+        Temp.AppendToFile("foo/hello.txt", "this is some text");
+        Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
+        Temp.CreateOrOverwriteFile("foo/hello.txt");
+        Temp.ReadFile("foo/hello.txt").Trim().Should().Be("");
     }
 
     [Fact]
@@ -59,8 +60,17 @@ public abstract class TestFileSystem
     [Fact]
     public void can_create_and_write_to_file()
     {
-        Temp.WriteToFile("hello.txt", "this is some text");
-        Temp.ReadFile("hello.txt").Trim().Should().Be("this is some text");
+        Temp.WriteToFile("foo/hello.txt", "this is some text");
+        Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
+    }
+    
+    [Fact]
+    public void can_delete_files()
+    {
+        Temp.WriteToFile("foo/hello.txt", "this is some text");
+        Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
+        Temp.DeleteFile("foo/hello.txt");
+        Temp.ReadFile("foo/hello.txt").Should().Be("");
     }
 
     public class Real : TestFileSystem, IDisposable
