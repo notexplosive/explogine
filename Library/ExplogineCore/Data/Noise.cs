@@ -26,7 +26,7 @@ public readonly struct Noise
 
     public int IntAt(int position, int max = int.MaxValue)
     {
-        return (int) UIntAt(position) % max;
+        return Math.Abs((int) UIntAt(position)) % max;
     }
 
     public double DoubleAt(int position)

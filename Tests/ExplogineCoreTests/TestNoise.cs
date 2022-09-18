@@ -17,4 +17,41 @@ public class TestNoise
             (noise.DoubleAt(i) > 0.0).Should().BeTrue($"at {i} we got {noise.DoubleAt(i)} which should be more than 0");
         }
     }
+
+    [Fact]
+    public void probability_is_about_right()
+    {
+        var noise = new Noise(0);
+
+        var count0 = 0;
+        var count1 = 0;
+        var count2 = 0;
+        var count3 = 0;
+
+        for (var i = 0; i < 1000; i++)
+        {
+            var j = noise.IntAt(i, 4);
+
+            switch (j)
+            {
+                case 0:
+                    count0++;
+                    break;
+                case 1:
+                    count1++;
+                    break;
+                case 2:
+                    count2++;
+                    break;
+                case 3:
+                    count3++;
+                    break;
+            }
+        }
+
+        count0.Should().BeInRange(220, 280);
+        count1.Should().BeInRange(220, 280);
+        count2.Should().BeInRange(220, 280);
+        count3.Should().BeInRange(220, 280);
+    }
 }
