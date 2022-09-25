@@ -51,7 +51,7 @@ public class ClientDebug
 #endif
     }
 
-    public void Log(object message, params object[] paramsObjects)
+    public void Log(object? message, params object?[] paramsObjects)
     {
         var output = new StringBuilder();
 
