@@ -3,16 +3,10 @@ using System.Collections.Generic;
 using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 
-namespace ExplogineMonoGame;
+namespace ExplogineMonoGame.HitTesting;
 
 public class HitTestStack
 {
-    public enum HitTestLayer
-    {
-        Game,
-        DebugOverlay
-    }
-
     private readonly List<HitTestTarget> _list = new();
     private int _descriptorIndex;
 
@@ -33,7 +27,7 @@ public class HitTestStack
         }
     }
 
-    public HitTestTarget? GetTopHit(Vector2 position)
+    private HitTestTarget? GetTopHit(Vector2 position)
     {
         _list.Sort((x, y) => x.Depth - y.Depth);
 
@@ -75,27 +69,5 @@ public class HitTestStack
         // Debug layer is always in screen-space
         return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++), rect, depth, HitTestLayer.Game,
             worldMatrix)).Descriptor;
-    }
-
-    /// <summary>
-    /// The ID of a HitTestTarget for this frame.
-    /// </summary>
-    /// <param name="Value">Internal value</param>
-    public readonly record struct HitTestDescriptor(int Value);
-
-    public readonly record struct HitTestTarget(HitTestDescriptor Descriptor, Rectangle Rectangle, Depth Depth,
-        HitTestLayer Layer,
-        Matrix WorldMatrix)
-    {
-        public HitTestTarget(HitTestDescriptor descriptor, Rectangle rectangle, Depth depth, HitTestLayer layer) : this(
-            descriptor, rectangle, depth, layer,
-            Matrix.Identity)
-        {
-        }
-
-        public bool Contains(Vector2 position)
-        {
-            return Rectangle.Contains(Vector2.Transform(position, WorldMatrix));
-        }
     }
 }
