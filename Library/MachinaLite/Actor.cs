@@ -156,7 +156,10 @@ namespace MachinaLite
         public void RemoveComponent<T>() where T : BaseComponent
         {
             var comp = GetComponent<T>();
-            DeleteIterable(comp);
+            if (comp != null)
+            {
+                DeleteIterable(comp);
+            }
         }
 
         private IComponent? GetComponentByName(string fullName)
