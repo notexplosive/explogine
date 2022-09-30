@@ -5,6 +5,7 @@ using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
@@ -48,6 +49,11 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         {
             _frameStep.Update(dt);
             _snapshotTaker.Update(dt);
+        }
+
+        if (Client.Input.Keyboard.Modifiers.ControlShift && Client.Input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
+        {
+            Client.Debug.CycleDebugMode();
         }
     }
 

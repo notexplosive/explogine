@@ -76,8 +76,14 @@ public class Painter
     public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
+        var origin = settings.Origin.Value(destinationRectangle.Size);
+        var size = destinationRectangle.Size;
+
+        origin.X /= size.X;
+        origin.Y /= size.Y;
+        
         _spriteBatch.Draw(texture, destinationRectangle, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin.Value(destinationRectangle.Size), settings.FlipEffect, settings.Depth);
+            origin, settings.FlipEffect, settings.Depth);
     }
 
     public void DrawAtPosition(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
