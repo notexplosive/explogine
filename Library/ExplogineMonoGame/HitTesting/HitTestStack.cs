@@ -23,6 +23,7 @@ public class HitTestStack
         var hit = GetTopHit(position);
         if (hit != null)
         {
+            hit.Value.Descriptor.Callback?.Invoke();
             Resolved?.Invoke(hit.Value.Descriptor);
         }
     }
@@ -58,16 +59,16 @@ public class HitTestStack
         _descriptorIndex = 0;
     }
 
-    public HitTestDescriptor Add(Rectangle rect, Depth depth, HitTestLayer layer = HitTestLayer.Game)
+    public HitTestDescriptor Add(Rectangle rect, Depth depth, Action? callback = null, HitTestLayer layer = HitTestLayer.Game)
     {
-        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++), rect, depth, layer)).Descriptor;
+        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++, callback), rect, depth, layer)).Descriptor;
     }
 
-    public HitTestDescriptor Add(Rectangle rect, Depth depth, Matrix worldMatrix)
+    public HitTestDescriptor Add(Rectangle rect, Depth depth, Matrix worldMatrix, Action? callback = null)
     {
         // Assumes that if you're using WorldMatrix you don't care about debug layer.
         // Debug layer is always in screen-space
-        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++), rect, depth, HitTestLayer.Game,
+        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++, callback), rect, depth, HitTestLayer.Game,
             worldMatrix)).Descriptor;
     }
 }

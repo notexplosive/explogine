@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -39,8 +41,29 @@ public readonly struct MouseFrameState
         return Current.MouseButtonStates.Any(state => state == ButtonState.Pressed);
     }
 
+    public bool WasAnyButtonPressedOrReleased()
+    {
+        foreach (var (buttonState, button) in EachButton())
+        {
+            if (buttonState.WasPressed || buttonState.WasReleased)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public int ScrollDelta()
     {
         return Current.ScrollValue - Previous.ScrollValue;
+    }
+
+    public IEnumerable<(ButtonFrameState, MouseButton)> EachButton()
+    {
+        foreach (var mouseButton in Enum.GetValues<MouseButton>())
+        {
+            yield return (GetButton(mouseButton), mouseButton);
+        }
     }
 }

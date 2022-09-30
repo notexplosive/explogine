@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Input;
@@ -39,5 +42,14 @@ public readonly struct KeyboardFrameState
     public bool IsAnyKeyDown()
     {
         return Current.PressedKeys.Length > 0;
+    }
+
+    public IEnumerable<(ButtonFrameState, Keys)> EachKey()
+    {
+        // This might be slow, technically O(n^2)
+        foreach (var key in Enum.GetValues<Keys>())
+        {
+            yield return (GetButton(key), key);
+        }
     }
 }
