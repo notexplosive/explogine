@@ -144,7 +144,7 @@ public class Demo
 
     public InputSnapshot GetNextRecordedState()
     {
-        if (_records.Count > _playHeadIndex)
+        if (_records.Count-1 > _playHeadIndex)
         {
             return _records[_playHeadIndex++];
         }

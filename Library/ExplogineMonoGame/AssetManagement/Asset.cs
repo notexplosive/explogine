@@ -11,7 +11,7 @@ public abstract class Asset : IDisposable
         _ownedContent = ownedContent;
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         _ownedContent?.Dispose();
     }
