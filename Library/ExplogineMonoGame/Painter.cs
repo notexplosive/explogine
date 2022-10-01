@@ -77,10 +77,13 @@ public class Painter
     {
         settings.SourceRectangle ??= texture.Bounds;
         var origin = settings.Origin.Value(destinationRectangle.Size);
-        var size = destinationRectangle.Size;
 
-        origin.X /= size.X;
-        origin.Y /= size.Y;
+        var scaleX = (float)destinationRectangle.Size.X / settings.SourceRectangle.Value.Size.X;
+        var scaleY = (float)destinationRectangle.Size.Y / settings.SourceRectangle.Value.Size.Y;
+        
+        // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
+        origin.X /= scaleX;
+        origin.Y /= scaleY;
         
         _spriteBatch.Draw(texture, destinationRectangle, settings.SourceRectangle, settings.Color, settings.Angle,
             origin, settings.FlipEffect, settings.Depth);

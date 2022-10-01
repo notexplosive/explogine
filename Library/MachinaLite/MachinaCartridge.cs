@@ -21,12 +21,13 @@ public abstract class MachinaCartridge : BasicGameCartridge
     
     public override void Update(float dt)
     {
-        foreach (var scene in Scenes)
+        var hitTestStack = new HitTestStack();
+
+        for (int i = Scenes.Count - 1; i >= 0; i--)
         {
+            var scene = Scenes[i];
             // Mouse
             var mouse = Client.Input.Mouse;
-            var keyboard = Client.Input.Keyboard;
-            var hitTestStack = new HitTestStack();
             var rawMousePosition = mouse.Position(Client.RenderCanvas.ScreenToCanvas);
             if (mouse.WasAnyButtonPressedOrReleased())
             {
@@ -43,7 +44,10 @@ public abstract class MachinaCartridge : BasicGameCartridge
             _previousMouseWorldPosition = mouse.Position(scene.Camera.ScreenToWorldMatrix);
 
             hitTestStack.Resolve(scene.Camera.ScreenToWorld(rawMousePosition));
-
+        }
+        
+        foreach(var scene in Scenes){
+            var keyboard = Client.Input.Keyboard;
             // Keyboard
             foreach (var (buttonFrameState, key) in keyboard.EachKey())
             {
@@ -60,6 +64,9 @@ public abstract class MachinaCartridge : BasicGameCartridge
 
             // World Update
             scene.Update(dt);
+            
+            // kinda lame that we have to do this in the cartridge and it isn't just "handled for us"
+            scene.FlushBuffers();
         }
     }
 
