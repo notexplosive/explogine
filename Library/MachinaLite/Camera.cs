@@ -1,11 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ExplogineMonoGame;
+using Microsoft.Xna.Framework;
 
 namespace MachinaLite;
 
 public class Camera
 {
-    public Matrix ScreenToWorldMatrix => Matrix.CreateTranslation(new Vector3(Position, 0)) *
-                                         Matrix.CreateScale(new Vector3(new Vector2(Scale, Scale), 1));
+    public Matrix ScreenToWorldMatrix =>
+        Matrix.CreateTranslation(new Vector3(Position, 0)) *
+        Matrix.CreateScale(new Vector3(new Vector2(Scale, Scale), 1));
 
     public Matrix WorldToScreenMatrix => Matrix.Invert(ScreenToWorldMatrix);
     public Vector2 Position { get; set; }

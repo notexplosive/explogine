@@ -20,7 +20,7 @@ public class BoxRenderer : BaseComponent
         var origin = new DrawOrigin(_box.Offset.ToVector2());
         painter.DrawRectangle(new Rectangle(Transform.Position.ToPoint(), _box.Size),
             new DrawSettings
-                {Color = Color, Angle = Transform.Angle, Origin = origin});
+                {Color = Color, Angle = Transform.Angle, Origin = origin, Depth = Transform.Depth});
     }
 
     public override void DebugDraw(Painter painter)
@@ -28,6 +28,6 @@ public class BoxRenderer : BaseComponent
         var origin = new DrawOrigin(_box.Offset.ToVector2());
         painter.DrawRectangle(new Rectangle(Transform.Position.ToPoint(), _box.Size),
             new DrawSettings
-                {Color = Color, Angle = Transform.Angle, Origin = origin});
+                {Color = Color, Angle = Transform.Angle, Origin = origin, Depth = Transform.Depth});
     }
 }

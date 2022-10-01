@@ -27,7 +27,7 @@ public abstract class MachinaCartridge : BasicGameCartridge
             var mouse = Client.Input.Mouse;
             var keyboard = Client.Input.Keyboard;
             var hitTestStack = new HitTestStack();
-            var rawMousePosition = mouse.Position(Matrix.Identity);
+            var rawMousePosition = mouse.Position(Client.RenderCanvas.ScreenToCanvas);
             if (mouse.WasAnyButtonPressedOrReleased())
             {
                 foreach (var (state, button) in mouse.EachButton())
