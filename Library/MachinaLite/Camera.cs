@@ -17,4 +17,9 @@ public class Camera
     {
         return Vector2.Transform(screenPosition, ScreenToWorldMatrix);
     }
+    
+    public Vector2 WorldToScreen(Vector2 worldPosition)
+    {
+        return Vector2.Transform(worldPosition, Matrix.Invert(ScreenToWorldMatrix));
+    }
 }
