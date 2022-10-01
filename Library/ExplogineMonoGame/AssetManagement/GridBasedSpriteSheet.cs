@@ -48,7 +48,7 @@ public class GridBasedSpriteSheet : SpriteSheet
     public override void DrawFrame(Painter painter, int index, Vector2 position, Scale2D scale,
         DrawSettings drawSettings)
     {
-        var isValid = index >= 0 && index <= _frameCount;
+        var isValid = index >= 0 && index <= _frameCount-1;
         if (!isValid)
         {
             throw new IndexOutOfRangeException();
