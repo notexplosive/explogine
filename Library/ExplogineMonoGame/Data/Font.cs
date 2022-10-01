@@ -10,14 +10,14 @@ public class Font
     public Font(SpriteFont spriteFont, int size)
     {
         SpriteFont = spriteFont;
-        LineSpacing = size;
-        ScaleFactor = (float) LineSpacing / SpriteFont.LineSpacing;
+        FontSize = size;
+        ScaleFactor = (float) FontSize / SpriteFont.LineSpacing;
     }
 
     public SpriteFont SpriteFont { get; }
     public float ScaleFactor { get; }
 
-    public int LineSpacing { get; }
+    public int FontSize { get; }
 
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {

@@ -55,7 +55,7 @@ public class CrashCartridge : ICartridge
         painter.DrawStringAtPosition(_titleFont, "heck! :(", Point.Zero, new DrawSettings());
 
         painter.DrawStringWithinRectangle(_font, _reportText,
-            new Rectangle(new Point(0, _titleFont.LineSpacing), Client.Window.Size), Alignment.TopLeft,
+            new Rectangle(new Point(0, _titleFont.FontSize), Client.Window.Size), Alignment.TopLeft,
             new DrawSettings());
 
         painter.EndSpriteBatch();

@@ -94,7 +94,7 @@ public class NinepatchSheet : Asset
         DrawFullNinepatch(painter, GenerateDestinationRects(starter, gen), layerDepth, opacity);
     }
 
-    public void DrawFullNinepatch(Painter painter, NinepatchRects destinationRects, Depth layerDepth,
+    private void DrawFullNinepatch(Painter painter, NinepatchRects destinationRects, Depth layerDepth,
         float opacity = 1f)
     {
         Debug.Assert(_rects.IsValidNinepatch, "Attempted to draw an invalid Ninepatch.");

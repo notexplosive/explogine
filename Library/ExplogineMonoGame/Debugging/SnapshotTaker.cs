@@ -10,22 +10,25 @@ internal class SnapshotTaker
     private float _timer = 0.1f;
     private float _timerMax = 2f;
     private bool _timerReady;
+    private DateTime _timeLastFrame;
 
     public void StartTimer()
     {
         _timerReady = true;
+        _timeLastFrame = DateTime.Now;
     }
 
     public void Update(float dt)
     {
+        var now = DateTime.Now;
         if (Client.Input.Keyboard.GetButton(Keys.F12).WasPressed)
         {
             TakeSnapshot();
         }
-
+        
         if (_timerReady)
         {
-            _timer -= dt;
+            _timer -= (float)(now - _timeLastFrame).TotalSeconds;
             if (_timer < 0)
             {
                 TakeSnapshot();
@@ -33,6 +36,8 @@ internal class SnapshotTaker
                 _timer = _timerMax;
             }
         }
+        
+        _timeLastFrame = now;
     }
 
     private void TakeSnapshot()
