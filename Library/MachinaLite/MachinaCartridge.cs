@@ -49,8 +49,11 @@ public abstract class MachinaCartridge : BasicGameCartridge
             {
                 foreach (var (state, button) in mouse.EachButton())
                 {
-                    scene.OnMouseButton(button, rawMousePosition,
-                        state.WasPressed ? ButtonState.Pressed : ButtonState.Released, hitTestStack);
+                    if (mouse.GetButton(button).WasPressed || mouse.GetButton(button).WasReleased)
+                    {
+                        scene.OnMouseButton(button, rawMousePosition,
+                            state.WasPressed ? ButtonState.Pressed : ButtonState.Released, hitTestStack);
+                    }
                 }
             }
 
