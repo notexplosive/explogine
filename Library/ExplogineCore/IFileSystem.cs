@@ -56,4 +56,10 @@ public interface IFileSystem
     /// <param name="relativeFileName"></param>
     /// <param name="lines"></param>
     void WriteToFile(string relativeFileName, params string[] lines);
+
+    /// <summary>
+    /// Working Directory of this FileSystem object
+    /// </summary>
+    /// <returns></returns>
+    string GetCurrentDirectory();
 }

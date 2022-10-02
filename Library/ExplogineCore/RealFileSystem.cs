@@ -120,4 +120,9 @@ public class RealFileSystem : IFileSystem
         }
         return Path.Join(RootPath, relativePath);
     }
+
+    public string GetCurrentDirectory()
+    {
+        return RootPath;
+    }
 }

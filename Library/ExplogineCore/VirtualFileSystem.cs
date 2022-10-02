@@ -91,6 +91,11 @@ public class VirtualFileSystem : IFileSystem
             ?.CreateFile(_root.GetFileName(relativeFileName), string.Join('\n', lines));
     }
 
+    public string GetCurrentDirectory()
+    {
+        return "/";
+    }
+
     private interface IVirtualItem
     {
         VirtualDirectory Parent { get; }
