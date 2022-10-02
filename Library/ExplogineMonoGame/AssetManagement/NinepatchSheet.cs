@@ -88,10 +88,10 @@ public class NinepatchSheet : Asset
             new DrawSettings {SourceRectangle = source, Color = Color.White, Depth = layerDepth});
     }
 
-    public void DrawFullNinepatch(Painter painter, Rectangle starter, InnerOuter gen,
+    public void DrawFullNinepatch(Painter painter, Rectangle starter, InnerOuter innerOuter,
         Depth layerDepth, float opacity = 1f)
     {
-        DrawFullNinepatch(painter, GenerateDestinationRects(starter, gen), layerDepth, opacity);
+        DrawFullNinepatch(painter, GenerateDestinationRects(starter, innerOuter), layerDepth, opacity);
     }
 
     private void DrawFullNinepatch(Painter painter, NinepatchRects destinationRects, Depth layerDepth,
