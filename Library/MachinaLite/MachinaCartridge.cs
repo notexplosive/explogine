@@ -18,9 +18,20 @@ public abstract class MachinaCartridge : BasicGameCartridge
         Scenes.Add(scene);
         return scene;
     }
+
+    public virtual void BeforeUpdate(float dt)
+    {
+        
+    }
+
+    public virtual void AfterUpdate(float dt)
+    {
+        
+    }
     
     public override void Update(float dt)
     {
+        BeforeUpdate(dt);
         var hitTestStack = new HitTestStack();
 
         for (int i = Scenes.Count - 1; i >= 0; i--)
@@ -68,6 +79,7 @@ public abstract class MachinaCartridge : BasicGameCartridge
             // kinda lame that we have to do this in the cartridge and it isn't just "handled for us"
             scene.FlushBuffers();
         }
+        AfterUpdate(dt);
     }
 
     public override void Draw(Painter painter)

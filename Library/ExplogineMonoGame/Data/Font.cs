@@ -36,6 +36,11 @@ public class Font
 
     public RestrictedString GetRestrictedString(string text, float restrictedWidth)
     {
+        if (string.IsNullOrEmpty(text))
+        {
+            return new RestrictedString("", Vector2.Zero);
+        }
+        
         var currentLineWidth = 0f;
         var maxWidth = 0f;
         var height = 0f;
