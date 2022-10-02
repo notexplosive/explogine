@@ -20,7 +20,10 @@ public class Hoverable : BaseComponent
         HitTestStack hitTestStack)
     {
         IsHovered = false;
-        hitTestStack.Add(_box.Rectangle, Transform.Depth, OnHovered);
+        if (Actor.Visible)
+        {
+            hitTestStack.Add(_box.Rectangle, Transform.Depth, OnHovered);
+        }
     }
 
     private void OnHovered()
