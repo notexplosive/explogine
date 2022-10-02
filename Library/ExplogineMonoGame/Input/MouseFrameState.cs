@@ -17,9 +17,9 @@ public readonly struct MouseFrameState
     private InputSnapshot Previous { get; }
     private InputSnapshot Current { get; }
 
-    public Vector2 Position(Matrix transform)
+    public Vector2 Position(Matrix toScreenTransform)
     {
-        return Vector2.Transform(Current.MousePosition, transform);
+        return Vector2.Transform(Current.MousePosition, toScreenTransform);
     }
 
     public Vector2 Delta(Matrix transform)
