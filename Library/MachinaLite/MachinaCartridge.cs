@@ -19,6 +19,11 @@ public abstract class MachinaCartridge : BasicGameCartridge
         return scene;
     }
 
+    protected void RemoveScene(Scene scene)
+    {
+        Scenes.Remove(scene);
+    }
+
     public virtual void BeforeUpdate(float dt)
     {
         
