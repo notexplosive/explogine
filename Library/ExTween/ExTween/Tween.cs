@@ -58,7 +58,7 @@ public class Tween<T> : ITween
 
     public void JumpTo(float time)
     {
-        CurrentTime = time;
+        CurrentTime = Math.Clamp(time, 0, TotalDuration.Get());
         ApplyTimeToValue();
     }
 
