@@ -22,4 +22,15 @@ public class Camera
     {
         return Vector2.Transform(worldPosition, Matrix.Invert(ScreenToWorldMatrix));
     }
+
+    public Rectangle ViewRectInWorldSpace
+    {
+        get
+        {
+            var position = ScreenToWorld(Vector2.Zero);
+            var size = Client.Window.RenderResolution.ToVector2() * Scale;
+
+            return new Rectangle(position.ToPoint(), size.ToPoint());
+        }
+    }
 }
