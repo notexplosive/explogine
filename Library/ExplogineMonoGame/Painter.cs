@@ -96,8 +96,9 @@ public class Painter
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
 
-    public void DrawScaledStringAtPosition(Font font, string text, Point position, Scale2D scale, DrawSettings settings)
+    public void DrawScaledStringAtPosition(IFont fontLike, string text, Point position, Scale2D scale, DrawSettings settings)
     {
+        var font = fontLike.GetFont();
         _spriteBatch.DrawString(
             font.SpriteFont,
             text,
@@ -110,14 +111,15 @@ public class Painter
             settings.Depth);
     }
 
-    public void DrawStringAtPosition(Font font, string text, Point position, DrawSettings settings)
+    public void DrawStringAtPosition(IFont font, string text, Point position, DrawSettings settings)
     {
         DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
     }
 
-    public void DrawStringWithinRectangle(Font font, string text, Rectangle rectangle, Alignment alignment,
+    public void DrawStringWithinRectangle(IFont fontLike, string text, Rectangle rectangle, Alignment alignment,
         DrawSettings settings)
     {
+        var font = fontLike.GetFont();
         var restrictedString = font.GetRestrictedString(text, rectangle.Width);
         var size = restrictedString.Size;
         var relativePosition = alignment.GetRelativePositionOfElement(rectangle.Size.ToVector2(), size);

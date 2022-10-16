@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
-public class Font
+public class Font : IFont
 {
     public Font(SpriteFont spriteFont, int size)
     {
@@ -16,7 +16,6 @@ public class Font
 
     public SpriteFont SpriteFont { get; }
     public float ScaleFactor { get; }
-
     public int FontSize { get; }
 
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
@@ -27,6 +26,12 @@ public class Font
         }
 
         return GetRestrictedString(text, restrictedWidth.Value).Size;
+    }
+
+    public Font GetFont()
+    {
+        // no-op
+        return this;
     }
 
     public string Linebreak(string text, float restrictedWidth)
