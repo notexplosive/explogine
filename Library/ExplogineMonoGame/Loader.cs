@@ -86,14 +86,7 @@ public class Loader
     public void LoadNext()
     {
         var currentLoadEvent = _loadEvents[_loadEventIndex];
-        try
-        {
-            currentLoadEvent.Execute();
-        }
-        catch(Exception e)
-        {
-            Client.Debug.Log($"Loading key {currentLoadEvent} failed:\n{e}");
-        }
+        currentLoadEvent.Execute();
 
         _loadEventIndex++;
         Client.Debug.Log("Loading: " + MathF.Floor(Percent * 100f) + "%");
