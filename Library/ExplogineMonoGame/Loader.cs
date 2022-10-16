@@ -20,6 +20,11 @@ public readonly record struct LoadEvent(string Key, LoadEventFunction Function)
         Client.Assets.AddAsset(Key, asset);
         return asset;
     }
+
+    public override string ToString()
+    {
+        return Key;
+    }
 }
 
 public class Loader
@@ -80,7 +85,16 @@ public class Loader
 
     public void LoadNext()
     {
-        _loadEvents[_loadEventIndex].Execute();
+        var currentLoadEvent = _loadEvents[_loadEventIndex];
+        try
+        {
+            currentLoadEvent.Execute();
+        }
+        catch(Exception e)
+        {
+            Client.Debug.Log($"Loading key {currentLoadEvent} failed:\n{e}");
+        }
+
         _loadEventIndex++;
         Client.Debug.Log("Loading: " + MathF.Floor(Percent * 100f) + "%");
     }
@@ -136,8 +150,10 @@ public class Loader
         foreach (var fileName in fileNames)
         {
             var extension = new FileInfo(fileName).Extension;
+            // Remove `.xnb`
             var withoutExtension = fileName.Substring(0, fileName.Length - extension.Length);
-            var withoutPrefix = withoutExtension.Substring(Client.ContentBaseDirectory.Length);
+            // Remove `Content/`
+            var withoutPrefix = withoutExtension.Substring(Client.ContentBaseDirectory.Length + 1);
             keys.Add(withoutPrefix);
         }
 

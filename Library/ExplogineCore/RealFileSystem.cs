@@ -67,7 +67,8 @@ public class RealFileSystem : IFileSystem
         var root = RootPath;
         foreach (var path in fullPaths)
         {
-            result.Add(path.Replace(root, string.Empty).Replace(Path.DirectorySeparatorChar.ToString(), "/").Substring(1));
+            var revisedPath = path.Replace(root, string.Empty).Replace(Path.DirectorySeparatorChar.ToString(), "/");
+            result.Add(revisedPath);
         }
 
         return result;
