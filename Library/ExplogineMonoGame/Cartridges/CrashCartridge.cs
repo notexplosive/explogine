@@ -9,8 +9,8 @@ namespace ExplogineMonoGame.Cartridges;
 public class CrashCartridge : ICartridge
 {
     private readonly string _reportText;
-    private Font? _font;
-    private Font? _titleFont;
+    private readonly LazyInitializedFont _font = new("engine/console-font", 32);
+    private readonly LazyInitializedFont _titleFont = new("engine/console-font", 100);
 
     public CrashCartridge(Exception exception)
     {
@@ -31,8 +31,6 @@ public class CrashCartridge : ICartridge
 
     public void OnCartridgeStarted()
     {
-        _font = Client.Assets.GetFont("engine/console-font", 32);
-        _titleFont = _font.WithFontSize(100);
     }
 
     public void Update(float dt)

@@ -20,24 +20,16 @@ public class LazyInitializedFont : IFont
 
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
-        if (_cache == null)
-        {
-            return Vector2.Zero;
-        }
-        return _cache.MeasureString(text, restrictedWidth);
+        return GetFont().MeasureString(text, restrictedWidth);
     }
 
     public Font GetFont()
     {
-        if (_cache == null)
-        {
-            throw new MissingContentException($"{_spriteFontPath} is not loaded yet");
-        }
-        return _cache;
+        return _cache ??= BuildCache();
     }
 
-    public void BuildCache()
+    private Font BuildCache()
     {
-        _cache = Client.Assets.GetFont(_spriteFontPath, FontSize);
+        return Client.Assets.GetFont(_spriteFontPath, FontSize);
     }
 }

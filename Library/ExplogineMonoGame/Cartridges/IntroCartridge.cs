@@ -11,7 +11,7 @@ namespace ExplogineMonoGame.Cartridges;
 public class IntroCartridge : ICartridge
 {
     private readonly List<Figure> _letters = new();
-    private Font? _logoFont;
+    private readonly LazyInitializedFont _logoFont = new("engine/logo-font", 72);
     private SequenceTween _tween = new();
     private bool _useWholeWord = true;
     private Figure _wholeWord;
@@ -20,7 +20,6 @@ public class IntroCartridge : ICartridge
     {
         Client.Debug.Log("Intro loaded");
         var text = "NotExplosive.net";
-        _logoFont = Client.Assets.GetFont("engine/logo-font", 72);
         _wholeWord = new Figure(text);
 
         foreach (var character in text)

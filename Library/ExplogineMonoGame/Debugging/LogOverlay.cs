@@ -11,7 +11,7 @@ internal class LogOverlay : ILogCapture
 {
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
     private float _timer;
-    private Font Font => Client.Assets.GetFont("engine/console-font", 32);
+    private readonly LazyInitializedFont _font = new("engine/console-font", 32);
 
     private float Opacity => Math.Clamp(_timer, 0f, 1f);
 
@@ -20,7 +20,7 @@ internal class LogOverlay : ILogCapture
 
     public void CaptureMessage(string text)
     {
-        var newMessage = new RenderedMessage(text, Font.MeasureString(text, TotalWidth));
+        var newMessage = new RenderedMessage(text, _font.MeasureString(text, TotalWidth));
 
         float usedHeight = 0;
         foreach (var line in _linesBuffer)
@@ -72,7 +72,7 @@ internal class LogOverlay : ILogCapture
         {
             var color = Color.White;
 
-            painter.DrawStringWithinRectangle(Font, message.Text, textRect,
+            painter.DrawStringWithinRectangle(_font, message.Text, textRect,
                 Alignment.TopLeft, 
                 new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
 
