@@ -68,6 +68,10 @@ public class RealFileSystem : IFileSystem
         foreach (var path in fullPaths)
         {
             var revisedPath = path.Replace(root, string.Empty).Replace(Path.DirectorySeparatorChar.ToString(), "/");
+            if (revisedPath.StartsWith('/'))
+            {
+                revisedPath = revisedPath.Substring(1);
+            }
             result.Add(revisedPath);
         }
 
