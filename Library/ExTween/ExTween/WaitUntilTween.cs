@@ -37,5 +37,10 @@ public class WaitUntilTween : ITween
         Update(time);
     }
 
+    public void SkipToEnd()
+    {
+        Update(0);
+    }
+
     public ITweenDuration TotalDuration => new UnknownTweenDuration();
 }

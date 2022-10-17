@@ -24,6 +24,11 @@ public class CallbackTween : ITween
         return dt;
     }
 
+    public void SkipToEnd()
+    {
+        Update(0);
+    }
+
     public bool IsDone()
     {
         return _hasExecuted;

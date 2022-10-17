@@ -14,4 +14,5 @@ public interface ITween
     public bool IsDone();
     public void Reset();
     public void JumpTo(float time);
+    public void SkipToEnd();
 }

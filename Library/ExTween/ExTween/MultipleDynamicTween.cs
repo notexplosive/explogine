@@ -37,6 +37,11 @@ public abstract class MultipleDynamicTween<T> : ITween where T : TweenCollection
         GenerateIfNotAlready().JumpTo(time);
     }
 
+    public void SkipToEnd()
+    {
+        GenerateIfNotAlready().SkipToEnd();
+    }
+
     private T GenerateIfNotAlready()
     {
         if (_generated == null)

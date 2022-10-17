@@ -41,4 +41,9 @@ public class WaitSecondsTween : ITween
     {
         _timer = _duration - time;
     }
+
+    public void SkipToEnd()
+    {
+        _timer = 0;
+    }
 }

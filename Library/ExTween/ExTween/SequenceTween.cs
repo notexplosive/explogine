@@ -75,6 +75,8 @@ public class SequenceTween : TweenCollection, ITween
 
         var adjustedTargetTime = targetTime;
 
+        // bug?: JumpTo(TotalDuration) didn't work as intended
+        
         for (var i = 0; i < Items.Count; i++)
         {
             var itemDuration = Items[i].TotalDuration;

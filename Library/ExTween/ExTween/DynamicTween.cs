@@ -35,6 +35,11 @@ public class DynamicTween : ITween
         GenerateIfNotAlready().JumpTo(time);
     }
 
+    public void SkipToEnd()
+    {
+        GenerateIfNotAlready().SkipToEnd();
+    }
+
     private ITween GenerateIfNotAlready()
     {
         if (_generated == null)

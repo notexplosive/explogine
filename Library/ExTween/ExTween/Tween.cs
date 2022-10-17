@@ -62,6 +62,12 @@ public class Tween<T> : ITween
         ApplyTimeToValue();
     }
 
+    public void SkipToEnd()
+    {
+        CurrentTime = TotalDuration.Get();
+        ApplyTimeToValue();
+    }
+
     private void ApplyTimeToValue()
     {
         var percent = CurrentTime / TotalDuration.Get();

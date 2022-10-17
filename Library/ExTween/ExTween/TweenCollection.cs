@@ -58,4 +58,9 @@ public abstract class TweenCollection
     {
         return $"TweenCollection[{Items.Count}]";
     }
+    
+    public void SkipToEnd()
+    {
+        ForEachItem(item => { item.SkipToEnd(); });
+    }
 }
