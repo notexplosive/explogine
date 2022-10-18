@@ -1,5 +1,6 @@
 ﻿using ExplogineCore.Data;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame;
 
@@ -11,6 +12,11 @@ public class SoundPlayer
 
     public SoundEffectInstance Play(string name, SoundEffectOptions? options = null)
     {
+        if (Client.Headless)
+        {
+            return null!;
+        }
+        
         var usedOptions = new SoundEffectOptions();
         if (options.HasValue)
         {

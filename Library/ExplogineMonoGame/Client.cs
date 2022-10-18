@@ -50,7 +50,7 @@ public static class Client
     /// <summary>
     ///     Wrapper for accessing the Window of your platform.
     /// </summary>
-    public static AbstractWindow Window { get; private set; } = null!;
+    public static PlatformAgnosticWindow Window { get; private set; } = new();
 
     /// <summary>
     ///     Args passed via command line
@@ -106,6 +106,12 @@ public static class Client
     public static string LocalFullPath => AppDomain.CurrentDomain.BaseDirectory;
 
     /// <summary>
+    /// Indicates if we're in a Test-Only environment. (ie: Client.Start has not been run)
+    /// In Headless mode, we have no Window, no Assets, and no Graphics.
+    /// </summary>
+    public static bool Headless { get; private set; } = true;
+
+    /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
     /// </summary>
     /// <param name="argsArray">Args passed via command line</param>
@@ -116,7 +122,8 @@ public static class Client
         IPlatformInterface platform)
     {
         // Setup Platform
-        Client.Window = platform.AbstractWindow;
+        Client.Headless = false;
+        Client.Window = platform.PlatformAgnosticWindow;
         Client.FileSystem =
             new ClientFileSystem(
                 new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),

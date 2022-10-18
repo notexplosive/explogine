@@ -3,16 +3,16 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineDesktop;
 
-public class DesktopWindow : AbstractWindow
+public class DesktopWindow : PlatformAgnosticWindow
 {
     protected override void LateSetup(WindowConfig config)
     {
         void OnResize(object? sender, EventArgs e)
         {
-            var newWindowSize = new Point(_window.ClientBounds.Width, _window.ClientBounds.Height);
+            var newWindowSize = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
             InvokeResized(newWindowSize);
         }
 
-        _window.ClientSizeChanged += OnResize;
+        Window.ClientSizeChanged += OnResize;
     }
 }
