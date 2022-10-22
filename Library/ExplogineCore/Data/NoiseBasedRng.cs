@@ -85,4 +85,9 @@ public class NoiseBasedRng
     {
         return NextPositiveInt(low + high - 1) + low;
     }
+
+    public override string ToString()
+    {
+        return $"{_noise}, Position {_position}";
+    }
 }

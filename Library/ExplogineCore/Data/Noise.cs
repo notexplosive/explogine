@@ -54,4 +54,9 @@ public readonly struct Noise
     {
         return new Noise(PositiveIntAt(position));
     }
+
+    public override string ToString()
+    {
+        return $"Seed = {_seed}";
+    }
 }
