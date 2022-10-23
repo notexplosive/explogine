@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Mime;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
@@ -65,6 +66,8 @@ public class PlatformAgnosticWindow
         }
     }
 
+    public TextEnteredBuffer TextEnteredBuffer { get; set; }
+
     public void SetRenderResolution(Point? optionalSize)
     {
         if (optionalSize.HasValue)
@@ -128,6 +131,11 @@ public class PlatformAgnosticWindow
 
         InvokeResized(windowSize);
         Client.Graphics.DeviceManager.ApplyChanges();
+    }
+
+    protected void InvokeTextEntered(char text)
+    {
+        TextEnteredBuffer = TextEnteredBuffer.WithAddedCharacter(text);
     }
 
     protected void InvokeResized(Point windowSize)

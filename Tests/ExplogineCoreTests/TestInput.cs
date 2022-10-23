@@ -1,4 +1,5 @@
 ﻿using System;
+using ExplogineMonoGame;
 using ExplogineMonoGame.Input;
 using FluentAssertions;
 using Microsoft.Xna.Framework;
@@ -26,6 +27,7 @@ public class TestInput
                 new KeyboardState(Keys.Space),
                 new MouseState(0, 0, 0, ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
                     ButtonState.Released, ButtonState.Released),
+                new TextEnteredBuffer(),
                 new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.A),
                     new GamePadDPad()),
                 new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.B),
@@ -61,6 +63,7 @@ public class TestInput
                 new KeyboardState(Keys.Space),
                 new MouseState(0, 0, 0, ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
                     ButtonState.Released, ButtonState.Released),
+                new TextEnteredBuffer(),
                 new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.A),
                     new GamePadDPad()),
                 new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.B),
@@ -100,6 +103,7 @@ public class TestInput
                 0, 0, 0,
                 ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
                 ButtonState.Released, ButtonState.Released),
+            new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
             new GamePadState(
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
                 new GamePadTriggers(1, 0.5f),
@@ -151,6 +155,7 @@ public class TestInput
                 2, 4, 16,
                 ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
                 ButtonState.Released, ButtonState.Released),
+            new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
             new GamePadState(
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
                 new GamePadTriggers(1, 0.5f),
@@ -174,7 +179,46 @@ public class TestInput
         );
 
         snapshot.Serialize().Should()
-            .Be("M:2,4,16,1|K:32,65|G:1,0.5,1,0,0,1,1|G:1,0.5,1,0,0,1,2|G:1,0.5,1,0,0,1,4|G:1,0.5,1,0,0,1,8");
+            .Be("M:2,4,16,1|K:32,65|E:97,98,99|G:1,0.5,1,0,0,1,1|G:1,0.5,1,0,0,1,2|G:1,0.5,1,0,0,1,4|G:1,0.5,1,0,0,1,8");
+    }
+
+    [Fact]
+    public void serialize_to_and_back()
+    {
+        var snapshot = new InputSnapshot(
+            new KeyboardState(Keys.Space, Keys.A),
+            new MouseState(
+                2, 4, 16,
+                ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
+                ButtonState.Released, ButtonState.Released),
+            new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
+            new GamePadState(
+                new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
+                new GamePadTriggers(1, 0.5f),
+                new GamePadButtons(Buttons.A),
+                new GamePadDPad()),
+            new GamePadState(
+                new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
+                new GamePadTriggers(1, 0.5f),
+                new GamePadButtons(Buttons.B),
+                new GamePadDPad()),
+            new GamePadState(
+                new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
+                new GamePadTriggers(1, 0.5f),
+                new GamePadButtons(Buttons.X),
+                new GamePadDPad()),
+            new GamePadState(
+                new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
+                new GamePadTriggers(1, 0.5f),
+                new GamePadButtons(Buttons.Y),
+                new GamePadDPad())
+        );
+
+        var serialized = snapshot.Serialize();
+        var deserialized = new InputSnapshot(serialized);
+        var serializedBack = deserialized.Serialize();
+
+        serialized.Should().Be(serializedBack);
     }
 
     [Fact]

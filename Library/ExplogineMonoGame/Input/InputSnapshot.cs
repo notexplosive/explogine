@@ -11,6 +11,7 @@ public readonly struct InputSnapshot
     {
         MouseButtonStates = Array.Empty<ButtonState>();
         PressedKeys = Array.Empty<Keys>();
+        TextEntered = new TextEnteredBuffer(Array.Empty<char>());
 
         var split = serializedString.Split('|');
         var playerIndex = 0;
@@ -70,6 +71,19 @@ public readonly struct InputSnapshot
 
                 playerIndex++;
             }
+
+            else if (segment.StartsWith("E"))
+            {
+                var data = segment.Split(":")[1].Split(',');
+                var charList = new List<char>();
+
+                foreach (var item in data)
+                {
+                    charList.Add((char) int.Parse(item));
+                }
+
+                TextEntered = new TextEnteredBuffer(charList.ToArray());
+            }
         }
     }
 
@@ -77,7 +91,8 @@ public readonly struct InputSnapshot
     {
     }
 
-    public InputSnapshot(KeyboardState keyboardState, MouseState mouseState, GamePadState gamePadStateP1,
+    public InputSnapshot(KeyboardState keyboardState, MouseState mouseState, TextEnteredBuffer buffer,
+        GamePadState gamePadStateP1,
         GamePadState gamePadStateP2, GamePadState gamePadStateP3, GamePadState gamePadStateP4)
     {
         PressedKeys = new Keys[keyboardState.GetPressedKeyCount()];
@@ -87,6 +102,7 @@ public readonly struct InputSnapshot
         }
 
         MousePosition = mouseState.Position.ToVector2();
+        TextEntered = buffer;
         ScrollValue = mouseState.ScrollWheelValue;
         MouseButtonStates = new ButtonState[InputSerialization.NumberOfMouseButtons];
         MouseButtonStates[0] = mouseState.LeftButton;
@@ -99,6 +115,7 @@ public readonly struct InputSnapshot
         GamePadSnapshotFour = new GamePadSnapshot(gamePadStateP4);
     }
 
+    public TextEnteredBuffer TextEntered { get; } = new();
     public GamePadSnapshot GamePadSnapshotOne { get; } = new();
     public GamePadSnapshot GamePadSnapshotTwo { get; } = new();
     public GamePadSnapshot GamePadSnapshotThree { get; } = new();
@@ -134,13 +151,14 @@ public readonly struct InputSnapshot
     }
 
     public static InputSnapshot Human =>
-        new(Keyboard.GetState(), Mouse.GetState(),
+        new(Keyboard.GetState(), Mouse.GetState(), Client.Window.TextEnteredBuffer,
             GamePad.GetState(PlayerIndex.One), GamePad.GetState(PlayerIndex.Two),
             GamePad.GetState(PlayerIndex.Three), GamePad.GetState(PlayerIndex.Four)
         );
 
     public static InputSnapshot Empty =>
-        new(new KeyboardState(), new MouseState(), new GamePadState(), new GamePadState(), new GamePadState(),
+        new(new KeyboardState(), new MouseState(), new TextEnteredBuffer(), new GamePadState(), new GamePadState(),
+            new GamePadState(),
             new GamePadState());
 
     public override string ToString()

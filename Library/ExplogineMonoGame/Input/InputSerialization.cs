@@ -70,6 +70,6 @@ public static class InputSerialization
         }
 
         return
-            $"M:{mouse}|K:{keyboardBuilder}|G:{InputSerialization.AsString(input.GamePadSnapshotOne)}|G:{InputSerialization.AsString(input.GamePadSnapshotTwo)}|G:{InputSerialization.AsString(input.GamePadSnapshotThree)}|G:{InputSerialization.AsString(input.GamePadSnapshotFour)}";
+            $"M:{mouse}|K:{keyboardBuilder}|E:{input.TextEntered.ToString()}|G:{InputSerialization.AsString(input.GamePadSnapshotOne)}|G:{InputSerialization.AsString(input.GamePadSnapshotTwo)}|G:{InputSerialization.AsString(input.GamePadSnapshotThree)}|G:{InputSerialization.AsString(input.GamePadSnapshotFour)}";
     }
 }

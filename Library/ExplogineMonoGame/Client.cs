@@ -205,6 +205,7 @@ public static class Client
             Client.Input = Client.Demo.ProcessInput(Client.Input);
             Client.CartridgeChain.Update(dt);
             Client.HitTesting.Resolve(Client.Input.Mouse.Position(Client.RenderCanvas.ScreenToCanvas));
+            Client.Window.TextEnteredBuffer = new TextEnteredBuffer();
         }
     }
 

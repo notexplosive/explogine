@@ -12,7 +12,15 @@ public class DesktopWindow : PlatformAgnosticWindow
             var newWindowSize = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
             InvokeResized(newWindowSize);
         }
+        
+        void OnTextEntered(object? sender, TextInputEventArgs e)
+        {
+            InvokeTextEntered(e.Character);
+        }
 
         Window.ClientSizeChanged += OnResize;
+        Window.TextInput += OnTextEntered;
     }
+
+    
 }
