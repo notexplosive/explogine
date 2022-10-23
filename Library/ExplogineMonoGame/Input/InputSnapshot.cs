@@ -79,7 +79,10 @@ public readonly struct InputSnapshot
 
                 foreach (var item in data)
                 {
-                    charList.Add((char) int.Parse(item));
+                    if (item.Length > 0)
+                    {
+                        charList.Add((char) int.Parse(item));
+                    }
                 }
 
                 TextEntered = new TextEnteredBuffer(charList.ToArray());

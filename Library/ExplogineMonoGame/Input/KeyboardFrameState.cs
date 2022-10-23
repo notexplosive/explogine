@@ -14,6 +14,11 @@ public readonly struct KeyboardFrameState
         Previous = previous;
     }
 
+    public char[] GetEnteredCharacters()
+    {
+        return Current.TextEntered.Characters;
+    }
+    
     public ButtonFrameState GetButton(Keys key)
     {
         var isDown = Current.PressedKeys.Contains(key);
