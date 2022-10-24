@@ -167,6 +167,11 @@ public class VirtualFileSystem : IFileSystem
             var nodes = path.SplitDirectorySeparators();
             return nodes[^1];
         }
+
+        public override string ToString()
+        {
+            return "/";
+        }
     }
 
     private record VirtualDirectory(VirtualDirectory Parent, string Name) : IVirtualItem

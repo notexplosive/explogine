@@ -1,0 +1,3 @@
+﻿float_variable_a 1
+float_variable_b 2
+bool_variable_a False
