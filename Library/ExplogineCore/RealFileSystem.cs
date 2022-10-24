@@ -56,6 +56,7 @@ public class RealFileSystem : IFileSystem
         {
             return string.Empty;
         }
+        
         return File.ReadAllText(ToWorkingPath(relativePathToFile));
     }
 

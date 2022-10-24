@@ -21,6 +21,18 @@ public abstract class TestFileSystem
         Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
         Temp.HasFile("foo/hello.txt").Should().BeTrue();
     }
+    
+    [Fact]
+    public void create_file_multiple_times()
+    {
+        Temp.CreateFile("foo/hello.txt");
+        Temp.WriteToFile("foo/hello.txt", "hello");
+        Temp.CreateFile("foo/hello.txt");
+        Temp.CreateFile("foo/hello.txt");
+        Temp.CreateFile("foo/hello.txt");
+
+        Temp.ReadFile("foo/hello.txt").Trim().Should().Be("hello");
+    }
 
     [Fact]
     public void creating_a_file_does_not_overwrite_it()

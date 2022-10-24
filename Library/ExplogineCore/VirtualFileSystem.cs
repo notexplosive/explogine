@@ -19,6 +19,11 @@ public class VirtualFileSystem : IFileSystem
 
     public void CreateFile(string relativePathToFile)
     {
+        if (HasFile(relativePathToFile))
+        {
+            return;
+        }
+        
         WriteToFile(relativePathToFile, "");
     }
 
@@ -88,7 +93,7 @@ public class VirtualFileSystem : IFileSystem
     public void WriteToFile(string relativeFileName, params string[] lines)
     {
         _root.CreateDirectoriesUpToFile(relativeFileName, true)
-            ?.CreateFile(_root.GetFileName(relativeFileName), string.Join('\n', lines));
+            ?.CreateFileWithContent(_root.GetFileName(relativeFileName), string.Join('\n', lines));
     }
 
     public string GetCurrentDirectory()
@@ -174,7 +179,7 @@ public class VirtualFileSystem : IFileSystem
             return (VirtualDirectory) AddItem(new VirtualDirectory(this, name));
         }
 
-        public VirtualFile CreateFile(string name, string content)
+        public VirtualFile CreateFileWithContent(string name, string content)
         {
             return (VirtualFile) AddItem(new VirtualFile(this, name, content));
         }
@@ -184,6 +189,12 @@ public class VirtualFileSystem : IFileSystem
             if (item.Name.Contains('/') || item.Name.Contains('\\'))
             {
                 throw new Exception("Invalid character");
+            }
+
+            var foundItem = _items.Find(i => i.Name == item.Name);
+            if (foundItem != null)
+            {
+                _items.Remove(foundItem);
             }
 
             _items.Add(item);
