@@ -1,19 +1,15 @@
-﻿namespace ExplogineCore;
+﻿using System.Reflection;
+using Newtonsoft.Json;
+
+namespace ExplogineCore;
 
 public class SerialBlob
 {
-    private const char SeparatorChar = ' ';
-
     private readonly Dictionary<IDescriptor, object> _assignedVariables = new();
     private readonly Dictionary<string, IDescriptor> _declaredVariables = new();
 
     public Descriptor<T> Declare<T>(string variableName)
     {
-        if (variableName.Contains(SerialBlob.SeparatorChar))
-        {
-            throw new Exception($"\"{variableName}\" contains illegal character {SerialBlob.SeparatorChar}.");
-        }
-
         if (_declaredVariables.ContainsKey(variableName))
         {
             throw new Exception($"Duplicate variable declaration {variableName}");
@@ -52,7 +48,15 @@ public class SerialBlob
             throw new ArgumentNullException();
         }
 
-        _assignedVariables[descriptor] = value;
+        var type = descriptor.GetUnderlyingType();
+
+        if (type.IsEnum)
+        {
+            // enums are special, ugh
+            value = Enum.Parse(type, value.ToString()!);
+        }
+
+        _assignedVariables[descriptor] = Convert.ChangeType(value, type);
     }
 
     private void ConfirmDeclared(IDescriptor descriptor)
@@ -116,39 +120,39 @@ public class SerialBlob
 
     public void Read(IFileSystem fileSystem, string fileName)
     {
-        var lines = fileSystem.ReadFile(fileName).SplitLines();
-        foreach (var line in lines)
+        var fileContent = fileSystem.ReadFile(fileName);
+        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(fileContent);
+
+        if (dictionary == null)
         {
-            var split = line.Split(SerialBlob.SeparatorChar);
-            if (split.Length != 2)
-            {
-                throw new Exception("Blob was in an unexpected format");
-            }
+            throw new Exception($"Json deserialize failed {fileName}");
+        }
 
-            var name = split[0];
-            var data = split[1];
-
+        foreach (var keyVal in dictionary)
+        {
+            var name = keyVal.Key;
             if (_declaredVariables.ContainsKey(name))
             {
                 var descriptor = _declaredVariables[name];
-
-                var type = descriptor.GetUnderlyingType();
-                var result = Convert.ChangeType(data, type);
-                SetUnsafe(descriptor, result);
+                var data = dictionary[name];
+                SetUnsafe(descriptor, data);
             }
         }
     }
 
     public string[] DataAsStrings()
     {
-        var lines = new List<string>();
+        var dictionary = new Dictionary<string, object>();
 
-        foreach (var data in _assignedVariables)
+        foreach (var keyValue in _assignedVariables)
         {
-            lines.Add($"{data.Key.Name}{SerialBlob.SeparatorChar}{data.Value}");
+            var name = keyValue.Key.Name;
+            var value = keyValue.Value;
+
+            dictionary[name] = value;
         }
 
-        return lines.ToArray();
+        return new[] {JsonConvert.SerializeObject(dictionary, Formatting.Indented)};
     }
 
     /// <summary>

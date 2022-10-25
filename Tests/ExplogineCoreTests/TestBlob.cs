@@ -72,6 +72,7 @@ public class TestBlob
         blob.Declare("float_variable_a", 1f);
         blob.Declare("float_variable_b", 2f);
         blob.Declare("bool_variable_a", false);
+        blob.Declare("enum_variable", TestEnum.TestEnumValueB);
         blob.Declare<bool>("blank_bool_variable");
         blob.Declare<int>("blank_int_variable");
 
@@ -79,7 +80,7 @@ public class TestBlob
         var file = FileSystem.ReadFile("blob.txt");
         Approvals.Verify(file);
     }
-    
+
     [Fact]
     public void write_and_get_back_result()
     {
@@ -87,16 +88,19 @@ public class TestBlob
         var writeBlob = new SerialBlob();
         writeBlob.Declare("float_variable_a", 1f);
         writeBlob.Declare("float_variable_b", 2f);
+        writeBlob.Declare("enum_variable",TestEnum.TestEnumValueC);
         writeBlob.Dump(FileSystem, "written.txt");
 
         // Another blob (maybe the same blob after restarting the application), only has a subset of the original declared variables.
         var readBlob = new SerialBlob();
         var floatARead = readBlob.Declare<float>("float_variable_a");
         var floatBRead = readBlob.Declare<float>("float_variable_b");
+        var enumRead = readBlob.Declare<TestEnum>("enum_variable");
         readBlob.Read(FileSystem, "written.txt");
 
         readBlob.Get(floatARead).Should().Be(1f);
         readBlob.Get(floatBRead).Should().Be(2f);
+        readBlob.Get(enumRead).Should().Be(TestEnum.TestEnumValueC);
     }
 
     [Fact]
@@ -117,5 +121,12 @@ public class TestBlob
 
         readBlob.Get(floatARead).Should().Be(writeBlob.Get(floatAWrite));
         readBlob.Get(floatBRead).Should().Be(writeBlob.Get(floatBWrite));
+    }
+
+    private enum TestEnum
+    {
+        TestEnumValueA,
+        TestEnumValueB,
+        TestEnumValueC
     }
 }

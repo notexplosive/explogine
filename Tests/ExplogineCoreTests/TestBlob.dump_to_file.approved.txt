@@ -1,3 +1,6 @@
-﻿float_variable_a 1
-float_variable_b 2
-bool_variable_a False
+﻿{
+  "float_variable_a": 1.0,
+  "float_variable_b": 2.0,
+  "bool_variable_a": false,
+  "enum_variable": 1
+}
