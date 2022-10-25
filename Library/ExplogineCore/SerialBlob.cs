@@ -7,6 +7,8 @@ public class SerialBlob
     private readonly Dictionary<IDescriptor, object> _assignedVariables = new();
     private readonly Dictionary<string, IDescriptor> _declaredVariables = new();
 
+    public event Action? WasValueSet;
+
     public Descriptor<T> Declare<T>(string variableName)
     {
         if (_declaredVariables.ContainsKey(variableName))
@@ -36,6 +38,7 @@ public class SerialBlob
         }
 
         _assignedVariables[descriptor] = value;
+        WasValueSet?.Invoke();
     }
 
     private void SetUnsafe(IDescriptor descriptor, object value)
@@ -56,6 +59,7 @@ public class SerialBlob
         }
 
         _assignedVariables[descriptor] = Convert.ChangeType(value, type);
+        WasValueSet?.Invoke();
     }
 
     private void ConfirmDeclared(IDescriptor descriptor)
