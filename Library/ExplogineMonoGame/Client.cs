@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
@@ -106,8 +107,8 @@ public static class Client
     public static string LocalFullPath => AppDomain.CurrentDomain.BaseDirectory;
 
     /// <summary>
-    /// Indicates if we're in a Test-Only environment. (ie: Client.Start has not been run)
-    /// In Headless mode, we have no Window, no Assets, and no Graphics.
+    ///     Indicates if we're in a Test-Only environment. (ie: Client.Start has not been run)
+    ///     In Headless mode, we have no Window, no Assets, and no Graphics.
     /// </summary>
     public static bool Headless { get; private set; } = true;
 
@@ -127,7 +128,8 @@ public static class Client
         Client.FileSystem =
             new ClientFileSystem(
                 new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),
-                new RealFileSystem(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData))
+                new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name))
             );
         Client.startingConfig = windowConfig;
 

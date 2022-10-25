@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace ExplogineCore;
 
@@ -15,7 +14,7 @@ public class SerialBlob
             throw new Exception($"Duplicate variable declaration {variableName}");
         }
 
-        var descriptor = new Descriptor<T>(variableName);
+        var descriptor = new Descriptor<T>(variableName, this);
         _declaredVariables.Add(variableName, descriptor);
         return descriptor;
     }
@@ -118,6 +117,19 @@ public class SerialBlob
         fileSystem.WriteToFile(fileName, DataAsStrings());
     }
 
+    public bool TryRead(IFileSystem fileSystem, string fileName)
+    {
+        try
+        {
+            Read(fileSystem, fileName);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public void Read(IFileSystem fileSystem, string fileName)
     {
         var fileContent = fileSystem.ReadFile(fileName);
@@ -164,11 +176,21 @@ public class SerialBlob
         public Type GetUnderlyingType();
     }
 
-    public readonly record struct Descriptor<T>(string Name) : IDescriptor
+    public readonly record struct Descriptor<T>(string Name, SerialBlob Blob) : IDescriptor
     {
         public Type GetUnderlyingType()
         {
             return typeof(T);
+        }
+
+        public void Set(T value)
+        {
+            Blob.Set(this, value);
+        }
+
+        public T Get()
+        {
+            return Blob.Get(this);
         }
 
         public override string ToString()
