@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.AssetManagement;
+﻿using System.Diagnostics.Contracts;
+using ExplogineMonoGame.AssetManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,6 +19,7 @@ public class LazyInitializedFont : IFont
 
     public int FontSize { get; }
 
+    [Pure]
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
         return GetFont().MeasureString(text, restrictedWidth);
