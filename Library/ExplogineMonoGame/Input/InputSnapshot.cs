@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -101,16 +102,16 @@ public readonly struct InputSnapshot
         PressedKeys = new Keys[keyboardState.GetPressedKeyCount()];
         for (var i = 0; i < keyboardState.GetPressedKeyCount(); i++)
         {
-            PressedKeys[i] = keyboardState.GetPressedKeys()[i];
+            PressedKeys.Set(i, keyboardState.GetPressedKeys()[i]);
         }
 
         MousePosition = mouseState.Position.ToVector2();
         TextEntered = buffer;
         ScrollValue = mouseState.ScrollWheelValue;
         MouseButtonStates = new ButtonState[InputSerialization.NumberOfMouseButtons];
-        MouseButtonStates[0] = mouseState.LeftButton;
-        MouseButtonStates[1] = mouseState.RightButton;
-        MouseButtonStates[2] = mouseState.MiddleButton;
+        MouseButtonStates.Set(0, mouseState.LeftButton);
+        MouseButtonStates.Set(1, mouseState.RightButton);
+        MouseButtonStates.Set(2, mouseState.MiddleButton);
 
         GamePadSnapshotOne = new GamePadSnapshot(gamePadStateP1);
         GamePadSnapshotTwo = new GamePadSnapshot(gamePadStateP2);
@@ -123,8 +124,8 @@ public readonly struct InputSnapshot
     public GamePadSnapshot GamePadSnapshotTwo { get; } = new();
     public GamePadSnapshot GamePadSnapshotThree { get; } = new();
     public GamePadSnapshot GamePadSnapshotFour { get; } = new();
-    public ButtonState[] MouseButtonStates { get; } = Array.Empty<ButtonState>();
-    public Keys[] PressedKeys { get; } = Array.Empty<Keys>();
+    public NotNullArray<ButtonState> MouseButtonStates { get; } = new();
+    public NotNullArray<Keys> PressedKeys { get; } = new();
     public Vector2 MousePosition { get; } = Vector2.Zero;
     public int ScrollValue { get; } = 0;
 
