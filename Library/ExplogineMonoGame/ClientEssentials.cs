@@ -49,9 +49,9 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         }
     }
 
-    public IEnumerable<LoadEvent?> LoadEvents(Painter painter)
+    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        yield return new LoadEvent("white-pixel", () =>
+        yield return new AssetLoadEvent("white-pixel", () =>
         {
             var canvas = new Canvas(1, 1);
             Client.Graphics.PushCanvas(canvas);

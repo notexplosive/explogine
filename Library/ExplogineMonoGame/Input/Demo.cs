@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ExplogineMonoGame.Cartridges;
 
 namespace ExplogineMonoGame.Input;
 
-public class Demo
+public class Demo : ILoadEventProvider
 {
     private readonly List<InputSnapshot> _records = new();
 
@@ -144,7 +145,7 @@ public class Demo
 
     public InputSnapshot GetNextRecordedState()
     {
-        if (_records.Count-1 > _playHeadIndex)
+        if (_records.Count - 1 > _playHeadIndex)
         {
             return _records[_playHeadIndex++];
         }
@@ -178,7 +179,16 @@ public class Demo
         return result;
     }
 
-    public void OnStartup()
+    public void Prepare()
+    {
+        var demoVal = Client.Args.GetValue<string>("demo");
+        if (demoVal == "playback")
+        {
+            LoadFile("default.demo");
+        }
+    }
+
+    public void Begin()
     {
         var demoVal = Client.Args.GetValue<string>("demo");
         if (!string.IsNullOrEmpty(demoVal))
@@ -189,7 +199,6 @@ public class Demo
                     BeginRecording();
                     break;
                 case "playback":
-                    LoadFile("default.demo");
                     BeginPlayback();
                     break;
             }
@@ -201,5 +210,10 @@ public class Demo
         Stopped,
         Recording,
         Playing
+    }
+
+    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
+    {
+        yield return new VoidLoadEvent("PrepareDemo",() => Prepare());
     }
 }

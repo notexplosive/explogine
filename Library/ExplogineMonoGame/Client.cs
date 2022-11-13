@@ -147,7 +147,7 @@ public static class Client
         }
 
         Client.CartridgeChain.Append(gameCartridge);
-        Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.OnStartup;
+        Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game
         using var game = new NotGame();
@@ -179,6 +179,7 @@ public static class Client
     internal static void LoadContent(ContentManager contentManager)
     {
         Client.loader = new Loader(contentManager);
+        Client.loader.AddLoadEvents(Client.Demo);
         Client.loader.AddLoadEvents(Client.Essentials);
         Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
         Client.CartridgeChain.SetupLoadingCartridge(Client.loader);

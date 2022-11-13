@@ -12,25 +12,10 @@ namespace ExplogineMonoGame;
 
 public delegate Asset LoadEventFunction();
 
-public readonly record struct LoadEvent(string Key, LoadEventFunction Function)
-{
-    public Asset Execute()
-    {
-        var asset = Function.Invoke();
-        Client.Assets.AddAsset(Key, asset);
-        return asset;
-    }
-
-    public override string ToString()
-    {
-        return Key;
-    }
-}
-
 public class Loader
 {
     private readonly ContentManager _content;
-    private readonly List<LoadEvent> _loadEvents = new();
+    private readonly List<ILoadEvent> _loadEvents = new();
     private int _loadEventIndex;
 
     public Loader(ContentManager content)
@@ -52,19 +37,19 @@ public class Loader
             return Client.Assets.GetAsset<T>(key);
         }
 
-        LoadEvent? found = null;
+        ILoadEvent? foundLoadEvent = null;
         foreach (var loadEvent in _loadEvents)
         {
             if (loadEvent.Key == key)
             {
-                found = loadEvent;
+                foundLoadEvent = loadEvent;
             }
         }
 
-        if (found.HasValue)
+        if (foundLoadEvent is AssetLoadEvent assetLoadEvent)
         {
-            _loadEvents.Remove(found.Value);
-            var asset = found.Value.Execute();
+            _loadEvents.Remove(assetLoadEvent);
+            var asset = assetLoadEvent.ExecuteAndReturnAsset();
             var result = asset as T;
 
             if (result == null)
@@ -92,11 +77,11 @@ public class Loader
         Client.Debug.Log("Loading: " + MathF.Floor(Percent * 100f) + "%");
     }
 
-    private IEnumerable<LoadEvent> StaticContentLoadEvents()
+    private IEnumerable<AssetLoadEvent> StaticContentLoadEvents()
     {
         foreach (var key in Loader.GetKeysFromContentDirectory())
         {
-            yield return new LoadEvent(key, () => LoadAsset(key));
+            yield return new AssetLoadEvent(key, () => LoadAsset(key));
         }
     }
 
@@ -158,9 +143,9 @@ public class Loader
         _content.Unload();
     }
 
-    public void AddLoadEvent(LoadEvent loadEvent)
+    public void AddLoadEvent(ILoadEvent assetLoadEvent)
     {
-        _loadEvents.Add(loadEvent);
+        _loadEvents.Add(assetLoadEvent);
     }
 
     public void AddLoadEvents(IEnumerable<ILoadEventProvider> providers)
@@ -175,9 +160,9 @@ public class Loader
     {
         foreach (var loadEvent in provider.LoadEvents(Client.Graphics.Painter))
         {
-            if (loadEvent.HasValue)
+            if (loadEvent != null)
             {
-                AddLoadEvent(loadEvent.Value);
+                AddLoadEvent(loadEvent);
             }
         }
     }

@@ -82,9 +82,9 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         return false;
     }
 
-    public IEnumerable<LoadEvent?> LoadEvents(Painter painter)
+    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        yield return new LoadEvent("demo-indicators",
+        yield return new AssetLoadEvent("demo-indicators",
             () => new GridBasedSpriteSheet("engine/demo-indicators", new Point(67, 23)));
     }
     
