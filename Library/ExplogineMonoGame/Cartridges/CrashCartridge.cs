@@ -8,8 +8,8 @@ namespace ExplogineMonoGame.Cartridges;
 
 public class CrashCartridge : ICartridge
 {
-    private readonly string _reportText;
     private readonly LazyInitializedFont _font = new("engine/console-font", 32);
+    private readonly string _reportText;
     private readonly LazyInitializedFont _titleFont = new("engine/console-font", 100);
 
     public CrashCartridge(Exception exception)
@@ -39,21 +39,18 @@ public class CrashCartridge : ICartridge
 
     public void Draw(Painter painter)
     {
-        if (_font == null || _titleFont == null)
-        {
-            Client.Debug.Log("Font was not loaded, we couldn't render crash cart");
-            Client.Exit();
-            return;
-        }
-
         painter.BeginSpriteBatch(SamplerState.LinearWrap, Matrix.Identity);
 
         painter.Clear(Color.DarkBlue);
 
-        painter.DrawStringAtPosition(_titleFont, "heck! :(", Point.Zero, new DrawSettings());
+        var rect = new Rectangle(new Point(0, 0), Client.Window.Size);
+        rect.Inflate(-10, -10);
 
+        painter.DrawStringWithinRectangle(_titleFont, "heck! :(", rect, Alignment.TopLeft, new DrawSettings());
+        rect.Height -= _titleFont.FontSize;
+        rect.Location += new Point(0,_titleFont.FontSize);
         painter.DrawStringWithinRectangle(_font, _reportText,
-            new Rectangle(new Point(0, _titleFont.FontSize), Client.Window.Size), Alignment.TopLeft,
+            rect, Alignment.TopLeft,
             new DrawSettings());
 
         painter.EndSpriteBatch();
