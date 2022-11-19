@@ -18,7 +18,7 @@ internal class SnapshotTaker
         _timeLastFrame = DateTime.Now;
     }
 
-    public void Update(float dt)
+    public void Update()
     {
         var now = DateTime.Now;
         if (Client.Input.Keyboard.GetButton(Keys.F12).WasPressed)

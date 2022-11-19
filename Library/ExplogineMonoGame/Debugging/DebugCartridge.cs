@@ -48,7 +48,6 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         if (Client.FinishedLoading.IsReady)
         {
             _frameStep.Update(dt);
-            _snapshotTaker.Update(dt);
         }
 
         if (Client.Input.Keyboard.Modifiers.ControlShift && Client.Input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
@@ -59,6 +58,11 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
 
     public void Draw(Painter painter)
     {
+        if (Client.FinishedLoading.IsReady)
+        {
+            _snapshotTaker.Update();
+        }
+        
         painter.BeginSpriteBatch(SamplerState.LinearWrap);
 
         _demoInterface.Draw(painter, DemoStatusDepth);
