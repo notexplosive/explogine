@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
-public struct DrawSettings
+public struct DrawSettings : IBasicDrawSettings
 {
     public DrawSettings()
     {
@@ -14,6 +14,12 @@ public struct DrawSettings
         Flip = default;
         Color = Color.White;
         SourceRectangle = null;
+    }
+
+    public DrawSettings(IBasicDrawSettings basicDrawSettings) : this()
+    {
+        Depth = basicDrawSettings.Depth;
+        Color = basicDrawSettings.Color;
     }
 
     public Color Color { get; set; }

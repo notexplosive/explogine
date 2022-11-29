@@ -1,4 +1,4 @@
-﻿using ExplogineCore.Data;
+﻿using System;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -78,13 +78,13 @@ public class Painter
         settings.SourceRectangle ??= texture.Bounds;
         var origin = settings.Origin.Value(destinationRectangle.Size);
 
-        var scaleX = (float)destinationRectangle.Size.X / settings.SourceRectangle.Value.Size.X;
-        var scaleY = (float)destinationRectangle.Size.Y / settings.SourceRectangle.Value.Size.Y;
-        
+        var scaleX = (float) destinationRectangle.Size.X / settings.SourceRectangle.Value.Size.X;
+        var scaleY = (float) destinationRectangle.Size.Y / settings.SourceRectangle.Value.Size.Y;
+
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
         origin.X /= scaleX;
         origin.Y /= scaleY;
-        
+
         _spriteBatch.Draw(texture, destinationRectangle, settings.SourceRectangle, settings.Color, settings.Angle,
             origin, settings.FlipEffect, settings.Depth);
     }
@@ -96,7 +96,8 @@ public class Painter
             settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
 
-    public void DrawScaledStringAtPosition(IFont fontLike, string text, Point position, Scale2D scale, DrawSettings settings)
+    public void DrawScaledStringAtPosition(IFont fontLike, string text, Point position, Scale2D scale,
+        DrawSettings settings)
     {
         var font = fontLike.GetFont();
         _spriteBatch.DrawString(
@@ -114,6 +115,11 @@ public class Painter
     public void DrawStringAtPosition(IFont font, string text, Point position, DrawSettings settings)
     {
         DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
+    }
+
+    public void DrawDebugStringAtPosition(string text, Point position, DrawSettings settings)
+    {
+        DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
     }
 
     public void DrawStringWithinRectangle(IFont fontLike, string text, Rectangle rectangle, Alignment alignment,
@@ -137,9 +143,33 @@ public class Painter
             settings.Depth);
     }
 
-    public void FillRectangle(Rectangle rectangle, Color color, Depth depth)
+    public void DrawLine(Point start, Point end, LineDrawSettings settings)
     {
-        DrawAsRectangle(Client.Assets.GetTexture("white-pixel"), rectangle,
-            new DrawSettings {Depth = depth, Color = color});
+        var length = (end - start).ToVector2().Length() + settings.Thickness;
+        var rect = new Rectangle(start, new Point((int) length, (int) settings.Thickness));
+        var unitX = Vector2.UnitX;
+        var relativeEnd = (end - start).ToVector2();
+        var angle = MathF.Acos(Vector2.Dot(unitX, relativeEnd) / (unitX.Length() * relativeEnd.Length()));
+
+        if (start == end)
+        {
+            // edge case: overwrite the values and just draw a box
+            rect = new Rectangle(start, new Point((int)settings.Thickness));
+            angle = 0;
+        }
+
+        if (relativeEnd.Y < 0)
+        {
+            angle = -angle;
+        }
+        
+        DrawRectangle(rect,
+            new DrawSettings
+            {
+                Color = settings.Color,
+                Depth = settings.Depth,
+                Angle = angle,
+                Origin = new DrawOrigin(new Vector2(settings.Thickness / 2f))
+            });
     }
 }
