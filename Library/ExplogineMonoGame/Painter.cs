@@ -58,9 +58,9 @@ public class Painter
         }
     }
 
-    public void DrawRectangle(Rectangle rectangle, DrawSettings drawSettings)
+    public void DrawRectangle(RectangleF rectangle, DrawSettings drawSettings)
     {
-        DrawAsRectangle(PixelAsset, rectangle, drawSettings);
+        DrawAsRectangle(PixelAsset, rectangle.ToRectangle(), drawSettings);
     }
 
     public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle)
@@ -163,7 +163,7 @@ public class Painter
             angle = -angle;
         }
 
-        DrawRectangle(rect.ToRectangle(),
+        DrawRectangle(rect,
             new DrawSettings
             {
                 Color = settings.Color,
