@@ -17,6 +17,10 @@ public struct RectangleF : IEquatable<RectangleF>
         Size = size;
     }
 
+    public RectangleF(float x, float y, float width, float height) : this(new Vector2(x, y), new Vector2(width, height))
+    {
+    }
+
     public static implicit operator RectangleF(Rectangle rect)
     {
         return rect.ToRectangleF();

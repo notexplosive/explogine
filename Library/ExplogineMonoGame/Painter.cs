@@ -145,6 +145,34 @@ public class Painter
             settings.Depth);
     }
 
+    public void DrawPolygonOutline(Vector2[] points, bool closeShape, LineDrawSettings settings)
+    {
+        for (var i = 1; i < points.Length; i++)
+        {
+            DrawLine(points[i - 1], points[i], settings);
+        }
+
+        if (closeShape)
+        {
+            DrawLine(points[^1], points[0], settings);
+        }
+    }
+
+    public void DrawLineRectangle(RectangleF rectangle, LineDrawSettings settings)
+    {
+        DrawPolygonOutline(
+            new Vector2[]
+            {
+                new(rectangle.Left, rectangle.Top),
+                new(rectangle.Right, rectangle.Top),
+                new(rectangle.Right, rectangle.Bottom),
+                new(rectangle.Left, rectangle.Bottom)
+            },
+            true,
+            settings
+        );
+    }
+
     public void DrawLine(Vector2 start, Vector2 end, LineDrawSettings settings)
     {
         var relativeEnd = end - start;
