@@ -143,18 +143,18 @@ public class Painter
             settings.Depth);
     }
 
-    public void DrawLine(Point start, Point end, LineDrawSettings settings)
+    public void DrawLine(Vector2 start, Vector2 end, LineDrawSettings settings)
     {
-        var length = (end - start).ToVector2().Length() + settings.Thickness;
-        var rect = new Rectangle(start, new Point((int) length, (int) settings.Thickness));
+        var length = (end - start).Length() + settings.Thickness;
+        var rect = new RectangleF(start, new Vector2(length, settings.Thickness));
         var unitX = Vector2.UnitX;
-        var relativeEnd = (end - start).ToVector2();
+        var relativeEnd = end - start;
         var angle = MathF.Acos(Vector2.Dot(unitX, relativeEnd) / (unitX.Length() * relativeEnd.Length()));
 
         if (start == end)
         {
             // edge case: overwrite the values and just draw a box
-            rect = new Rectangle(start, new Point((int)settings.Thickness));
+            rect = new RectangleF(start, new Vector2(settings.Thickness));
             angle = 0;
         }
 
@@ -162,8 +162,8 @@ public class Painter
         {
             angle = -angle;
         }
-        
-        DrawRectangle(rect,
+
+        DrawRectangle(rect.ToRectangle(),
             new DrawSettings
             {
                 Color = settings.Color,
