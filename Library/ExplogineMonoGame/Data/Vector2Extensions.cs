@@ -10,4 +10,14 @@ public static class Vector2Extensions
         copy.Normalize();
         return copy;
     }
+
+    public static Vector2 StraightMultiply(this Vector2 vec, Vector2 other)
+    {
+        return new Vector2(vec.X * other.X, vec.Y * other.Y);
+    }
+    
+    public static Vector2 StraightMultiply(this Vector2 vec, Point other)
+    {
+        return vec.StraightMultiply(other.ToVector2());
+    }
 }
