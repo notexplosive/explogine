@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mime;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame;
 
@@ -146,5 +147,10 @@ public class PlatformAgnosticWindow
         }
 
         Resized?.Invoke(windowSize);
+    }
+
+    public void SetCursor(MouseCursor cursor)
+    {
+        Mouse.SetCursor(cursor);
     }
 }

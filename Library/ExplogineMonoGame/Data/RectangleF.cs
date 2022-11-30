@@ -206,4 +206,77 @@ public struct RectangleF : IEquatable<RectangleF>
         copy.Inflate(horizontalAmount, verticalAmount);
         return copy;
     }
+
+    public RectangleF ResizedOnEdge(RectEdge edge, Vector2 delta)
+    {
+        var x = X;
+        var y = Y;
+        var width = Width;
+        var height = Height;
+
+        void ResizeOnCardinalEdge(RectEdge localEdge)
+        {
+            switch (localEdge)
+            {
+                case RectEdge.Bottom:
+                    height += delta.Y;
+                    break;
+                case RectEdge.Right:
+                    width += delta.X;
+                    break;
+                case RectEdge.Left:
+                    width -= delta.X;
+                    x += delta.X;
+                    break;
+                case RectEdge.Top:
+                    height -= delta.Y;
+                    y += delta.Y;
+                    break;
+            }
+        }
+
+        switch (edge)
+        {
+            case RectEdge.Bottom:
+            case RectEdge.Right:
+            case RectEdge.Left:
+            case RectEdge.Top:
+                ResizeOnCardinalEdge(edge);
+                break;
+            case RectEdge.BottomLeft:
+                ResizeOnCardinalEdge(RectEdge.Bottom);
+                ResizeOnCardinalEdge(RectEdge.Left);
+                break;
+            case RectEdge.BottomRight:
+                ResizeOnCardinalEdge(RectEdge.Bottom);
+                ResizeOnCardinalEdge(RectEdge.Right);
+                break;
+            case RectEdge.TopLeft:
+                ResizeOnCardinalEdge(RectEdge.Top);
+                ResizeOnCardinalEdge(RectEdge.Left);
+                break;
+            case RectEdge.TopRight:
+                ResizeOnCardinalEdge(RectEdge.Right);
+                ResizeOnCardinalEdge(RectEdge.Top);
+                break;
+        }
+
+        return new RectangleF(x, y, width, height);
+    }
+
+    public RectangleF GetEdge(RectEdge edge, float thickness)
+    {
+        return edge switch
+        {
+            RectEdge.Right => new RectangleF(Right, Top, thickness, Height),
+            RectEdge.Top => new RectangleF(Left, Top - thickness, Width, thickness),
+            RectEdge.Left => new RectangleF(Left - thickness, Top, thickness, Height),
+            RectEdge.Bottom => new RectangleF(Left, Bottom, Width, thickness),
+            RectEdge.TopLeft => new RectangleF(Left - thickness, Top - thickness, thickness, thickness),
+            RectEdge.TopRight => new RectangleF(Right, Top - thickness, thickness, thickness),
+            RectEdge.BottomLeft => new RectangleF(Left - thickness, Bottom, thickness, thickness),
+            RectEdge.BottomRight => new RectangleF(Right, Bottom, thickness, thickness),
+            _ => throw new Exception($"Unrecognized edge {edge}")
+        };
+    }
 }

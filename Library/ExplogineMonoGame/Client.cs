@@ -11,6 +11,7 @@ using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame;
 
@@ -198,6 +199,7 @@ public static class Client
     {
         for (var i = 0; i < Client.Debug.GameSpeed; i++)
         {
+            Client.Window.SetCursor(MouseCursor.Arrow);
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
             Client.Input = Client.Demo.ProcessInput(Client.Input);
             Client.CartridgeChain.Update(dt);
