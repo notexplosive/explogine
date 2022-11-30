@@ -9,6 +9,11 @@ public readonly struct DrawOrigin
 
     public Vector2 Value(Point size)
     {
+        return Value(size.ToVector2());
+    }
+    
+    public Vector2 Value(Vector2 size)
+    {
         if (_style == Style.Constant)
         {
             return _constantValue;
@@ -16,7 +21,7 @@ public readonly struct DrawOrigin
 
         if (_style == Style.Centered)
         {
-            return size.ToVector2() / 2;
+            return size / 2;
         }
 
         return Vector2.Zero;

@@ -60,10 +60,10 @@ public class Painter
 
     public void DrawRectangle(RectangleF rectangle, DrawSettings drawSettings)
     {
-        DrawAsRectangle(PixelAsset, rectangle.ToRectangle(), drawSettings);
+        DrawAtPosition(PixelAsset, rectangle.Location, new Scale2D(rectangle.Size), drawSettings);
     }
 
-    public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle)
+    public void DrawAsRectangle(Texture2D texture, RectangleF destinationRectangle)
     {
         DrawAsRectangle(texture, destinationRectangle, new DrawSettings());
     }
@@ -73,19 +73,21 @@ public class Painter
         DrawAtPosition(texture, position, Scale2D.One, new DrawSettings());
     }
 
-    public void DrawAsRectangle(Texture2D texture, Rectangle destinationRectangle, DrawSettings settings)
+    public void DrawAsRectangle(Texture2D texture, RectangleF destinationRectangle, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
         var origin = settings.Origin.Value(destinationRectangle.Size);
 
-        var scaleX = (float) destinationRectangle.Size.X / settings.SourceRectangle.Value.Size.X;
-        var scaleY = (float) destinationRectangle.Size.Y / settings.SourceRectangle.Value.Size.Y;
+        var scaleX = destinationRectangle.Size.X / settings.SourceRectangle.Value.Size.X;
+        var scaleY = destinationRectangle.Size.Y / settings.SourceRectangle.Value.Size.Y;
 
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
         origin.X /= scaleX;
         origin.Y /= scaleY;
 
-        _spriteBatch.Draw(texture, destinationRectangle, settings.SourceRectangle, settings.Color, settings.Angle,
+        // destination is downcast to a Rectangle
+        _spriteBatch.Draw(texture, destinationRectangle.ToRectangle(), settings.SourceRectangle, settings.Color,
+            settings.Angle,
             origin, settings.FlipEffect, settings.Depth);
     }
 
@@ -145,10 +147,11 @@ public class Painter
 
     public void DrawLine(Vector2 start, Vector2 end, LineDrawSettings settings)
     {
-        var length = (end - start).Length() + settings.Thickness;
+        var relativeEnd = end - start;
+        var length = relativeEnd.Length();
         var rect = new RectangleF(start, new Vector2(length, settings.Thickness));
         var unitX = Vector2.UnitX;
-        var relativeEnd = end - start;
+
         var angle = MathF.Acos(Vector2.Dot(unitX, relativeEnd) / (unitX.Length() * relativeEnd.Length()));
 
         if (start == end)
@@ -169,7 +172,7 @@ public class Painter
                 Color = settings.Color,
                 Depth = settings.Depth,
                 Angle = angle,
-                Origin = new DrawOrigin(new Vector2(settings.Thickness / 2f))
+                Origin = new DrawOrigin(new Vector2(0, 0.5f))
             });
     }
 }

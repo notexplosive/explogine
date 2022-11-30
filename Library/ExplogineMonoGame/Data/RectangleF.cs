@@ -17,6 +17,11 @@ public struct RectangleF : IEquatable<RectangleF>
         Size = size;
     }
 
+    public static implicit operator RectangleF(Rectangle rect)
+    {
+        return rect.ToRectangleF();
+    }
+
     public override string ToString()
     {
         return $"({Location.X}, {Location.Y}) ({Size.X}, {Size.Y})";
