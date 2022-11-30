@@ -10,9 +10,13 @@ public class RenderCanvas
 {
     public Canvas Canvas { get; private set; } = null!;
 
-    public Matrix CanvasToScreen => Matrix.CreateScale(new Vector3(
-                                        new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
-                                            Client.Window.RenderResolution)), 1))
+    public Matrix CanvasToScreenScalar => Matrix.CreateScale(new Vector3(
+        new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
+            Client.Window.RenderResolution)), 1));
+
+    public Matrix ScreenToCanvasScalar => Matrix.Invert(CanvasToScreenScalar);
+    
+    public Matrix CanvasToScreen => CanvasToScreenScalar
                                     * Matrix.CreateTranslation(new Vector3(CalculateTopLeftCorner(), 0));
 
     public Matrix ScreenToCanvas => Matrix.Invert(Client.RenderCanvas.CanvasToScreen);

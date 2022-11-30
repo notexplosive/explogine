@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExplogineCore.Data;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.HitTesting;
@@ -59,12 +60,12 @@ public class HitTestStack
         _descriptorIndex = 0;
     }
 
-    public HitTestDescriptor Add(Rectangle rect, Depth depth, Action? callback = null, HitTestLayer layer = HitTestLayer.Game)
+    public HitTestDescriptor Add(RectangleF rect, Depth depth, Action? callback = null, HitTestLayer layer = HitTestLayer.Game)
     {
         return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++, callback), rect, depth, layer)).Descriptor;
     }
 
-    public HitTestDescriptor Add(Rectangle rect, Depth depth, Matrix worldMatrix, Action? callback = null)
+    public HitTestDescriptor Add(RectangleF rect, Depth depth, Matrix worldMatrix, Action? callback = null)
     {
         // Assumes that if you're using WorldMatrix you don't care about debug layer.
         // Debug layer is always in screen-space

@@ -1,13 +1,14 @@
 ﻿using ExplogineCore.Data;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.HitTesting;
 
-internal readonly record struct HitTestTarget(HitTestDescriptor Descriptor, Rectangle Rectangle, Depth Depth,
+internal readonly record struct HitTestTarget(HitTestDescriptor Descriptor, RectangleF Rectangle, Depth Depth,
     HitTestLayer Layer,
     Matrix WorldMatrix)
 {
-    public HitTestTarget(HitTestDescriptor descriptor, Rectangle rectangle, Depth depth, HitTestLayer layer) : this(
+    public HitTestTarget(HitTestDescriptor descriptor, RectangleF rectangle, Depth depth, HitTestLayer layer) : this(
         descriptor, rectangle, depth, layer,
         Matrix.Identity)
     {
