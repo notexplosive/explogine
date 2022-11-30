@@ -74,11 +74,6 @@ public static class Client
     public static Demo Demo { get; } = new();
 
     /// <summary>
-    ///     HitTest stack that keeps track of all HitTestTargets registered this frame.
-    /// </summary>
-    public static HitTestStack HitTesting { get; } = new();
-
-    /// <summary>
     ///     Debug tools.
     /// </summary>
     public static ClientDebug Debug { get; } = new();
@@ -203,11 +198,9 @@ public static class Client
     {
         for (var i = 0; i < Client.Debug.GameSpeed; i++)
         {
-            Client.HitTesting.Clear();
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
             Client.Input = Client.Demo.ProcessInput(Client.Input);
             Client.CartridgeChain.Update(dt);
-            Client.HitTesting.Resolve(Client.Input.Mouse.Position(Client.RenderCanvas.ScreenToCanvas));
             Client.Window.TextEnteredBuffer = new TextEnteredBuffer();
         }
     }
