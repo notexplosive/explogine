@@ -72,8 +72,11 @@ public struct RectangleF : IEquatable<RectangleF>
     public float Bottom => Location.Y + Size.Y;
     public float X => Location.X;
     public float Y => Location.Y;
-    public Vector2 BottomRight => Location + Size;
     public static RectangleF Empty => new(Vector2.Zero, Vector2.Zero);
+    public Vector2 TopLeft => Location;
+    public Vector2 BottomRight => Location + Size;
+    public Vector2 BottomLeft => new(Location.X, Location.Y + Size.Y);
+    public Vector2 TopRight => new(Location.X + Size.Y, Location.Y);
 
     public bool IsEmpty()
     {
@@ -92,7 +95,12 @@ public struct RectangleF : IEquatable<RectangleF>
 
     public bool Contains(Rectangle containedRect)
     {
-        return Contains(containedRect.Location) && Contains(containedRect.Location + containedRect.Size - new Point(1));
+        return Contains(containedRect.ToRectangleF());
+    }
+
+    public bool Contains(RectangleF containedRect)
+    {
+        return Contains(containedRect.Location) && Contains(containedRect.Location + containedRect.Size - new Vector2(1));
     }
 
     public bool Contains(Vector2 vector)
@@ -278,5 +286,37 @@ public struct RectangleF : IEquatable<RectangleF>
             RectEdge.BottomRight => new RectangleF(Right, Bottom, thickness, thickness),
             _ => throw new Exception($"Unrecognized edge {edge}")
         };
+    }
+
+    public RectangleF ConstrainedTo(RectangleF outer)
+    {
+        if (outer.Contains(TopLeft) && outer.Contains(TopRight) && outer.Contains(BottomRight) && outer.Contains(BottomLeft))
+        {
+            return this;
+        }
+
+        var result = this;
+
+        if (result.Right > outer.Right)
+        {
+            result.Location = new Vector2(outer.Right - result.Size.X, result.Y);
+        }
+        
+        if (result.Bottom > outer.Bottom)
+        {
+            result.Location = new Vector2(result.X, outer.Bottom - result.Size.Y);
+        }
+        
+        if (result.Left < outer.Left)
+        {
+            result.Location = new Vector2(outer.X, result.Y);
+        }
+
+        if (result.Top < outer.Top)
+        {
+            result.Location = new Vector2(result.X, outer.Y);
+        }
+
+        return result;
     }
 }

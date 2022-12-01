@@ -52,19 +52,20 @@ public class TestRectangleF
             new Point(150, 300), // along bottom
             new Point(150, 299), // just in bottom
             new Point(150, 301), // just out bottom
-            
+
             new Point(100, 300), // bottom left
             new Point(101, 301), // just in bottom left
             new Point(101, 299), // just out bottom left
-            
+
             new Point(300, 300), // bottom right
             new Point(299, 299), // just in bottom right
-            new Point(301, 301), // just out bottom right
+            new Point(301, 301) // just out bottom right
         };
 
         foreach (var point in manyPoints)
         {
-            rectangleF.Contains(point).Should().Be(rectangleI.Contains(point), $"{point} is {(rectangleI.Contains(point) ? "inside" : "outside")}");
+            rectangleF.Contains(point).Should().Be(rectangleI.Contains(point),
+                $"{point} is {(rectangleI.Contains(point) ? "inside" : "outside")}");
         }
     }
 
@@ -277,5 +278,92 @@ public class TestRectangleF
             rectF.Offset(floatOffset, floatOffset);
             rectF.Location.Should().Be(rect.Location.ToVector2());
         }
+    }
+
+    [Fact]
+    public void constrain_to_outer_rect_pinning()
+    {
+        var outer = new RectangleF(100, 50, 200, 300);
+
+        // positions
+        var middle = 120;
+        var left = 20;
+        var top = 20;
+        var below = 350;
+        var right = 350;
+        var topLeftPosition = new Vector2(left, top);
+        var topPosition = new Vector2(middle, top);
+        var topRightPosition = new Vector2(right, top);
+        var bottomPosition = new Vector2(middle, below);
+        var rightPosition = new Vector2(right, middle);
+        var leftPosition = new Vector2(left, middle);
+        var bottomRightPosition = new Vector2(right, below);
+
+        var smallSize = new Vector2(100, 100);
+        new RectangleF(topLeftPosition, smallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, smallSize));
+        new RectangleF(topPosition, smallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(topPosition.X, outer.Y), smallSize));
+        new RectangleF(topRightPosition, smallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.Right - smallSize.X, outer.Y), smallSize));
+        new RectangleF(bottomPosition, smallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(bottomPosition.X, outer.Bottom - smallSize.Y), smallSize));
+        new RectangleF(rightPosition, smallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.Right - smallSize.X, rightPosition.Y), smallSize));
+        new RectangleF(leftPosition, smallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.Left, leftPosition.Y), smallSize));
+        new RectangleF(bottomRightPosition, smallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.Right - smallSize.X, outer.Bottom - smallSize.Y), smallSize));
+        
+        // If it's too wide we align to the left of the rectangle and do our best with the rest
+        var tooWideSize = new Vector2(250, 100);
+        new RectangleF(topLeftPosition, tooWideSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, tooWideSize));
+        new RectangleF(topPosition, tooWideSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.X, outer.Y), tooWideSize));
+        new RectangleF(topRightPosition, tooWideSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.X, outer.Y), tooWideSize));
+        new RectangleF(bottomPosition, tooWideSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.X, outer.Bottom - tooWideSize.Y), tooWideSize));
+        new RectangleF(rightPosition, tooWideSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.X, rightPosition.Y), tooWideSize));
+        new RectangleF(leftPosition, tooWideSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.X, leftPosition.Y), tooWideSize));
+        new RectangleF(bottomRightPosition, tooWideSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.X, outer.Bottom - tooWideSize.Y), tooWideSize));
+
+        // If it's too tall we align the top of the rectangle and do our best with the rest
+        var tooTallSize = new Vector2(100, 350);
+        new RectangleF(topLeftPosition, tooTallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, tooTallSize));
+        new RectangleF(topPosition, tooTallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(topPosition.X, outer.Y), tooTallSize));
+        new RectangleF(topRightPosition, tooTallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.Right - tooTallSize.X, outer.Y), tooTallSize));
+        new RectangleF(bottomPosition, tooTallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(bottomPosition.X, outer.Y), tooTallSize));
+        new RectangleF(rightPosition, tooTallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.Right - tooTallSize.X, outer.Y), tooTallSize));
+        new RectangleF(leftPosition, tooTallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.X, outer.Y), tooTallSize));
+        new RectangleF(bottomRightPosition, tooTallSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(new Vector2(outer.Right - tooTallSize.X, outer.Y), tooTallSize));
+        
+        // If it's an exact match it fits perfectly every time
+        var exactMatchSize = outer.Size;
+        new RectangleF(topLeftPosition, exactMatchSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, exactMatchSize));
+        new RectangleF(topPosition, exactMatchSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, exactMatchSize));
+        new RectangleF(topRightPosition, exactMatchSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, exactMatchSize));
+        new RectangleF(bottomPosition, exactMatchSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, exactMatchSize));
+        new RectangleF(rightPosition, exactMatchSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, exactMatchSize));
+        new RectangleF(leftPosition, exactMatchSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, exactMatchSize));
+        new RectangleF(bottomRightPosition, exactMatchSize).ConstrainedTo(outer)
+            .Should().Be(new RectangleF(outer.TopLeft, exactMatchSize));
     }
 }
