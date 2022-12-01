@@ -199,7 +199,7 @@ public static class Client
     {
         for (var i = 0; i < Client.Debug.GameSpeed; i++)
         {
-            Client.Window.SetCursor(MouseCursor.Arrow);
+            Client.Window.ResolveSetCursor();
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
             Client.Input = Client.Demo.ProcessInput(Client.Input);
             Client.CartridgeChain.Update(dt);
@@ -210,7 +210,6 @@ public static class Client
     internal static void Draw()
     {
         Client.RenderCanvas.DrawWithin(painter => { Client.CartridgeChain.DrawCurrentCartridge(painter); });
-
         Client.RenderCanvas.Draw(Client.Graphics.Painter);
         Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
     }
