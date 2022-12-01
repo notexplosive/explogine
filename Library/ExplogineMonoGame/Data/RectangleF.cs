@@ -272,7 +272,19 @@ public struct RectangleF : IEquatable<RectangleF>
         return new RectangleF(x, y, width, height);
     }
 
-    public RectangleF GetEdge(RectEdge edge, float thickness)
+    public float GetEdge(RectEdge edge)
+    {
+        return edge switch
+        {
+            RectEdge.Top => Top,
+            RectEdge.Left => Left,
+            RectEdge.Right => Right,
+            RectEdge.Bottom => Bottom,
+            _ => throw new ArgumentOutOfRangeException(nameof(edge), edge, $"Unable to obtain {edge} as a float")
+        };
+    }
+    
+    public RectangleF GetEdgeRect(RectEdge edge, float thickness)
     {
         return edge switch
         {
@@ -315,6 +327,56 @@ public struct RectangleF : IEquatable<RectangleF>
         if (result.Top < outer.Top)
         {
             result.Location = new Vector2(result.X, outer.Y);
+        }
+
+        return result;
+    }
+
+    public float EdgeDisplacement(RectEdge edge, RectangleF outer)
+    {
+        var innerEdge = GetEdge(edge);
+        var outerEdge = outer.GetEdge(edge);
+
+        switch (edge)
+        {
+            case RectEdge.Top:
+            case RectEdge.Left:
+                return outerEdge - innerEdge;
+            case RectEdge.Right:
+            case RectEdge.Bottom:
+                return innerEdge - outerEdge;
+            default:
+                throw new Exception($"Invalid Edge: {edge}");
+        }
+    }
+
+    public RectangleF ConstrainSizeTo(RectangleF outerRect)
+    {
+        var result = this;
+        var edges = new[] {RectEdge.Top, RectEdge.Left, RectEdge.Right, RectEdge.Bottom};
+        foreach (var edge in edges)
+        {
+            var displacement = EdgeDisplacement(edge, outerRect);
+            if (displacement > 0)
+            {
+                switch (edge)
+                {
+                    case RectEdge.Top:
+                        result.Location += new Vector2(0, displacement);
+                        result.Size -= new Vector2(0, displacement);
+                        break;
+                    case RectEdge.Left:
+                        result.Location += new Vector2(displacement, 0);
+                        result.Size -= new Vector2(displacement, 0);
+                        break;
+                    case RectEdge.Right:
+                        result.Size -= new Vector2(displacement, 0);
+                        break;
+                    case RectEdge.Bottom:
+                        result.Size -= new Vector2(0, displacement);
+                        break;
+                }
+            }
         }
 
         return result;

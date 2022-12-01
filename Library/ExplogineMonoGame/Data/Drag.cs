@@ -2,22 +2,22 @@
 
 namespace ExplogineMonoGame.Data;
 
-public class Drag
+public class Drag<T> where T : new()
 {
     public bool IsDragging { get; private set; }
     public Vector2 TotalDelta { get; private set; }
-    public Vector2 StartPosition { get; private set; }
+    public T? StartingValue { get; private set; }
 
-    public void Start(Vector2 startPosition)
+    public void Start(T startingValue)
     {
         IsDragging = true;
-        StartPosition = startPosition;
+        StartingValue = startingValue;
     }
 
     public void End()
     {
         IsDragging = false;
-        StartPosition = Vector2.Zero;
+        StartingValue = default;
         TotalDelta = Vector2.Zero;
     }
 
