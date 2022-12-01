@@ -7,6 +7,8 @@ public abstract class TweenCollection
 {
     protected readonly List<ITween> Items = new();
 
+    public int ChildCount => Items.Count;
+
     public int ChildrenWithDurationCount
     {
         get

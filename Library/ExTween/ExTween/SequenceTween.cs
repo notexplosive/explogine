@@ -68,7 +68,7 @@ public class SequenceTween : TweenCollection, ITween
             return new KnownTweenDuration(total);
         }
     }
-
+    
     public void JumpTo(float targetTime)
     {
         Reset();
