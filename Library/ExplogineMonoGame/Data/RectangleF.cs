@@ -381,4 +381,23 @@ public struct RectangleF : IEquatable<RectangleF>
 
         return result;
     }
+
+    public RectangleF InflatedMaintainAspectRatio(float longSideAmount)
+    {
+        var horizontalAmount = longSideAmount;
+        var verticalAmount = longSideAmount;
+        
+        if (Width > Height)
+        {
+            var aspectRatio = Height / Width;
+            verticalAmount = longSideAmount * aspectRatio;
+        }
+        else
+        {
+            var aspectRatio = Width / Height;
+            horizontalAmount = longSideAmount * aspectRatio;
+        }
+
+        return Inflated(horizontalAmount, verticalAmount);
+    }
 }

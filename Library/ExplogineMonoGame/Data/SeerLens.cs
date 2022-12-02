@@ -6,15 +6,20 @@ namespace ExplogineMonoGame.Data;
 public class SeerLens
 {
     // this should go on RectangleF
-    public static Matrix RenderMatrix(RectangleF viewBounds, Point outputDimensions)
+    public static Matrix CanvasToScreen(RectangleF viewBounds, Point outputDimensions)
     {
         var translation =
             Matrix.Invert(Matrix.CreateTranslation(new Vector3(viewBounds.Location, 0)));
-        return translation * SeerLens.RenderMatrixScalar(viewBounds, outputDimensions);
+        return translation * SeerLens.CanvasToScreenScalar(viewBounds, outputDimensions);
+    }
+
+    public static Matrix ScreenToCanvas(RectangleF viewBounds, Point outputDimensions)
+    {
+        return Matrix.Invert(SeerLens.CanvasToScreen(viewBounds, outputDimensions));
     }
 
     // this should go on RectangleF
-    public static Matrix RenderMatrixScalar(RectangleF viewBounds, Point outputDimensions)
+    public static Matrix CanvasToScreenScalar(RectangleF viewBounds, Point outputDimensions)
     {
         return Matrix.CreateScale(new Vector3(outputDimensions.X / viewBounds.Width,
             outputDimensions.Y / viewBounds.Height, 1));
@@ -23,8 +28,7 @@ public class SeerLens
     // This should go on Painter
     public static void Begin(Painter painter, RectangleF viewBounds, Point outputDimensions)
     {
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, SeerLens.RenderMatrix(viewBounds, outputDimensions));
-        painter.Clear(Color.LightBlue);
+        painter.BeginSpriteBatch(SamplerState.LinearWrap, SeerLens.CanvasToScreen(viewBounds, outputDimensions));
     }
 
     public static void End(Painter painter)
@@ -37,14 +41,17 @@ public class SeerLens
     ///     and after the deflation.
     /// </summary>
     /// <param name="viewBounds">Starting view bounds</param>
-    /// <param name="zoomAmount">Amount to deflate the viewBounds by</param>
+    /// <param name="zoomAmount">
+    ///     Amount to deflate the long side of the viewBounds by (short side will deflate by the correct
+    ///     amount relative to aspect ratio)
+    /// </param>
     /// <param name="focusPosition">Position to zoom towards in WorldSpace (aka: the same space as the ViewBounds rect)</param>
     /// <returns></returns>
     public static RectangleF GetZoomedInBounds(RectangleF viewBounds, float zoomAmount, Vector2 focusPosition)
     {
         var focusRelativeToViewBounds = focusPosition - viewBounds.Location;
         var relativeScalar = focusRelativeToViewBounds.StraightDivide(viewBounds.Width, viewBounds.Height);
-        var zoomedInBounds = viewBounds.Inflated(-zoomAmount, -zoomAmount);
+        var zoomedInBounds = viewBounds.InflatedMaintainAspectRatio(-zoomAmount);
 
         // center zoomed in bounds on focus
         zoomedInBounds.Location = focusPosition - zoomedInBounds.Size / 2f;
@@ -71,7 +78,7 @@ public class SeerLens
     {
         var zoomedInBounds = SeerLens.GetZoomedInBounds(viewBounds, zoomAmount, focusPosition);
         var zoomedOutOffset = viewBounds.Center - zoomedInBounds.Center;
-        var zoomedOutBounds = zoomedInBounds.Inflated(zoomAmount * 2, zoomAmount * 2);
+        var zoomedOutBounds = zoomedInBounds.InflatedMaintainAspectRatio(zoomAmount * 2);
         zoomedOutBounds.Offset(zoomedOutOffset * 2);
         return zoomedOutBounds;
     }
