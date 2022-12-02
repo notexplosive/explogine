@@ -24,6 +24,12 @@ public class SeerLens
         return Matrix.CreateScale(new Vector3(outputDimensions.X / viewBounds.Width,
             outputDimensions.Y / viewBounds.Height, 1));
     }
+    
+    // this should go on RectangleF
+    public static Matrix ScreenToCanvasScalar(RectangleF viewBounds, Point outputDimensions)
+    {
+        return Matrix.Invert(CanvasToScreenScalar(viewBounds, outputDimensions));
+    }
 
     // This should go on Painter
     public static void Begin(Painter painter, RectangleF viewBounds, Point outputDimensions)
