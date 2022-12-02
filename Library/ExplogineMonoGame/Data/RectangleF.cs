@@ -100,7 +100,8 @@ public struct RectangleF : IEquatable<RectangleF>
 
     public bool Contains(RectangleF containedRect)
     {
-        return Contains(containedRect.Location) && Contains(containedRect.Location + containedRect.Size - new Vector2(1));
+        return Contains(containedRect.Location) &&
+               Contains(containedRect.Location + containedRect.Size - new Vector2(1));
     }
 
     public bool Contains(Vector2 vector)
@@ -283,7 +284,7 @@ public struct RectangleF : IEquatable<RectangleF>
             _ => throw new ArgumentOutOfRangeException(nameof(edge), edge, $"Unable to obtain {edge} as a float")
         };
     }
-    
+
     public RectangleF GetEdgeRect(RectEdge edge, float thickness)
     {
         return edge switch
@@ -302,7 +303,8 @@ public struct RectangleF : IEquatable<RectangleF>
 
     public RectangleF ConstrainedTo(RectangleF outer)
     {
-        if (outer.Contains(TopLeft) && outer.Contains(TopRight) && outer.Contains(BottomRight) && outer.Contains(BottomLeft))
+        if (outer.Contains(TopLeft) && outer.Contains(TopRight) && outer.Contains(BottomRight) &&
+            outer.Contains(BottomLeft))
         {
             return this;
         }
@@ -313,12 +315,12 @@ public struct RectangleF : IEquatable<RectangleF>
         {
             result.Location = new Vector2(outer.Right - result.Size.X, result.Y);
         }
-        
+
         if (result.Bottom > outer.Bottom)
         {
             result.Location = new Vector2(result.X, outer.Bottom - result.Size.Y);
         }
-        
+
         if (result.Left < outer.Left)
         {
             result.Location = new Vector2(outer.X, result.Y);
@@ -386,7 +388,7 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         var horizontalAmount = longSideAmount;
         var verticalAmount = longSideAmount;
-        
+
         if (Width > Height)
         {
             var aspectRatio = Height / Width;
@@ -399,5 +401,18 @@ public struct RectangleF : IEquatable<RectangleF>
         }
 
         return Inflated(horizontalAmount, verticalAmount);
+    }
+
+    public Polygon ToPolygon()
+    {
+        return new Polygon(
+            Center,
+            new[]
+            {
+                new Vector2(Left, Top) - Center,
+                new Vector2(Right, Top) - Center,
+                new Vector2(Right, Bottom) - Center,
+                new Vector2(Left, Bottom) - Center
+            });
     }
 }
