@@ -426,7 +426,7 @@ public struct RectangleF : IEquatable<RectangleF>
             * Matrix.CreateRotationZ(-angle)
             * Matrix.CreateTranslation(new Vector3(halfSize, 0));
         var translation =
-            Matrix.Invert(Matrix.CreateTranslation(new Vector3(Location, 0)));
+            Matrix.CreateTranslation(new Vector3(-Location, 0));
         return translation * rotation * CanvasToScreenScalar(outputDimensions);
     }
 
