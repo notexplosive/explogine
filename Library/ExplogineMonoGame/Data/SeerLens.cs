@@ -5,16 +5,7 @@ namespace ExplogineMonoGame.Data;
 
 public class SeerLens
 {
-    // This should go on Painter
-    public static void Begin(Painter painter, RectangleF viewBounds, Point outputDimensions, float angle)
-    {
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, viewBounds.CanvasToScreen(outputDimensions, angle));
-    }
-
-    public static void End(Painter painter)
-    {
-        painter.EndSpriteBatch();
-    }
+    
 
     /// <summary>
     ///     Deflates the ViewRect centered on a focus point such that the focus point is at the same relative position before
