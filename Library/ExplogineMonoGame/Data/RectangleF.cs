@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
@@ -414,5 +415,37 @@ public struct RectangleF : IEquatable<RectangleF>
                 new Vector2(Right, Bottom) - Center,
                 new Vector2(Left, Bottom) - Center
             });
+    }
+    
+    [Pure]
+    public Matrix CanvasToScreen(Point outputDimensions, float angle)
+    {
+        var halfSize = Size / 2;
+        var rotation =
+            Matrix.CreateTranslation(new Vector3(-halfSize, 0))
+            * Matrix.CreateRotationZ(-angle)
+            * Matrix.CreateTranslation(new Vector3(halfSize, 0));
+        var translation =
+            Matrix.Invert(Matrix.CreateTranslation(new Vector3(Location, 0)));
+        return translation * rotation * CanvasToScreenScalar(outputDimensions);
+    }
+
+    [Pure]
+    public Matrix ScreenToCanvas(Point outputDimensions, float angle)
+    {
+        return Matrix.Invert(CanvasToScreen(outputDimensions, angle));
+    }
+
+    [Pure]
+    public Matrix CanvasToScreenScalar(Point outputDimensions)
+    {
+        return Matrix.CreateScale(new Vector3(outputDimensions.X / Width,
+            outputDimensions.Y / Height, 1));
+    }
+    
+    [Pure]
+    public Matrix ScreenToCanvasScalar(Point outputDimensions)
+    {
+        return Matrix.Invert(CanvasToScreenScalar(outputDimensions));
     }
 }

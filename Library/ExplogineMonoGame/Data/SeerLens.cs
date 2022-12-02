@@ -5,41 +5,10 @@ namespace ExplogineMonoGame.Data;
 
 public class SeerLens
 {
-    // this should go on RectangleF
-    public static Matrix CanvasToScreen(RectangleF viewBounds, Point outputDimensions, float angle)
-    {
-        var halfSize = viewBounds.Size / 2;
-        var rotation =
-            Matrix.CreateTranslation(new Vector3(-halfSize, 0))
-            * Matrix.CreateRotationZ(-angle)
-            * Matrix.CreateTranslation(new Vector3(halfSize, 0));
-        var translation =
-            Matrix.Invert(Matrix.CreateTranslation(new Vector3(viewBounds.Location, 0)));
-        return translation * rotation * SeerLens.CanvasToScreenScalar(viewBounds, outputDimensions);
-    }
-
-    public static Matrix ScreenToCanvas(RectangleF viewBounds, Point outputDimensions, float angle)
-    {
-        return Matrix.Invert(SeerLens.CanvasToScreen(viewBounds, outputDimensions, angle));
-    }
-
-    // this should go on RectangleF
-    public static Matrix CanvasToScreenScalar(RectangleF viewBounds, Point outputDimensions)
-    {
-        return Matrix.CreateScale(new Vector3(outputDimensions.X / viewBounds.Width,
-            outputDimensions.Y / viewBounds.Height, 1));
-    }
-    
-    // this should go on RectangleF
-    public static Matrix ScreenToCanvasScalar(RectangleF viewBounds, Point outputDimensions)
-    {
-        return Matrix.Invert(CanvasToScreenScalar(viewBounds, outputDimensions));
-    }
-
     // This should go on Painter
     public static void Begin(Painter painter, RectangleF viewBounds, Point outputDimensions, float angle)
     {
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, SeerLens.CanvasToScreen(viewBounds, outputDimensions, angle));
+        painter.BeginSpriteBatch(SamplerState.LinearWrap, viewBounds.CanvasToScreen(outputDimensions, angle));
     }
 
     public static void End(Painter painter)
