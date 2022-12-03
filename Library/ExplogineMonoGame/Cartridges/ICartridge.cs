@@ -8,6 +8,6 @@ public interface ICartridge
     public void OnCartridgeStarted();
     public void Update(float dt);
     public void Draw(Painter painter);
-    public void UpdateInput(AllDeviceFrameState input);
+    public void UpdateInput(InputFrameState input);
     public bool ShouldLoadNextCartridge();
 }

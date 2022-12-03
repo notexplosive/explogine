@@ -9,7 +9,7 @@ public abstract class BasicGameCartridge : ICartridge, ILoadEventProvider, IComm
     public abstract void OnCartridgeStarted();
     public abstract void Update(float dt);
     public abstract void Draw(Painter painter);
-    public abstract void UpdateInput(AllDeviceFrameState input);
+    public abstract void UpdateInput(InputFrameState input);
 
     public bool ShouldLoadNextCartridge()
     {

@@ -10,17 +10,14 @@ public readonly struct InputFrameState
         Current = current;
         Previous = previous;
 
-        AllDevices = new AllDeviceFrameState(
-            new MouseFrameState(Current, Previous),
-            new KeyboardFrameState(Current, Previous),
-            new GamePadFrameState(Current, Previous)
-        );
+        Mouse = new MouseFrameState(Current, Previous);
+        Keyboard = new KeyboardFrameState(Current, Previous);
+        GamePad = new GamePadFrameState(Current, Previous);
     }
 
-    public GamePadFrameState GamePad => AllDevices.GamePad;
-    public KeyboardFrameState Keyboard => AllDevices.Keyboard;
-    public MouseFrameState Mouse => AllDevices.Mouse;
-    public AllDeviceFrameState AllDevices { get; }
+    public GamePadFrameState GamePad { get; }
+    public KeyboardFrameState Keyboard { get; }
+    public MouseFrameState Mouse { get; }
 
     internal InputFrameState Next(InputSnapshot newSnapshot)
     {

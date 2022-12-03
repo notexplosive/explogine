@@ -100,7 +100,7 @@ public class LoadingCartridge : ICartridge
         painter.EndSpriteBatch();
     }
 
-    public void UpdateInput(AllDeviceFrameState input)
+    public void UpdateInput(InputFrameState input)
     {
     }
 

@@ -200,7 +200,7 @@ public static class Client
         {
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
             Client.Input = Client.Demo.ProcessInput(Client.Input);
-            Client.CartridgeChain.UpdateInput(Client.Input.AllDevices);
+            Client.CartridgeChain.UpdateInput(Client.Input);
             Client.CartridgeChain.Update(dt);
             Client.Window.TextEnteredBuffer = new TextEnteredBuffer();
             Client.Window.ResolveSetCursor();

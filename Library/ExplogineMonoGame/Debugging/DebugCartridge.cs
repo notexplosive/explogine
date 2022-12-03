@@ -73,7 +73,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         }
     }
 
-    public void UpdateInput(AllDeviceFrameState input)
+    public void UpdateInput(InputFrameState input)
     {
         if (Client.Input.Keyboard.Modifiers.ControlShift && Client.Input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
         {

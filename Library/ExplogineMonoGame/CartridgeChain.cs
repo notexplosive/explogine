@@ -18,7 +18,7 @@ internal class CartridgeChain
 
     public event Action? AboutToLoadLastCartridge;
 
-    public void UpdateInput(AllDeviceFrameState input)
+    public void UpdateInput(InputFrameState input)
     {
         DebugCartridge.UpdateInput(input);
         Current.UpdateInput(input);
