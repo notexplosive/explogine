@@ -21,6 +21,11 @@ public class HitTestStack
 
     public void Resolve(Vector2 position)
     {
+        if (!Client.IsInFocus)
+        {
+            return;
+        }
+        
         var hit = GetTopHit(position);
         if (hit != null)
         {

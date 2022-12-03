@@ -154,14 +154,48 @@ public readonly struct InputSnapshot
         }
     }
 
+    /// <summary>
+    ///     Obtains the latest Human Input State (ie: the actual input of the real physical mouse, keyboard, controller, etc.
+    ///     If the Window is not in focus we return an almost-empty InputState, that only holds the current mouse position.
+    /// </summary>
     public static InputSnapshot Human =>
-        new(Keyboard.GetState(), Mouse.GetState(), Client.Window.TextEnteredBuffer,
-            GamePad.GetState(PlayerIndex.One), GamePad.GetState(PlayerIndex.Two),
-            GamePad.GetState(PlayerIndex.Three), GamePad.GetState(PlayerIndex.Four)
-        );
+        Client.IsInFocus
+            ? new InputSnapshot(
+                Keyboard.GetState(),
+                Mouse.GetState(),
+                Client.Window.TextEnteredBuffer,
+                GamePad.GetState(PlayerIndex.One),
+                GamePad.GetState(PlayerIndex.Two),
+                GamePad.GetState(PlayerIndex.Three),
+                GamePad.GetState(PlayerIndex.Four)
+            )
+            : new InputSnapshot(
+                new KeyboardState(),
+                InputSnapshot.AlmostEmptyMouseState,
+                new TextEnteredBuffer(),
+                new GamePadState(),
+                new GamePadState(),
+                new GamePadState(),
+                new GamePadState()
+            );
+
+    private static MouseState AlmostEmptyMouseState =>
+        new(
+            Mouse.GetState().X,
+            Mouse.GetState().Y,
+            0,
+            ButtonState.Released,
+            ButtonState.Released,
+            ButtonState.Released,
+            ButtonState.Released,
+            ButtonState.Released);
 
     public static InputSnapshot Empty =>
-        new(new KeyboardState(), new MouseState(), new TextEnteredBuffer(), new GamePadState(), new GamePadState(),
+        new(new KeyboardState(),
+            new MouseState(),
+            new TextEnteredBuffer(),
+            new GamePadState(),
+            new GamePadState(),
             new GamePadState(),
             new GamePadState());
 

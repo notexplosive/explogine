@@ -6,12 +6,10 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Debugging;
-using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame;
 
@@ -26,6 +24,7 @@ public static class Client
     public static readonly OnceReady FinishedLoading = new();
     public static readonly OnceReady InitializedGraphics = new();
     public static readonly OnceReady Exited = new();
+    public static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
     /// <summary>
     ///     Wrapper around the MonoGame Graphics objects (Device & DeviceManager)
