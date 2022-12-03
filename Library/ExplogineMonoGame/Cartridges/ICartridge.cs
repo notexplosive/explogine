@@ -1,4 +1,6 @@
-﻿namespace ExplogineMonoGame.Cartridges;
+﻿using ExplogineMonoGame.Input;
+
+namespace ExplogineMonoGame.Cartridges;
 
 public interface ICartridge
 {
@@ -6,5 +8,6 @@ public interface ICartridge
     public void OnCartridgeStarted();
     public void Update(float dt);
     public void Draw(Painter painter);
+    public void UpdateInput(AllDeviceFrameState input);
     public bool ShouldLoadNextCartridge();
 }

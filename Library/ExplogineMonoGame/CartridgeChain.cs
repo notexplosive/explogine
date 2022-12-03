@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ExplogineCore;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Debugging;
+using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame;
 
@@ -17,10 +18,15 @@ internal class CartridgeChain
 
     public event Action? AboutToLoadLastCartridge;
 
+    public void UpdateInput(AllDeviceFrameState input)
+    {
+        DebugCartridge.UpdateInput(input);
+        Current.UpdateInput(input);
+    }
+
     public void Update(float dt)
     {
         DebugCartridge.Update(dt);
-
         if (!IsFrozen)
         {
             UpdateCurrentCartridge(dt);
@@ -30,7 +36,6 @@ internal class CartridgeChain
     public void UpdateCurrentCartridge(float dt)
     {
         Current.Update(dt);
-
         if (Current.ShouldLoadNextCartridge())
         {
             IncrementCartridge();
@@ -53,12 +58,12 @@ internal class CartridgeChain
     private void IncrementCartridge()
     {
         _list.RemoveFirst();
-        
+
         if (_list.Last == _list.First)
         {
             AboutToLoadLastCartridge?.Invoke();
         }
-        
+
         if (HasCurrent)
         {
             CartridgeChain.StartCartridge(Current);

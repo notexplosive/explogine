@@ -3,6 +3,7 @@ using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
+using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -45,15 +46,6 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         _demoInterface.Update(dt);
         _logOverlay.Update(dt);
 
-        if (Client.FinishedLoading.IsReady)
-        {
-            _frameStep.Update(dt);
-        }
-
-        if (Client.Input.Keyboard.Modifiers.ControlShift && Client.Input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
-        {
-            Client.Debug.CycleDebugMode();
-        }
     }
 
     public void Draw(Painter painter)
@@ -78,6 +70,19 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         {
             // We don't let the snapshot timer start until after we're done with at least one draw
             _snapshotTaker.StartTimer();
+        }
+    }
+
+    public void UpdateInput(AllDeviceFrameState input)
+    {
+        if (Client.Input.Keyboard.Modifiers.ControlShift && Client.Input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
+        {
+            Client.Debug.CycleDebugMode();
+        }
+        
+        if (Client.FinishedLoading.IsReady)
+        {
+            _frameStep.Update(input);
         }
     }
 

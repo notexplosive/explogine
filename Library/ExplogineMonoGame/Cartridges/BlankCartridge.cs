@@ -1,4 +1,6 @@
-﻿namespace ExplogineMonoGame.Cartridges;
+﻿using ExplogineMonoGame.Input;
+
+namespace ExplogineMonoGame.Cartridges;
 
 public class BlankCartridge : ICartridge
 {
@@ -11,6 +13,10 @@ public class BlankCartridge : ICartridge
     }
 
     public void Draw(Painter painter)
+    {
+    }
+
+    public void UpdateInput(AllDeviceFrameState input)
     {
     }
 

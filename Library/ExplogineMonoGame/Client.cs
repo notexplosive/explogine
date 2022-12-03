@@ -198,11 +198,12 @@ public static class Client
     {
         for (var i = 0; i < Client.Debug.GameSpeed; i++)
         {
-            Client.Window.ResolveSetCursor();
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
             Client.Input = Client.Demo.ProcessInput(Client.Input);
+            Client.CartridgeChain.UpdateInput(Client.Input.AllDevices);
             Client.CartridgeChain.Update(dt);
             Client.Window.TextEnteredBuffer = new TextEnteredBuffer();
+            Client.Window.ResolveSetCursor();
         }
     }
 

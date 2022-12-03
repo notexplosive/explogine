@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Input;
 using ExTween;
 using ExTweenMonoGame;
 using Microsoft.Xna.Framework;
@@ -88,6 +89,14 @@ public class IntroCartridge : ICartridge
         }
 
         painter.EndSpriteBatch();
+    }
+
+    public void UpdateInput(AllDeviceFrameState input)
+    {
+        if (input.Keyboard.IsAnyKeyDown() || input.Mouse.WasAnyButtonPressedOrReleased())
+        {
+            _tween.SkipToEnd();
+        }
     }
 
     public bool ShouldLoadNextCartridge()

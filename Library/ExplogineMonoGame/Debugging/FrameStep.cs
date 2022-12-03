@@ -1,25 +1,28 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System;
+using System.Linq;
+using ExplogineMonoGame.Input;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
 public class FrameStep
 {
-    public void Update(float dt)
+    public void Update(AllDeviceFrameState allDeviceFrameState)
     {
         if (Client.Debug.IsPassiveOrActive)
         {
             if (Client.CartridgeChain.IsFrozen)
             {
-                if (Client.Input.Mouse.ScrollDelta() < 0)
+                if (allDeviceFrameState.Mouse.ScrollDelta() < 0 || allDeviceFrameState.Keyboard.GetButton(Keys.OemPipe).WasPressed)
                 {
-                    Client.CartridgeChain.UpdateCurrentCartridge(dt);
+                    Client.CartridgeChain.UpdateCurrentCartridge(1 / 60f);
                 }
             }
 
-            if (Client.Input.Keyboard.GetButton(Keys.Space).WasPressed && Client.Input.Keyboard.Modifiers.Control)
+            if (allDeviceFrameState.Keyboard.GetButton(Keys.Space).WasPressed && allDeviceFrameState.Keyboard.Modifiers.Control)
             {
                 Client.CartridgeChain.IsFrozen = !Client.CartridgeChain.IsFrozen;
-                var enabledString = Client.CartridgeChain.IsFrozen ? "Enabled" : "Disabled";
+                var enabledString = Client.CartridgeChain.IsFrozen ? "Frozen" : "Unfrozen";
                 Client.Debug.Log($"FrameStep {enabledString}");
             }
         }

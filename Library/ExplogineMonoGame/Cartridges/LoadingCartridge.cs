@@ -2,6 +2,7 @@
 using ExplogineCore;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -97,6 +98,10 @@ public class LoadingCartridge : ICartridge
 
         painter.DrawStringAtPosition(_font, "Loading...", Point.Zero, new DrawSettings());
         painter.EndSpriteBatch();
+    }
+
+    public void UpdateInput(AllDeviceFrameState input)
+    {
     }
 
     public bool ShouldLoadNextCartridge()

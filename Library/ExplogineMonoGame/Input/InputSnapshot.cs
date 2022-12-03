@@ -156,7 +156,7 @@ public readonly struct InputSnapshot
 
     /// <summary>
     ///     Obtains the latest Human Input State (ie: the actual input of the real physical mouse, keyboard, controller, etc.
-    ///     If the Window is not in focus we return an almost-empty InputState, that only holds the current mouse position.
+    ///     If the Window is not in focus we return an almost-empty InputState.
     /// </summary>
     public static InputSnapshot Human =>
         Client.IsInFocus
@@ -179,11 +179,17 @@ public readonly struct InputSnapshot
                 new GamePadState()
             );
 
+    /// <summary>
+    /// Empty MouseState except it holds the current mouse and scroll position
+    /// We need to detect mouse because otherwise we default to (0,0)
+    /// We need to detect scroll position because the scroll value will go from a potentially very high number to 0
+    /// Scrolling is not received unless the window is hovered so this is probably harmless. 
+    /// </summary>
     private static MouseState AlmostEmptyMouseState =>
         new(
             Mouse.GetState().X,
             Mouse.GetState().Y,
-            0,
+            Mouse.GetState().ScrollWheelValue,
             ButtonState.Released,
             ButtonState.Released,
             ButtonState.Released,

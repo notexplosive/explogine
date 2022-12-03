@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -34,6 +35,10 @@ public class CrashCartridge : ICartridge
     }
 
     public void Update(float dt)
+    {
+    }
+    
+    public void UpdateInput(AllDeviceFrameState input)
     {
     }
 
