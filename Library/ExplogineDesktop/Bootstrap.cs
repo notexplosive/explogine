@@ -5,8 +5,12 @@ namespace ExplogineDesktop;
 
 public static class Bootstrap
 {
-    public static void Run(string[] args, WindowConfig config, ICartridge gameCartridge)
+    public static void Run(string[] args, WindowConfig config, ICartridge gameCartridge, params string[] extraArgs)
     {
-        Client.Start(args, config, gameCartridge, new DesktopPlatform());
+        var combinedArgs = new List<string>();
+        combinedArgs.AddRange(args);
+        combinedArgs.AddRange(extraArgs);
+
+        Client.Start(combinedArgs.ToArray(), config, gameCartridge, new DesktopPlatform());
     }
 }
