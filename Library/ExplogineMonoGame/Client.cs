@@ -145,7 +145,7 @@ public static class Client
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game
-        using var game = new NotGame();
+        using var game = new ExplogineGame();
         Client.currentGame = game;
 
         // Setup Exit Handler

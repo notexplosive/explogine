@@ -5,11 +5,11 @@ using System;
 
 namespace ExplogineMonoGame;
 
-public class NotGame : Game
+public class ExplogineGame : Game
 {
     private readonly GraphicsDeviceManager _graphics;
 
-    public NotGame()
+    public ExplogineGame()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = Client.ContentBaseDirectory;
