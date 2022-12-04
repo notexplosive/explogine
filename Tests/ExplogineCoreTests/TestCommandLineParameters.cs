@@ -73,6 +73,14 @@ public class TestCommandLineParameters
     }
 
     [Fact]
+    public void same_parameter_specified_twice()
+    {
+        var commandLineParams = new CommandLineParameters("--level=4", "--level=10");
+        commandLineParams.RegisterParameter<int>("level");
+        commandLineParams.Args.GetValue<int>("level").Should().Be(10);
+    }
+
+    [Fact]
     public void ignore_capital_letters_when_appropriate()
     {
         var parameters = new CommandLineParameters("--Mode=eDiTor");

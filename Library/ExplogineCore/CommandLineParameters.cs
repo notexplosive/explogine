@@ -31,11 +31,11 @@ public class CommandLineParameters
                 if (CommandHasValue(argWithoutDashes))
                 {
                     var split = argWithoutDashes.Split('=');
-                    _givenArgsTable.Add(split[0].ToLower(), split[1]);
+                    _givenArgsTable[split[0].ToLower()] = split[1];
                 }
                 else
                 {
-                    _givenArgsTable.Add(argWithoutDashes.ToLower(), "true");
+                    _givenArgsTable[argWithoutDashes.ToLower()] = "true";
                 }
             }
         }
