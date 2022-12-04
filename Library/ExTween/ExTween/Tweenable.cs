@@ -34,6 +34,16 @@ public abstract class Tweenable<T>
         return tweenable.Value;
     }
 
+    public ITween SetTo(T destination)
+    {
+        return new CallbackTween(() => Value = destination);
+    }
+
+    public ITween TweenTo(T destination, float duration, Ease.Delegate ease)
+    {
+        return new Tween<T>(this, destination, duration, ease);
+    }
+
     /// <summary>
     ///     The equivalent of: `startingValue + (targetValue - startingValue) * percent` for the template type.
     /// </summary>

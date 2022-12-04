@@ -25,17 +25,17 @@ public class IntegrationTests
                     tweenableY.Value = 0;
                 }))
                 .Add(new MultiplexTween()
-                    .AddChannel(new Tween<float>(tweenableX, 0, duration / 4f, Ease.SineSlowFast))
-                    .AddChannel(new Tween<float>(tweenableY, radius, duration / 4f, Ease.SineFastSlow)))
+                    .AddChannel(tweenableX.TweenTo(0, duration / 4f, Ease.SineSlowFast))
+                    .AddChannel(tweenableY.TweenTo(radius, duration / 4f, Ease.SineFastSlow)))
                 .Add(new MultiplexTween()
-                    .AddChannel(new Tween<float>(tweenableX, -radius, duration / 4f, Ease.SineFastSlow))
-                    .AddChannel(new Tween<float>(tweenableY, 0, duration / 4f, Ease.SineSlowFast)))
+                    .AddChannel(tweenableX.TweenTo(-radius, duration / 4f, Ease.SineFastSlow))
+                    .AddChannel(tweenableY.TweenTo(0, duration / 4f, Ease.SineSlowFast)))
                 .Add(new MultiplexTween()
-                    .AddChannel(new Tween<float>(tweenableX, 0, duration / 4f, Ease.SineSlowFast))
-                    .AddChannel(new Tween<float>(tweenableY, -radius, duration / 4f, Ease.SineFastSlow)))
+                    .AddChannel(tweenableX.TweenTo(0, duration / 4f, Ease.SineSlowFast))
+                    .AddChannel(tweenableY.TweenTo(-radius, duration / 4f, Ease.SineFastSlow)))
                 .Add(new MultiplexTween()
-                    .AddChannel(new Tween<float>(tweenableX, radius, duration / 4f, Ease.SineFastSlow))
-                    .AddChannel(new Tween<float>(tweenableY, 0, duration / 4f, Ease.SineSlowFast)))
+                    .AddChannel(tweenableX.TweenTo(radius, duration / 4f, Ease.SineFastSlow))
+                    .AddChannel(tweenableY.TweenTo(0, duration / 4f, Ease.SineSlowFast)))
             ;
 
         // baseline of a circle to compare to

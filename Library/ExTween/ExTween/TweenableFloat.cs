@@ -16,6 +16,6 @@ public class TweenableFloat : Tweenable<float>
 
     public override float Lerp(float startingValue, float targetValue, float percent)
     {
-        return startingValue + (targetValue - startingValue) * percent;
+        return FloatExtensions.Lerp(startingValue, targetValue, percent);
     }
 }

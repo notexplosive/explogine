@@ -1,4 +1,6 @@
 ﻿using ExplogineMonoGame.Data;
+using ExTween;
+using ExTweenMonoGame;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
@@ -8,6 +10,9 @@ public class Camera
     public Camera(RectangleF viewBounds)
     {
         ViewBounds = viewBounds;
+        TweenableViewBounds = new TweenableRectangleF(() => ViewBounds, val => ViewBounds = val);
+        TweenableCenterPosition = new TweenableVector2(() => CenterPosition, val => CenterPosition = val);
+        TweenableAngle = new TweenableFloat(() => Angle, val => Angle = val);
     }
 
     public Camera(Vector2 viewableSize) : this(new RectangleF(Vector2.Zero, viewableSize))
@@ -16,21 +21,30 @@ public class Camera
 
     public float Angle { get; set; }
 
-    private RectangleF ViewBounds
+    public RectangleF ViewBounds
     {
-        get => new(TopLeftPosition, ViewableSize);
+        get => new(TopLeftPosition, Size);
         set
         {
             TopLeftPosition = value.TopLeft;
-            ViewableSize = value.Size;
+            Size = value.Size;
         }
     }
 
     public Matrix CanvasToScreen => ViewBounds.CanvasToScreen(Client.Window.RenderResolution, Angle);
     public Matrix ScreenToCanvas => Matrix.Invert(CanvasToScreen);
     public Vector2 TopLeftPosition { get; set; }
-    public Vector2 ViewableSize { get; set; }
-    public Vector2 CenterPosition => TopLeftPosition + ViewableSize / 2;
+    public Vector2 Size { get; private set; }
+
+    public Vector2 CenterPosition
+    {
+        get => TopLeftPosition + Size / 2;
+        set => TopLeftPosition = value - Size / 2;
+    }
+
+    public TweenableRectangleF TweenableViewBounds { get; }
+    public TweenableVector2 TweenableCenterPosition { get; }
+    public TweenableFloat TweenableAngle { get; }
 
     public void ZoomInTowards(int amount, Vector2 focus)
     {
@@ -38,7 +52,7 @@ public class Camera
         if (newBounds.Width > amount * 2 && newBounds.Height > amount * 2)
         {
             TopLeftPosition = newBounds.Location;
-            ViewableSize = newBounds.Size;
+            Size = newBounds.Size;
         }
     }
 
@@ -46,6 +60,6 @@ public class Camera
     {
         var newBounds = ViewBounds.GetZoomedOutBounds(amount, focus);
         TopLeftPosition = newBounds.Location;
-        ViewableSize = newBounds.Size;
+        Size = newBounds.Size;
     }
 }
