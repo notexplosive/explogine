@@ -91,6 +91,10 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         return false;
     }
 
+    public void Unload()
+    {
+    }
+
     public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
         yield return new AssetLoadEvent("demo-indicators",

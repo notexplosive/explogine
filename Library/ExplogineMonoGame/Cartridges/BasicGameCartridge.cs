@@ -10,6 +10,9 @@ public abstract class BasicGameCartridge : ICartridge, ILoadEventProvider, IComm
     public abstract void Update(float dt);
     public abstract void Draw(Painter painter);
     public abstract void UpdateInput(InputFrameState input);
+    public virtual void Unload()
+    {
+    }
 
     public bool ShouldLoadNextCartridge()
     {

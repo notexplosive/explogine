@@ -66,5 +66,9 @@ public class CrashCartridge : ICartridge
         return false;
     }
 
+    public void Unload()
+    {
+    }
+
     public CartridgeConfig CartridgeConfig { get; } = new();
 }

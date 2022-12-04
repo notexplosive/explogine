@@ -109,6 +109,10 @@ public class LoadingCartridge : ICartridge
         return _doneLoading;
     }
 
+    public void Unload()
+    {
+    }
+
     ~LoadingCartridge()
     {
         _loadingBarGraphic.Dispose();

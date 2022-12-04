@@ -104,6 +104,10 @@ public class IntroCartridge : ICartridge
         return _tween.IsDone();
     }
 
+    public void Unload()
+    {
+    }
+
     public CartridgeConfig CartridgeConfig { get; } = new();
 
     private SequenceTween FlyInLetters()

@@ -24,6 +24,10 @@ public class BlankCartridge : ICartridge
     {
         return false;
     }
-    
+
+    public void Unload()
+    {
+    }
+
     public CartridgeConfig CartridgeConfig { get; } = new();
 }
