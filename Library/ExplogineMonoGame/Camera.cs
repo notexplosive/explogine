@@ -32,9 +32,9 @@ public class Camera
     public Vector2 ViewableSize { get; set; }
     public Vector2 CenterPosition => TopLeftPosition + ViewableSize / 2;
 
-    public void ZoomInTowards(int amount, Vector2 mousePos)
+    public void ZoomInTowards(int amount, Vector2 focus)
     {
-        var newBounds = ViewBounds.GetZoomedInBounds(amount, mousePos);
+        var newBounds = ViewBounds.GetZoomedInBounds(amount, focus);
         if (newBounds.Width > amount * 2 && newBounds.Height > amount * 2)
         {
             TopLeftPosition = newBounds.Location;
@@ -42,9 +42,9 @@ public class Camera
         }
     }
 
-    public void ZoomOutFrom(int amount, Vector2 mousePos)
+    public void ZoomOutFrom(int amount, Vector2 focus)
     {
-        var newBounds = ViewBounds.GetZoomedOutBounds(amount, mousePos);
+        var newBounds = ViewBounds.GetZoomedOutBounds(amount, focus);
         TopLeftPosition = newBounds.Location;
         ViewableSize = newBounds.Size;
     }
