@@ -18,9 +18,14 @@ public class DesktopWindow : PlatformAgnosticWindow
             InvokeTextEntered(e.Character);
         }
 
+        void OnFileDrop(object? sender, FileDropEventArgs e)
+        {
+            InvokeFileDrop(e.Files);
+        }
+        
+        
         Window.ClientSizeChanged += OnResize;
         Window.TextInput += OnTextEntered;
+        Window.FileDrop += OnFileDrop;
     }
-
-    
 }

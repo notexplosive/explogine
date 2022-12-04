@@ -85,6 +85,7 @@ public class PlatformAgnosticWindow
 
     public event Action<Point>? Resized;
     public event Action<Point>? RenderResolutionChanged;
+    public event Action<string>? FileDropped;
     public event Action? ConfigChanged;
 
     public void Setup(GameWindow window, WindowConfig config)
@@ -134,6 +135,14 @@ public class PlatformAgnosticWindow
         Client.Graphics.DeviceManager.ApplyChanges();
     }
 
+    protected void InvokeFileDrop(string[] files)
+    {
+        foreach (var file in files)
+        {
+            FileDropped?.Invoke(file);
+        }
+    }
+
     protected void InvokeTextEntered(char text)
     {
         TextEnteredBuffer = TextEnteredBuffer.WithAddedCharacter(text);
@@ -155,7 +164,7 @@ public class PlatformAgnosticWindow
     }
 
     /// <summary>
-    /// Run at the end of frame so we're only setting the cursor once per frame
+    ///     Run at the end of frame so we're only setting the cursor once per frame
     /// </summary>
     public void ResolveSetCursor()
     {
