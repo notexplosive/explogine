@@ -30,9 +30,9 @@ public class Painter
         BeginSpriteBatch(samplerState, Matrix.Identity);
     }
     
-    public void BeginSpriteBatch(Painter painter, RectangleF viewBounds, Point outputDimensions, float angle = 0)
+    public void BeginSpriteBatch(RectangleF viewBounds, Point outputDimensions, float angle = 0)
     {
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, viewBounds.CanvasToScreen(outputDimensions, angle));
+        BeginSpriteBatch(SamplerState.LinearWrap, viewBounds.CanvasToScreen(outputDimensions, angle));
     }
 
     public void BeginSpriteBatch(SamplerState samplerState, Matrix matrix)
