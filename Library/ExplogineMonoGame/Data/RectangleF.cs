@@ -417,7 +417,7 @@ public struct RectangleF : IEquatable<RectangleF>
                 new Vector2(Left, Bottom) - Center
             });
     }
-    
+
     [Pure]
     public Matrix CanvasToScreen(Point outputDimensions, float angle)
     {
@@ -483,5 +483,15 @@ public struct RectangleF : IEquatable<RectangleF>
         var zoomedOutBounds = zoomedInBounds.InflatedMaintainAspectRatio(zoomAmount * 2);
         zoomedOutBounds.Offset(zoomedOutOffset * 2);
         return zoomedOutBounds;
+    }
+
+    [Pure]
+    public static RectangleF FromCorners(Vector2 cornerA, Vector2 cornerB)
+    {
+        var x = MathF.Min(cornerA.X, cornerB.X);
+        var y = MathF.Min(cornerA.Y, cornerB.Y);
+        var width = MathF.Abs(cornerA.X - cornerB.X);
+        var height = MathF.Abs(cornerA.Y - cornerB.Y);
+        return new RectangleF(x, y, width, height);
     }
 }
