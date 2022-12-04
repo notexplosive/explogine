@@ -19,6 +19,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
 
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
     private Depth ConsoleOverlayDepth { get; } = Depth.Front + 5;
+    private Depth FrameStepDepth { get; } = Depth.Front + 20;
 
     public void OnCartridgeStarted()
     {
@@ -44,6 +45,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
     {
         _demoInterface.Update(dt);
         _logOverlay.Update(dt);
+        _frameStep.UpdateGraphic(dt);
     }
 
     public void Draw(Painter painter)
@@ -56,6 +58,8 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         {
             _logOverlay.Draw(painter, ConsoleOverlayDepth);
         }
+        
+        _frameStep.Draw(painter, FrameStepDepth);
 
         painter.EndSpriteBatch();
 
@@ -64,6 +68,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
             // We don't let the snapshot timer start until after we're done with at least one draw
             _snapshotTaker.StartTimer();
         }
+
     }
 
     public void UpdateInput(InputFrameState input)
