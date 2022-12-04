@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
@@ -18,10 +19,10 @@ internal class SnapshotTaker
         _timeLastFrame = DateTime.Now;
     }
 
-    public void Update()
+    public void Update(InputFrameState input)
     {
         var now = DateTime.Now;
-        if (Client.Input.Keyboard.GetButton(Keys.F12).WasPressed)
+        if (input.Keyboard.GetButton(Keys.F12).WasPressed)
         {
             TakeSnapshot();
         }

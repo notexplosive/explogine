@@ -44,16 +44,10 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
     {
         _demoInterface.Update(dt);
         _logOverlay.Update(dt);
-
     }
 
     public void Draw(Painter painter)
     {
-        if (Client.FinishedLoading.IsReady)
-        {
-            _snapshotTaker.Update();
-        }
-        
         painter.BeginSpriteBatch();
 
         _demoInterface.Draw(painter, DemoStatusDepth);
@@ -74,13 +68,14 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
 
     public void UpdateInput(InputFrameState input)
     {
-        if (Client.Input.Keyboard.Modifiers.ControlShift && Client.Input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
+        if (input.Keyboard.Modifiers.ControlShift && input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
         {
             Client.Debug.CycleDebugMode();
         }
         
         if (Client.FinishedLoading.IsReady)
         {
+            _snapshotTaker.Update(input);
             _frameStep.Update(input);
         }
     }
