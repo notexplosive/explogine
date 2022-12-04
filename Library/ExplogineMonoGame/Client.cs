@@ -92,11 +92,6 @@ public static class Client
     /// </summary>
     public static RenderCanvas RenderCanvas { get; } = new();
 
-    /// <summary>
-    ///     All GameCartridges that were loaded by the Client on startup.
-    /// </summary>
-    public static MultiCartridge GameCartridges => Client.CartridgeChain.GameCartridge;
-
     private static ClientEssentials Essentials { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
