@@ -10,27 +10,32 @@ public static class PointExtensions
         return (float) point.X / point.Y;
     }
 
-    public static int MaxXY(this Point point)
+    public static int MaxXy(this Point point)
     {
         return Math.Max(point.X, point.Y);
+    }
+    
+    public static Point Multiplied(this Point point, float scalar)
+    {
+        return new Point((int) (point.X * scalar), (int) (point.Y * scalar));
     }
 
     /// <summary>
     ///     Calculate the scalar sizeToEnclose needs to multiply by to fit within enclosingSize
     /// </summary>
-    /// <param name="enclosingSize">The "Window" rect that encloses the other rect</param>
-    /// <param name="sizeToEnclose">The "Canvas" rect that will be scaled by the scalar</param>
+    /// <param name="outerSize">The "Window" size that encloses the other size</param>
+    /// <param name="innerSize">The "Canvas" size that will be scaled by the scalar</param>
     /// <returns>Scalar to multiply sizeToEnclose by</returns>
-    public static float CalculateScalarDifference(Point enclosingSize, Point sizeToEnclose)
+    public static float CalculateScalarDifference(Point outerSize, Point innerSize)
     {
-        var enclosingSizeIsTooWide = PointExtensions.IsEnclosingSizeTooWide(enclosingSize, sizeToEnclose);
+        var enclosingSizeIsTooWide = PointExtensions.IsEnclosingSizeTooWide(outerSize, innerSize);
 
         if (enclosingSizeIsTooWide)
         {
-            return (float) enclosingSize.Y / sizeToEnclose.Y;
+            return (float) outerSize.Y / innerSize.Y;
         }
 
-        return (float) enclosingSize.X / sizeToEnclose.X;
+        return (float) outerSize.X / innerSize.X;
     }
 
     public static bool IsEnclosingSizeTooWide(Point enclosingSize, Point sizeToEnclose)

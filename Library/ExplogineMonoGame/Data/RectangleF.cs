@@ -494,4 +494,12 @@ public struct RectangleF : IEquatable<RectangleF>
         var height = MathF.Abs(cornerA.Y - cornerB.Y);
         return new RectangleF(x, y, width, height);
     }
+
+    [Pure]
+    public RectangleF ConstrictedToAspectRatio(float aspectRatio)
+    {
+        var aspect = Vector2Extensions.FromAspectRatio(aspectRatio);
+        var result = new RectangleF(Location, aspect * Vector2Extensions.CalculateScalarDifference(Size, aspect));
+        return result;
+    }
 }

@@ -53,21 +53,9 @@ public class RenderCanvas
 
         var scalar =
             PointExtensions.CalculateScalarDifference(Client.Window.Size, Client.Window.RenderResolution);
-        var canvasWidth =
-            Client.Window.RenderResolution.X * scalar;
-        var canvasHeight =
-            Client.Window.RenderResolution.Y * scalar;
+        var canvasSize = Client.Window.RenderResolution.ToVector2() * scalar;
+        var result = (Client.Window.Size.ToVector2() - canvasSize) / 2;
 
-        var result = new Vector2(
-            Client.Window.Size.X / 2f - canvasWidth / 2,
-            Client.Window.Size.Y / 2f - canvasHeight / 2
-        );
-
-        if (windowIsTooWide)
-        {
-            return new Vector2(result.X, 0);
-        }
-
-        return new Vector2(0, result.Y);
+        return windowIsTooWide ? new Vector2(result.X, 0) : new Vector2(0, result.Y);
     }
 }
