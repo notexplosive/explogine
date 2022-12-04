@@ -78,6 +78,7 @@ public struct RectangleF : IEquatable<RectangleF>
     public Vector2 BottomRight => Location + Size;
     public Vector2 BottomLeft => new(Location.X, Location.Y + Size.Y);
     public Vector2 TopRight => new(Location.X + Size.Y, Location.Y);
+    public float Area => Width * Height;
 
     public bool IsEmpty()
     {
