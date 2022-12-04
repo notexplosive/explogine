@@ -79,6 +79,17 @@ public class TestCommandLineParameters
         commandLineParams.RegisterParameter<int>("level");
         commandLineParams.Args.GetValue<int>("level").Should().Be(10);
     }
+    
+    [Fact]
+    public void malformed_input_should_fail()
+    {
+        var action = () =>
+        {
+            // You're supposed to do "level=4", "level=10" as two separate args
+            new CommandLineParameters("--level=4 --level=10");
+        };
+        action.Should().Throw<Exception>();
+    }
 
     [Fact]
     public void ignore_capital_letters_when_appropriate()
