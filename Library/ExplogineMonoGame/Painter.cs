@@ -25,19 +25,19 @@ public class Painter
         _graphicsDevice.Clear(color);
     }
 
-    public void BeginSpriteBatch(SamplerState samplerState)
+    public void BeginSpriteBatch()
     {
-        BeginSpriteBatch(samplerState, Matrix.Identity);
+        BeginSpriteBatch(Matrix.Identity);
     }
     
     public void BeginSpriteBatch(RectangleF viewBounds, Point outputDimensions, float angle = 0)
     {
-        BeginSpriteBatch(SamplerState.LinearWrap, viewBounds.CanvasToScreen(outputDimensions, angle));
+        BeginSpriteBatch(viewBounds.CanvasToScreen(outputDimensions, angle));
     }
 
-    public void BeginSpriteBatch(SamplerState samplerState, Matrix matrix)
+    public void BeginSpriteBatch(Matrix matrix)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, null, matrix);
+        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, SamplerState.LinearWrap, null, null, null, matrix);
         _spriteBatchIsInProgress = true;
     }
 

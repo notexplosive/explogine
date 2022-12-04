@@ -4,7 +4,6 @@ using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -80,7 +79,7 @@ public class LoadingCartridge : ICartridge
         // draw the loading bar
         Client.Graphics.PushCanvas(_loadingBarGraphic);
         painter.Clear(Color.White);
-        painter.BeginSpriteBatch(SamplerState.PointWrap);
+        painter.BeginSpriteBatch();
 
         for (var i = 0; i < LoadingCartridge.ProgressBarWidth * _loader.Percent; i++)
         {
@@ -92,7 +91,7 @@ public class LoadingCartridge : ICartridge
 
         // main canvas draw
         painter.Clear(Color.Black);
-        painter.BeginSpriteBatch(SamplerState.PointWrap);
+        painter.BeginSpriteBatch();
         painter.DrawAtPosition(_loadingBarGraphic.Texture,
             Client.Window.RenderResolution.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
 

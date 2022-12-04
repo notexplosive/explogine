@@ -4,7 +4,6 @@ using ExplogineCore;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame;
 
@@ -56,7 +55,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
             var canvas = new Canvas(1, 1);
             Client.Graphics.PushCanvas(canvas);
 
-            painter.BeginSpriteBatch(SamplerState.PointWrap);
+            painter.BeginSpriteBatch();
             painter.Clear(Color.White);
             painter.EndSpriteBatch();
 

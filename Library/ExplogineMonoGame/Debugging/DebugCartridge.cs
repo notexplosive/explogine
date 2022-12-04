@@ -5,7 +5,6 @@ using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
@@ -55,7 +54,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
             _snapshotTaker.Update();
         }
         
-        painter.BeginSpriteBatch(SamplerState.LinearWrap);
+        painter.BeginSpriteBatch();
 
         _demoInterface.Draw(painter, DemoStatusDepth);
 

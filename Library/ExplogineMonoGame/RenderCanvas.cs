@@ -2,7 +2,6 @@
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame;
 
@@ -47,7 +46,7 @@ public class RenderCanvas
     public void Draw(Painter painter)
     {
         // this renders the whole canvas, does it need to be the same SamplerState as everything else?
-        painter.BeginSpriteBatch(SamplerState.PointWrap, CanvasToScreen);
+        painter.BeginSpriteBatch(CanvasToScreen);
         painter.DrawAtPosition(Canvas.Texture, Vector2.Zero);
         painter.EndSpriteBatch();
     }

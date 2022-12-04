@@ -5,7 +5,6 @@ using ExplogineMonoGame.Input;
 using ExTween;
 using ExTweenMonoGame;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -46,10 +45,9 @@ public class IntroCartridge : ICartridge
 
     public void Draw(Painter painter)
     {
-        painter.BeginSpriteBatch(SamplerState.LinearClamp,
-            Matrix.CreateTranslation(new Vector3(-Client.Window.RenderResolution.ToVector2() / 2, 0))
-            * Matrix.CreateScale(new Vector3(new Vector2(_wholeWord.Scale), 1))
-            * Matrix.CreateTranslation(new Vector3(Client.Window.RenderResolution.ToVector2() / 2, 0))
+        painter.BeginSpriteBatch(Matrix.CreateTranslation(new Vector3(-Client.Window.RenderResolution.ToVector2() / 2, 0))
+                                 * Matrix.CreateScale(new Vector3(new Vector2(_wholeWord.Scale), 1))
+                                 * Matrix.CreateTranslation(new Vector3(Client.Window.RenderResolution.ToVector2() / 2, 0))
         );
         painter.Clear(Color.Navy);
 

@@ -3,7 +3,6 @@ using System.IO;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -44,7 +43,7 @@ public class CrashCartridge : ICartridge
 
     public void Draw(Painter painter)
     {
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, Matrix.Identity);
+        painter.BeginSpriteBatch(Matrix.Identity);
 
         painter.Clear(Color.DarkBlue);
 
