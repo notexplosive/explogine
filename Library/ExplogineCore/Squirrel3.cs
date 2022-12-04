@@ -39,7 +39,5 @@ public static class Squirrel3
         mangledBits *= sq5BitNoise5;
         mangledBits ^= mangledBits >> 17;
         return mangledBits;
-
-        return mangledBits;
     }
 }
