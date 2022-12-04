@@ -92,6 +92,11 @@ public static class Client
     /// </summary>
     public static RenderCanvas RenderCanvas { get; } = new();
 
+    /// <summary>
+    ///     All GameCartridges that were loaded by the Client on startup.
+    /// </summary>
+    public static MultiCartridge GameCartridges => Client.CartridgeChain.GameCartridge;
+
     private static ClientEssentials Essentials { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
@@ -141,7 +146,7 @@ public static class Client
             Client.CartridgeChain.Append(new IntroCartridge());
         }
 
-        Client.CartridgeChain.Append(gameCartridge);
+        Client.CartridgeChain.AppendGameCartridge(gameCartridge);
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game

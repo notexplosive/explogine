@@ -16,6 +16,23 @@ internal class CartridgeChain
     private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
     public bool IsFrozen { get; set; }
 
+    /// <summary>
+    /// The "Game Cartridge" is the last cartridge in the chain. This is what the user provided wrapped in a MetaCartridge.
+    /// </summary>
+    /// <exception cref="Exception"></exception>
+    public MultiCartridge GameCartridge
+    {
+        get
+        {
+            if (_list.Last?.Value is MultiCartridge multiCartridge)
+            {
+                return multiCartridge;
+            }
+
+            throw new Exception($"Attempted to get {nameof(CartridgeChain.GameCartridge)} before it was available.");
+        }
+    }
+
     public event Action? AboutToLoadLastCartridge;
 
     public void UpdateInput(InputFrameState input)
@@ -66,14 +83,26 @@ internal class CartridgeChain
 
         if (HasCurrent)
         {
-            CartridgeChain.StartCartridge(Current);
+            CartridgeChain.StartCartridgeAndSetRenderResolution(Current);
         }
     }
 
-    private static void StartCartridge(ICartridge cartridge)
+    private static void StartCartridgeAndSetRenderResolution(ICartridge cartridge)
     {
         Client.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
         cartridge.OnCartridgeStarted();
+    }
+
+    public void AppendGameCartridge(ICartridge cartridge)
+    {
+        if (cartridge is MultiCartridge meta)
+        {
+            Append(meta);
+        }
+        else
+        {
+            Append(new MultiCartridge(cartridge));
+        }
     }
 
     public void Append(ICartridge cartridge)
@@ -81,12 +110,12 @@ internal class CartridgeChain
         _list.AddLast(cartridge);
     }
 
-    public void Prepend(ICartridge cartridge)
+    private void Prepend(ICartridge cartridge)
     {
         _list.AddFirst(cartridge);
     }
 
-    public IEnumerable<ICartridge> GetAllCartridges()
+    private IEnumerable<ICartridge> GetAllCartridges()
     {
         foreach (var cartridge in _list)
         {
@@ -107,7 +136,7 @@ internal class CartridgeChain
     public void SetupLoadingCartridge(Loader loader)
     {
         var loadingCartridge = new LoadingCartridge(loader);
-        CartridgeChain.StartCartridge(loadingCartridge);
+        CartridgeChain.StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(DebugCartridge.OnCartridgeStarted);
     }
@@ -125,7 +154,7 @@ internal class CartridgeChain
         var crashCartridge = new CrashCartridge(exception);
         _list.Clear();
         _list.AddFirst(crashCartridge);
-        CartridgeChain.StartCartridge(crashCartridge);
+        CartridgeChain.StartCartridgeAndSetRenderResolution(crashCartridge);
         DebugCartridge = new BlankCartridge();
     }
 
