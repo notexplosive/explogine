@@ -9,13 +9,9 @@ public class RenderCanvas
 {
     public Canvas Canvas { get; private set; } = null!;
 
-    public Matrix CanvasToScreenScalar => Matrix.CreateScale(new Vector3(
-        new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
-            Client.Window.RenderResolution)), 1));
-
-    public Matrix ScreenToCanvasScalar => Matrix.Invert(CanvasToScreenScalar);
-    
-    public Matrix CanvasToScreen => CanvasToScreenScalar
+    public Matrix CanvasToScreen => Matrix.CreateScale(new Vector3(
+                                        new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
+                                            Client.Window.RenderResolution)), 1))
                                     * Matrix.CreateTranslation(new Vector3(CalculateTopLeftCorner(), 0));
 
     public Matrix ScreenToCanvas => Matrix.Invert(Client.RenderCanvas.CanvasToScreen);
@@ -45,7 +41,6 @@ public class RenderCanvas
 
     public void Draw(Painter painter)
     {
-        // this renders the whole canvas, does it need to be the same SamplerState as everything else?
         painter.BeginSpriteBatch(CanvasToScreen);
         painter.DrawAtPosition(Canvas.Texture, Vector2.Zero);
         painter.EndSpriteBatch();

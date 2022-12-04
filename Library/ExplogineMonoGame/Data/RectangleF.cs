@@ -427,7 +427,8 @@ public struct RectangleF : IEquatable<RectangleF>
             * Matrix.CreateTranslation(new Vector3(halfSize, 0));
         var translation =
             Matrix.CreateTranslation(new Vector3(-Location, 0));
-        return translation * rotation * CanvasToScreenScalar(outputDimensions);
+        return translation * rotation * Matrix.CreateScale(new Vector3(outputDimensions.X / Width,
+            outputDimensions.Y / Height, 1));
     }
 
     [Pure]
@@ -436,19 +437,6 @@ public struct RectangleF : IEquatable<RectangleF>
         return Matrix.Invert(CanvasToScreen(outputDimensions, angle));
     }
 
-    [Pure]
-    public Matrix CanvasToScreenScalar(Point outputDimensions)
-    {
-        return Matrix.CreateScale(new Vector3(outputDimensions.X / Width,
-            outputDimensions.Y / Height, 1));
-    }
-    
-    [Pure]
-    public Matrix ScreenToCanvasScalar(Point outputDimensions)
-    {
-        return Matrix.Invert(CanvasToScreenScalar(outputDimensions));
-    }
-    
     /// <summary>
     ///     Deflates the ViewRect centered on a focus point such that the focus point is at the same relative position before
     ///     and after the deflation.

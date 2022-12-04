@@ -17,15 +17,29 @@ public readonly struct MouseFrameState
     private InputSnapshot Previous { get; }
     private InputSnapshot Current { get; }
 
-    public Vector2 Position(Matrix toCanvasTransform)
+    public Vector2 Position(Matrix? toCanvasTransform = null)
     {
-        return Vector2.Transform(Current.MousePosition, toCanvasTransform);
+        var transform = toCanvasTransform ?? Matrix.Identity;
+        return Vector2.Transform(Current.MousePosition, transform);
     }
 
-    public Vector2 Delta(Matrix toCanvasScaleTransform)
+    public Vector2 Delta(Matrix? toCanvasTransform = null)
     {
-        return Vector2.Transform(Current.MousePosition, toCanvasScaleTransform) -
-               Vector2.Transform(Previous.MousePosition, toCanvasScaleTransform);
+        var transform = toCanvasTransform ?? Matrix.Identity;
+        return Vector2.Transform(Current.MousePosition, transform) -
+               Vector2.Transform(Previous.MousePosition, transform);
+    }
+
+    public Vector2 CanvasPosition(Matrix? toCanvasTransform = null)
+    {
+        var transform = toCanvasTransform ?? Matrix.Identity;
+        return Position(Client.RenderCanvas.ScreenToCanvas * transform);
+    }
+
+    public Vector2 CanvasDelta(Matrix? toCanvasTransform = null)
+    {
+        var transform = toCanvasTransform ?? Matrix.Identity;
+        return Delta(Client.RenderCanvas.ScreenToCanvas * transform);
     }
 
     public ButtonFrameState GetButton(MouseButton mouseButton)
