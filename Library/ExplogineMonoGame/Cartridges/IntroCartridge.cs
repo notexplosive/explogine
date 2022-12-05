@@ -15,6 +15,7 @@ public class IntroCartridge : ICartridge
     private SequenceTween _tween = new();
     private bool _useWholeWord = true;
     private Figure _wholeWord;
+    private bool _cancelEarly;
 
     public void OnCartridgeStarted()
     {
@@ -40,7 +41,16 @@ public class IntroCartridge : ICartridge
 
     public void Update(float dt)
     {
-        _tween.Update(dt);
+        try
+        {
+            _tween.Update(dt);
+        }
+        catch(Exception e)
+        {
+            // If we somehow throw an exception during the intro, move onto the next cart
+            Client.Debug.Log($"Crashed during the intro {e}");
+            _cancelEarly = true;
+        }
     }
 
     public void Draw(Painter painter)
@@ -55,7 +65,7 @@ public class IntroCartridge : ICartridge
 
         if (_useWholeWord)
         {
-            painter.DrawStringAtPosition(_logoFont!, _wholeWord.Text,
+            painter.DrawStringAtPosition(_logoFont, _wholeWord.Text,
                 (centerOfScreen + _wholeWord.Position.Value).ToPoint(),
                 new DrawSettings
                 {
@@ -68,11 +78,11 @@ public class IntroCartridge : ICartridge
             var runningWidth = 0f;
             foreach (var letter in _letters)
             {
-                var myWidth = _logoFont!.MeasureString(letter.Text).X;
-                var textWidth = _logoFont!.MeasureString(_wholeWord.Text).X;
+                var myWidth = _logoFont.MeasureString(letter.Text).X;
+                var textWidth = _logoFont.MeasureString(_wholeWord.Text).X;
                 var startOffset = centerOfScreen - new Vector2(textWidth / 2f, 0) +
                                   new Vector2(runningWidth + myWidth / 2, 0);
-                painter.DrawScaledStringAtPosition(_logoFont!,
+                painter.DrawScaledStringAtPosition(_logoFont,
                     letter.Text,
                     (startOffset + letter.Position.Value).ToPoint(),
                     new Scale2D(letter.Scale),
@@ -99,7 +109,7 @@ public class IntroCartridge : ICartridge
 
     public bool ShouldLoadNextCartridge()
     {
-        return _tween.IsDone();
+        return _tween.IsDone() || _cancelEarly;
     }
 
     public void Unload()
