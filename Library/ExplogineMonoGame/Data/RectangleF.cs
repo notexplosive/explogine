@@ -77,7 +77,7 @@ public struct RectangleF : IEquatable<RectangleF>
     public Vector2 TopLeft => Location;
     public Vector2 BottomRight => Location + Size;
     public Vector2 BottomLeft => new(Location.X, Location.Y + Size.Y);
-    public Vector2 TopRight => new(Location.X + Size.Y, Location.Y);
+    public Vector2 TopRight => new(Location.X + Size.X, Location.Y);
     public float Area => Width * Height;
 
     public bool IsEmpty()
@@ -501,5 +501,27 @@ public struct RectangleF : IEquatable<RectangleF>
         var aspect = Vector2Extensions.FromAspectRatio(aspectRatio);
         var result = new RectangleF(Location, aspect * Vector2Extensions.CalculateScalarDifference(Size, aspect));
         return result;
+    }
+
+    public RectangleF AlignedWithin(RectangleF outer, Alignment alignment)
+    {
+        var resultPosition = Location;
+        resultPosition.X = alignment.Horizontal switch
+        {
+            HorizontalAlignment.Left => outer.X,
+            HorizontalAlignment.Center => outer.Right - outer.Width / 2 - Width / 2,
+            HorizontalAlignment.Right => outer.Right - Size.X,
+            _ => resultPosition.X
+        };
+
+        resultPosition.Y = alignment.Vertical switch
+        {
+            VerticalAlignment.Top => outer.Y,
+            VerticalAlignment.Center => outer.Bottom - outer.Height / 2 - Height / 2,
+            VerticalAlignment.Bottom => outer.Bottom - Size.Y,
+            _ => resultPosition.Y
+        };
+
+        return new RectangleF(resultPosition, Size);
     }
 }
