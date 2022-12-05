@@ -91,6 +91,16 @@ public static class Vector2Extensions
         return MathF.Max(vec.X, vec.Y);
     }
 
+    public static Vector2 JustX(this Vector2 vec)
+    {
+        return new Vector2(vec.X, 0);
+    }
+    
+    public static Vector2 JustY(this Vector2 vec)
+    {
+        return new Vector2(0, vec.Y);
+    }
+
     public static Vector2 FromAspectRatio(float aspectRatio)
     {
         return new Vector2(aspectRatio, 1);
