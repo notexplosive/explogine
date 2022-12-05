@@ -38,33 +38,6 @@ public readonly struct Alignment
     public static Alignment CenterRight { get; } = new(HorizontalAlignment.Right, VerticalAlignment.Center);
     public static Alignment CenterLeft { get; } = new(HorizontalAlignment.Left, VerticalAlignment.Center);
 
-    public Point AddPostionDeltaFromMargin(Point margin)
-    {
-        var xFactor = 1;
-        var yFactor = 1;
-        if (Horizontal == HorizontalAlignment.Right)
-        {
-            xFactor = -1;
-        }
-
-        if (Horizontal == HorizontalAlignment.Center)
-        {
-            xFactor = 0;
-        }
-
-        if (Vertical == VerticalAlignment.Bottom)
-        {
-            yFactor = -1;
-        }
-
-        if (Vertical == VerticalAlignment.Center)
-        {
-            yFactor = 0;
-        }
-
-        return new Point(margin.X * xFactor, margin.Y * yFactor);
-    }
-
     public Vector2 GetRelativePositionOfElement(Vector2 availableSpace, Vector2 totalUsedSpace)
     {
         var result = Vector2.Zero;
@@ -91,5 +64,10 @@ public readonly struct Alignment
 
         // assumes top left is default
         return result;
+    }
+
+    public override string ToString()
+    {
+        return $"{Horizontal} {Vertical}";
     }
 }
