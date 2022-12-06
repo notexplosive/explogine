@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -36,21 +37,21 @@ public class Font : IFont
 
     public string Linebreak(string text, float restrictedWidth)
     {
-        return GetRestrictedString(text, restrictedWidth).Text;
+        return GetRestrictedString(text, restrictedWidth).CombinedText;
     }
 
     public RestrictedString GetRestrictedString(string text, float restrictedWidth)
     {
         if (string.IsNullOrEmpty(text))
         {
-            return new RestrictedString("", Vector2.Zero);
+            return new RestrictedString(Array.Empty<string>(), Vector2.Zero);
         }
         
         var currentLineWidth = 0f;
         var maxWidth = 0f;
         var height = 0f;
         var heightOfOneLine = SpriteFont.LineSpacing * ScaleFactor;
-        var lineBrokenString = new StringBuilder();
+        var currentLine = new StringBuilder();
 
         if (text.Length > 0)
         {
@@ -60,20 +61,27 @@ public class Font : IFont
         var spaceWidth = SpriteFont.MeasureString(" ").X;
 
         var token = new StringBuilder();
+        var result = new List<string>();
 
-        void StartNewLine()
+        void FinishCurrentLine()
         {
             maxWidth = MathF.Max(maxWidth, currentLineWidth);
-            height += heightOfOneLine;
             currentLineWidth = 0;
-            lineBrokenString.Append('\n');
+            result.Add(currentLine.ToString());
+        }
+        
+        void StartNewLine()
+        {
+            FinishCurrentLine();
+            height += heightOfOneLine;
+            currentLine.Clear();
         }
 
         void AppendToken()
         {
             currentLineWidth += TokenWidth();
-            lineBrokenString.Append(token);
-            token = new StringBuilder(); // can we just call token.Clear()?
+            currentLine.Append(token.ToString());
+            token.Clear();
         }
 
         float TokenWidth()
@@ -110,11 +118,19 @@ public class Font : IFont
             }
         }
 
-        return new RestrictedString(lineBrokenString.ToString(),
+        if (currentLine.Length > 0)
+        {
+            FinishCurrentLine();
+        }
+
+        return new RestrictedString(result.ToArray(),
             new Vector2(MathF.Max(maxWidth, currentLineWidth), height));
     }
 
-    public readonly record struct RestrictedString(string Text, Vector2 Size);
+    public readonly record struct RestrictedString(string[] Lines, Vector2 Size)
+    {
+        public readonly string CombinedText = string.Join("\n", Lines);
+    }
 
     public Font WithFontSize(int size)
     {

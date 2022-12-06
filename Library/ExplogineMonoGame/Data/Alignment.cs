@@ -14,20 +14,10 @@ public enum HorizontalAlignment
     Right
 }
 
-public readonly struct Alignment
+public readonly record struct Alignment(HorizontalAlignment Horizontal, VerticalAlignment Vertical)
 {
-    public HorizontalAlignment Horizontal { get; }
-    public VerticalAlignment Vertical { get; }
-
-    public Alignment(HorizontalAlignment horizontal = HorizontalAlignment.Left,
-        VerticalAlignment vertical = VerticalAlignment.Top)
-    {
-        Horizontal = horizontal;
-        Vertical = vertical;
-    }
-
-    public static Alignment TopLeft { get; } = new();
-    public static Alignment TopRight { get; } = new(HorizontalAlignment.Right);
+    public static Alignment TopLeft { get; } = new(HorizontalAlignment.Left,VerticalAlignment.Top);
+    public static Alignment TopRight { get; } = new(HorizontalAlignment.Right, VerticalAlignment.Top);
     public static Alignment TopCenter { get; } = new(HorizontalAlignment.Center, VerticalAlignment.Top);
     public static Alignment BottomCenter { get; } = new(HorizontalAlignment.Center, VerticalAlignment.Bottom);
     public static Alignment BottomRight { get; } = new(HorizontalAlignment.Right, VerticalAlignment.Bottom);
@@ -39,5 +29,15 @@ public readonly struct Alignment
     public override string ToString()
     {
         return $"{Horizontal} {Vertical}";
+    }
+    
+    public Alignment JustVertical()
+    {
+        return this with {Horizontal = HorizontalAlignment.Left};
+    }
+    
+    public Alignment JustHorizontal()
+    {
+        return this with {Vertical = VerticalAlignment.Top};
     }
 }

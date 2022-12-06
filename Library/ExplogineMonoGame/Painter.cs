@@ -29,7 +29,7 @@ public class Painter
     {
         BeginSpriteBatch(Matrix.Identity);
     }
-    
+
     public void BeginSpriteBatch(RectangleF viewBounds, Point outputDimensions, float angle = 0)
     {
         BeginSpriteBatch(viewBounds.CanvasToScreen(outputDimensions, angle));
@@ -134,19 +134,36 @@ public class Painter
     {
         var font = fontLike.GetFont();
         var restrictedString = font.GetRestrictedString(text, rectangle.Width);
-        var innerPosition = RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment).Location;
-        var brokenText = restrictedString.Text;
+        var restrictedBounds = RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment.JustVertical());
+        var lines = restrictedString.Lines;
         var origin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
-        _spriteBatch.DrawString(
-            font.SpriteFont,
-            brokenText,
-            innerPosition.ToPoint().ToVector2(), // gross truncating
-            settings.Color,
-            settings.Angle,
-            origin,
-            Vector2.One * font.ScaleFactor,
-            settings.FlipEffect,
-            settings.Depth);
+
+        void DrawTextLine(string line, Vector2 linePosition)
+        {
+            _spriteBatch.DrawString(
+                font.SpriteFont,
+                line,
+                linePosition.Truncate(),
+                settings.Color,
+                settings.Angle,
+                origin,
+                Vector2.One * font.ScaleFactor,
+                settings.FlipEffect,
+                settings.Depth);
+        }
+
+        for (var i = 0; i < lines.Length; i++)
+        {
+            var line = lines[i];
+            var actualLineSize = font.MeasureString(line);
+            var availableBoundForLine = new RectangleF(
+                restrictedBounds.TopLeft + new Vector2(0, i * font.FontSize),
+                new Vector2(rectangle.Width, actualLineSize.Y));
+            var actualLineRectangle =
+                RectangleF.FromSizeAlignedWithin(availableBoundForLine, actualLineSize, alignment);
+
+            DrawTextLine(line, actualLineRectangle.TopLeft);
+        }
     }
 
     public void DrawLinePolygon(Polygon polygon, LineDrawSettings settings)
