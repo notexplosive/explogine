@@ -140,31 +140,16 @@ public class Painter
         void DrawTextLine(string line, Vector2 linePosition)
         {
             var originalOrigin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
-
-            var lineOrigin = originalOrigin - (linePosition / font.ScaleFactor).Truncate();
-            
-            DrawLine(linePosition,linePosition - lineOrigin, new LineDrawSettings{});
-            
+            var topLeft = rectangle.ToRectangleF().TopLeft;
+            var lineOrigin = (originalOrigin - linePosition + topLeft) / font.ScaleFactor;
             
             _spriteBatch.DrawString(
                 font.SpriteFont,
                 line,
-                rectangle.ToRectangleF().TopLeft.Truncate(),
+                topLeft.Truncate(),
                 settings.Color,
                 settings.Angle,
-                lineOrigin,
-                Vector2.One * font.ScaleFactor,
-                settings.FlipEffect,
-                settings.Depth);
-            
-            // debuggin'
-            _spriteBatch.DrawString(
-                font.SpriteFont,
-                line,
-                linePosition.Truncate(),
-                Color.Red.WithMultipliedOpacity(0.25f),
-                settings.Angle,
-                Vector2.Zero,
+                lineOrigin.Truncate(),
                 Vector2.One * font.ScaleFactor,
                 settings.FlipEffect,
                 settings.Depth);
@@ -180,8 +165,6 @@ public class Painter
             var actualLineRectangle =
                 RectangleF.FromSizeAlignedWithin(availableBoundForLine, actualLineSize, alignment);
 
-            var origin = settings.Origin.Value(actualLineRectangle.Size) / font.ScaleFactor;
-            
             DrawTextLine(line, actualLineRectangle.TopLeft);
         }
     }
