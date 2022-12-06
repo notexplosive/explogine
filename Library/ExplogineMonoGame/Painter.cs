@@ -144,18 +144,18 @@ public class Painter
             RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment.JustVertical());
         var lines = restrictedString.Lines;
 
-        void DrawTextLine(string line, Vector2 linePosition)
+        void DrawLetter(char letter, Vector2 linePosition)
         {
-            var topLeft = rectangle.ToRectangleF().TopLeft;
-            var lineOrigin = (settings.Origin.Value(rectangle.Size) - linePosition + topLeft) / font.ScaleFactor;
+            var rectTopLeft = rectangle.ToRectangleF().TopLeft;
+            var letterOrigin = (settings.Origin.Value(rectangle.Size) - linePosition + rectTopLeft) / font.ScaleFactor;
 
             _spriteBatch.DrawString(
                 font.SpriteFont,
-                line,
-                topLeft.Truncate(),
+                letter.ToString(),
+                rectTopLeft.Truncate(),
                 settings.Color,
                 settings.Angle,
-                lineOrigin.Truncate(),
+                letterOrigin.Truncate(),
                 Vector2.One * font.ScaleFactor,
                 settings.FlipEffect,
                 settings.Depth);
@@ -168,10 +168,15 @@ public class Painter
             var availableBoundForLine = new RectangleF(
                 restrictedBounds.TopLeft + new Vector2(0, i * font.FontSize),
                 new Vector2(rectangle.Width, actualLineSize.Y));
-            var actualLineRectangle =
+            var actualLineBounds =
                 RectangleF.FromSizeAlignedWithin(availableBoundForLine, actualLineSize, alignment);
 
-            DrawTextLine(line, actualLineRectangle.TopLeft);
+            var letterPosition = Vector2.Zero;
+            foreach (var letter in line)
+            {
+                DrawLetter(letter, actualLineBounds.TopLeft + letterPosition);
+                letterPosition += font.MeasureString(letter.ToString()).JustX();
+            }
         }
     }
 
