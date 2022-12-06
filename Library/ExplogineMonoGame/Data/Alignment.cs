@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-
-namespace ExplogineMonoGame.Data;
+﻿namespace ExplogineMonoGame.Data;
 
 public enum VerticalAlignment
 {
@@ -37,34 +35,6 @@ public readonly struct Alignment
     public static Alignment Center { get; } = new(HorizontalAlignment.Center, VerticalAlignment.Center);
     public static Alignment CenterRight { get; } = new(HorizontalAlignment.Right, VerticalAlignment.Center);
     public static Alignment CenterLeft { get; } = new(HorizontalAlignment.Left, VerticalAlignment.Center);
-
-    public Vector2 GetRelativePositionOfElement(Vector2 availableSpace, Vector2 totalUsedSpace)
-    {
-        var result = Vector2.Zero;
-
-        if (Horizontal == HorizontalAlignment.Center)
-        {
-            result.X = availableSpace.X / 2 - totalUsedSpace.X / 2;
-        }
-
-        if (Horizontal == HorizontalAlignment.Right)
-        {
-            result.X = availableSpace.X - totalUsedSpace.X;
-        }
-
-        if (Vertical == VerticalAlignment.Center)
-        {
-            result.Y = availableSpace.Y / 2 - totalUsedSpace.Y / 2;
-        }
-
-        if (Vertical == VerticalAlignment.Bottom)
-        {
-            result.Y = availableSpace.Y - totalUsedSpace.Y;
-        }
-
-        // assumes top left is default
-        return result;
-    }
 
     public override string ToString()
     {

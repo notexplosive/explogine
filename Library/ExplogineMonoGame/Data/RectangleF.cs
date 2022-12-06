@@ -503,6 +503,11 @@ public struct RectangleF : IEquatable<RectangleF>
         return result;
     }
 
+    public static RectangleF FromSizeAlignedWithin(RectangleF outer, Vector2 innerSize, Alignment alignment)
+    {
+        return new RectangleF(Vector2.Zero, innerSize).AlignedWithin(outer, alignment);
+    } 
+
     public RectangleF AlignedWithin(RectangleF outer, Alignment alignment)
     {
         var resultPosition = Location;

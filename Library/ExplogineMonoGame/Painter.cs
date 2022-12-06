@@ -134,14 +134,13 @@ public class Painter
     {
         var font = fontLike.GetFont();
         var restrictedString = font.GetRestrictedString(text, rectangle.Width);
-        var size = restrictedString.Size;
-        var relativePosition = alignment.GetRelativePositionOfElement(rectangle.Size.ToVector2(), size);
+        var innerPosition = RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment).Location;
         var brokenText = restrictedString.Text;
         var origin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
         _spriteBatch.DrawString(
             font.SpriteFont,
             brokenText,
-            (rectangle.Location.ToVector2() + relativePosition).ToPoint().ToVector2(), // gross truncating
+            innerPosition.ToPoint().ToVector2(), // gross truncating
             settings.Color,
             settings.Angle,
             origin,
