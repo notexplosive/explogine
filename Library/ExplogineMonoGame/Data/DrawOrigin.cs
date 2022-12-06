@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
-public readonly struct DrawOrigin
+public readonly record struct DrawOrigin
 {
     private readonly Vector2 _constantValue;
     private readonly Style _style = Style.None;

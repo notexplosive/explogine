@@ -139,9 +139,8 @@ public class Painter
 
         void DrawTextLine(string line, Vector2 linePosition)
         {
-            var originalOrigin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
             var topLeft = rectangle.ToRectangleF().TopLeft;
-            var lineOrigin = (originalOrigin - linePosition + topLeft) / font.ScaleFactor;
+            var lineOrigin = (settings.Origin.Value(rectangle.Size) - linePosition + topLeft) / font.ScaleFactor;
             
             _spriteBatch.DrawString(
                 font.SpriteFont,
