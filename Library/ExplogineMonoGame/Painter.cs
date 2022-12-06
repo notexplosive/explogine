@@ -80,6 +80,9 @@ public class Painter
 
     public void DrawAsRectangle(Texture2D texture, RectangleF destinationRectangle, DrawSettings settings)
     {
+        // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
+        // and is then rotated around the origin
+        destinationRectangle.Offset(settings.Origin.Value(destinationRectangle.Size));
         settings.SourceRectangle ??= texture.Bounds;
         var origin = settings.Origin.Value(destinationRectangle.Size);
 
@@ -132,16 +135,20 @@ public class Painter
     public void DrawStringWithinRectangle(IFont fontLike, string text, Rectangle rectangle, Alignment alignment,
         DrawSettings settings)
     {
+        // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
+        // and is then rotated around the origin
+        rectangle.Offset(settings.Origin.Value(rectangle.Size));
         var font = fontLike.GetFont();
         var restrictedString = font.GetRestrictedString(text, rectangle.Width);
-        var restrictedBounds = RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment.JustVertical());
+        var restrictedBounds =
+            RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment.JustVertical());
         var lines = restrictedString.Lines;
 
         void DrawTextLine(string line, Vector2 linePosition)
         {
             var topLeft = rectangle.ToRectangleF().TopLeft;
             var lineOrigin = (settings.Origin.Value(rectangle.Size) - linePosition + topLeft) / font.ScaleFactor;
-            
+
             _spriteBatch.DrawString(
                 font.SpriteFont,
                 line,
