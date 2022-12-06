@@ -4,19 +4,20 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
-public class FormattedText : IEnumerable<FormattedText.LetterPosition>
+public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
 {
-    private List<LetterPosition> _letterPositions = new();
+    private readonly List<LetterPosition> _letterPositions = new();
 
-    public FormattedText(IFont fontLike, string text, Rectangle rectangle, Alignment alignment)
+    public FormattedText(IFontGetter fontLike, string text, Rectangle rectangle, Alignment alignment)
     {
+        Rectangle = rectangle;
+        
         var font = fontLike.GetFont();
-        var restrictedString = font.GetRestrictedString(text, rectangle.Width);
-        var lines = restrictedString.Lines;
-        
+        var (lines, restrictedSize) = font.GetRestrictedString(text, rectangle.Width);
+
         var restrictedBounds =
-            RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment.JustVertical());
-        
+            RectangleF.FromSizeAlignedWithin(rectangle, restrictedSize, alignment.JustVertical());
+
         for (var i = 0; i < lines.Length; i++)
         {
             var line = lines[i];
@@ -30,18 +31,20 @@ public class FormattedText : IEnumerable<FormattedText.LetterPosition>
             var letterPosition = Vector2.Zero;
             foreach (var letter in line)
             {
-                AddLetter(new LetterPosition(letter, actualLineBounds.TopLeft + letterPosition));
+                AddLetter(new LetterPosition(letter, actualLineBounds.TopLeft + letterPosition, font));
                 letterPosition += font.MeasureString(letter.ToString()).JustX();
             }
         }
     }
+
+    public Rectangle Rectangle { get; }
 
     private void AddLetter(LetterPosition letterPosition)
     {
         _letterPositions.Add(letterPosition);
     }
 
-    public readonly record struct LetterPosition(char Letter, Vector2 Position);
+    public readonly record struct LetterPosition(char Letter, Vector2 Position, Font Font);
 
     public IEnumerator<LetterPosition> GetEnumerator()
     {

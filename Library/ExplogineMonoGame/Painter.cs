@@ -63,6 +63,94 @@ public class Painter
         }
     }
 
+    #region Draw Strings
+
+    public void DrawScaledStringAtPosition(IFontGetter fontLike, string text, Point position, Scale2D scale,
+        DrawSettings settings)
+    {
+        var font = fontLike.GetFont();
+        _spriteBatch.DrawString(
+            font.SpriteFont,
+            text,
+            position.ToVector2(),
+            settings.Color,
+            settings.Angle,
+            settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
+            scale.Value * font.ScaleFactor,
+            settings.FlipEffect,
+            settings.Depth);
+    }
+
+    public void DrawStringAtPosition(IFontGetter font, string text, Point position, DrawSettings settings)
+    {
+        DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
+    }
+
+    public void DrawDebugStringAtPosition(string text, Point position, DrawSettings settings)
+    {
+        DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
+    }
+
+    public void DrawFormattedStringWithinRectangle(FormattedText formattedText, DrawSettings settings)
+    {
+        // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
+        // and is then rotated around the origin
+        var rectangle = formattedText.Rectangle;
+        rectangle.Offset(settings.Origin.Value(rectangle.Size));
+
+        void DrawLetter(char letter, Vector2 linePosition, Font font)
+        {
+            var rectTopLeft = rectangle.ToRectangleF().TopLeft;
+            var letterOrigin = (settings.Origin.Value(rectangle.Size) - linePosition + rectTopLeft) / font.ScaleFactor;
+
+            _spriteBatch.DrawString(
+                font.SpriteFont,
+                letter.ToString(),
+                rectTopLeft.Truncate(),
+                settings.Color,
+                settings.Angle,
+                letterOrigin.Truncate(),
+                Vector2.One * font.ScaleFactor,
+                settings.FlipEffect,
+                settings.Depth);
+        }
+
+        foreach (var letterPosition in formattedText)
+        {
+            if (!char.IsWhiteSpace(letterPosition.Letter))
+            {
+                DrawLetter(letterPosition.Letter, letterPosition.Position, letterPosition.Font);
+            }
+        }
+    }
+    
+    public void DrawStringWithinRectangle(IFontGetter fontLike, string text, Rectangle rectangle, Alignment alignment,
+        DrawSettings settings)
+    {
+        var formattedText = new FormattedText(fontLike.GetFont(), text, rectangle, alignment);
+        DrawFormattedStringWithinRectangle(formattedText, settings);
+    }
+
+    #endregion
+
+    # region Draw At Position
+
+    public void DrawAtPosition(Texture2D texture, Vector2 position)
+    {
+        DrawAtPosition(texture, position, Scale2D.One, new DrawSettings());
+    }
+
+    public void DrawAtPosition(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
+    {
+        settings.SourceRectangle ??= texture.Bounds;
+        _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
+            settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
+    }
+
+    #endregion
+
+    # region Draw Rectangles
+
     public void DrawRectangle(RectangleF rectangle, DrawSettings drawSettings)
     {
         DrawAtPosition(PixelAsset, rectangle.Location, new Scale2D(rectangle.Size), drawSettings);
@@ -71,11 +159,6 @@ public class Painter
     public void DrawAsRectangle(Texture2D texture, RectangleF destinationRectangle)
     {
         DrawAsRectangle(texture, destinationRectangle, new DrawSettings());
-    }
-
-    public void DrawAtPosition(Texture2D texture, Vector2 position)
-    {
-        DrawAtPosition(texture, position, Scale2D.One, new DrawSettings());
     }
 
     public void DrawAsRectangle(Texture2D texture, RectangleF destinationRectangle, DrawSettings settings)
@@ -99,71 +182,9 @@ public class Painter
             origin, settings.FlipEffect, settings.Depth);
     }
 
-    public void DrawAtPosition(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
-    {
-        settings.SourceRectangle ??= texture.Bounds;
-        _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
-    }
+    #endregion
 
-    public void DrawScaledStringAtPosition(IFont fontLike, string text, Point position, Scale2D scale,
-        DrawSettings settings)
-    {
-        var font = fontLike.GetFont();
-        _spriteBatch.DrawString(
-            font.SpriteFont,
-            text,
-            position.ToVector2(),
-            settings.Color,
-            settings.Angle,
-            settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
-            scale.Value * font.ScaleFactor,
-            settings.FlipEffect,
-            settings.Depth);
-    }
-
-    public void DrawStringAtPosition(IFont font, string text, Point position, DrawSettings settings)
-    {
-        DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
-    }
-
-    public void DrawDebugStringAtPosition(string text, Point position, DrawSettings settings)
-    {
-        DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
-    }
-
-    public void DrawStringWithinRectangle(IFont fontLike, string text, Rectangle rectangle, Alignment alignment,
-        DrawSettings settings)
-    {
-        // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
-        // and is then rotated around the origin
-        rectangle.Offset(settings.Origin.Value(rectangle.Size));
-        var font = fontLike.GetFont();
-
-        void DrawLetter(char letter, Vector2 linePosition)
-        {
-            var rectTopLeft = rectangle.ToRectangleF().TopLeft;
-            var letterOrigin = (settings.Origin.Value(rectangle.Size) - linePosition + rectTopLeft) / font.ScaleFactor;
-
-            _spriteBatch.DrawString(
-                font.SpriteFont,
-                letter.ToString(),
-                rectTopLeft.Truncate(),
-                settings.Color,
-                settings.Angle,
-                letterOrigin.Truncate(),
-                Vector2.One * font.ScaleFactor,
-                settings.FlipEffect,
-                settings.Depth);
-        }
-
-        var formattedText = new FormattedText(font, text, rectangle, alignment);
-
-        foreach (var letterPosition in formattedText)
-        {
-            DrawLetter(letterPosition.Letter, letterPosition.Position);
-        }
-    }
+    #region Line Figures
 
     public void DrawLinePolygon(Polygon polygon, LineDrawSettings settings)
     {
@@ -210,4 +231,6 @@ public class Painter
                 Origin = new DrawOrigin(new Vector2(0, 0.5f))
             });
     }
+
+    #endregion
 }

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
-public class LazyInitializedFont : IFont
+public class LazyInitializedFont : IFontGetter
 {
     private readonly string _spriteFontPath;
     private Font? _cache;

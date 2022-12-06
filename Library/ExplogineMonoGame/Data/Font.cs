@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
-public class Font : IFont
+public class Font : IFontGetter
 {
     public Font(SpriteFont spriteFont, int size)
     {

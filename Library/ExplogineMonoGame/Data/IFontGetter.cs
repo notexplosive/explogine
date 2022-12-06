@@ -2,7 +2,7 @@
 
 namespace ExplogineMonoGame.Data;
 
-public interface IFont
+public interface IFontGetter
 {
     Font GetFont();
 }
