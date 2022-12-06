@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Diagnostics.Contracts;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
@@ -7,11 +8,13 @@ public readonly struct DrawOrigin
     private readonly Vector2 _constantValue;
     private readonly Style _style = Style.None;
 
+    [Pure]
     public Vector2 Value(Point size)
     {
         return Value(size.ToVector2());
     }
     
+    [Pure]
     public Vector2 Value(Vector2 size)
     {
         if (_style == Style.Constant)

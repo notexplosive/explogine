@@ -136,17 +136,35 @@ public class Painter
         var restrictedString = font.GetRestrictedString(text, rectangle.Width);
         var restrictedBounds = RectangleF.FromSizeAlignedWithin(rectangle, restrictedString.Size, alignment.JustVertical());
         var lines = restrictedString.Lines;
-        var origin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
 
         void DrawTextLine(string line, Vector2 linePosition)
         {
+            var originalOrigin = settings.Origin.Value(rectangle.Size) / font.ScaleFactor;
+
+            var lineOrigin = originalOrigin - (linePosition / font.ScaleFactor).Truncate();
+            
+            DrawLine(linePosition,linePosition - lineOrigin, new LineDrawSettings{});
+            
+            
+            _spriteBatch.DrawString(
+                font.SpriteFont,
+                line,
+                rectangle.ToRectangleF().TopLeft.Truncate(),
+                settings.Color,
+                settings.Angle,
+                lineOrigin,
+                Vector2.One * font.ScaleFactor,
+                settings.FlipEffect,
+                settings.Depth);
+            
+            // debuggin'
             _spriteBatch.DrawString(
                 font.SpriteFont,
                 line,
                 linePosition.Truncate(),
-                settings.Color,
+                Color.Red.WithMultipliedOpacity(0.25f),
                 settings.Angle,
-                origin,
+                Vector2.Zero,
                 Vector2.One * font.ScaleFactor,
                 settings.FlipEffect,
                 settings.Depth);
@@ -162,6 +180,8 @@ public class Painter
             var actualLineRectangle =
                 RectangleF.FromSizeAlignedWithin(availableBoundForLine, actualLineSize, alignment);
 
+            var origin = settings.Origin.Value(actualLineRectangle.Size) / font.ScaleFactor;
+            
             DrawTextLine(line, actualLineRectangle.TopLeft);
         }
     }
