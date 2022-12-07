@@ -70,17 +70,17 @@ public class Font : IFontGetter, IFont
             }
 
             var currentFragmentIndex = 0;
-            var currentCharIndexWithinCurrentFragment = 0;
+            var charIndexWithinCurrentFragment = 0;
             var lettersAsFragments = new FormattedText.Fragment[combinedText.Length];
             for (var i = 0; i < lettersAsFragments.Length; i++)
             {
                 var currentFragment = fragments[currentFragmentIndex];
                 lettersAsFragments[i] = currentFragment with {Text = combinedText[i].ToString()};
-                currentCharIndexWithinCurrentFragment++;
-                if (currentCharIndexWithinCurrentFragment > currentFragment.NumberOfChars - 1)
+                charIndexWithinCurrentFragment++;
+                if (charIndexWithinCurrentFragment > currentFragment.NumberOfChars - 1)
                 {
                     currentFragmentIndex++;
-                    currentCharIndexWithinCurrentFragment = 0;
+                    charIndexWithinCurrentFragment = 0;
                 }
             }
 
