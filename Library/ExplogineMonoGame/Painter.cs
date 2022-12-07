@@ -97,7 +97,7 @@ public class Painter
         // and is then rotated around the origin
         var rectangle = formattedText.Rectangle;
         rectangle.Offset(settings.Origin.Value(rectangle.Size));
-
+        
         void DrawLetter(char letter, Vector2 linePosition, Font font)
         {
             var rectTopLeft = rectangle.ToRectangleF().TopLeft;
