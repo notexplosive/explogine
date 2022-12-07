@@ -98,19 +98,19 @@ public class Painter
         var rectangle = formattedText.Rectangle;
         rectangle.Offset(settings.Origin.Value(rectangle.Size));
 
-        void DrawLetter(char letter, Vector2 linePosition, Font font)
+        void DrawLetter(FormattedText.LetterPosition letterPosition)
         {
             var rectTopLeft = rectangle.ToRectangleF().TopLeft;
-            var letterOrigin = (rectTopLeft - linePosition) / font.ScaleFactor;
+            var letterOrigin = (rectTopLeft - letterPosition.Position) / letterPosition.Font.ScaleFactor;
 
             _spriteBatch.DrawString(
-                font.SpriteFont,
-                letter.ToString(),
+                letterPosition.Font.SpriteFont,
+                letterPosition.Letter.ToString(),
                 rectTopLeft.Truncate(),
-                settings.Color,
+                letterPosition.Color ?? settings.Color,
                 settings.Angle,
                 letterOrigin.Truncate(),
-                Vector2.One * font.ScaleFactor,
+                Vector2.One * letterPosition.Font.ScaleFactor,
                 settings.FlipEffect,
                 settings.Depth);
         }
@@ -119,7 +119,7 @@ public class Painter
         {
             if (!char.IsWhiteSpace(letterPosition.Letter))
             {
-                DrawLetter(letterPosition.Letter, letterPosition.Position, letterPosition.Font);
+                DrawLetter(letterPosition);
             }
         }
     }

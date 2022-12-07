@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
@@ -17,32 +18,44 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
     {
         Rectangle = rectangle;
         
-        var (lines, restrictedSize) = Font.RestrictedString.FromFragments(fragments, rectangle.Width);
+        var (lines, restrictedSize) = RestrictedStringBuilder.FromFragments(fragments, rectangle.Width);
         var restrictedBounds =
             RectangleF.FromSizeAlignedWithin(rectangle, restrictedSize, alignment.JustVertical());
 
-        foreach (var fragment in fragments)
+        var verticalSpaceUsedByPreviousLines = 0f;
+        for (var i = 0; i < lines.Length; i++)
         {
-            var font = fragment.Font;
+            var fragmentLine = lines[i];
+            var actualLineSize = MeasureFragmentLine(fragmentLine);
+            var availableBoundForLine = new RectangleF(
+                restrictedBounds.TopLeft + new Vector2(0, verticalSpaceUsedByPreviousLines),
+                new Vector2(rectangle.Width, actualLineSize.Y));
+            var actualLineBounds =
+                RectangleF.FromSizeAlignedWithin(availableBoundForLine, actualLineSize, alignment);
 
-            for (var i = 0; i < lines.Length; i++)
+            verticalSpaceUsedByPreviousLines += actualLineSize.Y;
+
+            var letterPosition = Vector2.Zero;
+            foreach (var letterFragment in fragmentLine)
             {
-                var line = lines[i];
-                var actualLineSize = font.MeasureString(line);
-                var availableBoundForLine = new RectangleF(
-                    restrictedBounds.TopLeft + new Vector2(0, i * font.FontSize),
-                    new Vector2(rectangle.Width, actualLineSize.Y));
-                var actualLineBounds =
-                    RectangleF.FromSizeAlignedWithin(availableBoundForLine, actualLineSize, alignment);
-
-                var letterPosition = Vector2.Zero;
-                foreach (var letter in line)
-                {
-                    AddLetter(new LetterPosition(letter, actualLineBounds.TopLeft + letterPosition, font));
-                    letterPosition += font.MeasureString(letter.ToString()).JustX();
-                }
+                var letterFragmentChar = letterFragment.Text[0];
+                AddLetter(new LetterPosition(letterFragmentChar, actualLineBounds.TopLeft + letterPosition, letterFragment.Font, letterFragment.Color));
+                letterPosition += letterFragment.Font.MeasureString(letterFragmentChar.ToString()).JustX();
             }
         }
+    }
+
+    private Vector2 MeasureFragmentLine(Fragment[] fragmentLine)
+    {
+        var width = 0f;
+        var height = 0f;
+        foreach (var fragment in fragmentLine)
+        {
+            width += fragment.Size.X;
+            height = MathF.Max(height, fragment.Size.Y);
+        }
+
+        return new Vector2(width, height);
     }
 
     public Rectangle Rectangle { get; }
@@ -52,9 +65,9 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
         _letterPositions.Add(letterPosition);
     }
 
-    public readonly record struct LetterPosition(char Letter, Vector2 Position, Font Font);
+    public readonly record struct LetterPosition(char Letter, Vector2 Position, Font Font, Color? Color);
 
-    public readonly record struct Fragment(Font Font, string Text)
+    public readonly record struct Fragment(Font Font, string Text, Color? Color = null)
     {
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
