@@ -97,11 +97,11 @@ public class Painter
         // and is then rotated around the origin
         var rectangle = formattedText.Rectangle;
         rectangle.Offset(settings.Origin.Value(rectangle.Size));
-        
+
         void DrawLetter(char letter, Vector2 linePosition, Font font)
         {
             var rectTopLeft = rectangle.ToRectangleF().TopLeft;
-            var letterOrigin = (settings.Origin.Value(rectangle.Size) - linePosition + rectTopLeft) / font.ScaleFactor;
+            var letterOrigin = (rectTopLeft - linePosition) / font.ScaleFactor;
 
             _spriteBatch.DrawString(
                 font.SpriteFont,
@@ -123,7 +123,7 @@ public class Painter
             }
         }
     }
-    
+
     public void DrawStringWithinRectangle(IFontGetter fontLike, string text, Rectangle rectangle, Alignment alignment,
         DrawSettings settings)
     {
