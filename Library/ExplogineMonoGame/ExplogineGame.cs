@@ -5,7 +5,7 @@ using System;
 
 namespace ExplogineMonoGame;
 
-public class ExplogineGame : Game
+internal class ExplogineGame : Game
 {
     private readonly GraphicsDeviceManager _graphics;
 
