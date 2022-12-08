@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
-public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
+public readonly struct FormattedText : IEnumerable<FormattedText.FormattedGlyph>
 {
-    private readonly List<LetterPosition> _letterPositions = new();
+    private readonly List<FormattedGlyph> _letterPositions = new();
 
     public FormattedText(IFontGetter fontLike, string text, Rectangle rectangle, Alignment alignment) : this(
         new[] {new Fragment(fontLike.GetFont(), text)}, rectangle, alignment)
@@ -18,7 +18,7 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
     public FormattedText(Fragment[] fragments, Rectangle rectangle, Alignment alignment)
     {
         Rectangle = rectangle;
-        
+
         var (lines, restrictedSize) = RestrictedStringBuilder.FromFragments(fragments, rectangle.Width);
         var restrictedBounds =
             RectangleF.FromSizeAlignedWithin(rectangle, restrictedSize, alignment.JustVertical());
@@ -39,8 +39,9 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
             foreach (var letterFragment in fragmentLine)
             {
                 var letterSize = letterFragment.Font.MeasureString(letterFragment.Text.ToString());
-                
-                AddLetter(new LetterPosition(letterFragment.Text, actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() - letterSize.JustY(), letterFragment.Font, letterFragment.Color));
+                var position = actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() -
+                               letterSize.JustY();
+                AddLetter(new FormattedGlyph(position, letterFragment));
                 letterPosition += letterSize.JustX();
             }
         }
@@ -61,37 +62,33 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
 
     public Rectangle Rectangle { get; }
 
-    private void AddLetter(LetterPosition letterPosition)
+    private void AddLetter(FormattedGlyph formattedGlyph)
     {
-        _letterPositions.Add(letterPosition);
+        _letterPositions.Add(formattedGlyph);
     }
 
-    public readonly record struct LetterPosition(char Letter, Vector2 Position, Font Font, Color? Color);
+    public interface IGlyphData
+    {
+        public Vector2 Size { get; }
+    }
+
+    public readonly record struct FormattedGlyph(Vector2 Position, IGlyphData Data);
 
     public readonly record struct Fragment(Font Font, string Text, Color? Color = null)
     {
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
     }
-    
-    public readonly record struct FragmentChar(Font Font, char Text, Color? Color = null)
+
+    public readonly record struct FragmentChar(Font Font, char Text, Color? Color = null) : IGlyphData
     {
         public Vector2 Size => Font.MeasureString(Text.ToString());
     }
 
     public readonly record struct FragmentLine(NotNullArray<FragmentChar> Fragments) : IEnumerable<FragmentChar>
     {
-        public IEnumerator<FragmentChar> GetEnumerator()
+        public Vector2 Size
         {
-            return Fragments.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        
-        public Vector2 Size {
             get
             {
                 var size = new Vector2();
@@ -104,9 +101,19 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
                 return size;
             }
         }
+
+        public IEnumerator<FragmentChar> GetEnumerator()
+        {
+            return Fragments.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 
-    public IEnumerator<LetterPosition> GetEnumerator()
+    public IEnumerator<FormattedGlyph> GetEnumerator()
     {
         foreach (var letterPosition in _letterPositions)
         {

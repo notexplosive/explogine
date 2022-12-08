@@ -98,29 +98,34 @@ public class Painter
         var rectangle = formattedText.Rectangle;
         rectangle.Offset(settings.Origin.Value(rectangle.Size));
 
-        void DrawLetter(FormattedText.LetterPosition letterPosition)
+        void DrawLetter(FormattedText.FormattedGlyph glyph)
         {
-            var rectTopLeft = rectangle.ToRectangleF().TopLeft;
-            var letterOrigin = (rectTopLeft - letterPosition.Position) / letterPosition.Font.ScaleFactor;
+            if (glyph.Data is FormattedText.FragmentChar fragmentChar)
+            {
+                if (char.IsWhiteSpace(fragmentChar.Text))
+                {
+                    return;
+                }
 
-            _spriteBatch.DrawString(
-                letterPosition.Font.SpriteFont,
-                letterPosition.Letter.ToString(),
-                rectTopLeft.Truncate(),
-                letterPosition.Color ?? settings.Color,
-                settings.Angle,
-                letterOrigin.Truncate(),
-                Vector2.One * letterPosition.Font.ScaleFactor,
-                settings.FlipEffect,
-                settings.Depth);
+                var rectTopLeft = rectangle.ToRectangleF().TopLeft;
+                var letterOrigin = (rectTopLeft - glyph.Position) / fragmentChar.Font.ScaleFactor;
+
+                _spriteBatch.DrawString(
+                    fragmentChar.Font.SpriteFont,
+                    fragmentChar.Text.ToString(),
+                    rectTopLeft.Truncate(),
+                    fragmentChar.Color ?? settings.Color,
+                    settings.Angle,
+                    letterOrigin.Truncate(),
+                    Vector2.One * fragmentChar.Font.ScaleFactor,
+                    settings.FlipEffect,
+                    settings.Depth);
+            }
         }
 
         foreach (var letterPosition in formattedText)
         {
-            if (!char.IsWhiteSpace(letterPosition.Letter))
-            {
-                DrawLetter(letterPosition);
-            }
+            DrawLetter(letterPosition);
         }
     }
 
