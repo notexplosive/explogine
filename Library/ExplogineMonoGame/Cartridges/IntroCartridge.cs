@@ -48,7 +48,7 @@ public class IntroCartridge : ICartridge
         catch(Exception e)
         {
             // If we somehow throw an exception during the intro, move onto the next cart
-            Client.Debug.Log($"Crashed during the intro {e}");
+            Client.Debug.LogError($"Crashed during the intro {e}");
             _cancelEarly = true;
         }
     }

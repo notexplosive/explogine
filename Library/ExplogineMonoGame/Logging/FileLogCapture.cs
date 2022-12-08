@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ExplogineMonoGame.Logging;
 
 public class FileLogCapture : ILogCapture
 {
-    private readonly List<string> _buffer = new();
+    private readonly List<LogMessage> _buffer = new();
 
     public FileLogCapture()
     {
         Client.Exited.Add(DumpBufferWithTimestamp);
     }
 
-    public void CaptureMessage(string text)
+    public void CaptureMessage(LogMessage text)
     {
         _buffer.Add(text);
     }
@@ -29,6 +30,14 @@ public class FileLogCapture : ILogCapture
     public void WriteBufferAsFilename(string fileName)
     {
         Client.Debug.Log($"Creating file {fileName}");
-        Client.FileSystem.Local.WriteToFile(fileName, _buffer.ToArray());
+        Client.FileSystem.Local.WriteToFile(fileName, GetLines().ToArray());
+    }
+
+    private IEnumerable<string> GetLines()
+    {
+        foreach (var line in _buffer)
+        {
+            yield return line.ToFileString();
+        }
     }
 }

@@ -182,7 +182,7 @@ public static class Client
 
         foreach (var arg in Client.commandLineParameters.Args.UnboundArgs())
         {
-            Client.Debug.Log($"Was passed unregistered arg: {arg}");
+            Client.Debug.LogWarning($"Was passed unregistered arg: {arg}");
         }
 
         Client.Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);

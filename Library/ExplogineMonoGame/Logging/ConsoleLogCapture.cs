@@ -4,8 +4,8 @@ namespace ExplogineMonoGame.Logging;
 
 public class ConsoleLogCapture : ILogCapture
 {
-    public void CaptureMessage(string text)
+    public void CaptureMessage(LogMessage text)
     {
-        Console.WriteLine(text);
+        Console.WriteLine(text.ToFileString());
     }
 }

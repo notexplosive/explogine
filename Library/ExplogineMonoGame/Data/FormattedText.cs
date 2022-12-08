@@ -12,24 +12,23 @@ public readonly struct FormattedText
 {
     private readonly IFragment[] _fragments;
 
-    public FormattedText(IFontGetter fontLike, string text) : this(
-        new IFragment[] {new Fragment(fontLike.GetFont(), text)})
+    public FormattedText(IFontGetter indirectFont, string text, Color? color = null) : this(new Fragment(indirectFont.GetFont(), text, color))
     {
     }
 
-    public FormattedText(IFragment[] fragments)
+    public FormattedText(params IFragment[] fragments)
     {
         _fragments = fragments;
     }
 
     /// <summary>
-    /// The size of the whole text if it had infinite width
+    ///     The size of the whole text if it had infinite width
     /// </summary>
     /// <returns></returns>
     public Vector2 OneLineSize()
     {
         var (_, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, float.MaxValue);
-        
+
         // +1 on both sides to round up
         return restrictedSize + new Vector2(1);
     }
@@ -82,8 +81,9 @@ public readonly struct FormattedText
     {
     }
 
-    public readonly record struct Fragment(Font Font, string Text, Color? Color = null) : IFragment
+    public readonly record struct Fragment(IFontGetter FontGetter, string Text, Color? Color = null) : IFragment
     {
+        public Font Font => FontGetter.GetFont();
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
 

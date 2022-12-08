@@ -9,18 +9,18 @@ namespace ExplogineMonoGame.Debugging;
 
 internal class LogOverlay : ILogCapture
 {
+    private readonly LazyInitializedFont _font = new("engine/console-font", 32);
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
     private float _timer;
-    private readonly LazyInitializedFont _font = new("engine/console-font", 32);
 
     private float Opacity => Math.Clamp(_timer, 0f, 1f);
 
     private int TotalWidth => Client.Window.Size.X;
     private int MaxHeight => Client.Window.Size.Y;
 
-    public void CaptureMessage(string text)
+    public void CaptureMessage(LogMessage message)
     {
-        var newMessage = new RenderedMessage(text, _font.MeasureString(text, TotalWidth));
+        var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth));
 
         float usedHeight = 0;
         foreach (var line in _linesBuffer)
@@ -71,9 +71,12 @@ internal class LogOverlay : ILogCapture
         foreach (var message in _linesBuffer)
         {
             var color = Color.White;
+            var messageColor = LogMessage.GetColorFromType(message.Content.Type).WithMultipliedOpacity(Opacity);
 
-            painter.DrawStringWithinRectangle(_font, message.Text, textRect,
-                Alignment.TopLeft, 
+            painter.DrawFormattedStringWithinRectangle(
+                new FormattedText(_font, message.Content.Text, messageColor),
+                textRect,
+                Alignment.TopLeft,
                 new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
 
             textRect.Location += new Point(0, (int) message.Size.Y);
@@ -84,5 +87,5 @@ internal class LogOverlay : ILogCapture
             new DrawSettings {Color = Color.Black.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
     }
 
-    private readonly record struct RenderedMessage(string Text, Vector2 Size);
+    private readonly record struct RenderedMessage(LogMessage Content, Vector2 Size);
 }

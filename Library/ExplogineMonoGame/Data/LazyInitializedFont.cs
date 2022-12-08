@@ -19,6 +19,11 @@ public class LazyInitializedFont : IFontGetter
 
     public int FontSize { get; }
 
+    public static implicit operator Font(LazyInitializedFont lazyInitializedFont)
+    {
+        return lazyInitializedFont.GetFont();
+    }
+
     [Pure]
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {

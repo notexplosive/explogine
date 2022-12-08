@@ -22,7 +22,7 @@ public class CrashCartridge : ICartridge
         var fileInfo = new FileInfo(Path.Join(Client.FileSystem.Local.GetCurrentDirectory(), fileName));
         _reportText =
             $"The program has crashed!\n\nWe're very sorry this happened.\nA copy of this report, and a full log can be found at:\n{fileInfo.FullName}\n\nCrash report:\n{ThrownException.Message}\n\nStacktrace:\n{ThrownException.StackTrace}";
-        Client.Debug.Log(_reportText);
+        Client.Debug.LogError(_reportText);
 
         Client.Debug.LogFile.WriteBufferAsFilename(fileName);
     }

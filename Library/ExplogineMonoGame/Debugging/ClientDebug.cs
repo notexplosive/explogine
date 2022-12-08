@@ -53,6 +53,24 @@ public class ClientDebug
 
     public void Log(object? message, params object?[] paramsObjects)
     {
+        var output = CreateOutputString(message, paramsObjects);
+        Output.Emit(new LogMessage(LogMessageType.Info, output));
+    }
+
+    public void LogError(object? message, params object?[] paramsObjects)
+    {
+        var output = CreateOutputString(message, paramsObjects);
+        Output.Emit(new LogMessage(LogMessageType.Fail, output));
+    }
+    
+    public void LogWarning(object? message, params object?[] paramsObjects)
+    {
+        var output = CreateOutputString(message, paramsObjects);
+        Output.Emit(new LogMessage(LogMessageType.Warn, output));
+    }
+
+    private string CreateOutputString(object? message, params object?[] paramsObjects)
+    {
         var output = new StringBuilder();
 
         output.Append(message);
@@ -63,6 +81,6 @@ public class ClientDebug
             output.Append(param);
         }
 
-        Output.Emit(output.ToString());
+        return output.ToString();
     }
 }

@@ -7,7 +7,7 @@ public class LogOutput
     private readonly List<ILogCapture> _multiplex = new();
     private readonly List<ILogCapture> _stack = new();
 
-    internal void Emit(string message)
+    internal void Emit(LogMessage message)
     {
         if (_stack.Count > 0)
         {
