@@ -121,6 +121,23 @@ public class Painter
                     settings.FlipEffect,
                     settings.Depth);
             }
+
+            if (glyph.Data is FormattedText.FragmentImage fragmentImage)
+            {
+                var rectTopLeft = rectangle.ToRectangleF().TopLeft;
+                var letterOrigin = (rectTopLeft - glyph.Position) / fragmentImage.ScaleFactor;
+
+                DrawAtPosition(
+                    fragmentImage.Texture,
+                    rectTopLeft,
+                    new Scale2D(new Vector2(fragmentImage.ScaleFactor)),
+                    settings with
+                    {
+                        SourceRectangle = fragmentImage.SourceRect,
+                        Color = fragmentImage.Color ?? Color.White,
+                        Origin = new DrawOrigin(letterOrigin)
+                    });
+            }
         }
 
         foreach (var letterPosition in formattedText)

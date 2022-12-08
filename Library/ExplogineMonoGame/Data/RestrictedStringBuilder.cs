@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,32 +17,52 @@ public static class RestrictedStringBuilder
             restrictedWidth);
     }
 
-    public static RestrictedString<FormattedText.FragmentLine> FromFragments(FormattedText.Fragment[] fragments,
+    public static RestrictedString<FormattedText.FragmentLine> FromFragments(FormattedText.IFragment[] fragments,
         float restrictedWidth)
     {
         var combinedText = string.Empty;
         foreach (var fragment in fragments)
         {
-            combinedText += fragment.Text;
+            if (fragment is FormattedText.Fragment textFragment)
+            {
+                combinedText += textFragment.Text;
+            }
+            else
+            {
+                // One character placeholder in the combined text string
+                combinedText += '#';
+            }
         }
 
         var currentFragmentIndex = 0;
         var charIndexWithinCurrentFragment = 0;
-        var lettersAsFragments = new FormattedText.FragmentChar[combinedText.Length];
+        var lettersAsFragments = new FormattedText.IGlyphData[combinedText.Length];
         for (var i = 0; i < lettersAsFragments.Length; i++)
         {
             var currentFragment = fragments[currentFragmentIndex];
-            lettersAsFragments[i] =
-                new FormattedText.FragmentChar(currentFragment.Font, combinedText[i], currentFragment.Color);
-            charIndexWithinCurrentFragment++;
-            if (charIndexWithinCurrentFragment > currentFragment.NumberOfChars - 1)
+            if (currentFragment is FormattedText.Fragment fragment)
             {
+                lettersAsFragments[i] =
+                    new FormattedText.FragmentChar(fragment.Font, combinedText[i], fragment.Color);
+                charIndexWithinCurrentFragment++;
+                if (charIndexWithinCurrentFragment > fragment.NumberOfChars - 1)
+                {
+                    currentFragmentIndex++;
+                    charIndexWithinCurrentFragment = 0;
+                }
+            }
+            else if(currentFragment is FormattedText.IGlyphData glyphData)
+            {
+                lettersAsFragments[i] = glyphData;
                 currentFragmentIndex++;
-                charIndexWithinCurrentFragment = 0;
+            }
+            else
+            {
+                throw new Exception($"Unable to convert {currentFragment} into {nameof(FormattedText.IGlyphData)}");
             }
         }
 
-        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy<FormattedText.FragmentChar>(new FragmentStrategy(),
+        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy(new FragmentStrategy(),
             lettersAsFragments,
             restrictedWidth);
     }
@@ -60,10 +81,10 @@ public static class RestrictedStringBuilder
         bool IsWhiteSpace(TChar character);
     }
 
-    public class FragmentStrategy : IStrategy<FormattedText.FragmentChar, FormattedText.FragmentLine>
+    public class FragmentStrategy : IStrategy<FormattedText.IGlyphData, FormattedText.FragmentLine>
     {
-        private readonly List<FormattedText.FragmentChar> _currentLineFragments = new();
-        private readonly List<FormattedText.FragmentChar> _currentTokenFragments = new();
+        private readonly List<FormattedText.IGlyphData> _currentLineFragments = new();
+        private readonly List<FormattedText.IGlyphData> _currentTokenFragments = new();
         private readonly List<FormattedText.FragmentLine> _resultLines = new();
         private Vector2 _totalSize;
 
@@ -104,9 +125,12 @@ public static class RestrictedStringBuilder
             get
             {
                 var result = string.Empty;
-                foreach (var fragment in _currentLineFragments)
+                foreach (var data in _currentLineFragments)
                 {
-                    result += fragment.Text;
+                    if (data is FormattedText.FragmentChar fragmentChar)
+                    {
+                        result += fragmentChar.Text;
+                    }
                 }
 
                 return result;
@@ -121,7 +145,7 @@ public static class RestrictedStringBuilder
         {
             _totalSize.X = MathF.Max(_totalSize.X, CurrentLineSize.X);
             _totalSize.Y += CurrentLineSize.Y;
-            _resultLines.Add(new FormattedText.FragmentLine(_currentLineFragments.ToArray()));
+            _resultLines.Add(new FormattedText.FragmentLine(_currentLineFragments.ToImmutableArray()));
         }
 
         public void StartNewLine()
@@ -141,7 +165,7 @@ public static class RestrictedStringBuilder
             return CurrentTokenSize.X;
         }
 
-        public void AppendTextToToken(FormattedText.FragmentChar content)
+        public void AppendTextToToken(FormattedText.IGlyphData content)
         {
             _currentTokenFragments.Add(content);
         }
@@ -151,14 +175,19 @@ public static class RestrictedStringBuilder
             return CurrentLineString.Length > 0;
         }
 
-        public bool IsNewline(FormattedText.FragmentChar character)
+        public bool IsNewline(FormattedText.IGlyphData character)
         {
-            return character.Text == '\n';
+            return character is FormattedText.FragmentChar {Text: '\n'};
         }
 
-        public bool IsWhiteSpace(FormattedText.FragmentChar character)
+        public bool IsWhiteSpace(FormattedText.IGlyphData character)
         {
-            return char.IsWhiteSpace(character.Text);
+            if (character is FormattedText.FragmentChar fragmentChar)
+            {
+                return char.IsWhiteSpace(fragmentChar.Text);
+            }
+
+            return false;
         }
     }
 
