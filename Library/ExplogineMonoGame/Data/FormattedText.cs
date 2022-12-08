@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Text;
 using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -74,16 +75,31 @@ public readonly struct FormattedText : IEnumerable<FormattedText.FormattedGlyph>
     {
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
+
+        public override string ToString()
+        {
+            return $"{Size} \"{Text}\"";
+        }
     }
 
     public readonly record struct FragmentChar(Font Font, char Text, Color? Color = null) : IGlyphData
     {
         public Vector2 Size => Font.MeasureString(Text.ToString());
+        
+        public override string ToString()
+        {
+            return $"{Size} '{Text}'";
+        }
     }
     
     public readonly record struct FragmentImage(Texture2D Texture, Rectangle SourceRect, float ScaleFactor = 1f, Color? Color = null) : IFragment, IGlyphData
     {
         public Vector2 Size => SourceRect.Size.ToVector2() * ScaleFactor;
+        
+        public override string ToString()
+        {
+            return $"{Size} (image)";
+        }
     }
 
     public readonly record struct FragmentLine(ImmutableArray<IGlyphData> Fragments) : IEnumerable<IGlyphData>
@@ -101,6 +117,20 @@ public readonly struct FormattedText : IEnumerable<FormattedText.FormattedGlyph>
 
                 return size;
             }
+        }
+        
+        public override string ToString()
+        {
+            var result = new StringBuilder();
+            foreach (var fragment in Fragments)
+            {
+                if (fragment is FragmentChar fragmentChar)
+                    result.Append(fragmentChar.Text);
+
+                if (fragment is FragmentImage)
+                    result.Append("(image)");
+            }
+            return $"{Size} {result.ToString()}";
         }
 
         public IEnumerator<IGlyphData> GetEnumerator()
