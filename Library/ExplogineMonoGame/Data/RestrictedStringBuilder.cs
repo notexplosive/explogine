@@ -55,6 +55,7 @@ public static class RestrictedStringBuilder
             {
                 lettersAsFragments[i] = glyphData;
                 currentFragmentIndex++;
+                charIndexWithinCurrentFragment = 0;
             }
             else
             {
