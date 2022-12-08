@@ -26,7 +26,7 @@ public class Font : IFontGetter, IFont
     {
         if (!restrictedWidth.HasValue)
         {
-            restrictedWidth = float.MaxValue;
+            return SpriteFont.MeasureString(text) * ScaleFactor;
         }
 
         return GetRestrictedString(text, restrictedWidth.Value).Size;
