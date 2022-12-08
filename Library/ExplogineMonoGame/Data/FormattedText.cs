@@ -38,10 +38,9 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
             var letterPosition = Vector2.Zero;
             foreach (var letterFragment in fragmentLine)
             {
-                var letterFragmentChar = letterFragment.Text[0];
-                var letterSize = letterFragment.Font.MeasureString(letterFragmentChar.ToString());
+                var letterSize = letterFragment.Font.MeasureString(letterFragment.Text.ToString());
                 
-                AddLetter(new LetterPosition(letterFragmentChar, actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() - letterSize.JustY(), letterFragment.Font, letterFragment.Color));
+                AddLetter(new LetterPosition(letterFragment.Text, actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() - letterSize.JustY(), letterFragment.Font, letterFragment.Color));
                 letterPosition += letterSize.JustX();
             }
         }
@@ -74,10 +73,15 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
     }
-
-    public readonly record struct FragmentLine(NotNullArray<Fragment> Fragments) : IEnumerable<Fragment>
+    
+    public readonly record struct FragmentChar(Font Font, char Text, Color? Color = null)
     {
-        public IEnumerator<Fragment> GetEnumerator()
+        public Vector2 Size => Font.MeasureString(Text.ToString());
+    }
+
+    public readonly record struct FragmentLine(NotNullArray<FragmentChar> Fragments) : IEnumerable<FragmentChar>
+    {
+        public IEnumerator<FragmentChar> GetEnumerator()
         {
             return Fragments.GetEnumerator();
         }

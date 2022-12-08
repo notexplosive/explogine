@@ -27,11 +27,12 @@ public static class RestrictedStringBuilder
 
         var currentFragmentIndex = 0;
         var charIndexWithinCurrentFragment = 0;
-        var lettersAsFragments = new FormattedText.Fragment[combinedText.Length];
+        var lettersAsFragments = new FormattedText.FragmentChar[combinedText.Length];
         for (var i = 0; i < lettersAsFragments.Length; i++)
         {
             var currentFragment = fragments[currentFragmentIndex];
-            lettersAsFragments[i] = currentFragment with {Text = combinedText[i].ToString()};
+            lettersAsFragments[i] =
+                new FormattedText.FragmentChar(currentFragment.Font, combinedText[i], currentFragment.Color);
             charIndexWithinCurrentFragment++;
             if (charIndexWithinCurrentFragment > currentFragment.NumberOfChars - 1)
             {
@@ -40,7 +41,7 @@ public static class RestrictedStringBuilder
             }
         }
 
-        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy(new FragmentStrategy(),
+        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy<FormattedText.FragmentChar>(new FragmentStrategy(),
             lettersAsFragments,
             restrictedWidth);
     }
@@ -59,10 +60,10 @@ public static class RestrictedStringBuilder
         bool IsWhiteSpace(TChar character);
     }
 
-    public class FragmentStrategy : IStrategy<FormattedText.Fragment, FormattedText.FragmentLine>
+    public class FragmentStrategy : IStrategy<FormattedText.FragmentChar, FormattedText.FragmentLine>
     {
-        private readonly List<FormattedText.Fragment> _currentLineFragments = new();
-        private readonly List<FormattedText.Fragment> _currentTokenFragments = new();
+        private readonly List<FormattedText.FragmentChar> _currentLineFragments = new();
+        private readonly List<FormattedText.FragmentChar> _currentTokenFragments = new();
         private readonly List<FormattedText.FragmentLine> _resultLines = new();
         private Vector2 _totalSize;
 
@@ -140,7 +141,7 @@ public static class RestrictedStringBuilder
             return CurrentTokenSize.X;
         }
 
-        public void AppendTextToToken(FormattedText.Fragment content)
+        public void AppendTextToToken(FormattedText.FragmentChar content)
         {
             _currentTokenFragments.Add(content);
         }
@@ -150,14 +151,14 @@ public static class RestrictedStringBuilder
             return CurrentLineString.Length > 0;
         }
 
-        public bool IsNewline(FormattedText.Fragment character)
+        public bool IsNewline(FormattedText.FragmentChar character)
         {
-            return character.Text == "\n";
+            return character.Text == '\n';
         }
 
-        public bool IsWhiteSpace(FormattedText.Fragment character)
+        public bool IsWhiteSpace(FormattedText.FragmentChar character)
         {
-            return string.IsNullOrWhiteSpace(character.Text);
+            return char.IsWhiteSpace(character.Text);
         }
     }
 
