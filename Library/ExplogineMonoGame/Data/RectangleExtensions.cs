@@ -20,4 +20,11 @@ public static class RectangleExtensions
         var height = Math.Abs(cornerA.Y - cornerB.Y);
         return new Rectangle(x, y, width, height);
     }
+
+    [Pure]
+    public static Rectangle Moved(this Rectangle rectangle, Vector2 offsetAmount)
+    {
+        rectangle.Offset(offsetAmount);
+        return rectangle;
+    }
 }

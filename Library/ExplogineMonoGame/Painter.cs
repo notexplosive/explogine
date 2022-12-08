@@ -91,24 +91,24 @@ public class Painter
         DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
     }
 
-    public void DrawFormattedStringWithinRectangle(FormattedText formattedText, DrawSettings settings)
+    public void DrawFormattedStringWithinRectangle(FormattedText formattedText, Rectangle rectangle,
+        Alignment alignment, DrawSettings settings)
     {
         // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
         // and is then rotated around the origin
-        var rectangle = formattedText.Rectangle;
-        rectangle.Offset(settings.Origin.Value(rectangle.Size));
+        var movedRectangle = rectangle.Moved(settings.Origin.Value(rectangle.Size));
+        var rectTopLeft = movedRectangle.Location.ToVector2();
 
         void DrawLetter(FormattedText.FormattedGlyph glyph)
         {
+            var letterOrigin = (rectTopLeft - glyph.Position) / glyph.Data.ScaleFactor;
+
             if (glyph.Data is FormattedText.FragmentChar fragmentChar)
             {
                 if (char.IsWhiteSpace(fragmentChar.Text))
                 {
                     return;
                 }
-
-                var rectTopLeft = rectangle.ToRectangleF().TopLeft;
-                var letterOrigin = (rectTopLeft - glyph.Position) / fragmentChar.Font.ScaleFactor;
 
                 _spriteBatch.DrawString(
                     fragmentChar.Font.SpriteFont,
@@ -124,9 +124,6 @@ public class Painter
 
             if (glyph.Data is FormattedText.FragmentImage fragmentImage)
             {
-                var rectTopLeft = rectangle.ToRectangleF().TopLeft;
-                var letterOrigin = (rectTopLeft - glyph.Position) / fragmentImage.ScaleFactor;
-
                 DrawAtPosition(
                     fragmentImage.Texture,
                     rectTopLeft,
@@ -140,7 +137,7 @@ public class Painter
             }
         }
 
-        foreach (var letterPosition in formattedText)
+        foreach (var letterPosition in formattedText.Constrict(rectangle, alignment))
         {
             DrawLetter(letterPosition);
         }
@@ -149,8 +146,8 @@ public class Painter
     public void DrawStringWithinRectangle(IFontGetter fontLike, string text, Rectangle rectangle, Alignment alignment,
         DrawSettings settings)
     {
-        var formattedText = new FormattedText(fontLike.GetFont(), text, rectangle, alignment);
-        DrawFormattedStringWithinRectangle(formattedText, settings);
+        var formattedText = new FormattedText(fontLike.GetFont(), text);
+        DrawFormattedStringWithinRectangle(formattedText, rectangle, alignment, settings);
     }
 
     #endregion
