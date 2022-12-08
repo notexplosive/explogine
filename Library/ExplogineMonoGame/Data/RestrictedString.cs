@@ -18,14 +18,11 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
         for (var i = 0; i < text.Length; i++)
         {
             var character = text[i];
-            if (strategy.IsNewline(character))
-            {
-                strategy.AppendCurrentTokenToLineAndClearCurrentToken();
-                strategy.StartNewLine();
-                continue;
-            }
 
-            strategy.AppendTextToToken(character);
+            if (!strategy.IsNewline(character))
+            {
+                strategy.AppendTextToToken(character);
+            }
 
             if (strategy.IsWhiteSpace(character) || i == text.Length - 1)
             {
@@ -35,6 +32,12 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
                 }
 
                 strategy.AppendCurrentTokenToLineAndClearCurrentToken();
+            }
+            
+            if (strategy.IsNewline(character))
+            {
+                strategy.AppendCurrentTokenToLineAndClearCurrentToken();
+                strategy.StartNewLine();
             }
         }
 
