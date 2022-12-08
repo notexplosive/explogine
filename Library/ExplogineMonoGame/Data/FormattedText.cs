@@ -22,7 +22,7 @@ public readonly struct FormattedText
         _fragments = fragments;
     }
     
-    public IEnumerable<FormattedGlyph> Constrict(Rectangle rectangle, Alignment alignment)
+    public IEnumerable<FormattedGlyph> GetGlyphs(Rectangle rectangle, Alignment alignment)
     {
         var (lines, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, rectangle.Width);
         var restrictedBounds =

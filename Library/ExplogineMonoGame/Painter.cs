@@ -137,7 +137,7 @@ public class Painter
             }
         }
 
-        foreach (var letterPosition in formattedText.Constrict(rectangle, alignment))
+        foreach (var letterPosition in formattedText.GetGlyphs(rectangle, alignment))
         {
             DrawLetter(letterPosition);
         }
