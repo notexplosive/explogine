@@ -16,7 +16,7 @@ public static class RestrictedStringBuilder
             restrictedWidth);
     }
 
-    public static RestrictedString<FormattedText.Fragment[]> FromFragments(FormattedText.Fragment[] fragments,
+    public static RestrictedString<FormattedText.FragmentLine> FromFragments(FormattedText.Fragment[] fragments,
         float restrictedWidth)
     {
         var combinedText = string.Empty;
@@ -40,7 +40,7 @@ public static class RestrictedStringBuilder
             }
         }
 
-        return RestrictedString<FormattedText.Fragment[]>.ExecuteStrategy(new FragmentStrategy(),
+        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy(new FragmentStrategy(),
             lettersAsFragments,
             restrictedWidth);
     }
@@ -59,11 +59,11 @@ public static class RestrictedStringBuilder
         bool IsWhiteSpace(TChar character);
     }
 
-    public class FragmentStrategy : IStrategy<FormattedText.Fragment, FormattedText.Fragment[]>
+    public class FragmentStrategy : IStrategy<FormattedText.Fragment, FormattedText.FragmentLine>
     {
         private readonly List<FormattedText.Fragment> _currentLineFragments = new();
         private readonly List<FormattedText.Fragment> _currentTokenFragments = new();
-        private readonly List<FormattedText.Fragment[]> _resultLines = new();
+        private readonly List<FormattedText.FragmentLine> _resultLines = new();
         private Vector2 _totalSize;
 
         public Vector2 CurrentLineSize
@@ -112,7 +112,7 @@ public static class RestrictedStringBuilder
             }
         }
 
-        public RestrictedString<FormattedText.Fragment[]> Result => new(_resultLines.ToArray(), _totalSize);
+        public RestrictedString<FormattedText.FragmentLine> Result => new(_resultLines.ToArray(), _totalSize);
 
         public float CurrentLineWidth => CurrentLineSize.X;
 
@@ -120,7 +120,7 @@ public static class RestrictedStringBuilder
         {
             _totalSize.X = MathF.Max(_totalSize.X, CurrentLineSize.X);
             _totalSize.Y += CurrentLineSize.Y;
-            _resultLines.Add(_currentLineFragments.ToArray());
+            _resultLines.Add(new FormattedText.FragmentLine(_currentLineFragments.ToArray()));
         }
 
         public void StartNewLine()

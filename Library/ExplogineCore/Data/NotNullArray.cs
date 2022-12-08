@@ -1,6 +1,8 @@
-﻿namespace ExplogineCore.Data;
+﻿using System.Collections;
 
-public readonly struct NotNullArray<T>
+namespace ExplogineCore.Data;
+
+public readonly struct NotNullArray<T> : IEnumerable<T>
 {
     private readonly T[]? _content;
 
@@ -14,7 +16,7 @@ public readonly struct NotNullArray<T>
         _content = array;
     }
 
-    public T this[int i] => _content![i];
+    public T this[Index i] => _content![i];
 
     public void Set(int i, T val)
     {
@@ -87,6 +89,17 @@ public readonly struct NotNullArray<T>
         return true;
     }
 
+    public IEnumerator<T> GetEnumerator()
+    {
+        if (_content != null)
+        {
+            foreach (var item in _content)
+            {
+                yield return item;
+            }
+        }
+    }
+
     public override bool Equals(object? obj)
     {
         return obj is NotNullArray<T> other && Equals(other);
@@ -95,6 +108,11 @@ public readonly struct NotNullArray<T>
     public override int GetHashCode()
     {
         return _content != null ? _content.GetHashCode() : 0;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 
     public static bool operator ==(NotNullArray<T> left, NotNullArray<T> right)

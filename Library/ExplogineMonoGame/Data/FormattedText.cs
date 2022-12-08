@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
@@ -23,9 +24,8 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
             RectangleF.FromSizeAlignedWithin(rectangle, restrictedSize, alignment.JustVertical());
 
         var verticalSpaceUsedByPreviousLines = 0f;
-        for (var i = 0; i < lines.Length; i++)
+        foreach (var fragmentLine in lines)
         {
-            var fragmentLine = lines[i];
             var actualLineSize = MeasureFragmentLine(fragmentLine);
             var availableBoundForLine = new RectangleF(
                 restrictedBounds.TopLeft + new Vector2(0, verticalSpaceUsedByPreviousLines),
@@ -39,13 +39,15 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
             foreach (var letterFragment in fragmentLine)
             {
                 var letterFragmentChar = letterFragment.Text[0];
-                AddLetter(new LetterPosition(letterFragmentChar, actualLineBounds.TopLeft + letterPosition, letterFragment.Font, letterFragment.Color));
-                letterPosition += letterFragment.Font.MeasureString(letterFragmentChar.ToString()).JustX();
+                var letterSize = letterFragment.Font.MeasureString(letterFragmentChar.ToString());
+                
+                AddLetter(new LetterPosition(letterFragmentChar, actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() - letterSize.JustY(), letterFragment.Font, letterFragment.Color));
+                letterPosition += letterSize.JustX();
             }
         }
     }
 
-    private Vector2 MeasureFragmentLine(Fragment[] fragmentLine)
+    private Vector2 MeasureFragmentLine(FragmentLine fragmentLine)
     {
         var width = 0f;
         var height = 0f;
@@ -71,6 +73,33 @@ public readonly struct FormattedText : IEnumerable<FormattedText.LetterPosition>
     {
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
+    }
+
+    public readonly record struct FragmentLine(NotNullArray<Fragment> Fragments) : IEnumerable<Fragment>
+    {
+        public IEnumerator<Fragment> GetEnumerator()
+        {
+            return Fragments.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        
+        public Vector2 Size {
+            get
+            {
+                var size = new Vector2();
+                foreach (var fragment in Fragments)
+                {
+                    size.X += fragment.Size.X;
+                    size.Y = MathF.Max(size.Y, fragment.Size.Y);
+                }
+
+                return size;
+            }
+        }
     }
 
     public IEnumerator<LetterPosition> GetEnumerator()
