@@ -90,6 +90,13 @@ public class Painter
     {
         DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
     }
+    
+    public void DrawFormattedStringAtPosition(FormattedText formattedText, Vector2 position, Alignment alignment, DrawSettings settings)
+    {
+        var rectangle = new RectangleF(position, formattedText.OneLineSize()).ToRectangle();
+        var movedRectangle = rectangle.Moved(-settings.Origin.Value(rectangle.Size));
+        DrawFormattedStringWithinRectangle(formattedText, movedRectangle, alignment, settings);
+    }
 
     public void DrawFormattedStringWithinRectangle(FormattedText formattedText, Rectangle rectangle,
         Alignment alignment, DrawSettings settings)

@@ -21,7 +21,19 @@ public readonly struct FormattedText
     {
         _fragments = fragments;
     }
-    
+
+    /// <summary>
+    /// The size of the whole text if it had infinite width
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 OneLineSize()
+    {
+        var (_, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, float.MaxValue);
+        
+        // +1 on both sides to round up
+        return restrictedSize + new Vector2(1);
+    }
+
     public IEnumerable<FormattedGlyph> GetGlyphs(Rectangle rectangle, Alignment alignment)
     {
         var (lines, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, rectangle.Width);
@@ -63,6 +75,7 @@ public readonly struct FormattedText
     /// </summary>
     public interface IFragment
     {
+        public Vector2 Size { get; }
     }
 
     public readonly record struct FormattedGlyph(Vector2 Position, IGlyphData Data)
