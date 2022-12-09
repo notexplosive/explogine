@@ -46,6 +46,18 @@ public readonly record struct DrawOrigin
 
     public static DrawOrigin Center => new(Style.Centered);
 
+    public override string ToString()
+    {
+        switch (_style)
+        {
+            case Style.Centered:
+                return "Centered";
+            case Style.Constant:
+                return $"Constant: {_constantValue.X} {_constantValue.Y}";
+        }
+        return $"Uninitialized ({nameof(DrawOrigin._style)} has not been set)";
+    }
+
     private enum Style
     {
         None,

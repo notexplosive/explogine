@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
@@ -14,6 +15,16 @@ public readonly struct Scale2D
     public Scale2D(Vector2 scale)
     {
         Value = scale;
+    }
+
+    public override string ToString()
+    {
+        if (Math.Abs(Value.X - Value.Y) < float.Epsilon)
+        {
+            return $"{Value.X}";
+        }
+
+        return $"{Value.X}, {Value.Y}";
     }
 
     public Scale2D(float scale)
