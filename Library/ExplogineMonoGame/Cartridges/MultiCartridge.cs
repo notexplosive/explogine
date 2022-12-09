@@ -148,6 +148,11 @@ public class MultiCartridge : BasicGameCartridge
         MetaUpdateInput(input);
         CurrentCartridge.UpdateInput(input);
     }
+    
+    protected virtual IEnumerable<ILoadEvent?> MetaLoadEvents()
+    {
+        yield return null;
+    }
 
     protected virtual void MetaStart()
     {
@@ -186,6 +191,11 @@ public class MultiCartridge : BasicGameCartridge
 
     public override IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
+        foreach (var loadEvent in MetaLoadEvents())
+        {
+            yield return loadEvent;
+        }
+        
         foreach (var cartridge in _cartridges)
         {
             if (cartridge is ILoadEventProvider provider)
