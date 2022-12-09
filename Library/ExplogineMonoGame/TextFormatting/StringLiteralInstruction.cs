@@ -1,6 +1,9 @@
-﻿namespace ExplogineMonoGame.TextFormatting;
+﻿using ExplogineMonoGame.Data;
+using Microsoft.Xna.Framework;
 
-public class StringLiteralInstruction : Instruction
+namespace ExplogineMonoGame.TextFormatting;
+
+public class StringLiteralInstruction : Instruction, ILiteralInstruction
 {
     internal StringLiteralInstruction(string text)
     {
@@ -8,4 +11,9 @@ public class StringLiteralInstruction : Instruction
     }
 
     public string Text { get; }
+    
+    public FormattedText.IFragment GetFragment(IFontGetter font, Color color)
+    {
+        return new FormattedText.Fragment(font, Text, color);
+    }
 }
