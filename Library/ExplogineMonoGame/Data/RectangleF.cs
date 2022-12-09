@@ -191,6 +191,14 @@ public struct RectangleF : IEquatable<RectangleF>
                Contains(otherTopRight) || Contains(otherBottomLeft);
     }
 
+    [Pure]
+    public RectangleF Moved(Vector2 offsetAmount)
+    {
+        var rectangle = this;
+        rectangle.Offset(offsetAmount);
+        return rectangle;
+    }
+    
     public void Offset(Point point)
     {
         Offset(point.ToVector2());
