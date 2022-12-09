@@ -127,12 +127,12 @@ public class Painter
             if (glyph.Data is FormattedText.FragmentImage fragmentImage)
             {
                 DrawAtPosition(
-                    fragmentImage.Texture,
+                    fragmentImage.Image.Texture,
                     rectTopLeft,
                     new Scale2D(new Vector2(fragmentImage.ScaleFactor)),
                     settings with
                     {
-                        SourceRectangle = fragmentImage.SourceRect,
+                        SourceRectangle = fragmentImage.Image.SourceRectangle,
                         Color = fragmentImage.Color ?? Color.White,
                         Origin = new DrawOrigin(letterOrigin)
                     });

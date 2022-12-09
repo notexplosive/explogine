@@ -129,15 +129,19 @@ public readonly struct FormattedText
         }
     }
 
-    public readonly record struct FragmentImage(Texture2D Texture, Rectangle SourceRect, float ScaleFactor = 1f,
+    public readonly record struct FragmentImage(StaticImageAsset Image, float ScaleFactor = 1f,
         Color? Color = null) : IFragment, IGlyphData
     {
-        public Vector2 Size => SourceRect.Size.ToVector2() * ScaleFactor;
+        public FragmentImage(Texture2D texture, float scaleFactor = 1f, Color? color = null) : this(new StaticImageAsset(texture, texture.Bounds), scaleFactor, color)
+        {
+        }
+        
+        public Vector2 Size => Image.SourceRectangle.Size.ToVector2() * ScaleFactor;
 
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
-            painter.DrawAtPosition(Texture, position, new Scale2D(ScaleFactor),
-                drawSettings with {SourceRectangle = SourceRect, Color = Color ?? drawSettings.Color});
+            painter.DrawAtPosition(Image.Texture, position, new Scale2D(ScaleFactor),
+                drawSettings with {SourceRectangle = Image.SourceRectangle, Color = Color ?? drawSettings.Color});
         }
 
         public override string ToString()
