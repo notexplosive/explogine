@@ -35,7 +35,7 @@ internal class DemoInterface
                 }
 
                 painter.DrawStringAtPosition(consoleFont, text,
-                    new Point(
+                    new Vector2(
                         Client.Window.Size.X
                         - (int) consoleFont.MeasureString(text).X
                         , spriteSheet.GetSourceRectForFrame(0).Height),

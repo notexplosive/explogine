@@ -95,7 +95,7 @@ public class LoadingCartridge : ICartridge
         painter.DrawAtPosition(_loadingBarGraphic.Texture,
             Client.Window.RenderResolution.ToVector2() / 2 - _loadingBarGraphic.Texture.Bounds.Size.ToVector2() / 2f);
 
-        painter.DrawStringAtPosition(_font, "Loading...", Point.Zero, new DrawSettings());
+        painter.DrawStringAtPosition(_font, "Loading...", Vector2.Zero, new DrawSettings());
         painter.EndSpriteBatch();
     }
 

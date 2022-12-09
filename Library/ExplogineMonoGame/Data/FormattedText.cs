@@ -12,7 +12,8 @@ public readonly struct FormattedText
 {
     private readonly IFragment[] _fragments;
 
-    public FormattedText(IFontGetter indirectFont, string text, Color? color = null) : this(new Fragment(indirectFont.GetFont(), text, color))
+    public FormattedText(IFontGetter indirectFont, string text, Color? color = null) : this(
+        new Fragment(indirectFont.GetFont(), text, color))
     {
     }
 
@@ -33,7 +34,7 @@ public readonly struct FormattedText
         return restrictedSize + new Vector2(1);
     }
 
-    public IEnumerable<FormattedGlyph> GetGlyphs(Rectangle rectangle, Alignment alignment)
+    public IEnumerable<FormattedGlyph> GetGlyphs(RectangleF rectangle, Alignment alignment)
     {
         var (lines, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, rectangle.Width);
         var restrictedBounds =
@@ -57,7 +58,16 @@ public readonly struct FormattedText
                 var letterSize = letterFragment.Size;
                 var position = actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() -
                                letterSize.JustY();
-                yield return new FormattedGlyph(position, letterFragment);
+                var isWhiteSpace = letterFragment is FragmentChar fragmentChar && char.IsWhiteSpace(fragmentChar.Text);
+
+                var glyphData = letterFragment;
+                if (isWhiteSpace)
+                {
+                    // White space still has a size and scale factor, but it's a different type so it's not caught like regular text
+                    glyphData = new WhiteSpaceGlyphData(letterFragment.Size, letterFragment.ScaleFactor);
+                }
+
+                yield return new FormattedGlyph(position, glyphData);
                 letterPosition += letterSize.JustX();
             }
         }
@@ -67,6 +77,7 @@ public readonly struct FormattedText
     {
         public Vector2 Size { get; }
         float ScaleFactor { get; }
+        void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings);
     }
 
     /// <summary>
@@ -74,7 +85,7 @@ public readonly struct FormattedText
     /// </summary>
     public interface IFragment
     {
-        public Vector2 Size { get; }
+        Vector2 Size { get; }
     }
 
     public readonly record struct FormattedGlyph(Vector2 Position, IGlyphData Data)
@@ -98,9 +109,23 @@ public readonly struct FormattedText
         public Vector2 Size => Font.MeasureString(Text.ToString());
         public float ScaleFactor => Font.ScaleFactor;
 
+        public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
+        {
+            painter.DrawStringAtPosition(Font, Text.ToString(), position,
+                drawSettings with {Color = Color ?? drawSettings.Color});
+        }
+
         public override string ToString()
         {
             return $"{Size} '{Text}'";
+        }
+    }
+
+    public readonly record struct WhiteSpaceGlyphData(Vector2 Size, float ScaleFactor) : IGlyphData
+    {
+        public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
+        {
+            // this function is intentionally left blank
         }
     }
 
@@ -108,6 +133,12 @@ public readonly struct FormattedText
         Color? Color = null) : IFragment, IGlyphData
     {
         public Vector2 Size => SourceRect.Size.ToVector2() * ScaleFactor;
+
+        public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
+        {
+            painter.DrawAtPosition(Texture, position, new Scale2D(ScaleFactor),
+                drawSettings with {SourceRectangle = SourceRect, Color = Color ?? drawSettings.Color});
+        }
 
         public override string ToString()
         {

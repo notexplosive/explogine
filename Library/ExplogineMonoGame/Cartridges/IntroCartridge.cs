@@ -66,7 +66,7 @@ public class IntroCartridge : ICartridge
         if (_useWholeWord)
         {
             painter.DrawStringAtPosition(_logoFont, _wholeWord.Text,
-                (centerOfScreen + _wholeWord.Position.Value).ToPoint(),
+                centerOfScreen + _wholeWord.Position.Value,
                 new DrawSettings
                 {
                     Origin = DrawOrigin.Center, Angle = _wholeWord.Angle,
@@ -84,7 +84,7 @@ public class IntroCartridge : ICartridge
                                   new Vector2(runningWidth + myWidth / 2, 0);
                 painter.DrawScaledStringAtPosition(_logoFont,
                     letter.Text,
-                    (startOffset + letter.Position.Value).ToPoint(),
+                    startOffset + letter.Position.Value,
                     new Scale2D(letter.Scale),
                     new DrawSettings
                     {

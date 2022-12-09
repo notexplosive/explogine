@@ -65,14 +65,14 @@ public class Painter
 
     #region Draw Strings
 
-    public void DrawScaledStringAtPosition(IFontGetter fontLike, string text, Point position, Scale2D scale,
+    public void DrawScaledStringAtPosition(IFontGetter fontLike, string text, Vector2 position, Scale2D scale,
         DrawSettings settings)
     {
         var font = fontLike.GetFont();
         _spriteBatch.DrawString(
             font.SpriteFont,
             text,
-            position.ToVector2(),
+            position,
             settings.Color,
             settings.Angle,
             settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
@@ -81,12 +81,12 @@ public class Painter
             settings.Depth);
     }
 
-    public void DrawStringAtPosition(IFontGetter font, string text, Point position, DrawSettings settings)
+    public void DrawStringAtPosition(IFontGetter font, string text, Vector2 position, DrawSettings settings)
     {
         DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
     }
 
-    public void DrawDebugStringAtPosition(string text, Point position, DrawSettings settings)
+    public void DrawDebugStringAtPosition(string text, Vector2 position, DrawSettings settings)
     {
         DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
     }
@@ -98,13 +98,13 @@ public class Painter
         DrawFormattedStringWithinRectangle(formattedText, movedRectangle, alignment, settings);
     }
 
-    public void DrawFormattedStringWithinRectangle(FormattedText formattedText, Rectangle rectangle,
+    public void DrawFormattedStringWithinRectangle(FormattedText formattedText, RectangleF rectangle,
         Alignment alignment, DrawSettings settings)
     {
         // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
         // and is then rotated around the origin
         var movedRectangle = rectangle.Moved(settings.Origin.Value(rectangle.Size));
-        var rectTopLeft = movedRectangle.Location.ToVector2();
+        var rectTopLeft = movedRectangle.Location;
 
         void DrawLetter(FormattedText.FormattedGlyph glyph)
         {
@@ -112,18 +112,13 @@ public class Painter
 
             if (glyph.Data is FormattedText.FragmentChar fragmentChar)
             {
-                if (char.IsWhiteSpace(fragmentChar.Text))
-                {
-                    return;
-                }
-
                 _spriteBatch.DrawString(
                     fragmentChar.Font.SpriteFont,
                     fragmentChar.Text.ToString(),
-                    rectTopLeft.Truncate(),
+                    rectTopLeft,
                     fragmentChar.Color ?? settings.Color,
                     settings.Angle,
-                    letterOrigin.Truncate(),
+                    letterOrigin,
                     Vector2.One * fragmentChar.Font.ScaleFactor,
                     settings.FlipEffect,
                     settings.Depth);
@@ -150,7 +145,7 @@ public class Painter
         }
     }
 
-    public void DrawStringWithinRectangle(IFontGetter fontLike, string text, Rectangle rectangle, Alignment alignment,
+    public void DrawStringWithinRectangle(IFontGetter fontLike, string text, RectangleF rectangle, Alignment alignment,
         DrawSettings settings)
     {
         var formattedText = new FormattedText(fontLike.GetFont(), text);
@@ -170,7 +165,7 @@ public class Painter
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin.Value(texture.Bounds.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
+            settings.Origin.Value(settings.SourceRectangle.Value.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
     }
 
     #endregion
@@ -193,14 +188,12 @@ public class Painter
         // and is then rotated around the origin
         destinationRectangle.Offset(settings.Origin.Value(destinationRectangle.Size));
         settings.SourceRectangle ??= texture.Bounds;
-        var origin = settings.Origin.Value(destinationRectangle.Size);
 
-        var scaleX = destinationRectangle.Size.X / settings.SourceRectangle.Value.Size.X;
-        var scaleY = destinationRectangle.Size.Y / settings.SourceRectangle.Value.Size.Y;
+        // scale is how much we need to multiply the source rect size to get the destination rect
+        var scale = destinationRectangle.Size.StraightDivide(settings.SourceRectangle.Value.Size);
 
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
-        origin.X /= scaleX;
-        origin.Y /= scaleY;
+        var origin = settings.Origin.Value(destinationRectangle.Size).StraightDivide(scale);
 
         // destination is downcast to a Rectangle
         _spriteBatch.Draw(texture, destinationRectangle.ToRectangle(), settings.SourceRectangle, settings.Color,
