@@ -19,4 +19,9 @@ public static class ColorExtensions
     {
         return new Color((byte) ((hex & 0xFF0000) >> 16), (byte) ((hex & 0x00FF00) >> 8), (byte) (hex & 0x0000FF));
     }
+
+    public static uint ToRgbaHex(this Color color)
+    {
+        return (uint) (0xFF | color.R << 24 | color.G << 16 | color.B << 8);
+    }
 }
