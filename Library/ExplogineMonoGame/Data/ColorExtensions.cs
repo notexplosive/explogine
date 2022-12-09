@@ -24,4 +24,9 @@ public static class ColorExtensions
     {
         return (uint) (0xFF | color.R << 24 | color.G << 16 | color.B << 8);
     }
+    
+    public static string ToRgbaHexString(this Color color)
+    {
+        return color.ToRgbaHex().ToString("X");
+    }
 }

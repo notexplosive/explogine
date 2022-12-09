@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Data;
+﻿using System.Globalization;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.TextFormatting;
@@ -16,7 +17,7 @@ public class ImageLiteralInstruction : Instruction, ILiteralInstruction
 
     public ImageLiteralInstruction(string[] args) : this(
         Client.Assets.GetAsset<StaticImageAsset>(args[0]),
-        args.Length > 1 ? float.Parse(args[1]) : 1f)
+        args.Length > 1 ? float.Parse(args[1], CultureInfo.InvariantCulture) : 1f)
     {
     }
 

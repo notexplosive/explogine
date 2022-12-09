@@ -1,32 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExplogineCore;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.TextFormatting;
-
-internal class Commands
-{
-    public static ScopedCommand Color = new(
-        "color",
-        args => new PushColor(args),
-        () => new PopColor());
-
-    public static ScopedCommand Font = new(
-        "font",
-        args => new PushFont(args),
-        () => new PopFont());
-
-    public static Command Image = new(
-        "image",
-        args => new ImageLiteralInstruction(args)
-    );
-
-    public static readonly Dictionary<string, ICommand> LookupTable = Reflection.GetStaticFieldsThatDeriveFromType<Commands, ICommand>();
-}
 
 public abstract class Instruction
 {
@@ -54,28 +30,23 @@ public abstract class Instruction
             commandName = commandName.Substring(1, commandName.Length - 1);
         }
 
-        foreach (var command in Commands.LookupTable.Values)
+        foreach (var keyPair in Commands.LookupTable)
         {
-            if (command.Name != commandName)
+            if (!String.Equals(keyPair.Key, commandName, StringComparison.InvariantCultureIgnoreCase))
             {
                 continue;
             }
 
-            try
+            var command = keyPair.Value;
+
+            switch (command)
             {
-                switch (command)
-                {
-                    case ScopedCommand scopedCommand when isPopCommand:
-                        return scopedCommand.CreatePop();
-                    case ScopedCommand scopedCommand:
-                        return scopedCommand.CreatePush(args);
-                    case Command unscopedCommand:
-                        return unscopedCommand.Create(args);
-                }
-            }
-            catch(Exception e)
-            {
-                throw new Exception("Command parse failed", e);
+                case ScopedCommand scopedCommand when isPopCommand:
+                    return scopedCommand.CreatePop();
+                case ScopedCommand scopedCommand:
+                    return scopedCommand.CreatePush(args);
+                case Command unscopedCommand:
+                    return unscopedCommand.Create(args);
             }
         }
 
@@ -85,9 +56,9 @@ public abstract class Instruction
 
 public interface ICommand
 {
-    public string Name { get; }
 }
 
-public record Command(string Name, Func<string[], Instruction> Create) : ICommand;
+public record Command(Func<string[], Instruction> Create) : ICommand;
 
-public record ScopedCommand(string Name, Func<string[], Instruction> CreatePush, Func<Instruction> CreatePop) : ICommand;
+public record ScopedCommand
+    (Func<string[], Instruction> CreatePush, Func<Instruction> CreatePop) : ICommand;
