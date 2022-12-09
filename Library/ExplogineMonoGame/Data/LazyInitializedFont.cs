@@ -8,12 +8,12 @@ namespace ExplogineMonoGame.Data;
 
 public class LazyInitializedFont : IFontGetter
 {
-    private readonly string _spriteFontPath;
+    public string SpriteFontPath { get; }
     private Font? _cache;
 
     public LazyInitializedFont(string spriteFontPath, int fontSize)
     {
-        _spriteFontPath = spriteFontPath;
+        SpriteFontPath = spriteFontPath;
         FontSize = fontSize;
     }
 
@@ -37,6 +37,6 @@ public class LazyInitializedFont : IFontGetter
 
     private Font BuildCache()
     {
-        return Client.Assets.GetFont(_spriteFontPath, FontSize);
+        return Client.Assets.GetFont(SpriteFontPath, FontSize);
     }
 }
