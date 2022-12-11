@@ -18,7 +18,7 @@ public abstract class Instruction
 
     public static implicit operator Instruction(Texture2D texture)
     {
-        return new TextureLiteralInstruction(new Lazy<Texture2D>(texture));
+        return new TextureLiteralInstruction(new IndirectTexture(texture));
     }
 
     public static Instruction FromString(string commandName, string[] args)

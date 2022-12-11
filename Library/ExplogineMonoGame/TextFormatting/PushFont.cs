@@ -12,7 +12,7 @@ public class PushFont : Instruction, IStackInstruction<IFontGetter>
         Font = font;
     }
 
-    public PushFont(string[] args) : this(new LazyInitializedFont(args[0], int.Parse(args[1])))
+    public PushFont(string[] args) : this(new IndirectFont(args[0], int.Parse(args[1])))
     {
     }
 

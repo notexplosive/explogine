@@ -37,7 +37,7 @@ public static class Format
 
     public static Instruction Texture(string textureName, float scaleFactor = 1f)
     {
-        return new TextureLiteralInstruction(new Lazy<Texture2D>(() => Client.Assets.GetTexture(textureName)),
+        return new TextureLiteralInstruction(new IndirectTexture(textureName),
             scaleFactor);
     }
 

@@ -15,7 +15,7 @@ public class GridBasedSpriteSheet : SpriteSheet
     private readonly int _rowCount;
     private Point _frameSize;
 
-    public GridBasedSpriteSheet(string textureName, Point frameSize) : this(Client.Assets.GetTexture(textureName),
+    public GridBasedSpriteSheet(string textureName, Point frameSize) : this(new IndirectTexture(textureName).GetTexture(),
         frameSize)
     {
     }

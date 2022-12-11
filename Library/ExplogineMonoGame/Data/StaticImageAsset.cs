@@ -7,12 +7,19 @@ namespace ExplogineMonoGame.Data;
 
 public class StaticImageAsset : Asset
 {
-    public Texture2D Texture { get; }
+    private readonly IndirectTexture _indirectTexture;
+    public Texture2D Texture => _indirectTexture.GetTexture();
     public Rectangle SourceRectangle { get; }
 
     public StaticImageAsset(Texture2D texture, Rectangle sourceRectangle, bool ownsTexture = false) : base(ownsTexture ? texture : null)
     {
-        Texture = texture;
+        _indirectTexture = new IndirectTexture(texture);
+        SourceRectangle = sourceRectangle;
+    }
+
+    public StaticImageAsset(IndirectTexture texture, Rectangle sourceRectangle) : base(null)
+    {
+        _indirectTexture = texture;
         SourceRectangle = sourceRectangle;
     }
 }

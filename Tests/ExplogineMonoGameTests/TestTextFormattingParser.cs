@@ -31,7 +31,7 @@ public class TestTextFormattingParser
     public void push_font()
     {
         var push = new PushFont(new[] {"fonts/cool-font", "32"});
-        var font = push.Font.Should().BeOfType<LazyInitializedFont>();
+        var font = push.Font.Should().BeOfType<IndirectFont>();
         font.Which.FontSize.Should().Be(32);
         font.Which.SpriteFontPath.Should().Be("fonts/cool-font");
     }

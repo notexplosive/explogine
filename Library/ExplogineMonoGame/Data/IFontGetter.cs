@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-
-namespace ExplogineMonoGame.Data;
+﻿namespace ExplogineMonoGame.Data;
 
 public interface IFontGetter
 {

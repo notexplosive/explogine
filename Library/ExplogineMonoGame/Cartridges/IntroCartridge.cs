@@ -11,7 +11,7 @@ namespace ExplogineMonoGame.Cartridges;
 public class IntroCartridge : ICartridge
 {
     private readonly List<Figure> _letters = new();
-    private readonly LazyInitializedFont _logoFont = new("engine/logo-font", 72);
+    private readonly IndirectFont _logoFont = new("engine/logo-font", 72);
     private SequenceTween _tween = new();
     private bool _useWholeWord = true;
     private Figure _wholeWord;

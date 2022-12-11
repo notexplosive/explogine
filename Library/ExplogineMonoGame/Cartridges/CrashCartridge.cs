@@ -8,9 +8,9 @@ namespace ExplogineMonoGame.Cartridges;
 
 public class CrashCartridge : ICartridge
 {
-    private readonly LazyInitializedFont _font = new("engine/console-font", 32);
+    private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly string _reportText;
-    private readonly LazyInitializedFont _titleFont = new("engine/console-font", 100);
+    private readonly IndirectFont _titleFont = new("engine/console-font", 100);
 
     public CrashCartridge(Exception exception)
     {
