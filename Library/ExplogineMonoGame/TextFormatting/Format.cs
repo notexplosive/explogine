@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.TextFormatting;
 
@@ -26,15 +28,17 @@ public static class Format
     {
         return new PopFont();
     }
-    
+
     public static Instruction Image(string imageName, float scaleFactor = 1f)
     {
-        return new ImageLiteralInstruction(Client.Assets.GetAsset<StaticImageAsset>(imageName), scaleFactor);
+        return new ImageLiteralInstruction(
+            new Lazy<StaticImageAsset>(() => Client.Assets.GetAsset<StaticImageAsset>(imageName)), scaleFactor);
     }
-    
+
     public static Instruction Texture(string textureName, float scaleFactor = 1f)
     {
-        return new TextureLiteralInstruction(Client.Assets.GetTexture(textureName), scaleFactor);
+        return new TextureLiteralInstruction(new Lazy<Texture2D>(() => Client.Assets.GetTexture(textureName)),
+            scaleFactor);
     }
 
     public static FormattedText FromInstructions(IFontGetter startingFont, Color startingColor,
@@ -97,7 +101,7 @@ public static class Format
                 currentToken.Clear();
             }
         }
-        
+
         void SaveTokenAsCommand()
         {
             var token = currentToken.ToString();
@@ -128,13 +132,14 @@ public static class Format
                     parameters.Append(character);
                 }
             }
-            
-            result.Add(Instruction.FromString(commandName.ToString(), parameters.ToString().Split(parametersSeparator)));
+
+            result.Add(Instruction.FromString(commandName.ToString(),
+                parameters.ToString().Split(parametersSeparator)));
             currentToken.Clear();
         }
 
         var currentMode = ParserState.ReadingLiteral;
-        
+
         foreach (var character in text)
         {
             switch (currentMode)
@@ -152,12 +157,12 @@ public static class Format
                     break;
             }
         }
-        
+
         SaveTokenAsLiteral();
 
         return result.ToArray();
     }
-    
+
     private enum ParserState
     {
         ReadingLiteral,

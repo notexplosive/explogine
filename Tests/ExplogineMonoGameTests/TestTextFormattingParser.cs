@@ -39,10 +39,7 @@ public class TestTextFormattingParser
     [Fact]
     public void image_instruction()
     {
-        // This test doesn't work because GetAsset fails in tests.
-        /*
         var image = new ImageLiteralInstruction(new[] {"cool-image", "0.5"});
         image.ScaleFactor.Should().Be(0.5f);
-        */
     }
 }

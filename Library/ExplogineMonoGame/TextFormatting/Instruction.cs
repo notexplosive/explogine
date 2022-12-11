@@ -13,12 +13,12 @@ public abstract class Instruction
 
     public static implicit operator Instruction(StaticImageAsset asset)
     {
-        return new ImageLiteralInstruction(asset);
+        return new ImageLiteralInstruction(new Lazy<StaticImageAsset>(asset));
     }
 
     public static implicit operator Instruction(Texture2D texture)
     {
-        return new TextureLiteralInstruction(texture);
+        return new TextureLiteralInstruction(new Lazy<Texture2D>(texture));
     }
 
     public static Instruction FromString(string commandName, string[] args)

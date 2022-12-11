@@ -1,14 +1,10 @@
 ﻿using System.Diagnostics.Contracts;
-using ExplogineMonoGame.AssetManagement;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
 public class LazyInitializedFont : IFontGetter
 {
-    public string SpriteFontPath { get; }
     private Font? _cache;
 
     public LazyInitializedFont(string spriteFontPath, int fontSize)
@@ -17,7 +13,14 @@ public class LazyInitializedFont : IFontGetter
         FontSize = fontSize;
     }
 
+    public string SpriteFontPath { get; }
+
     public int FontSize { get; }
+
+    public Font GetFont()
+    {
+        return _cache ??= BuildCache();
+    }
 
     public static implicit operator Font(LazyInitializedFont lazyInitializedFont)
     {
@@ -28,11 +31,6 @@ public class LazyInitializedFont : IFontGetter
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
         return GetFont().MeasureString(text, restrictedWidth);
-    }
-
-    public Font GetFont()
-    {
-        return _cache ??= BuildCache();
     }
 
     private Font BuildCache()
