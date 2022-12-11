@@ -11,9 +11,9 @@ public abstract class Instruction
         return new StringLiteralInstruction(str);
     }
 
-    public static implicit operator Instruction(StaticImageAsset asset)
+    public static implicit operator Instruction(IndirectAsset<StaticImageAsset> indirectAsset)
     {
-        return new ImageLiteralInstruction(new Lazy<StaticImageAsset>(asset));
+        return new ImageLiteralInstruction(indirectAsset);
     }
 
     public static implicit operator Instruction(Texture2D texture)

@@ -23,6 +23,6 @@ public class TextureLiteralInstruction : Instruction, ILiteralInstruction
 
     public FormattedText.IFragment GetFragment(IFontGetter font, Color color)
     {
-        return new FormattedText.FragmentImage(_texture.GetTexture(), _scaleFactor, color);
+        return new FormattedText.FragmentImage(_texture.Get(), _scaleFactor, color);
     }
 }

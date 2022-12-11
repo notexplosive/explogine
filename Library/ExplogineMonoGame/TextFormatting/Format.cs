@@ -31,8 +31,7 @@ public static class Format
 
     public static Instruction Image(string imageName, float scaleFactor = 1f)
     {
-        return new ImageLiteralInstruction(
-            new Lazy<StaticImageAsset>(() => Client.Assets.GetAsset<StaticImageAsset>(imageName)), scaleFactor);
+        return new ImageLiteralInstruction(imageName, scaleFactor);
     }
 
     public static Instruction Texture(string textureName, float scaleFactor = 1f)
