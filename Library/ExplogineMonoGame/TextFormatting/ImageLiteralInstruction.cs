@@ -24,6 +24,6 @@ public class ImageLiteralInstruction : Instruction, ILiteralInstruction
 
     public FormattedText.IFragment GetFragment(IFontGetter font, Color color)
     {
-        return new FormattedText.FragmentImage(Image.Get(), ScaleFactor, color);
+        return new FormattedText.FragmentImage(Image, ScaleFactor, color);
     }
 }

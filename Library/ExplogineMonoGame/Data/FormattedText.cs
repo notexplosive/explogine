@@ -13,7 +13,7 @@ public readonly struct FormattedText
     private readonly IFragment[] _fragments;
 
     public FormattedText(IFontGetter indirectFont, string text, Color? color = null) : this(
-        new Fragment(indirectFont.GetFont(), text, color))
+        new Fragment(indirectFont, text, color))
     {
     }
 
@@ -129,19 +129,19 @@ public readonly struct FormattedText
         }
     }
 
-    public readonly record struct FragmentImage(StaticImageAsset Image, float ScaleFactor = 1f,
+    public readonly record struct FragmentImage(IndirectAsset<StaticImageAsset> Image, float ScaleFactor = 1f,
         Color? Color = null) : IFragment, IGlyphData
     {
         public FragmentImage(Texture2D texture, float scaleFactor = 1f, Color? color = null) : this(new StaticImageAsset(texture, texture.Bounds), scaleFactor, color)
         {
         }
         
-        public Vector2 Size => Image.SourceRectangle.Size.ToVector2() * ScaleFactor;
+        public Vector2 Size => Image.Get().SourceRectangle.Size.ToVector2() * ScaleFactor;
 
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
-            painter.DrawAtPosition(Image.Texture, position, new Scale2D(ScaleFactor),
-                drawSettings with {SourceRectangle = Image.SourceRectangle, Color = Color ?? drawSettings.Color});
+            painter.DrawAtPosition(Image.Get().Texture, position, new Scale2D(ScaleFactor),
+                drawSettings with {SourceRectangle = Image.Get().SourceRectangle, Color = Color ?? drawSettings.Color});
         }
 
         public override string ToString()

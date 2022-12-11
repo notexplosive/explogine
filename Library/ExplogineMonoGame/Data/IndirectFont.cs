@@ -34,4 +34,9 @@ public class IndirectFont : IFontGetter
     {
         return GetFont().MeasureString(text, restrictedWidth);
     }
+
+    public IndirectFont WithFontSize(int newFontSize)
+    {
+        return new IndirectFont(SpriteFontPath, newFontSize);
+    }
 }
