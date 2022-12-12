@@ -1,4 +1,5 @@
 ﻿using System;
+using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
@@ -14,10 +15,46 @@ public static class PointExtensions
     {
         return Math.Max(point.X, point.Y);
     }
-    
+
     public static Point Multiplied(this Point point, float scalar)
     {
         return new Point((int) (point.X * scalar), (int) (point.Y * scalar));
+    }
+
+    public static void AddToAxis(this Point point, Axis axis, int amountToAdd)
+    {
+        point.SetAxis(axis, point.GetAxis(axis) + amountToAdd);
+    }
+
+    public static void SetAxis(this Point point, Axis axis, int value)
+    {
+        if (axis == Axis.X)
+        {
+            point.X = value;
+        }
+        else if (axis == Axis.Y)
+        {
+            point.Y = value;
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
+        }
+    }
+
+    public static int GetAxis(this Point point, Axis axis)
+    {
+        if (axis == Axis.X)
+        {
+            return point.X;
+        }
+
+        if (axis == Axis.Y)
+        {
+            return point.Y;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
     }
 
     /// <summary>
