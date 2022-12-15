@@ -56,3 +56,15 @@ public class SpriteFontContentWriter : IContentWriter
         yield return $"/build:{relativePath}";
     }
 }
+
+public class EffectContentWriter : IContentWriter
+{
+    public IEnumerable<string> GetContentLines(string relativePath)
+    {
+        yield return $"#begin {relativePath}";
+        yield return "/importer:EffectImporter";
+        yield return "/processor:EffectProcessor";
+        yield return "/processorParam:DebugMode=Auto";
+        yield return $"/build:{relativePath}";
+    }
+}

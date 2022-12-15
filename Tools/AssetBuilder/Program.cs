@@ -23,6 +23,7 @@ IContentWriter GetContentWriter(string extension)
         ".png" => new TextureContentWriter(),
         ".ogg" => new OggContentWriter(),
         ".spritefont" => new SpriteFontContentWriter(),
+        ".fx" => new EffectContentWriter(),
         _ => new CopyContentWriter()
     };
 }
