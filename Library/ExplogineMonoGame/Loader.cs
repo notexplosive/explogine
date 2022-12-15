@@ -105,6 +105,12 @@ public class Loader
             return new SpriteFontAsset(spriteFont);
         }
 
+        var effect = AttemptLoad<Effect>(key);
+        if (effect != null)
+        {
+            return new EffectAsset(effect);
+        }
+
         throw new Exception($"Unsupported/Unidentified Asset: {key}");
     }
 
