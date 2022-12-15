@@ -73,4 +73,19 @@ public class Axis
 
         throw new Exception("Unknown Axis");
     }
+
+    public T ReturnIfXElseY<T>(Func<T> doIfX, Func<T> doIfY)
+    {
+        if (this == Axis.X)
+        {
+            return doIfX();
+        }
+            
+        if (this == Axis.Y)
+        {
+            return doIfY();
+        }
+
+        throw new Exception("Unknown axis");
+    }
 }
