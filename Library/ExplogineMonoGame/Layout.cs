@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
@@ -20,34 +19,44 @@ public static class Layout
     public static Arrangement CreateRow(Vector2 startingPosition, RowSettings settings, Element[] elements)
     {
         var namedRects = new OneToMany<string, RectangleF>();
-        var alongSize = new Vector2();
+        var alongPosition = new Vector2();
+        var usedPerpendicularSize = 0f;
         for (var i = 0; i < elements.Length; i++)
         {
             var element = elements[i];
-            var rectangle = new RectangleF(startingPosition + alongSize, element.GetSize());
-            alongSize += rectangle.Size.JustAxis(settings.Axis);
+            var elementRectangle = new RectangleF(startingPosition + alongPosition, element.GetSize());
+            alongPosition += elementRectangle.Size.JustAxis(settings.Axis);
             if (i < elements.Length - 1)
             {
-                alongSize += new Vector2(settings.PaddingBetweenElements).JustAxis(settings.Axis);
+                alongPosition += new Vector2(settings.PaddingBetweenElements).JustAxis(settings.Axis);
             }
 
             if (element.Name is ElementName name)
             {
-                namedRects.Add(name, rectangle);
+                namedRects.Add(name, elementRectangle);
+                
+                var oppositeAxis = settings.Axis.Opposite();
+                usedPerpendicularSize = Math.Max(usedPerpendicularSize, elementRectangle.Size.GetAxis(oppositeAxis));
             }
         }
 
-        return new Arrangement(namedRects);
+        var totalSize = Vector2Extensions.FromAxisFirst(settings.Axis, alongPosition.GetAxis(settings.Axis),
+            usedPerpendicularSize);
+
+        return new Arrangement(namedRects, new RectangleF(startingPosition, totalSize));
     }
 
     public class Arrangement : IEnumerable<RectangleF>
     {
         private readonly OneToMany<string, RectangleF> _namedRects;
 
-        public Arrangement(OneToMany<string, RectangleF> namedRects)
+        public Arrangement(OneToMany<string, RectangleF> namedRects, RectangleF usedSpace)
         {
             _namedRects = namedRects;
+            UsedSpace = usedSpace;
         }
+
+        public RectangleF UsedSpace { get; }
 
         public IEnumerator<RectangleF> GetEnumerator()
         {
@@ -66,7 +75,7 @@ public static class Layout
         {
             return _namedRects.Get(name);
         }
-        
+
         public RectangleF GetElement(string name)
         {
             var matchingElements = GetElements(name);
@@ -75,10 +84,11 @@ public static class Layout
             {
                 throw new Exception($"No element found '{name}'");
             }
-            
+
             if (matchingElements.Count > 1)
             {
-                Client.Debug.LogWarning($"Attempted to get element '{name}' but found {matchingElements.Count} matches.");
+                Client.Debug.LogWarning(
+                    $"Attempted to get element '{name}' but found {matchingElements.Count} matches.");
             }
 
             return matchingElements[0];

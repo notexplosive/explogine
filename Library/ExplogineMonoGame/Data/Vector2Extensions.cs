@@ -112,7 +112,7 @@ public static class Vector2Extensions
         return new Vector2((int)vector.X, (int)vector.Y);
     }
     
-    public static void SetAxis(this Vector2 vec, Axis axis, float value)
+    public static void SetAxis(this ref Vector2 vec, Axis axis, float value)
     {
         if (axis == Axis.X)
         {
@@ -160,6 +160,21 @@ public static class Vector2Extensions
         if (axis == Axis.Y)
         {
             return vec.JustY();
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
+    }
+
+    public static Vector2 FromAxisFirst(Axis axis, float first, float second)
+    {
+        if (axis == Axis.X)
+        {
+            return new Vector2(first, second);
+        }
+
+        if (axis == Axis.Y)
+        {
+            return new Vector2(second, first);
         }
 
         throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
