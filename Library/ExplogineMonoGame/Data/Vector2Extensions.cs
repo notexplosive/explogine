@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
@@ -109,5 +110,58 @@ public static class Vector2Extensions
     public static Vector2 Truncate(this Vector2 vector)
     {
         return new Vector2((int)vector.X, (int)vector.Y);
+    }
+    
+    public static void SetAxis(this Vector2 vec, Axis axis, float value)
+    {
+        if (axis == Axis.X)
+        {
+            vec.X = value;
+        }
+        else if (axis == Axis.Y)
+        {
+            vec.Y = value;
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
+        }
+    }
+
+    public static float GetAxis(this Vector2 vec, Axis axis)
+    {
+        if (axis == Axis.X)
+        {
+            return vec.X;
+        }
+
+        if (axis == Axis.Y)
+        {
+            return vec.Y;
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
+    }
+    
+    /// <summary>
+    /// If given Axis.X, returns JustX(), if given Axis.Y, returns JustY()
+    /// </summary>
+    /// <param name="vec"></param>
+    /// <param name="axis"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public static Vector2 JustAxis(this Vector2 vec, Axis axis)
+    {
+        if (axis == Axis.X)
+        {
+            return vec.JustX();
+        }
+
+        if (axis == Axis.Y)
+        {
+            return vec.JustY();
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
     }
 }
