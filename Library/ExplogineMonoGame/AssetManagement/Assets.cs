@@ -28,6 +28,11 @@ public class Assets
 
         return result;
     }
+    
+    public Effect GetEffect(string key)
+    {
+        return GetAsset<EffectAsset>(key).Effect;
+    }
 
     public Texture2D GetTexture(string key)
     {
