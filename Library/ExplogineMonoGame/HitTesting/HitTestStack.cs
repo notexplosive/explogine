@@ -10,7 +10,7 @@ public class HitTestStack
 {
     private readonly List<HitTestTarget> _list = new();
     private int _descriptorIndex;
-    private readonly List<Action> _fallThroughEvents = new();
+    private readonly List<Action> _beforeResolveEvents = new();
 
     public event Action<HitTestDescriptor>? Resolved;
 
@@ -26,19 +26,17 @@ public class HitTestStack
         {
             return;
         }
+        
+        foreach (var beforeResolve in _beforeResolveEvents)
+        {
+            beforeResolve();
+        }
 
         var hit = GetTopHit(position);
         if (hit != null)
         {
             hit.Value.Descriptor.Callback?.Invoke();
             Resolved?.Invoke(hit.Value.Descriptor);
-        }
-        else
-        {
-            foreach (var fallThroughEvent in _fallThroughEvents)
-            {
-                fallThroughEvent();
-            }
         }
     }
 
@@ -70,7 +68,7 @@ public class HitTestStack
     public void Clear()
     {
         _list.Clear();
-        _fallThroughEvents.Clear();
+        _beforeResolveEvents.Clear();
         _descriptorIndex = 0;
     }
 
@@ -81,10 +79,10 @@ public class HitTestStack
             .Descriptor;
     }
 
-    public HitTestDescriptor AddFallThrough(Action callback)
+    public HitTestDescriptor AddBeforeResolve(Action callback)
     {
         var descriptor = new HitTestDescriptor(_descriptorIndex++, callback);
-        _fallThroughEvents.Add(callback);
+        _beforeResolveEvents.Add(callback);
         return descriptor;
     }
 
