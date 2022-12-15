@@ -5,13 +5,13 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Data;
 
-public class ResizableRect
+public class RectResizer
 {
     private readonly Drag<RectangleF> _edgeDrag = new();
     private RectEdge _edgeGrabbed;
     private RectEdge _edgeHovered;
 
-    public RectangleF UpdateInput(InputFrameState input, HitTestStack hitTestStack, RectangleF startingRect,
+    public RectangleF GetResizedRect(InputFrameState input, HitTestStack hitTestStack, RectangleF startingRect,
         Depth depth)
     {
         var leftButton = input.Mouse.GetButton(MouseButton.Left);
