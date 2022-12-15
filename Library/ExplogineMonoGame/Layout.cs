@@ -34,7 +34,7 @@ public static class Layout
             if (element.Name is ElementName name)
             {
                 namedRects.Add(name, elementRectangle);
-                
+
                 var oppositeAxis = settings.Axis.Opposite();
                 usedPerpendicularSize = Math.Max(usedPerpendicularSize, elementRectangle.Size.GetAxis(oppositeAxis));
             }
@@ -44,6 +44,92 @@ public static class Layout
             usedPerpendicularSize);
 
         return new Arrangement(namedRects, new RectangleF(startingPosition, totalSize));
+    }
+
+    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, Element[] elements)
+    {
+        var indexOfUnsizedElements = new HashSet<int>();
+        for (var i = 0; i < elements.Length; i++)
+        {
+            var element = elements[i];
+            if (element.X is not FixedEdgeSize || element.Y is not FixedEdgeSize)
+            {
+                indexOfUnsizedElements.Add(i);
+            }
+        }
+
+        var totalAvailableSpace = outerRectangle.Size;
+
+        var numberOfStretchedElementsOnAxis = new Dictionary<Axis, int>
+        {
+            {Axis.X, 0},
+            {Axis.Y, 0}
+        };
+
+        foreach (var element in elements)
+        {
+            foreach (var axis in Axis.Each)
+            {
+                var sizeAlongAxis = element.GetAxis(axis);
+                if (sizeAlongAxis is FixedEdgeSize fixedEdgeSize)
+                {
+                    if (axis == settings.Axis)
+                    {
+                        totalAvailableSpace.SetAxis(axis, totalAvailableSpace.GetAxis(axis) - fixedEdgeSize.Amount);
+                    }
+                }
+            }
+        }
+
+        totalAvailableSpace.SetAxis(settings.Axis,
+            totalAvailableSpace.GetAxis(settings.Axis) - settings.PaddingBetweenElements * (elements.Length - 1));
+
+        // tally up all stretched elements per axis
+        foreach (var i in indexOfUnsizedElements)
+        {
+            foreach (var axis in Axis.Each)
+            {
+                var sizeAlongAxis = elements[i].GetAxis(axis);
+                if (sizeAlongAxis is StretchedEdgeSize)
+                {
+                    numberOfStretchedElementsOnAxis[axis]++;
+                }
+            }
+        }
+
+        // replace stretched sizes with static sizes
+        foreach (var i in indexOfUnsizedElements)
+        {
+            var unsizedElement = elements[i];
+
+            var size = Vector2.Zero;
+            foreach (var axis in Axis.Each)
+            {
+                var sizeAlongAxis = unsizedElement.GetAxis(axis);
+
+                if (sizeAlongAxis is FixedEdgeSize fixedEdgeSize)
+                {
+                    size.SetAxis(axis, fixedEdgeSize.Amount);
+                }
+                else if (sizeAlongAxis is StretchedEdgeSize)
+                {
+                    var isAlong = axis == settings.Axis;
+                    if (isAlong)
+                    {
+                        var spaceToUse = totalAvailableSpace.GetAxis(axis) / numberOfStretchedElementsOnAxis[axis];
+                        size.SetAxis(axis, spaceToUse);
+                    }
+                    else
+                    {
+                        size.SetAxis(axis, totalAvailableSpace.GetAxis(axis));
+                    }
+                }
+            }
+
+            elements[i] = new Element(unsizedElement.Name, new FixedEdgeSize(size.X), new FixedEdgeSize(size.Y));
+        }
+
+        return Layout.CreateRow(outerRectangle.TopLeft, settings, elements);
     }
 
     public class Arrangement : IEnumerable<RectangleF>
@@ -134,6 +220,8 @@ public static class Layout
 
     public readonly record struct ElementBlankName : IElementName;
 
+    public readonly record struct StretchedEdgeSize : IEdgeSize;
+
     public readonly record struct FixedEdgeSize(float Amount) : IEdgeSize
     {
         public static implicit operator float(FixedEdgeSize size)
@@ -149,6 +237,16 @@ public static class Layout
             return new Element(new ElementName(name), new FixedEdgeSize(x), new FixedEdgeSize(y));
         }
 
+        public static Element StretchedHorizontal(string name, float verticalSize)
+        {
+            return new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(verticalSize));
+        }
+
+        public static Element StretchedVertical(string name, float horizontalSize)
+        {
+            return new Element(new ElementName(name), new FixedEdgeSize(horizontalSize), new StretchedEdgeSize());
+        }
+
         public static Element FixedSpacer(float size)
         {
             return new Element(new ElementBlankName(), new FixedEdgeSize(size), new FixedEdgeSize(size));
@@ -162,6 +260,21 @@ public static class Layout
             }
 
             throw new Exception("Cannot get size");
+        }
+
+        public IEdgeSize GetAxis(Axis axis)
+        {
+            if (axis == Axis.X)
+            {
+                return X;
+            }
+
+            if (axis == Axis.Y)
+            {
+                return Y;
+            }
+
+            throw new Exception("Unknown axis");
         }
     }
 }
