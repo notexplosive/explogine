@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
@@ -50,7 +51,7 @@ public static class Layout
 
         public IEnumerator<RectangleF> GetEnumerator()
         {
-            foreach(var rect in _namedRects.Values)
+            foreach (var rect in _namedRects.Values)
             {
                 yield return rect;
             }
@@ -59,6 +60,28 @@ public static class Layout
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public List<RectangleF> GetElements(string name)
+        {
+            return _namedRects.Get(name);
+        }
+        
+        public RectangleF GetElement(string name)
+        {
+            var matchingElements = GetElements(name);
+
+            if (matchingElements.Count == 0)
+            {
+                throw new Exception($"No element found '{name}'");
+            }
+            
+            if (matchingElements.Count > 1)
+            {
+                Client.Debug.LogWarning($"Attempted to get element '{name}' but found {matchingElements.Count} matches.");
+            }
+
+            return matchingElements[0];
         }
     }
 
