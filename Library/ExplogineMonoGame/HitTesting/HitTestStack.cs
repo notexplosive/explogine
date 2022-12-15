@@ -10,6 +10,7 @@ public class HitTestStack
 {
     private readonly List<HitTestTarget> _list = new();
     private int _descriptorIndex;
+    private readonly List<Action> _fallThroughEvents = new();
 
     public event Action<HitTestDescriptor>? Resolved;
 
@@ -25,12 +26,19 @@ public class HitTestStack
         {
             return;
         }
-        
+
         var hit = GetTopHit(position);
         if (hit != null)
         {
             hit.Value.Descriptor.Callback?.Invoke();
             Resolved?.Invoke(hit.Value.Descriptor);
+        }
+        else
+        {
+            foreach (var fallThroughEvent in _fallThroughEvents)
+            {
+                fallThroughEvent();
+            }
         }
     }
 
@@ -62,19 +70,31 @@ public class HitTestStack
     public void Clear()
     {
         _list.Clear();
+        _fallThroughEvents.Clear();
         _descriptorIndex = 0;
     }
 
-    public HitTestDescriptor Add(RectangleF rect, Depth depth, Action? callback = null, HitTestLayer layer = HitTestLayer.Game)
+    public HitTestDescriptor Add(RectangleF rect, Depth depth, Action? callback = null,
+        HitTestLayer layer = HitTestLayer.Game)
     {
-        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++, callback), rect, depth, layer)).Descriptor;
+        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++, callback), rect, depth, layer))
+            .Descriptor;
     }
 
+    public HitTestDescriptor AddFallThrough(Action callback)
+    {
+        var descriptor = new HitTestDescriptor(_descriptorIndex++, callback);
+        _fallThroughEvents.Add(callback);
+        return descriptor;
+    }
+
+    // why do we even bother with descriptors?
     public HitTestDescriptor Add(RectangleF rect, Depth depth, Matrix worldMatrix, Action? callback = null)
     {
         // Assumes that if you're using WorldMatrix you don't care about debug layer.
         // Debug layer is always in screen-space
-        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++, callback), rect, depth, HitTestLayer.Game,
+        return AddTarget(new HitTestTarget(new HitTestDescriptor(_descriptorIndex++, callback), rect, depth,
+            HitTestLayer.Game,
             worldMatrix)).Descriptor;
     }
 }
