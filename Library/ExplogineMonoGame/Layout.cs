@@ -21,10 +21,12 @@ public static class Layout
         var namedRects = new OneToMany<string, RectangleF>();
         var alongPosition = new Vector2();
         var usedPerpendicularSize = 0f;
+
         for (var i = 0; i < elements.Length; i++)
         {
             var element = elements[i];
             var elementRectangle = new RectangleF(startingPosition + alongPosition, element.GetSize());
+
             alongPosition += elementRectangle.Size.JustAxis(settings.Axis);
             if (i < elements.Length - 1)
             {
@@ -38,6 +40,20 @@ public static class Layout
                 var oppositeAxis = settings.Axis.Opposite();
                 usedPerpendicularSize = Math.Max(usedPerpendicularSize, elementRectangle.Size.GetAxis(oppositeAxis));
             }
+
+            if (element.Children.HasValue)
+            {
+                var childElements = Layout.ConvertToFixedElements(element.Children.Value.Elements,
+                    element.Children.Value.RowSettings, element.GetSize());
+
+                var childArrangement = Layout.CreateRow(elementRectangle.TopLeft,
+                    element.Children.Value.RowSettings, childElements);
+
+                foreach (var keyVal in childArrangement)
+                {
+                    namedRects.Add(keyVal.Key, keyVal.Value);
+                }
+            }
         }
 
         var totalSize = Vector2Extensions.FromAxisFirst(settings.Axis, alongPosition.GetAxis(settings.Axis),
@@ -47,6 +63,12 @@ public static class Layout
     }
 
     public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements)
+    {
+        var elements = Layout.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
+        return Layout.CreateRow(outerRectangle.TopLeft, settings, elements);
+    }
+
+    private static Element[] ConvertToFixedElements(IElement[] rawElements, RowSettings settings, Vector2 outerSize)
     {
         var elements = Layout.GetElements(rawElements, settings.Axis);
         var indexOfUnsizedElements = new HashSet<int>();
@@ -59,7 +81,7 @@ public static class Layout
             }
         }
 
-        var totalAvailableSpace = outerRectangle.Size;
+        var totalAvailableSpace = outerSize;
 
         var numberOfStretchedElementsOnAxis = new Dictionary<Axis, int>
         {
@@ -127,10 +149,10 @@ public static class Layout
                 }
             }
 
-            elements[i] = new Element(unsizedElement.Name, new FixedEdgeSize(size.X), new FixedEdgeSize(size.Y));
+            elements[i] = unsizedElement with {X = new FixedEdgeSize(size.X), Y = new FixedEdgeSize(size.Y)};
         }
 
-        return Layout.CreateRow(outerRectangle.TopLeft, settings, elements);
+        return elements;
     }
 
     private static Element[] GetElements(IElement[] rawElements, Axis axis)
@@ -158,7 +180,7 @@ public static class Layout
         return result;
     }
 
-    public class Arrangement : IEnumerable<RectangleF>
+    public class Arrangement : IEnumerable<KeyValuePair<string, RectangleF>>
     {
         private readonly OneToMany<string, RectangleF> _namedRects;
 
@@ -170,11 +192,11 @@ public static class Layout
 
         public RectangleF UsedSpace { get; }
 
-        public IEnumerator<RectangleF> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, RectangleF>> GetEnumerator()
         {
-            foreach (var rect in _namedRects.Values)
+            foreach (var keyValuePair in _namedRects)
             {
-                yield return rect;
+                yield return keyValuePair;
             }
         }
 
@@ -183,14 +205,14 @@ public static class Layout
             return GetEnumerator();
         }
 
-        public List<RectangleF> GetElements(string name)
+        public List<RectangleF> FindElements(string name)
         {
             return _namedRects.Get(name);
         }
 
-        public RectangleF GetElement(string name)
+        public RectangleF FindElement(string name)
         {
-            var matchingElements = GetElements(name);
+            var matchingElements = FindElements(name);
 
             if (matchingElements.Count == 0)
             {
@@ -204,6 +226,14 @@ public static class Layout
             }
 
             return matchingElements[0];
+        }
+
+        public IEnumerable<RectangleF> AllElements()
+        {
+            foreach (var rect in _namedRects.Values)
+            {
+                yield return rect;
+            }
         }
     }
 
@@ -260,7 +290,10 @@ public static class Layout
         }
     }
 
-    public readonly record struct Element(IElementName Name, IEdgeSize X, IEdgeSize Y) : IElement
+    public readonly record struct ElementChildren(RowSettings RowSettings, IElement[] Elements);
+
+    public readonly record struct Element
+        (IElementName Name, IEdgeSize X, IEdgeSize Y, ElementChildren? Children = null) : IElement
     {
         public static Element Fixed(string name, float x, float y)
         {
@@ -281,7 +314,7 @@ public static class Layout
         {
             return new Element(new ElementBlankName(), new FixedEdgeSize(size), new FixedEdgeSize(size));
         }
-        
+
         public static Element StretchedBoth(string name)
         {
             return new Element(new ElementName(name), new StretchedEdgeSize(), new StretchedEdgeSize());
@@ -334,6 +367,11 @@ public static class Layout
             }
 
             throw new Exception("Cannot get size");
+        }
+
+        public Element WithChildren(RowSettings rowSettings, IElement[] elements)
+        {
+            return this with {Children = new ElementChildren(rowSettings, elements)};
         }
     }
 
