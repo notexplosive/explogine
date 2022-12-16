@@ -9,23 +9,68 @@ namespace ExplogineMonoGame;
 
 public static class Layout
 {
-    /// <summary>
-    ///     Creates a row of rectangles
-    /// </summary>
-    /// <param name="startingPosition">Top left position of the first rectangle</param>
-    /// <param name="settings"></param>
-    /// <param name="elements">Specifications for each element in the row</param>
-    /// <returns></returns>
-    public static Arrangement CreateRow(Vector2 startingPosition, RowSettings settings, Element[] elements)
+    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements)
     {
+        outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
+        var elements = Layout.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
         var namedRects = new OneToMany<string, RectangleF>();
-        var alongPosition = new Vector2();
+        var estimatedPosition = new Vector2();
         var usedPerpendicularSize = 0f;
 
         for (var i = 0; i < elements.Length; i++)
         {
             var element = elements[i];
-            var elementRectangle = new RectangleF(startingPosition + alongPosition, element.GetSize());
+            var naiveRectangle = new RectangleF(outerRectangle.TopLeft + estimatedPosition, element.GetSize());
+            estimatedPosition += naiveRectangle.Size.JustAxis(settings.Axis);
+            if (i < elements.Length - 1)
+            {
+                estimatedPosition += new Vector2(settings.PaddingBetweenElements).JustAxis(settings.Axis);
+            }
+            
+            if (element.Name is ElementName name)
+            {
+                var oppositeAxis = settings.Axis.Opposite();
+                usedPerpendicularSize = Math.Max(usedPerpendicularSize, naiveRectangle.Size.GetAxis(oppositeAxis));
+            }
+        }
+        
+        var usedSize = Vector2Extensions.FromAxisFirst(settings.Axis, estimatedPosition.GetAxis(settings.Axis),
+            usedPerpendicularSize);
+
+        var usedRectangle = RectangleF.FromSizeAlignedWithin(outerRectangle, usedSize, settings.Alignment);
+        var alongPosition = new Vector2();
+        for (var i = 0; i < elements.Length; i++)
+        {
+            var element = elements[i];
+            var unalignedRectangle = new RectangleF(usedRectangle.TopLeft + alongPosition, element.GetSize());
+            var alignedPosition = unalignedRectangle.Location;
+
+            if (settings.Orientation == Orientation.Horizontal)
+            {
+                if (settings.Alignment.Vertical == VerticalAlignment.Center)
+                {
+                    alignedPosition.Y += usedRectangle.Size.Y / 2 - unalignedRectangle.Size.Y / 2f;
+                }
+                
+                if (settings.Alignment.Vertical == VerticalAlignment.Bottom)
+                {
+                    alignedPosition.Y += usedRectangle.Size.Y - unalignedRectangle.Size.Y;
+                }
+            }
+            else
+            {
+                if (settings.Alignment.Horizontal == HorizontalAlignment.Center)
+                {
+                    alignedPosition.X += usedRectangle.Size.X / 2 - unalignedRectangle.Size.X / 2f;
+                }
+                
+                if (settings.Alignment.Horizontal == HorizontalAlignment.Right)
+                {
+                    alignedPosition.X += usedRectangle.Size.X - unalignedRectangle.Size.X;
+                }
+            }
+
+            var elementRectangle = new RectangleF(alignedPosition,unalignedRectangle.Size);
 
             alongPosition += elementRectangle.Size.JustAxis(settings.Axis);
             if (i < elements.Length - 1)
@@ -36,9 +81,6 @@ public static class Layout
             if (element.Name is ElementName name)
             {
                 namedRects.Add(name, elementRectangle);
-
-                var oppositeAxis = settings.Axis.Opposite();
-                usedPerpendicularSize = Math.Max(usedPerpendicularSize, elementRectangle.Size.GetAxis(oppositeAxis));
             }
 
             if (element.Children.HasValue)
@@ -51,17 +93,7 @@ public static class Layout
             }
         }
 
-        var totalSize = Vector2Extensions.FromAxisFirst(settings.Axis, alongPosition.GetAxis(settings.Axis),
-            usedPerpendicularSize);
-
-        return new Arrangement(namedRects, new RectangleF(startingPosition, totalSize));
-    }
-
-    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements)
-    {
-        outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
-        var elements = Layout.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
-        return Layout.CreateRow(outerRectangle.TopLeft, settings, elements);
+        return new Arrangement(namedRects, usedRectangle);
     }
 
     private static Element[] ConvertToFixedElements(IElement[] rawElements, RowSettings settings, Vector2 outerSize)
@@ -233,7 +265,7 @@ public static class Layout
         }
     }
 
-    public readonly record struct RowSettings(Orientation Orientation = Orientation.Horizontal, int PaddingBetweenElements = 0, Vector2 Margin = default)
+    public readonly record struct RowSettings(Orientation Orientation = Orientation.Horizontal, int PaddingBetweenElements = 0, Vector2 Margin = default, Alignment Alignment = default)
     {
         public Axis Axis
         {
