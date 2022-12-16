@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
@@ -49,7 +48,7 @@ public static class Layout
 
     public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements)
     {
-        var elements = GetElements(rawElements, settings.Axis);
+        var elements = Layout.GetElements(rawElements, settings.Axis);
         var indexOfUnsizedElements = new HashSet<int>();
         for (var i = 0; i < elements.Length; i++)
         {
@@ -140,7 +139,20 @@ public static class Layout
 
         for (var i = 0; i < rawElements.Length; i++)
         {
-            result[i] = rawElements[i].GetElement(axis);
+            var rawElement = rawElements[i];
+
+            if (rawElement is Element element)
+            {
+                result[i] = element;
+            }
+            else if (rawElement is DynamicElement dynamicElement)
+            {
+                result[i] = dynamicElement.GetElement(axis);
+            }
+            else
+            {
+                throw new Exception($"Unknown element type: {result[i].GetType().Name}");
+            }
         }
 
         return result;
@@ -221,7 +233,6 @@ public static class Layout
 
     public interface IElement
     {
-        public Element GetElement(Axis alongAxis);
     }
 
     public readonly record struct ElementName(string Text) : IElementName
@@ -237,9 +248,9 @@ public static class Layout
         }
     }
 
-    public readonly record struct ElementBlankName : IElementName;
+    private readonly record struct ElementBlankName : IElementName;
 
-    public readonly record struct StretchedEdgeSize : IEdgeSize;
+    private readonly record struct StretchedEdgeSize : IEdgeSize;
 
     public readonly record struct FixedEdgeSize(float Amount) : IEdgeSize
     {
@@ -251,11 +262,6 @@ public static class Layout
 
     public readonly record struct Element(IElementName Name, IEdgeSize X, IEdgeSize Y) : IElement
     {
-        public Element GetElement(Axis axis)
-        {
-            return this;
-        }
-
         public static Element Fixed(string name, float x, float y)
         {
             return new Element(new ElementName(name), new FixedEdgeSize(x), new FixedEdgeSize(y));
@@ -275,14 +281,21 @@ public static class Layout
         {
             return new Element(new ElementBlankName(), new FixedEdgeSize(size), new FixedEdgeSize(size));
         }
+        
+        public static Element StretchedBoth(string name)
+        {
+            return new Element(new ElementName(name), new StretchedEdgeSize(), new StretchedEdgeSize());
+        }
 
         public static IElement StretchedAlong(string name, float perpendicularSize)
         {
             return new DynamicElement(alongAxis =>
             {
-                return alongAxis.ReturnIfXElseY<Element>(
-                    () => new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(perpendicularSize)),
-                    () => new Element(new ElementName(name), new FixedEdgeSize(perpendicularSize), new StretchedEdgeSize())
+                return alongAxis.ReturnIfXElseY(
+                    () => new Element(new ElementName(name), new StretchedEdgeSize(),
+                        new FixedEdgeSize(perpendicularSize)),
+                    () => new Element(new ElementName(name), new FixedEdgeSize(perpendicularSize),
+                        new StretchedEdgeSize())
                 );
             });
         }
@@ -291,7 +304,7 @@ public static class Layout
         {
             return new DynamicElement(alongAxis =>
             {
-                return alongAxis.ReturnIfXElseY<Element>(
+                return alongAxis.ReturnIfXElseY(
                     () => new Element(new ElementName(name), new FixedEdgeSize(alongSize), new StretchedEdgeSize()),
                     () => new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(alongSize))
                 );
@@ -323,8 +336,8 @@ public static class Layout
             throw new Exception("Cannot get size");
         }
     }
-    
-    public readonly record struct DynamicElement : IElement
+
+    private readonly record struct DynamicElement : IElement
     {
         private readonly Func<Axis, Element> _fromAxisFunction;
 
