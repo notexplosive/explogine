@@ -5,7 +5,7 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
-namespace ExplogineMonoGame;
+namespace ExplogineMonoGame.Layout;
 
 public static class Layout
 {
@@ -270,23 +270,6 @@ public static class Layout
             foreach (var rect in _namedRects.Values)
             {
                 yield return rect;
-            }
-        }
-    }
-
-    public readonly record struct RowSettings(Orientation Orientation = Orientation.Horizontal,
-        int PaddingBetweenElements = 0, Vector2 Margin = default, Alignment Alignment = default)
-    {
-        public Axis Axis
-        {
-            get
-            {
-                return Orientation switch
-                {
-                    Orientation.Horizontal => Axis.X,
-                    Orientation.Vertical => Axis.Y,
-                    _ => throw new Exception("Invalid orientation")
-                };
             }
         }
     }
