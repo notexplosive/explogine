@@ -35,6 +35,7 @@ public class RenderCanvas
     public void DrawWithin(Action<Painter> drawAction)
     {
         Client.Graphics.PushCanvas(Canvas);
+        Client.Graphics.Painter.Clear(Color.Black);
         drawAction(Client.Graphics.Painter);
         Client.Graphics.PopCanvas();
     }
