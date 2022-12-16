@@ -7,11 +7,11 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Layout;
 
-public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
+public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutElement>>
 {
-    private readonly OneToMany<string, BakedElement> _namedRects;
+    private readonly OneToMany<string, BakedLayoutElement> _namedRects;
 
-    public LayoutArrangement(OneToMany<string, BakedElement> namedRects, RectangleF usedSpace)
+    public LayoutArrangement(OneToMany<string, BakedLayoutElement> namedRects, RectangleF usedSpace)
     {
         _namedRects = namedRects;
         UsedSpace = usedSpace;
@@ -19,7 +19,7 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
 
     public RectangleF UsedSpace { get; }
 
-    public IEnumerator<KeyValuePair<string, BakedElement>> GetEnumerator()
+    public IEnumerator<KeyValuePair<string, BakedLayoutElement>> GetEnumerator()
     {
         foreach (var keyValuePair in _namedRects)
         {
@@ -32,17 +32,17 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
         return GetEnumerator();
     }
 
-    public List<BakedElement> FindElements(string name)
+    public List<BakedLayoutElement> FindElements(string name)
     {
         if (_namedRects.ContainsKey(name))
         {
             return _namedRects.Get(name);
         }
 
-        return new List<BakedElement>();
+        return new List<BakedLayoutElement>();
     }
 
-    public BakedElement FindElement(string name)
+    public BakedLayoutElement FindElement(string name)
     {
         var matchingElements = FindElements(name);
 
@@ -60,7 +60,7 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
         return matchingElements[0];
     }
 
-    public IEnumerable<BakedElement> AllElements()
+    public IEnumerable<BakedLayoutElement> AllElements()
     {
         foreach (var rect in _namedRects.Values)
         {
@@ -68,12 +68,12 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
         }
     }
     
-    public static LayoutArrangement Create(RectangleF outerRectangle, RowSettings settings, Element[] rawElements,
+    public static LayoutArrangement Create(RectangleF outerRectangle, ArrangementSettings settings, LayoutElement[] rawElements,
         int nestLevel = 0)
     {
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
         var elements = ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
-        var namedRects = new OneToMany<string, BakedElement>();
+        var namedRects = new OneToMany<string, BakedLayoutElement>();
         var estimatedPosition = new Vector2();
         var usedPerpendicularSize = 0f;
 
@@ -140,12 +140,12 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
 
             if (element.Name is ElementName name)
             {
-                namedRects.Add(name, new BakedElement(elementRectangle, name.Text, nestLevel));
+                namedRects.Add(name, new BakedLayoutElement(elementRectangle, name.Text, nestLevel));
             }
 
             if (element.Children.HasValue)
             {
-                var childArrangement = LayoutArrangement.Create(elementRectangle, element.Children.Value.RowSettings,
+                var childArrangement = LayoutArrangement.Create(elementRectangle, element.Children.Value.ArrangementSettings,
                     element.Children.Value.Elements, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
@@ -157,7 +157,7 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
         return new LayoutArrangement(namedRects, usedRectangle);
     }
 
-    private static Element[] ConvertToFixedElements(Element[] elements, RowSettings settings, Vector2 outerSize)
+    private static LayoutElement[] ConvertToFixedElements(LayoutElement[] elements, ArrangementSettings settings, Vector2 outerSize)
     {
         var indexOfUnsizedElements = new HashSet<int>();
         for (var i = 0; i < elements.Length; i++)

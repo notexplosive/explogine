@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Layout;
 
-public readonly record struct Element
+public readonly record struct LayoutElement
     (IElementName Name, IEdgeSize X, IEdgeSize Y, ElementChildren? Children = null)
 {
     public IEdgeSize GetAxis(Axis axis)

@@ -1,3 +1,3 @@
 ﻿namespace ExplogineMonoGame.Layout;
 
-public readonly record struct ElementChildren(RowSettings RowSettings, Element[] Elements);
+public readonly record struct ElementChildren(ArrangementSettings ArrangementSettings, LayoutElement[] Elements);
