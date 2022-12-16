@@ -9,11 +9,12 @@ namespace ExplogineMonoGame;
 
 public static class Layout
 {
-    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements)
+    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements,
+        int nestLevel = 0)
     {
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
         var elements = Layout.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
-        var namedRects = new OneToMany<string, RectangleF>();
+        var namedRects = new OneToMany<string, BakedElement>();
         var estimatedPosition = new Vector2();
         var usedPerpendicularSize = 0f;
 
@@ -26,14 +27,14 @@ public static class Layout
             {
                 estimatedPosition += new Vector2(settings.PaddingBetweenElements).JustAxis(settings.Axis);
             }
-            
+
             if (element.Name is ElementName name)
             {
                 var oppositeAxis = settings.Axis.Opposite();
                 usedPerpendicularSize = Math.Max(usedPerpendicularSize, naiveRectangle.Size.GetAxis(oppositeAxis));
             }
         }
-        
+
         var usedSize = Vector2Extensions.FromAxisFirst(settings.Axis, estimatedPosition.GetAxis(settings.Axis),
             usedPerpendicularSize);
 
@@ -51,7 +52,7 @@ public static class Layout
                 {
                     alignedPosition.Y += usedRectangle.Size.Y / 2 - unalignedRectangle.Size.Y / 2f;
                 }
-                
+
                 if (settings.Alignment.Vertical == VerticalAlignment.Bottom)
                 {
                     alignedPosition.Y += usedRectangle.Size.Y - unalignedRectangle.Size.Y;
@@ -63,14 +64,14 @@ public static class Layout
                 {
                     alignedPosition.X += usedRectangle.Size.X / 2 - unalignedRectangle.Size.X / 2f;
                 }
-                
+
                 if (settings.Alignment.Horizontal == HorizontalAlignment.Right)
                 {
                     alignedPosition.X += usedRectangle.Size.X - unalignedRectangle.Size.X;
                 }
             }
 
-            var elementRectangle = new RectangleF(alignedPosition,unalignedRectangle.Size);
+            var elementRectangle = new RectangleF(alignedPosition, unalignedRectangle.Size);
 
             alongPosition += elementRectangle.Size.JustAxis(settings.Axis);
             if (i < elements.Length - 1)
@@ -80,12 +81,13 @@ public static class Layout
 
             if (element.Name is ElementName name)
             {
-                namedRects.Add(name, elementRectangle);
+                namedRects.Add(name, new BakedElement(elementRectangle, name.Text, nestLevel));
             }
 
             if (element.Children.HasValue)
             {
-                var childArrangement = Layout.CreateRowWithin(elementRectangle, element.Children.Value.RowSettings, element.Children.Value.Elements);
+                var childArrangement = Layout.CreateRowWithin(elementRectangle, element.Children.Value.RowSettings,
+                    element.Children.Value.Elements, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
                     namedRects.Add(keyVal.Key, keyVal.Value);
@@ -208,11 +210,13 @@ public static class Layout
         return result;
     }
 
-    public class Arrangement : IEnumerable<KeyValuePair<string, RectangleF>>
-    {
-        private readonly OneToMany<string, RectangleF> _namedRects;
+    public readonly record struct BakedElement(RectangleF Rectangle, string Name, int NestingLevel);
 
-        public Arrangement(OneToMany<string, RectangleF> namedRects, RectangleF usedSpace)
+    public class Arrangement : IEnumerable<KeyValuePair<string, BakedElement>>
+    {
+        private readonly OneToMany<string, BakedElement> _namedRects;
+
+        public Arrangement(OneToMany<string, BakedElement> namedRects, RectangleF usedSpace)
         {
             _namedRects = namedRects;
             UsedSpace = usedSpace;
@@ -220,7 +224,7 @@ public static class Layout
 
         public RectangleF UsedSpace { get; }
 
-        public IEnumerator<KeyValuePair<string, RectangleF>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, BakedElement>> GetEnumerator()
         {
             foreach (var keyValuePair in _namedRects)
             {
@@ -233,12 +237,17 @@ public static class Layout
             return GetEnumerator();
         }
 
-        public List<RectangleF> FindElements(string name)
+        public List<BakedElement> FindElements(string name)
         {
-            return _namedRects.Get(name);
+            if (_namedRects.ContainsKey(name))
+            {
+                return _namedRects.Get(name);
+            }
+
+            return new List<BakedElement>();
         }
 
-        public RectangleF FindElement(string name)
+        public BakedElement FindElement(string name)
         {
             var matchingElements = FindElements(name);
 
@@ -256,7 +265,7 @@ public static class Layout
             return matchingElements[0];
         }
 
-        public IEnumerable<RectangleF> AllElements()
+        public IEnumerable<BakedElement> AllElements()
         {
             foreach (var rect in _namedRects.Values)
             {
@@ -265,7 +274,8 @@ public static class Layout
         }
     }
 
-    public readonly record struct RowSettings(Orientation Orientation = Orientation.Horizontal, int PaddingBetweenElements = 0, Vector2 Margin = default, Alignment Alignment = default)
+    public readonly record struct RowSettings(Orientation Orientation = Orientation.Horizontal,
+        int PaddingBetweenElements = 0, Vector2 Margin = default, Alignment Alignment = default)
     {
         public Axis Axis
         {
