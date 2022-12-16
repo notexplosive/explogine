@@ -1,4 +1,7 @@
-﻿namespace ExplogineMonoGame.Layout;
+﻿using System;
+using ExplogineCore.Data;
+
+namespace ExplogineMonoGame.Layout;
 
 public static class L
 {
@@ -7,47 +10,36 @@ public static class L
         return new Element(new ElementName(name), new FixedEdgeSize(x), new FixedEdgeSize(y));
     }
 
-    public static Element StretchedHorizontal(string name, float verticalSize)
+    public static Element Group(Func<Element> func, RowSettings settings, Element[] children)
     {
-        return new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(verticalSize));
+        return func() with {Children = new ElementChildren(settings, children)};
     }
 
-    public static Element StretchedVertical(string name, float horizontalSize)
+    public static Element FillVertical(string name, float horizontalSize)
     {
         return new Element(new ElementName(name), new FixedEdgeSize(horizontalSize), new StretchedEdgeSize());
     }
 
-    public static Element FixedSpacer(float size)
+    public static Element FillHorizontal(string name, float verticalSize)
     {
-        return new Element(new ElementBlankName(), new FixedEdgeSize(size), new FixedEdgeSize(size));
+        return new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(verticalSize));
     }
 
-    public static Element StretchedBoth(string name)
+    public static Element Fill(Orientation orientation, string name, float perpendicularSize)
+    {
+        switch (orientation)
+        {
+            case Orientation.Horizontal:
+                return FillHorizontal(name, perpendicularSize);
+            case Orientation.Vertical:
+                return FillHorizontal(name, perpendicularSize);
+            default:
+                throw new Exception("Unknown orientation");
+        }
+    }
+
+    public static Element FillBoth(string name)
     {
         return new Element(new ElementName(name), new StretchedEdgeSize(), new StretchedEdgeSize());
-    }
-
-    public static IElement StretchedAlong(string name, float perpendicularSize)
-    {
-        return new DynamicElement(alongAxis =>
-        {
-            return alongAxis.ReturnIfXElseY(
-                () => new Element(new ElementName(name), new StretchedEdgeSize(),
-                    new FixedEdgeSize(perpendicularSize)),
-                () => new Element(new ElementName(name), new FixedEdgeSize(perpendicularSize),
-                    new StretchedEdgeSize())
-            );
-        });
-    }
-
-    public static IElement StretchedPerpendicular(string name, float alongSize)
-    {
-        return new DynamicElement(alongAxis =>
-        {
-            return alongAxis.ReturnIfXElseY(
-                () => new Element(new ElementName(name), new FixedEdgeSize(alongSize), new StretchedEdgeSize()),
-                () => new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(alongSize))
-            );
-        });
     }
 }

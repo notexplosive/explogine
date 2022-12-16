@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 namespace ExplogineMonoGame.Layout;
 
 public readonly record struct Element
-    (IElementName Name, IEdgeSize X, IEdgeSize Y, ElementChildren? Children = null) : IElement
+    (IElementName Name, IEdgeSize X, IEdgeSize Y, ElementChildren? Children = null)
 {
     public IEdgeSize GetAxis(Axis axis)
     {
@@ -30,10 +30,5 @@ public readonly record struct Element
         }
 
         throw new Exception("Cannot get size");
-    }
-
-    public Element WithChildren(RowSettings rowSettings, IElement[] elements)
-    {
-        return this with {Children = new ElementChildren(rowSettings, elements)};
     }
 }

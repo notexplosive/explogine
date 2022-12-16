@@ -7,11 +7,11 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Layout;
 
-public class Arrangement : IEnumerable<KeyValuePair<string, BakedElement>>
+public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedElement>>
 {
     private readonly OneToMany<string, BakedElement> _namedRects;
 
-    public Arrangement(OneToMany<string, BakedElement> namedRects, RectangleF usedSpace)
+    public LayoutArrangement(OneToMany<string, BakedElement> namedRects, RectangleF usedSpace)
     {
         _namedRects = namedRects;
         UsedSpace = usedSpace;
@@ -68,7 +68,7 @@ public class Arrangement : IEnumerable<KeyValuePair<string, BakedElement>>
         }
     }
     
-    public static Arrangement Create(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements,
+    public static LayoutArrangement Create(RectangleF outerRectangle, RowSettings settings, Element[] rawElements,
         int nestLevel = 0)
     {
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
@@ -145,7 +145,7 @@ public class Arrangement : IEnumerable<KeyValuePair<string, BakedElement>>
 
             if (element.Children.HasValue)
             {
-                var childArrangement = Arrangement.Create(elementRectangle, element.Children.Value.RowSettings,
+                var childArrangement = LayoutArrangement.Create(elementRectangle, element.Children.Value.RowSettings,
                     element.Children.Value.Elements, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
@@ -154,32 +154,11 @@ public class Arrangement : IEnumerable<KeyValuePair<string, BakedElement>>
             }
         }
 
-        return new Arrangement(namedRects, usedRectangle);
+        return new LayoutArrangement(namedRects, usedRectangle);
     }
 
-    private static Element[] ConvertToFixedElements(IElement[] rawElements, RowSettings settings, Vector2 outerSize)
+    private static Element[] ConvertToFixedElements(Element[] elements, RowSettings settings, Vector2 outerSize)
     {
-        var result = new Element[rawElements.Length];
-
-        for (var i = 0; i < rawElements.Length; i++)
-        {
-            var rawElement = rawElements[i];
-
-            if (rawElement is Element element1)
-            {
-                result[i] = element1;
-            }
-            else if (rawElement is DynamicElement dynamicElement)
-            {
-                result[i] = dynamicElement.GetElement(settings.Axis);
-            }
-            else
-            {
-                throw new Exception($"Unknown element type: {result[i].GetType().Name}");
-            }
-        }
-
-        var elements = result;
         var indexOfUnsizedElements = new HashSet<int>();
         for (var i = 0; i < elements.Length; i++)
         {
