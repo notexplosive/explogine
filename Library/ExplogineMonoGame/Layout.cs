@@ -43,12 +43,7 @@ public static class Layout
 
             if (element.Children.HasValue)
             {
-                var childElements = Layout.ConvertToFixedElements(element.Children.Value.Elements,
-                    element.Children.Value.RowSettings, element.GetSize());
-
-                var childArrangement = Layout.CreateRow(elementRectangle.TopLeft,
-                    element.Children.Value.RowSettings, childElements);
-
+                var childArrangement = Layout.CreateRowWithin(elementRectangle, element.Children.Value.RowSettings, element.Children.Value.Elements);
                 foreach (var keyVal in childArrangement)
                 {
                     namedRects.Add(keyVal.Key, keyVal.Value);
@@ -64,6 +59,7 @@ public static class Layout
 
     public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements)
     {
+        outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
         var elements = Layout.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
         return Layout.CreateRow(outerRectangle.TopLeft, settings, elements);
     }
@@ -237,7 +233,7 @@ public static class Layout
         }
     }
 
-    public readonly record struct RowSettings(Orientation Orientation, int PaddingBetweenElements)
+    public readonly record struct RowSettings(Orientation Orientation = Orientation.Horizontal, int PaddingBetweenElements = 0, Vector2 Margin = default)
     {
         public Axis Axis
         {
