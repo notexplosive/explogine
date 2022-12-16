@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
@@ -46,8 +47,9 @@ public static class Layout
         return new Arrangement(namedRects, new RectangleF(startingPosition, totalSize));
     }
 
-    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, Element[] elements)
+    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements)
     {
+        var elements = GetElements(rawElements, settings.Axis);
         var indexOfUnsizedElements = new HashSet<int>();
         for (var i = 0; i < elements.Length; i++)
         {
@@ -132,6 +134,18 @@ public static class Layout
         return Layout.CreateRow(outerRectangle.TopLeft, settings, elements);
     }
 
+    private static Element[] GetElements(IElement[] rawElements, Axis axis)
+    {
+        var result = new Element[rawElements.Length];
+
+        for (var i = 0; i < rawElements.Length; i++)
+        {
+            result[i] = rawElements[i].GetElement(axis);
+        }
+
+        return result;
+    }
+
     public class Arrangement : IEnumerable<RectangleF>
     {
         private readonly OneToMany<string, RectangleF> _namedRects;
@@ -205,6 +219,11 @@ public static class Layout
     {
     }
 
+    public interface IElement
+    {
+        public Element GetElement(Axis alongAxis);
+    }
+
     public readonly record struct ElementName(string Text) : IElementName
     {
         public override string ToString()
@@ -230,8 +249,13 @@ public static class Layout
         }
     }
 
-    public readonly record struct Element(IElementName Name, IEdgeSize X, IEdgeSize Y)
+    public readonly record struct Element(IElementName Name, IEdgeSize X, IEdgeSize Y) : IElement
     {
+        public Element GetElement(Axis axis)
+        {
+            return this;
+        }
+
         public static Element Fixed(string name, float x, float y)
         {
             return new Element(new ElementName(name), new FixedEdgeSize(x), new FixedEdgeSize(y));
@@ -252,14 +276,26 @@ public static class Layout
             return new Element(new ElementBlankName(), new FixedEdgeSize(size), new FixedEdgeSize(size));
         }
 
-        public Vector2 GetSize()
+        public static IElement StretchedAlong(string name, float perpendicularSize)
         {
-            if (X is FixedEdgeSize fixedX && Y is FixedEdgeSize fixedY)
+            return new DynamicElement(alongAxis =>
             {
-                return new Vector2(fixedX, fixedY);
-            }
+                return alongAxis.ReturnIfXElseY<Element>(
+                    () => new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(perpendicularSize)),
+                    () => new Element(new ElementName(name), new FixedEdgeSize(perpendicularSize), new StretchedEdgeSize())
+                );
+            });
+        }
 
-            throw new Exception("Cannot get size");
+        public static IElement StretchedPerpendicular(string name, float alongSize)
+        {
+            return new DynamicElement(alongAxis =>
+            {
+                return alongAxis.ReturnIfXElseY<Element>(
+                    () => new Element(new ElementName(name), new FixedEdgeSize(alongSize), new StretchedEdgeSize()),
+                    () => new Element(new ElementName(name), new StretchedEdgeSize(), new FixedEdgeSize(alongSize))
+                );
+            });
         }
 
         public IEdgeSize GetAxis(Axis axis)
@@ -275,6 +311,31 @@ public static class Layout
             }
 
             throw new Exception("Unknown axis");
+        }
+
+        public Vector2 GetSize()
+        {
+            if (X is FixedEdgeSize fixedX && Y is FixedEdgeSize fixedY)
+            {
+                return new Vector2(fixedX, fixedY);
+            }
+
+            throw new Exception("Cannot get size");
+        }
+    }
+    
+    public readonly record struct DynamicElement : IElement
+    {
+        private readonly Func<Axis, Element> _fromAxisFunction;
+
+        public DynamicElement(Func<Axis, Element> fromAxisFunction)
+        {
+            _fromAxisFunction = fromAxisFunction;
+        }
+
+        public Element GetElement(Axis axis)
+        {
+            return _fromAxisFunction(axis);
         }
     }
 }
