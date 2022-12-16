@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.Contracts;
 
 namespace ExplogineCore.Data;
 
@@ -61,5 +62,11 @@ public class OneToMany<TKey, TValue> :IEnumerable<KeyValuePair<TKey,TValue>>  wh
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    [Pure]
+    public bool ContainsKey(TKey key)
+    {
+        return _dictionary.ContainsKey(key);
     }
 }
