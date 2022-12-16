@@ -68,7 +68,7 @@ public class Arrangement : IEnumerable<KeyValuePair<string, BakedElement>>
         }
     }
     
-    public static Arrangement CreateRowWithin(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements,
+    public static Arrangement Create(RectangleF outerRectangle, RowSettings settings, IElement[] rawElements,
         int nestLevel = 0)
     {
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
@@ -145,7 +145,7 @@ public class Arrangement : IEnumerable<KeyValuePair<string, BakedElement>>
 
             if (element.Children.HasValue)
             {
-                var childArrangement = CreateRowWithin(elementRectangle, element.Children.Value.RowSettings,
+                var childArrangement = Arrangement.Create(elementRectangle, element.Children.Value.RowSettings,
                     element.Children.Value.Elements, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
