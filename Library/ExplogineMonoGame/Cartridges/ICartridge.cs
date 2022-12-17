@@ -1,15 +1,11 @@
-﻿using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
+﻿namespace ExplogineMonoGame.Cartridges;
 
-namespace ExplogineMonoGame.Cartridges;
-
-public interface ICartridge
+public interface ICartridge : IUpdateInput
 {
     CartridgeConfig CartridgeConfig { get; }
     void OnCartridgeStarted();
     void Update(float dt);
     void Draw(Painter painter);
-    void UpdateInput(InputFrameState input, HitTestStack hitTestStack);
     bool ShouldLoadNextCartridge();
     void Unload();
 }

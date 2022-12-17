@@ -8,7 +8,7 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame;
 
-internal class CartridgeChain
+internal class CartridgeChain : IUpdateInput
 {
     private readonly LinkedList<ICartridge> _list = new();
     private bool _hasCrashed;

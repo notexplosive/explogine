@@ -1,9 +1,5 @@
-﻿using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
+﻿namespace ExplogineMonoGame.Gui;
 
-namespace ExplogineMonoGame.Gui;
-
-internal interface IGuiElement
+internal interface IGuiElement : IUpdateInput
 {
-    void UpdateInput(InputFrameState input, HitTestStack hitTestStack);
 }

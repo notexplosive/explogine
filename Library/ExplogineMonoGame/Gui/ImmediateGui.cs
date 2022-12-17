@@ -6,7 +6,7 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Gui;
 
-public class ImmediateGui
+public class ImmediateGui : IUpdateInput
 {
     private readonly List<IGuiElement> _elements = new();
 
