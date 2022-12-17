@@ -30,7 +30,7 @@ public static class Layout
 
     public static LayoutElement FillVertical(float horizontalSize)
     {
-        return new LayoutElement(new ElementBlankName(), new FixedEdgeSize(horizontalSize), new StretchedEdgeSize());
+        return new LayoutElement(new ElementBlankName(), new FixedEdgeSize(horizontalSize), new FillEdgeSize());
     }
 
     public static LayoutElement FillHorizontal(string name, float verticalSize)
@@ -40,7 +40,7 @@ public static class Layout
 
     public static LayoutElement FillHorizontal(float verticalSize)
     {
-        return new LayoutElement(new ElementBlankName(), new StretchedEdgeSize(), new FixedEdgeSize(verticalSize));
+        return new LayoutElement(new ElementBlankName(), new FillEdgeSize(), new FixedEdgeSize(verticalSize));
     }
 
     public static LayoutElement Fill(Orientation orientation, string name, float perpendicularSize)
@@ -58,7 +58,7 @@ public static class Layout
 
     public static LayoutElement FillBoth(string name)
     {
-        return new LayoutElement(new ElementName(name), new StretchedEdgeSize(), new StretchedEdgeSize());
+        return new LayoutElement(new ElementName(name), new FillEdgeSize(), new FillEdgeSize());
     }
 
     public static LayoutArrangement Create(RectangleF outerRectangle, ArrangementSettings settings,
@@ -207,7 +207,7 @@ public static class Layout
             foreach (var axis in Axis.Each)
             {
                 var sizeAlongAxis = result[i].GetAxis(axis);
-                if (sizeAlongAxis is StretchedEdgeSize)
+                if (sizeAlongAxis is FillEdgeSize)
                 {
                     numberOfStretchedElementsOnAxis[axis]++;
                 }
@@ -228,7 +228,7 @@ public static class Layout
                 {
                     size.SetAxis(axis, fixedEdgeSize.Amount);
                 }
-                else if (sizeAlongAxis is StretchedEdgeSize)
+                else if (sizeAlongAxis is FillEdgeSize)
                 {
                     var isAlong = axis == settings.Axis;
                     if (isAlong)
