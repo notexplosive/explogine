@@ -11,9 +11,9 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
 {
     private readonly OneToMany<string, BakedLayoutElement> _namedRects;
 
-    public LayoutArrangement(OneToMany<string, BakedLayoutElement> namedRects, RectangleF usedSpace, ArrangementSettings originalSettings, LayoutElement[] rawElements)
+    public LayoutArrangement(OneToMany<string, BakedLayoutElement> namedRects, RectangleF usedSpace, LayoutElementGroup rawGroup)
     {
-        RawGroup = new LayoutElementGroup(originalSettings, rawElements);
+        RawGroup = rawGroup;
         _namedRects = namedRects;
         UsedSpace = usedSpace;
     }

@@ -18,7 +18,8 @@ public static class Layout
         return Layout.FixedElement(x, y) with {Name = new ElementName(name)};
     }
 
-    public static LayoutElement Group(LayoutElement parentElement, ArrangementSettings settings, LayoutElement[] children)
+    public static LayoutElement Group(LayoutElement parentElement, ArrangementSettings settings,
+        LayoutElement[] children)
     {
         return parentElement with {Children = new LayoutElementGroup(settings, children)};
     }
@@ -61,17 +62,18 @@ public static class Layout
         return new LayoutElement(new ElementName(name), new FillEdgeSize(), new FillEdgeSize());
     }
 
-    public static LayoutArrangement Create(RectangleF outerRectangle, ArrangementSettings settings,
-        LayoutElement[] rawElements)
+    public static LayoutArrangement Create(RectangleF outerRectangle, LayoutElementGroup group)
     {
-        return CreateNested(outerRectangle, settings, rawElements);
+        return Layout.CreateNested(outerRectangle, group);
     }
-    
-    private static LayoutArrangement CreateNested(RectangleF outerRectangle, ArrangementSettings settings, LayoutElement[] rawElements,
+
+    private static LayoutArrangement CreateNested(RectangleF outerRectangle, LayoutElementGroup group,
         int nestLevel = 0)
     {
+        var settings = group.ArrangementSettings;
+        var rawElements = group.Elements;
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
-        var elements = ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
+        var elements = Layout.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
         var namedRects = new OneToMany<string, BakedLayoutElement>();
         var estimatedPosition = new Vector2();
         var usedPerpendicularSize = 0f;
@@ -144,8 +146,7 @@ public static class Layout
 
             if (element.Children.HasValue)
             {
-                var childArrangement = Layout.CreateNested(elementRectangle, element.Children.Value.ArrangementSettings,
-                    element.Children.Value.Elements, nestLevel + 1);
+                var childArrangement = Layout.CreateNested(elementRectangle, element.Children.Value, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
                     namedRects.Add(keyVal.Key, keyVal.Value);
@@ -153,18 +154,19 @@ public static class Layout
             }
         }
 
-        return new LayoutArrangement(namedRects, usedRectangle, settings, rawElements);
+        return new LayoutArrangement(namedRects, usedRectangle, group);
     }
 
-    private static LayoutElement[] ConvertToFixedElements(LayoutElement[] elements, ArrangementSettings settings, Vector2 outerSize)
+    private static LayoutElement[] ConvertToFixedElements(LayoutElement[] elements, ArrangementSettings settings,
+        Vector2 outerSize)
     {
         var result = new LayoutElement[elements.Length];
 
-        for (int i = 0; i < elements.Length; i++)
+        for (var i = 0; i < elements.Length; i++)
         {
             result[i] = elements[i];
         }
-        
+
         var indexOfUnsizedElements = new HashSet<int>();
         for (var i = 0; i < result.Length; i++)
         {
