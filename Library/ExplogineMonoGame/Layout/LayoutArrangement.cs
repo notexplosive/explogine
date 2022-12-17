@@ -13,12 +13,12 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
 
     public LayoutArrangement(OneToMany<string, BakedLayoutElement> namedRects, RectangleF usedSpace, ArrangementSettings originalSettings, LayoutElement[] rawElements)
     {
-        RawChildren = new LayoutElementChildren(originalSettings, rawElements);
+        RawGroup = new LayoutElementGroup(originalSettings, rawElements);
         _namedRects = namedRects;
         UsedSpace = usedSpace;
     }
 
-    public LayoutElementChildren RawChildren { get; }
+    public LayoutElementGroup RawGroup { get; }
     public RectangleF UsedSpace { get; }
 
     public IEnumerator<KeyValuePair<string, BakedLayoutElement>> GetEnumerator()

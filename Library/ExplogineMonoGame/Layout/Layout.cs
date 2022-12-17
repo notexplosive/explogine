@@ -20,7 +20,7 @@ public static class Layout
 
     public static LayoutElement Group(LayoutElement parentElement, ArrangementSettings settings, LayoutElement[] children)
     {
-        return parentElement with {Children = new LayoutElementChildren(settings, children)};
+        return parentElement with {Children = new LayoutElementGroup(settings, children)};
     }
 
     public static LayoutElement FillVertical(string name, float horizontalSize)

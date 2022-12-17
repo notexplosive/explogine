@@ -6,7 +6,7 @@ public static class LayoutSerialization
 {
     public static string ToJson(LayoutArrangement arrangement)
     {
-        return JsonConvert.SerializeObject(LayoutSerialization.SerializeGroup(arrangement.RawChildren), Formatting.Indented);
+        return JsonConvert.SerializeObject(LayoutSerialization.SerializeGroup(arrangement.RawGroup), Formatting.Indented);
     }
 
     public static SerializedSettings SerializeSettings(ArrangementSettings settings)
@@ -20,7 +20,7 @@ public static class LayoutSerialization
         return result;
     }
 
-    public static SerializedGroup SerializeGroup(LayoutElementChildren layoutLayoutElements)
+    public static SerializedGroup SerializeGroup(LayoutElementGroup layoutLayoutElements)
     {
         var elements = new SerializedElement[layoutLayoutElements.Elements.Length];
 
