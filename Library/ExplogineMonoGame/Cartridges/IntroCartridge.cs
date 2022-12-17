@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using ExTween;
 using ExTweenMonoGame;

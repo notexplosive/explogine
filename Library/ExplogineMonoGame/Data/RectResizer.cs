@@ -1,6 +1,5 @@
 ﻿using System;
 using ExplogineCore.Data;
-using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Data;

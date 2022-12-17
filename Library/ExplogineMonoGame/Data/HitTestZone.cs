@@ -3,7 +3,7 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
-namespace ExplogineMonoGame.HitTesting;
+namespace ExplogineMonoGame.Data;
 
 internal readonly record struct HitTestZone(RectangleF Rectangle, Depth Depth, Action? Callback)
 {

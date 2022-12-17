@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ExplogineCore;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;

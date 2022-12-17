@@ -4,7 +4,7 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
-namespace ExplogineMonoGame.HitTesting;
+namespace ExplogineMonoGame.Data;
 
 public class HitTestStack
 {

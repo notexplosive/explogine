@@ -1,8 +1,6 @@
 ﻿using System;
-using ExplogineCore;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 
