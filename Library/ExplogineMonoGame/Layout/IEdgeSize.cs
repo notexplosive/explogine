@@ -2,4 +2,5 @@
 
 public interface IEdgeSize
 {
+    string Serialized();
 }

@@ -1,0 +1,98 @@
+﻿{
+  "Settings": {
+    "Orientation": 1,
+    "Margin": [
+      25.0,
+      25.0
+    ],
+    "Alignment": "Left Top"
+  },
+  "Elements": [
+    {
+      "Name": "title-bar",
+      "Size": [
+        "fill",
+        "40"
+      ],
+      "SubGroup": {
+        "Settings": {
+          "Orientation": 0,
+          "Margin": [
+            0.0,
+            0.0
+          ],
+          "Alignment": "Center Center"
+        },
+        "Elements": [
+          {
+            "Name": "icon",
+            "Size": [
+              "32",
+              "32"
+            ],
+            "SubGroup": null
+          },
+          {
+            "Name": null,
+            "Size": [
+              "fill",
+              "32"
+            ],
+            "SubGroup": {
+              "Settings": {
+                "Orientation": 0,
+                "Margin": [
+                  0.0,
+                  0.0
+                ],
+                "Alignment": "Right Center"
+              },
+              "Elements": [
+                {
+                  "Name": "title",
+                  "Size": [
+                    "fill",
+                    "32"
+                  ],
+                  "SubGroup": null
+                },
+                {
+                  "Name": "minimize-button",
+                  "Size": [
+                    "32",
+                    "32"
+                  ],
+                  "SubGroup": null
+                },
+                {
+                  "Name": "fullscreen-button",
+                  "Size": [
+                    "32",
+                    "32"
+                  ],
+                  "SubGroup": null
+                },
+                {
+                  "Name": "close-button",
+                  "Size": [
+                    "32",
+                    "32"
+                  ],
+                  "SubGroup": null
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Name": "body",
+      "Size": [
+        "fill",
+        "fill"
+      ],
+      "SubGroup": null
+    }
+  ]
+}
