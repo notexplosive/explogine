@@ -8,43 +8,44 @@ namespace ExplogineMonoGame.HitTesting;
 
 public class HitTestStack
 {
-    private readonly List<HitTestZone> _list = new();
-    private readonly List<Action> _beforeResolveEvents = new();
+    private readonly Matrix _worldMatrix;
+    private readonly List<HitTestStack> _subLayers = new();
+    private readonly List<HitTestZone> _zones = new();
+    public event Action? BeforeResolved;
 
-    private HitTestZone AddTarget(HitTestZone zone)
+    public HitTestStack(Matrix worldMatrix)
     {
-        _list.Add(zone);
-        return zone;
+        _worldMatrix = worldMatrix;
     }
 
-    public void Resolve(Vector2 position)
+    internal void OnBeforeResolve()
     {
-        if (!Client.IsInFocus)
-        {
-            return;
-        }
-        
-        foreach (var beforeResolve in _beforeResolveEvents)
-        {
-            beforeResolve();
-        }
+        BeforeResolved?.Invoke();
 
-        var hit = GetTopHit(position);
-        if (hit != null)
+        foreach (var layer in _subLayers)
         {
-            hit.Value.Callback?.Invoke();
+            layer.OnBeforeResolve();
         }
     }
 
-    private HitTestZone? GetTopHit(Vector2 position)
+    internal HitTestZone? GetTopZoneAt(Vector2 position)
     {
-        _list.Sort((x, y) => x.Depth - y.Depth);
+        _zones.Sort((x, y) => x.Depth - y.Depth);
 
-        foreach (var item in _list)
+        foreach (var zone in _zones)
         {
-            if (item.Contains(position))
+            if (zone.Contains(position, _worldMatrix))
             {
-                return item;
+                return zone;
+            }
+        }
+
+        foreach (var layer in _subLayers)
+        {
+            var zone = layer.GetTopZoneAt(position);
+            if (zone.HasValue)
+            {
+                return zone;
             }
         }
 
@@ -53,17 +54,18 @@ public class HitTestStack
 
     public void Clear()
     {
-        _list.Clear();
-        _beforeResolveEvents.Clear();
+        _zones.Clear();
     }
 
-    public void Add(RectangleF rect, Depth depth, Action? callback = null)
+    public void AddZone(RectangleF rect, Depth depth, Action? callback = null)
     {
-        AddTarget(new HitTestZone(rect, depth, callback));
+        _zones.Add(new HitTestZone(rect, depth, callback));
     }
 
-    public void AddBeforeResolve(Action callback)
+    public HitTestStack AddLayer(Matrix layerMatrix)
     {
-        _beforeResolveEvents.Add(callback);
+        var hitTestStack = new HitTestStack(_worldMatrix * layerMatrix);
+        _subLayers.Add(hitTestStack);
+        return hitTestStack;
     }
 }

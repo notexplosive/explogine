@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using ExTween;
 using ExTweenMonoGame;
@@ -99,7 +100,7 @@ public class IntroCartridge : ICartridge
         painter.EndSpriteBatch();
     }
 
-    public void UpdateInput(InputFrameState input)
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         if (input.Keyboard.IsAnyKeyDown() || input.Mouse.WasAnyButtonPressedOrReleased())
         {

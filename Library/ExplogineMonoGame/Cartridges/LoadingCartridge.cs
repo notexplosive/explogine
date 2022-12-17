@@ -2,6 +2,7 @@
 using ExplogineCore;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 
@@ -99,7 +100,7 @@ public class LoadingCartridge : ICartridge
         painter.EndSpriteBatch();
     }
 
-    public void UpdateInput(InputFrameState input)
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
     }
 

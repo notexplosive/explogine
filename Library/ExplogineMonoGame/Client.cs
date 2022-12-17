@@ -6,6 +6,7 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Debugging;
+using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -200,7 +201,9 @@ public static class Client
         {
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
             Client.Input = Client.Demo.ProcessInput(Client.Input);
-            Client.CartridgeChain.UpdateInput(Client.Input);
+            var hitTest = new HitTestRoot();
+            Client.CartridgeChain.UpdateInput(Client.Input, hitTest.BaseStack);
+            hitTest.Resolve(Client.Input.Mouse.Position());
             Client.CartridgeChain.Update(dt);
             Client.Window.TextEnteredBuffer = new TextEnteredBuffer();
             Client.Window.ResolveSetCursor();

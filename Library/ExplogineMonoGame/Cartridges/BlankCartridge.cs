@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Input;
+﻿using ExplogineMonoGame.HitTesting;
+using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -16,7 +17,7 @@ public class BlankCartridge : ICartridge
     {
     }
 
-    public void UpdateInput(InputFrameState input)
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
     }
 

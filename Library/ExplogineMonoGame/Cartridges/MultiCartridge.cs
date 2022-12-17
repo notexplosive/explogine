@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ExplogineCore;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
@@ -143,10 +144,10 @@ public class MultiCartridge : BasicGameCartridge
         MetaDraw(painter);
     }
 
-    public override void UpdateInput(InputFrameState input)
+    public override void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         MetaUpdateInput(input);
-        CurrentCartridge.UpdateInput(input);
+        CurrentCartridge.UpdateInput(input, hitTestStack);
     }
     
     protected virtual IEnumerable<ILoadEvent?> MetaLoadEvents()

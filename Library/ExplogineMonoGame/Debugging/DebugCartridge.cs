@@ -3,6 +3,7 @@ using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
+using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -71,7 +72,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
 
     }
 
-    public void UpdateInput(InputFrameState input)
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         if (input.Keyboard.Modifiers.ControlShift && input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
         {

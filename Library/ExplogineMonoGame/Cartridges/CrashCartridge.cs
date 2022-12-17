@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.HitTesting;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 
@@ -37,7 +38,7 @@ public class CrashCartridge : ICartridge
     {
     }
     
-    public void UpdateInput(InputFrameState input)
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
     }
 

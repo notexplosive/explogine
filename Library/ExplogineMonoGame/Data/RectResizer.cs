@@ -18,13 +18,13 @@ public class RectResizer
         var mouseDown = leftButton.IsDown;
         var mousePressed = leftButton.WasPressed;
 
-        hitTestStack.AddBeforeResolve(() => { _edgeHovered = RectEdge.None; });
+        hitTestStack.BeforeResolved += () => { _edgeHovered = RectEdge.None; };
 
         foreach (var edge in Enum.GetValues<RectEdge>())
         {
             if (edge != RectEdge.None)
             {
-                hitTestStack.Add(startingRect.GetEdgeRect(edge, 50), depth, () =>
+                hitTestStack.AddZone(startingRect.GetEdgeRect(edge, 50), depth, () =>
                 {
                     _edgeHovered = edge;
                     if (!mouseDown)

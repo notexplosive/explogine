@@ -7,8 +7,8 @@ namespace ExplogineMonoGame.HitTesting;
 
 internal readonly record struct HitTestZone(RectangleF Rectangle, Depth Depth, Action? Callback)
 {
-    public bool Contains(Vector2 position)
+    public bool Contains(Vector2 position, Matrix worldMatrix)
     {
-        return Rectangle.Contains(position);
+        return Rectangle.Contains(Vector2.Transform(position, worldMatrix));
     }
 }

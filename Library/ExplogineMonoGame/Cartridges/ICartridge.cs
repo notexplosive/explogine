@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Input;
+﻿using ExplogineMonoGame.HitTesting;
+using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -8,7 +9,7 @@ public interface ICartridge
     void OnCartridgeStarted();
     void Update(float dt);
     void Draw(Painter painter);
-    void UpdateInput(InputFrameState input);
+    void UpdateInput(InputFrameState input, HitTestStack hitTestStack);
     bool ShouldLoadNextCartridge();
     void Unload();
 }
