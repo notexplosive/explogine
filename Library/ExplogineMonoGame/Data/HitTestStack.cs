@@ -52,11 +52,6 @@ public class HitTestStack
         return null;
     }
 
-    public void Clear()
-    {
-        _zones.Clear();
-    }
-
     public void AddZone(RectangleF rect, Depth depth, Action? callback = null)
     {
         _zones.Add(new HitTestZone(rect, depth, callback));
