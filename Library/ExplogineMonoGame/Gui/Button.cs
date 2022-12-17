@@ -25,8 +25,7 @@ public class Button : IGuiWidget
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
-        hitTestStack.BeforeResolved += ClearHovered;
-        hitTestStack.AddZone(Rectangle, Depth, BecomeHovered);
+        hitTestStack.AddZone(Rectangle, Depth, ClearHovered, BecomeHovered);
 
         var wasMouseReleased = input.Mouse.GetButton(MouseButton.Left).WasReleased;
         var wasMousePressed = input.Mouse.GetButton(MouseButton.Left).WasPressed;

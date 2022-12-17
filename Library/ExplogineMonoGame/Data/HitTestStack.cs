@@ -11,7 +11,7 @@ public class HitTestStack
     private readonly Matrix _worldMatrix;
     private readonly List<HitTestStack> _subLayers = new();
     private readonly List<HitTestZone> _zones = new();
-    public event Action? BeforeResolved;
+    public event Action? BeforeLayerResolved;
 
     public HitTestStack(Matrix worldMatrix)
     {
@@ -20,8 +20,13 @@ public class HitTestStack
 
     internal void OnBeforeResolve()
     {
-        BeforeResolved?.Invoke();
+        BeforeLayerResolved?.Invoke();
 
+        foreach (var zone in _zones)
+        {
+            zone.BeforeResolve?.Invoke();
+        }
+        
         foreach (var layer in _subLayers)
         {
             layer.OnBeforeResolve();
@@ -52,9 +57,14 @@ public class HitTestStack
         return null;
     }
 
-    public void AddZone(RectangleF rect, Depth depth, Action? callback = null)
+    public void AddZone(RectangleF rect, Depth depth, Action callback)
     {
-        _zones.Add(new HitTestZone(rect, depth, callback));
+        _zones.Add(new HitTestZone(rect, depth, null, callback));
+    }
+    
+    public void AddZone(RectangleF rect, Depth depth, Action? beforeResolve, Action callback)
+    {
+        _zones.Add(new HitTestZone(rect, depth, beforeResolve, callback));
     }
 
     public HitTestStack AddLayer(Matrix layerMatrix)

@@ -17,7 +17,7 @@ public class RectResizer
         var mouseDown = leftButton.IsDown;
         var mousePressed = leftButton.WasPressed;
 
-        hitTestStack.BeforeResolved += () => { _edgeHovered = RectEdge.None; };
+        hitTestStack.BeforeLayerResolved += () => { _edgeHovered = RectEdge.None; };
 
         foreach (var edge in Enum.GetValues<RectEdge>())
         {
