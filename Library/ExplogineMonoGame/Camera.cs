@@ -31,7 +31,13 @@ public class Camera
         }
     }
 
+    /// <summary>
+    /// Typically used for Drawing
+    /// </summary>
     public Matrix CanvasToScreen => ViewBounds.CanvasToScreen(Client.Window.RenderResolution, Angle);
+    /// <summary>
+    /// Typically used for Mouse Position -> World Position
+    /// </summary>
     public Matrix ScreenToCanvas => Matrix.Invert(CanvasToScreen);
     public Vector2 TopLeftPosition { get; set; }
     public Vector2 Size { get; private set; }
