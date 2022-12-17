@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
-using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Layout;
 
@@ -11,7 +10,8 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
 {
     private readonly OneToMany<string, BakedLayoutElement> _namedRects;
 
-    public LayoutArrangement(OneToMany<string, BakedLayoutElement> namedRects, RectangleF usedSpace, LayoutElementGroup rawGroup)
+    public LayoutArrangement(OneToMany<string, BakedLayoutElement> namedRects, RectangleF usedSpace,
+        LayoutElementGroup rawGroup)
     {
         RawGroup = rawGroup;
         _namedRects = namedRects;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace ExplogineMonoGame.Layout;
 
@@ -65,6 +66,20 @@ public static class Layout
     public static LayoutArrangement Create(RectangleF outerRectangle, LayoutElementGroup group)
     {
         return Layout.CreateNested(outerRectangle, group);
+    }
+
+    public static string ToJson(LayoutArrangement arrangement)
+    {
+        return JsonConvert.SerializeObject(new LayoutSerialization.SerializedGroup(arrangement.RawGroup),
+            Formatting.Indented);
+    }
+
+    public static LayoutArrangement FromJson(RectangleF outerRectangle, string json)
+    {
+        var serialized = JsonConvert.DeserializeObject<LayoutSerialization.SerializedGroup>(json);
+        var group = serialized.Deserialize();
+
+        return Layout.Create(outerRectangle, group);
     }
 
     private static LayoutArrangement CreateNested(RectangleF outerRectangle, LayoutElementGroup group,
