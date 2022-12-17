@@ -8,7 +8,7 @@ namespace ExplogineMonoGame.Gui;
 
 public class ImmediateGui : IUpdateInput
 {
-    private readonly List<IGuiElement> _elements = new();
+    private readonly List<IGuiWidget> _elements = new();
 
     public void Button(RectangleF rectangle, string text, Action? onPress, Depth depth)
     {

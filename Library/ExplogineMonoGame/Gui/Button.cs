@@ -5,7 +5,7 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Gui;
 
-public class Button : IGuiElement
+public class Button : IGuiWidget
 {
     private readonly Action? _onPress;
 
