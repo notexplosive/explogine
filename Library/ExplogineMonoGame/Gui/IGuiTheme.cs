@@ -2,5 +2,6 @@
 
 public interface IGuiTheme
 {
-    public void DrawButton(Painter painter, Button button);
+    void DrawButton(Painter painter, Button button);
+    void DrawPanel(Painter painter, Panel panel);
 }
