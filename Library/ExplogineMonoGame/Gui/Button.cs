@@ -8,54 +8,29 @@ namespace ExplogineMonoGame.Gui;
 public class Button : IGuiWidget
 {
     private readonly Action? _onPress;
+    private readonly ButtonBehavior _behavior;
 
     public Button(RectangleF rectangle, string text, Action? onPress, Depth depth)
     {
+        _behavior = new ButtonBehavior();
         Rectangle = rectangle;
         Text = text;
         _onPress = onPress;
         Depth = depth;
     }
-
-    public bool IsHovered { get; private set; }
-    public bool IsEngaged { get; private set; }
+    
     public RectangleF Rectangle { get; }
     public string Text { get; }
     public Depth Depth { get; }
 
+    public bool IsHovered => _behavior.IsHovered;
+    public bool IsEngaged => _behavior.IsEngaged;
+
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
-        hitTestStack.AddZone(Rectangle, Depth, ClearHovered, BecomeHovered);
-
-        var wasMouseReleased = input.Mouse.GetButton(MouseButton.Left).WasReleased;
-        var wasMousePressed = input.Mouse.GetButton(MouseButton.Left).WasPressed;
-
-        if (IsHovered)
+        if (_behavior.HasBeenClicked(input, hitTestStack, Rectangle, Depth))
         {
-            if (IsEngaged && wasMouseReleased)
-            {
-                _onPress?.Invoke();
-            }
-
-            if (wasMousePressed)
-            {
-                IsEngaged = true;
-            }
+            _onPress?.Invoke();
         }
-
-        if (wasMouseReleased)
-        {
-            IsEngaged = false;
-        }
-    }
-
-    private void BecomeHovered()
-    {
-        IsHovered = true;
-    }
-
-    private void ClearHovered()
-    {
-        IsHovered = false;
     }
 }

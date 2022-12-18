@@ -4,4 +4,5 @@ public interface IGuiTheme
 {
     void DrawButton(Painter painter, Button button);
     void DrawPanel(Painter painter, Panel panel);
+    void DrawCheckbox(Painter painter, Checkbox checkbox);
 }

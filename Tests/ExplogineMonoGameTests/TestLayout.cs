@@ -13,7 +13,7 @@ public class TestLayout
     [Fact]
     public void build_serial_from_real_layout()
     {
-        var layout = Layout.Create(
+        var layout = L.Create(
             new RectangleF(0, 0, 500, 500),
             new LayoutElementGroup(
                 new ArrangementSettings(
@@ -21,34 +21,34 @@ public class TestLayout
                     Margin: new Vector2(25, 25)),
                 new[]
                 {
-                    Layout.Group(Layout.FillHorizontal("title-bar", 40),
+                    L.Group(L.FillHorizontal("title-bar", 40),
                         new ArrangementSettings(
                             Alignment: Alignment.Center),
                         new[]
                         {
-                            Layout.FixedElement("icon", 32, 32),
-                            Layout.Group(Layout.FillHorizontal(32),
+                            L.FixedElement("icon", 32, 32),
+                            L.Group(L.FillHorizontal(32),
                                 new ArrangementSettings(
                                     Alignment: Alignment.CenterRight,
                                     PaddingBetweenElements: 3),
                                 new[]
                                 {
-                                    Layout.FillHorizontal("title", 32),
-                                    Layout.FixedElement("minimize-button", 32, 32),
-                                    Layout.FixedElement("fullscreen-button", 32, 32),
-                                    Layout.FixedElement("close-button", 32, 32)
+                                    L.FillHorizontal("title", 32),
+                                    L.FixedElement("minimize-button", 32, 32),
+                                    L.FixedElement("fullscreen-button", 32, 32),
+                                    L.FixedElement("close-button", 32, 32)
                                 })
                         }),
-                    Layout.FillBoth("body")
+                    L.FillBoth("body")
                 }));
 
-        Approvals.Verify(Layout.ToJson(layout));
+        Approvals.Verify(L.ToJson(layout));
     }
 
     [Fact]
     public void serialize_and_back()
     {
-        var layout = Layout.Create(
+        var layout = L.Create(
             new RectangleF(0, 0, 500, 500),
             new LayoutElementGroup(
                 new ArrangementSettings(
@@ -56,31 +56,31 @@ public class TestLayout
                     Margin: new Vector2(25, 25)),
                 new[]
                 {
-                    Layout.Group(Layout.FillHorizontal("title-bar", 40),
+                    L.Group(L.FillHorizontal("title-bar", 40),
                         new ArrangementSettings(
                             Alignment: Alignment.Center),
                         new[]
                         {
-                            Layout.FixedElement("icon", 32, 32),
-                            Layout.Group(Layout.FillHorizontal(32),
+                            L.FixedElement("icon", 32, 32),
+                            L.Group(L.FillHorizontal(32),
                                 new ArrangementSettings(
                                     Alignment: Alignment.CenterRight,
                                     PaddingBetweenElements: 3),
                                 new[]
                                 {
-                                    Layout.FillHorizontal("title", 32),
-                                    Layout.FixedElement("minimize-button", 32, 32),
-                                    Layout.FixedElement("fullscreen-button", 32, 32),
-                                    Layout.FixedElement("close-button", 32, 32)
+                                    L.FillHorizontal("title", 32),
+                                    L.FixedElement("minimize-button", 32, 32),
+                                    L.FixedElement("fullscreen-button", 32, 32),
+                                    L.FixedElement("close-button", 32, 32)
                                 })
                         }),
-                    Layout.FillBoth("body")
+                    L.FillBoth("body")
                 }));
 
-        var serialized = Layout.ToJson(layout);
-        var deserialized = Layout.FromJson(new RectangleF(0, 0, 500, 500), serialized);
+        var serialized = L.ToJson(layout);
+        var deserialized = L.FromJson(new RectangleF(0, 0, 500, 500), serialized);
 
-        Layout.ToJson(deserialized).Should().Be(serialized);
+        L.ToJson(deserialized).Should().Be(serialized);
 
     }
 }

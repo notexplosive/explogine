@@ -11,11 +11,26 @@ public class ImmediateGui : IUpdateInput
 {
     private readonly List<IGuiWidget> _widgets = new();
 
-    public void Button(RectangleF rectangle, string text, Depth depth, Action? onPress)
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
-        _widgets.Add(new Button(rectangle, text, onPress, depth));
+        foreach (var element in _widgets)
+        {
+            element.UpdateInput(input, hitTestStack);
+        }
+    }
+
+    public void Button(RectangleF rectangle, string label, Depth depth, Action? onPress)
+    {
+        _widgets.Add(new Button(rectangle, label, onPress, depth));
     }
     
+    public Wrapped<bool> Checkbox(RectangleF totalRectangle, string label, Depth depth)
+    {
+        var state = new Wrapped<bool>();
+        _widgets.Add(new Checkbox(totalRectangle, label, depth, state));
+        return state;
+    }
+
     public ImmediateGui Panel(RectangleF rectangle, Depth depth)
     {
         var panel = new Panel(rectangle, depth);
@@ -26,7 +41,7 @@ public class ImmediateGui : IUpdateInput
     public void Draw(Painter painter, IGuiTheme uiTheme, Matrix matrix)
     {
         PreDraw(painter, uiTheme);
-        
+
         painter.BeginSpriteBatch(matrix);
         foreach (var widget in _widgets)
         {
@@ -38,11 +53,14 @@ public class ImmediateGui : IUpdateInput
                 case Panel panel:
                     uiTheme.DrawPanel(painter, panel);
                     break;
-                
+                case Checkbox checkbox:
+                    uiTheme.DrawCheckbox(painter, checkbox);
+                    break;
                 default:
                     throw new Exception($"Unknown UI Widget type: {widget}");
             }
         }
+
         painter.EndSpriteBatch();
     }
 
@@ -54,14 +72,6 @@ public class ImmediateGui : IUpdateInput
             {
                 preDrawer.PreDraw(painter, uiTheme);
             }
-        }
-    }
-
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
-    {
-        foreach (var element in _widgets)
-        {
-            element.UpdateInput(input, hitTestStack);
         }
     }
 }

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace ExplogineMonoGame.Layout;
 
-public static class Layout
+public static class L
 {
     public static LayoutElement FixedElement(float x, float y)
     {
@@ -16,7 +16,7 @@ public static class Layout
 
     public static LayoutElement FixedElement(string name, float x, float y)
     {
-        return Layout.FixedElement(x, y) with {Name = new ElementName(name)};
+        return L.FixedElement(x, y) with {Name = new ElementName(name)};
     }
 
     public static LayoutElement Group(LayoutElement parentElement, ArrangementSettings settings,
@@ -27,7 +27,7 @@ public static class Layout
 
     public static LayoutElement FillVertical(string name, float horizontalSize)
     {
-        return Layout.FillVertical(horizontalSize) with {Name = new ElementName(name)};
+        return L.FillVertical(horizontalSize) with {Name = new ElementName(name)};
     }
 
     public static LayoutElement FillVertical(float horizontalSize)
@@ -37,7 +37,7 @@ public static class Layout
 
     public static LayoutElement FillHorizontal(string name, float verticalSize)
     {
-        return Layout.FillHorizontal(verticalSize) with {Name = new ElementName(name)};
+        return L.FillHorizontal(verticalSize) with {Name = new ElementName(name)};
     }
 
     public static LayoutElement FillHorizontal(float verticalSize)
@@ -50,9 +50,9 @@ public static class Layout
         switch (orientation)
         {
             case Orientation.Horizontal:
-                return Layout.FillHorizontal(name, perpendicularSize);
+                return L.FillHorizontal(name, perpendicularSize);
             case Orientation.Vertical:
-                return Layout.FillHorizontal(name, perpendicularSize);
+                return L.FillHorizontal(name, perpendicularSize);
             default:
                 throw new Exception("Unknown orientation");
         }
@@ -65,7 +65,7 @@ public static class Layout
 
     public static LayoutArrangement Create(RectangleF outerRectangle, LayoutElementGroup group)
     {
-        return Layout.CreateNested(outerRectangle, group);
+        return L.CreateNested(outerRectangle, group);
     }
 
     public static string ToJson(LayoutArrangement arrangement)
@@ -79,7 +79,7 @@ public static class Layout
         var serialized = JsonConvert.DeserializeObject<LayoutSerialization.SerializedGroup>(json);
         var group = serialized.Deserialize();
 
-        return Layout.Create(outerRectangle, group);
+        return L.Create(outerRectangle, group);
     }
 
     private static LayoutArrangement CreateNested(RectangleF outerRectangle, LayoutElementGroup group,
@@ -88,7 +88,7 @@ public static class Layout
         var settings = group.ArrangementSettings;
         var rawElements = group.Elements;
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
-        var elements = Layout.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
+        var elements = L.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
         var namedRects = new OneToMany<string, BakedLayoutElement>();
         var estimatedPosition = new Vector2();
         var usedPerpendicularSize = 0f;
@@ -161,7 +161,7 @@ public static class Layout
 
             if (element.Children.HasValue)
             {
-                var childArrangement = Layout.CreateNested(elementRectangle, element.Children.Value, nestLevel + 1);
+                var childArrangement = L.CreateNested(elementRectangle, element.Children.Value, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
                     namedRects.Add(keyVal.Key, keyVal.Value);
