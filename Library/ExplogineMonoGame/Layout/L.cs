@@ -62,6 +62,11 @@ public static class L
     {
         return new LayoutElement(new ElementName(name), new FillEdgeSize(), new FillEdgeSize());
     }
+    
+    public static LayoutElement FillBoth()
+    {
+        return new LayoutElement(new ElementBlankName(), new FillEdgeSize(), new FillEdgeSize());
+    }
 
     public static LayoutArrangement Create(RectangleF outerRectangle, LayoutElementGroup group)
     {
