@@ -1,19 +1,12 @@
 ﻿using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
-using ExplogineMonoGame.Layout;
 
 namespace ExplogineMonoGame.Gui;
 
 public class Checkbox : IGuiWidget
 {
     private readonly ButtonBehavior _behavior;
-    public Depth Depth { get; }
-    public string Label { get; }
-    public RectangleF Rectangle { get; }
-    public Wrapped<bool> State { get; }
-    public bool IsHovered => _behavior.IsHovered;
-    public bool IsEngaged => _behavior.IsEngaged;
 
     public Checkbox(RectangleF totalRectangle, string label, Depth depth, Wrapped<bool> state)
     {
@@ -23,6 +16,13 @@ public class Checkbox : IGuiWidget
         State = state;
         Rectangle = totalRectangle;
     }
+
+    public Depth Depth { get; }
+    public string Label { get; }
+    public RectangleF Rectangle { get; }
+    public Wrapped<bool> State { get; }
+    public bool IsHovered => _behavior.IsHovered;
+    public bool IsEngaged => _behavior.IsEngaged;
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {

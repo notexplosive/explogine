@@ -45,7 +45,7 @@ public class PrimitiveGuiTheme : IGuiTheme
                     {Color = SecondaryColor, Depth = button.Depth - 1, Thickness = isPressed ? 2f : 1f});
         }
 
-        painter.DrawStringWithinRectangle(Font, button.Text,
+        painter.DrawStringWithinRectangle(Font, button.Label,
             button.Rectangle.Moved(isPressed ? new Vector2(1) : Vector2.Zero), Alignment.Center,
             new DrawSettings {Depth = button.Depth - 2, Color = SecondaryColor});
     }
@@ -89,7 +89,7 @@ public class PrimitiveGuiTheme : IGuiTheme
             var corners = checkboxRect.Inflated(-8, -8);
             painter.DrawLine(corners.TopLeft, corners.BottomRight,
                 new LineDrawSettings {Depth = checkbox.Depth - 2, Color = SecondaryColor, Thickness = 8});
-            
+
             painter.DrawLine(corners.TopRight, corners.BottomLeft,
                 new LineDrawSettings {Depth = checkbox.Depth - 2, Color = SecondaryColor, Thickness = 8});
         }

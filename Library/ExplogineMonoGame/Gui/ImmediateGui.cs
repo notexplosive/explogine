@@ -23,7 +23,7 @@ public class ImmediateGui : IUpdateInput
     {
         _widgets.Add(new Button(rectangle, label, onPress, depth));
     }
-    
+
     public Wrapped<bool> Checkbox(RectangleF totalRectangle, string label, Depth depth)
     {
         var state = new Wrapped<bool>();

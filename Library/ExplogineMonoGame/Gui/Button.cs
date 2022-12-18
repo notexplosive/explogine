@@ -10,17 +10,17 @@ public class Button : IGuiWidget
     private readonly Action? _onPress;
     private readonly ButtonBehavior _behavior;
 
-    public Button(RectangleF rectangle, string text, Action? onPress, Depth depth)
+    public Button(RectangleF rectangle, string label, Action? onPress, Depth depth)
     {
         _behavior = new ButtonBehavior();
         Rectangle = rectangle;
-        Text = text;
+        Label = label;
         _onPress = onPress;
         Depth = depth;
     }
     
     public RectangleF Rectangle { get; }
-    public string Text { get; }
+    public string Label { get; }
     public Depth Depth { get; }
 
     public bool IsHovered => _behavior.IsHovered;
