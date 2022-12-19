@@ -12,16 +12,19 @@ public class Slider : IGuiWidget
     private readonly Drag<RectangleF> _thumbDrag;
     private readonly int _totalNotches;
 
-    public Slider(RectangleF entireRectangle, int totalNotches, Depth depth, Wrapped<int> state)
+    public Slider(RectangleF entireRectangle, Orientation orientation, int totalNotches, Depth depth,
+        Wrapped<int> state)
     {
+        AlongAxis = Axis.FromOrientation(orientation);
         Depth = depth;
         State = state;
         EntireRectangle = entireRectangle;
-        BodyRectangle = entireRectangle.Inflated(new Vector2(-5).JustAxis(Axis.X.Opposite()));
+        BodyRectangle = entireRectangle.Inflated(new Vector2(-5).JustAxis(AlongAxis.Opposite()));
         _totalNotches = totalNotches;
         _thumbDrag = new Drag<RectangleF>();
     }
 
+    public Axis AlongAxis { get; }
     public bool BodyHovered { get; private set; }
     public bool ThumbHovered { get; private set; }
     public bool ThumbEngaged => ThumbHovered || _thumbDrag.IsDragging;
@@ -33,10 +36,10 @@ public class Slider : IGuiWidget
     {
         get
         {
-            var alongSize = BodyRectangle.Size.GetAxis(Axis.X) - ThumbRectangle.Size.GetAxis(Axis.X);
-            var perpSize = BodyRectangle.Size.GetAxis(Axis.X.Opposite());
-            var startPosition = BodyRectangle.TopLeft + ThumbRectangle.Size.JustAxis(Axis.X);
-            var size = Vector2Extensions.FromAxisFirst(Axis.X, alongSize, perpSize);
+            var alongSize = BodyRectangle.Size.GetAxis(AlongAxis) - ThumbRectangle.Size.GetAxis(AlongAxis);
+            var perpSize = BodyRectangle.Size.GetAxis(AlongAxis.Opposite());
+            var startPosition = BodyRectangle.TopLeft + ThumbRectangle.Size.JustAxis(AlongAxis);
+            var size = Vector2Extensions.FromAxisFirst(AlongAxis, alongSize, perpSize);
             return new RectangleF(startPosition, size);
         }
     }
@@ -44,16 +47,17 @@ public class Slider : IGuiWidget
     public RectangleF ThumbRectangle =>
         new(
             EntireRectangle.TopLeft
-            + new Vector2(ThumbTravelDistance * State.Value / _totalNotches).JustAxis(Axis.X),
+            + new Vector2(ThumbTravelDistance * State.Value / _totalNotches).JustAxis(AlongAxis),
             ThumbSize);
 
     public Vector2 ThumbSize =>
-        Vector2Extensions.FromAxisFirst(Axis.X, 32, EntireRectangle.Size.GetAxis(Axis.X.Opposite()));
+        Vector2Extensions.FromAxisFirst(AlongAxis, 32, EntireRectangle.Size.GetAxis(AlongAxis.Opposite()));
+
     public Wrapped<int> State { get; }
     public Depth Depth { get; }
 
     public float ThumbTravelDistance =>
-        BodyRectangle.Size.GetAxis(Axis.X) - ThumbSize.GetAxis(Axis.X);
+        BodyRectangle.Size.GetAxis(AlongAxis) - ThumbSize.GetAxis(AlongAxis);
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
@@ -98,9 +102,9 @@ public class Slider : IGuiWidget
         var relativePosition = position - BodyRectangle.TopLeft;
 
         // subtract half the thumbs size so we're centered
-        relativePosition -= new Vector2(ThumbSize.GetAxis(Axis.X) / 2f).JustAxis(Axis.X);
+        relativePosition -= new Vector2(ThumbSize.GetAxis(AlongAxis) / 2f).JustAxis(AlongAxis);
         var totalSize = ThumbTravelDistance;
-        var percent = relativePosition.GetAxis(Axis.X) / totalSize;
+        var percent = relativePosition.GetAxis(AlongAxis) / totalSize;
         var result = MathF.Round(percent * _totalNotches, MidpointRounding.ToEven);
 
         return Math.Clamp((int) result, 0, _totalNotches);

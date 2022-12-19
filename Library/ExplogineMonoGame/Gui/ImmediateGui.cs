@@ -31,10 +31,10 @@ public class ImmediateGui : IUpdateInput
         return state;
     }
     
-    public Wrapped<int> Slider(RectangleF rectangle, int numberOfNotches, Depth depth)
+    public Wrapped<int> Slider(RectangleF rectangle, Orientation orientation, int numberOfNotches, Depth depth)
     {
         var state = new Wrapped<int>();
-        _widgets.Add(new Slider(rectangle, numberOfNotches, depth, state));
+        _widgets.Add(new Slider(rectangle, orientation, numberOfNotches, depth, state));
         return state;
     }
 
