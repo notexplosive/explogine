@@ -9,7 +9,7 @@ public class PrimitiveGuiTheme : IGuiTheme
     public static LayoutElementGroup CheckboxLayoutTemplate = L.Root(
         new Style
             {PaddingBetweenElements = 5, Margin = new Vector2(0, 5), Alignment = Alignment.CenterLeft},
-        L.FixedElement("checkbox", 32, 32), 
+        L.FixedElement("checkbox", 32, 32),
         L.FillBoth("label"));
 
     public PrimitiveGuiTheme(Color primaryColor, Color secondaryColor, Color backgroundColor, IFontGetter fontGetter)
@@ -78,12 +78,10 @@ public class PrimitiveGuiTheme : IGuiTheme
 
         if (checkbox.State)
         {
-            var corners = checkboxRect.Inflated(-8, -8);
-            painter.DrawLine(corners.TopLeft, corners.BottomRight,
-                new LineDrawSettings {Depth = checkbox.Depth - 2, Color = SecondaryColor, Thickness = 8});
-
-            painter.DrawLine(corners.TopRight, corners.BottomLeft,
-                new LineDrawSettings {Depth = checkbox.Depth - 2, Color = SecondaryColor, Thickness = 8});
+            var insetRect = checkboxRect.Inflated(-8, -8);
+            painter.DrawRectangle(
+                insetRect,
+                new DrawSettings {Depth = checkbox.Depth - 2, Color = SecondaryColor});
         }
     }
 
