@@ -178,7 +178,7 @@ public static class L
                 }
             }
         }
-
+        
         return new LayoutArrangement(namedRects, usedRectangle, group);
     }
 
