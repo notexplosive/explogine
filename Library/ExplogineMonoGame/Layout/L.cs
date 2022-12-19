@@ -24,7 +24,7 @@ public static class L
         return L.FixedElement(name, size.X, size.Y);
     }
 
-    public static LayoutElement Group(LayoutElement parentElement, ArrangementSettings settings,
+    public static LayoutElement Group(LayoutElement parentElement, Style settings,
         LayoutElement[] children)
     {
         return parentElement with {Children = new LayoutElementGroup(settings, children)};
@@ -73,9 +73,9 @@ public static class L
         return new LayoutElement(new ElementBlankName(), new FillEdgeSize(), new FillEdgeSize());
     }
 
-    public static LayoutArrangement Compute(RectangleF outerRectangle, LayoutElementGroup group)
+    public static LayoutArrangement Compute(RectangleF outerRectangle, LayoutElementGroup root)
     {
-        return L.ComputeNested(outerRectangle, group);
+        return L.ComputeNested(outerRectangle, root);
     }
 
     public static string ToJson(LayoutArrangement arrangement)
@@ -95,7 +95,7 @@ public static class L
     private static LayoutArrangement ComputeNested(RectangleF outerRectangle, LayoutElementGroup group,
         int nestLevel = 0)
     {
-        var settings = group.ArrangementSettings;
+        var settings = group.Style;
         var rawElements = group.Elements;
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
         var elements = L.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
@@ -182,7 +182,7 @@ public static class L
         return new LayoutArrangement(namedRects, usedRectangle, group);
     }
 
-    private static LayoutElement[] ConvertToFixedElements(LayoutElement[] elements, ArrangementSettings settings,
+    private static LayoutElement[] ConvertToFixedElements(LayoutElement[] elements, Style settings,
         Vector2 outerSize)
     {
         var result = new LayoutElement[elements.Length];
@@ -274,5 +274,10 @@ public static class L
         }
 
         return result;
+    }
+
+    public static LayoutElementGroup Root(Style settings, params LayoutElement[] elements)
+    {
+        return new LayoutElementGroup(settings, elements);
     }
 }

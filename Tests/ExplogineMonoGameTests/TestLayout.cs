@@ -16,19 +16,19 @@ public class TestLayout
         var layout = L.Compute(
             new RectangleF(0, 0, 500, 500),
             new LayoutElementGroup(
-                new ArrangementSettings(
+                new Style(
                     Orientation.Vertical,
                     Margin: new Vector2(25, 25)),
                 new[]
                 {
                     L.Group(L.FillHorizontal("title-bar", 40),
-                        new ArrangementSettings(
+                        new Style(
                             Alignment: Alignment.Center),
                         new[]
                         {
                             L.FixedElement("icon", 32, 32),
                             L.Group(L.FillHorizontal(32),
-                                new ArrangementSettings(
+                                new Style(
                                     Alignment: Alignment.CenterRight,
                                     PaddingBetweenElements: 3),
                                 new[]
@@ -51,19 +51,19 @@ public class TestLayout
         var layout = L.Compute(
             new RectangleF(0, 0, 500, 500),
             new LayoutElementGroup(
-                new ArrangementSettings(
+                new Style(
                     Orientation.Vertical,
                     Margin: new Vector2(25, 25)),
                 new[]
                 {
                     L.Group(L.FillHorizontal("title-bar", 40),
-                        new ArrangementSettings(
+                        new Style(
                             Alignment: Alignment.Center),
                         new[]
                         {
                             L.FixedElement("icon", 32, 32),
                             L.Group(L.FillHorizontal(32),
-                                new ArrangementSettings(
+                                new Style(
                                     Alignment: Alignment.CenterRight,
                                     PaddingBetweenElements: 3),
                                 new[]

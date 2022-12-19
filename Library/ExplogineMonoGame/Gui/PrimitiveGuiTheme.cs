@@ -6,8 +6,8 @@ namespace ExplogineMonoGame.Gui;
 
 public class PrimitiveGuiTheme : IGuiTheme
 {
-    public static LayoutElementGroup CheckboxLayoutTemplate = new(
-        new ArrangementSettings
+    public static LayoutElementGroup CheckboxLayoutTemplate = L.Root(
+        new Style
             {PaddingBetweenElements = 5, Margin = new Vector2(0, 5), Alignment = Alignment.CenterLeft}, new[]
         {
             L.FixedElement("checkbox", 32, 32),

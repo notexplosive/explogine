@@ -36,7 +36,7 @@ public static class LayoutSerialization
         public string Alignment;
         public int Padding;
 
-        public SerializedSettings(ArrangementSettings settings)
+        public SerializedSettings(Style settings)
         {
             Alignment = settings.Alignment.ToString();
             Margin = new[] {settings.Margin.X, settings.Margin.Y};
@@ -44,9 +44,9 @@ public static class LayoutSerialization
             Padding = settings.PaddingBetweenElements;
         }
 
-        public ArrangementSettings Deserialize()
+        public Style Deserialize()
         {
-            return new ArrangementSettings((Orientation) Orientation, Padding, new Vector2(Margin[0], Margin[1]),
+            return new Style((Orientation) Orientation, Padding, new Vector2(Margin[0], Margin[1]),
                 DeserializeAlignment(Alignment));
         }
 
@@ -110,7 +110,7 @@ public static class LayoutSerialization
             }
 
             Elements = elements;
-            Settings = new SerializedSettings(layoutLayoutElements.ArrangementSettings);
+            Settings = new SerializedSettings(layoutLayoutElements.Style);
         }
 
         public LayoutElementGroup Deserialize()
