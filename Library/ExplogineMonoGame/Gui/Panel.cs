@@ -36,7 +36,10 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
     public void PreDraw(Painter painter, IGuiTheme uiTheme)
     {
         Client.Graphics.PushCanvas(Canvas);
-        InnerGui.Draw(painter, uiTheme, Matrix.Identity);
+        InnerGui.PrepareCanvases(painter, uiTheme);        
+        painter.BeginSpriteBatch(Matrix.Identity);
+        InnerGui.Draw(painter, uiTheme);
+        painter.EndSpriteBatch();
         Client.Graphics.PopCanvas();
     }
 }

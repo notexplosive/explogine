@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
-using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
 public class ImmediateGui : IUpdateInput
 {
     private readonly List<IGuiWidget> _widgets = new();
+    private bool _isReadyToDraw;
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
@@ -28,8 +28,9 @@ public class ImmediateGui : IUpdateInput
     {
         _widgets.Add(new Checkbox(totalRectangle, label, depth, state));
     }
-    
-    public void Slider(RectangleF rectangle, Orientation orientation, int numberOfNotches, Depth depth, Wrapped<int> state)
+
+    public void Slider(RectangleF rectangle, Orientation orientation, int numberOfNotches, Depth depth,
+        Wrapped<int> state)
     {
         _widgets.Add(new Slider(rectangle, orientation, numberOfNotches, depth, state));
     }
@@ -41,11 +42,14 @@ public class ImmediateGui : IUpdateInput
         return panel.InnerGui;
     }
 
-    public void Draw(Painter painter, IGuiTheme uiTheme, Matrix matrix)
+    public void Draw(Painter painter, IGuiTheme uiTheme)
     {
-        PreDraw(painter, uiTheme);
+        if (!_isReadyToDraw)
+        {
+            throw new Exception(
+                $"{nameof(ImmediateGui.PrepareCanvases)} was not called before drawing");
+        }
 
-        painter.BeginSpriteBatch(matrix);
         foreach (var widget in _widgets)
         {
             switch (widget)
@@ -67,17 +71,19 @@ public class ImmediateGui : IUpdateInput
             }
         }
 
-        painter.EndSpriteBatch();
+        _isReadyToDraw = false;
     }
 
-    private void PreDraw(Painter painter, IGuiTheme uiTheme)
+    public void PrepareCanvases(Painter painter, IGuiTheme uiTheme)
     {
         foreach (var widget in _widgets)
         {
-            if (widget is IPreDrawWidget preDrawer)
+            if (widget is IPreDrawWidget iWidgetThatDoesPreDraw)
             {
-                preDrawer.PreDraw(painter, uiTheme);
+                iWidgetThatDoesPreDraw.PreDraw(painter, uiTheme);
             }
         }
+
+        _isReadyToDraw = true;
     }
 }
