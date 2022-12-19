@@ -5,6 +5,7 @@ using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Debugging;
 using ExplogineMonoGame.Input;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
 
@@ -38,7 +39,7 @@ internal class CartridgeChain : IUpdateInput
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
-        DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Client.RenderCanvas.ScreenToCanvas));
+        DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity));
         Current.UpdateInput(input, hitTestStack.AddLayer(Client.RenderCanvas.ScreenToCanvas));
     }
 
