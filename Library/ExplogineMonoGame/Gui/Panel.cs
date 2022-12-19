@@ -17,7 +17,7 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
     }
 
     public Canvas Canvas { get; }
-    public ImmediateGui InnerGui { get; } = new();
+    public Gui InnerGui { get; } = new();
 
     public RectangleF Rectangle { get; }
     public Depth Depth { get; }

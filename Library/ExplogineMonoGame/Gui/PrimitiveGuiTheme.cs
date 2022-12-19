@@ -112,4 +112,26 @@ public class PrimitiveGuiTheme : IGuiTheme
                     {Color = SecondaryColor, Depth = slider.Depth - 1, Thickness = slider.IsDragging ? 2f : 1f});
         }
     }
+
+    public void DrawRadialCheckbox(Painter painter, RadialCheckbox radialCheckbox)
+    {
+        var isPressed = radialCheckbox.IsEngaged && radialCheckbox.IsHovered;
+        painter.DrawRectangle(radialCheckbox.Rectangle,
+            new DrawSettings
+            {
+                Depth = radialCheckbox.Depth,
+                Color = isPressed || radialCheckbox.IsToggled ? ColorExtensions.Lerp(PrimaryColor, SecondaryColor, 0.25f) : PrimaryColor
+            });
+
+        if (radialCheckbox.IsHovered)
+        {
+            painter.DrawLineRectangle(radialCheckbox.Rectangle.Inflated(-2, -2),
+                new LineDrawSettings
+                    {Color = SecondaryColor, Depth = radialCheckbox.Depth - 1, Thickness = isPressed ? 2f : 1f});
+        }
+
+        painter.DrawStringWithinRectangle(Font, radialCheckbox.Label,
+            radialCheckbox.Rectangle.Moved(isPressed ? new Vector2(1) : Vector2.Zero), Alignment.Center,
+            new DrawSettings {Depth = radialCheckbox.Depth - 2, Color = SecondaryColor});
+    }
 }

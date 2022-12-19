@@ -28,7 +28,7 @@ public class Button : IGuiWidget
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
-        if (_behavior.HasBeenClicked(input, hitTestStack, Rectangle, Depth))
+        if (_behavior.UpdateInputAndReturnClicked(input, hitTestStack, Rectangle, Depth))
         {
             _onPress?.Invoke();
         }

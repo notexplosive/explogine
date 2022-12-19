@@ -6,7 +6,7 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Gui;
 
-public class ImmediateGui : IUpdateInput
+public class Gui : IUpdateInput
 {
     private readonly List<IGuiWidget> _widgets = new();
     private bool _isReadyToDraw;
@@ -35,7 +35,20 @@ public class ImmediateGui : IUpdateInput
         _widgets.Add(new Slider(rectangle, orientation, numberOfNotches, depth, state));
     }
 
-    public ImmediateGui Panel(RectangleF rectangle, Depth depth)
+    /// <summary>
+    ///     You can call this or Radial.Add, they do the same thing
+    /// </summary>
+    public void RadialCheckbox(Radial radial, int targetState, RectangleF rectangle, string label, Depth depth)
+    {
+        _widgets.Add(new RadialCheckbox(radial, targetState, rectangle, label, depth));
+    }
+
+    public Radial RadialState(Wrapped<int> state)
+    {
+        return new Radial(this, state);
+    }
+
+    public Gui Panel(RectangleF rectangle, Depth depth)
     {
         var panel = new Panel(rectangle, depth);
         _widgets.Add(panel);
@@ -47,7 +60,7 @@ public class ImmediateGui : IUpdateInput
         if (!_isReadyToDraw)
         {
             throw new Exception(
-                $"{nameof(ImmediateGui.PrepareCanvases)} was not called before drawing");
+                $"{nameof(Gui.PrepareCanvases)} was not called before drawing");
         }
 
         foreach (var widget in _widgets)
@@ -65,6 +78,9 @@ public class ImmediateGui : IUpdateInput
                     break;
                 case Slider slider:
                     uiTheme.DrawSlider(painter, slider);
+                    break;
+                case RadialCheckbox radialCheckbox:
+                    uiTheme.DrawRadialCheckbox(painter, radialCheckbox);
                     break;
                 default:
                     throw new Exception($"Unknown UI Widget type: {widget}");

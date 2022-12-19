@@ -4,31 +4,34 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Gui;
 
-public class Checkbox : IGuiWidget
+public class RadialCheckbox : IGuiWidget
 {
     private readonly ButtonBehavior _behavior;
+    private readonly Radial _radial;
+    private readonly int _targetState;
 
-    public Checkbox(RectangleF totalRectangle, string label, Depth depth, Wrapped<bool> state)
+    public RadialCheckbox(Radial radial, int targetState, RectangleF rectangle, string label, Depth depth)
     {
-        _behavior = new ButtonBehavior();
+        _radial = radial;
+        _targetState = targetState;
+        Rectangle = rectangle;
         Label = label;
         Depth = depth;
-        State = state;
-        Rectangle = totalRectangle;
+        _behavior = new ButtonBehavior();
     }
 
-    public Depth Depth { get; }
-    public string Label { get; }
     public RectangleF Rectangle { get; }
-    public Wrapped<bool> State { get; }
+    public string Label { get; }
+    public Depth Depth { get; }
     public bool IsHovered => _behavior.IsHovered;
     public bool IsEngaged => _behavior.IsEngaged;
+    public bool IsToggled => _radial.State.Value == _targetState;
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         if (_behavior.UpdateInputAndReturnClicked(input, hitTestStack, Rectangle, Depth))
         {
-            State.Value = !State.Value;
+            _radial.State.Value = _targetState;
         }
     }
 }

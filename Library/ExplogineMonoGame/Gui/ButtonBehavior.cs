@@ -10,7 +10,7 @@ namespace ExplogineMonoGame.Gui;
 /// </summary>
 public class ButtonBehavior
 {
-    public bool HasBeenClicked(InputFrameState input, HitTestStack hitTestStack, RectangleF rectangle, Depth depth)
+    public bool UpdateInputAndReturnClicked(InputFrameState input, HitTestStack hitTestStack, RectangleF rectangle, Depth depth)
     {
         var result = false;
         hitTestStack.AddZone(rectangle, depth, ClearHovered, BecomeHovered);

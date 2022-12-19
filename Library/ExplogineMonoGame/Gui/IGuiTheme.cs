@@ -6,4 +6,5 @@ public interface IGuiTheme
     void DrawPanel(Painter painter, Panel panel);
     void DrawCheckbox(Painter painter, Checkbox checkbox);
     void DrawSlider(Painter painter, Slider slider);
+    void DrawRadialCheckbox(Painter painter, RadialCheckbox radialCheckbox);
 }
