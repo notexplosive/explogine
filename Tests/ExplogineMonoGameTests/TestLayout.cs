@@ -13,7 +13,7 @@ public class TestLayout
     [Fact]
     public void build_serial_from_real_layout()
     {
-        var layout = L.Create(
+        var layout = L.Compute(
             new RectangleF(0, 0, 500, 500),
             new LayoutElementGroup(
                 new ArrangementSettings(
@@ -48,7 +48,7 @@ public class TestLayout
     [Fact]
     public void serialize_and_back()
     {
-        var layout = L.Create(
+        var layout = L.Compute(
             new RectangleF(0, 0, 500, 500),
             new LayoutElementGroup(
                 new ArrangementSettings(
