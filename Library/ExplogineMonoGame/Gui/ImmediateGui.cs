@@ -30,6 +30,13 @@ public class ImmediateGui : IUpdateInput
         _widgets.Add(new Checkbox(totalRectangle, label, depth, state));
         return state;
     }
+    
+    public Wrapped<int> Slider(RectangleF rectangle, int numberOfNotches, Depth depth)
+    {
+        var state = new Wrapped<int>();
+        _widgets.Add(new Slider(rectangle, numberOfNotches, depth, state));
+        return state;
+    }
 
     public ImmediateGui Panel(RectangleF rectangle, Depth depth)
     {
@@ -55,6 +62,9 @@ public class ImmediateGui : IUpdateInput
                     break;
                 case Checkbox checkbox:
                     uiTheme.DrawCheckbox(painter, checkbox);
+                    break;
+                case Slider slider:
+                    uiTheme.DrawSlider(painter, slider);
                     break;
                 default:
                     throw new Exception($"Unknown UI Widget type: {widget}");

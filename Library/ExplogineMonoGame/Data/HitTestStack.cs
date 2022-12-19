@@ -8,14 +8,14 @@ namespace ExplogineMonoGame.Data;
 
 public class HitTestStack
 {
-    private readonly Matrix _worldMatrix;
+    public Matrix WorldMatrix { get; }
     private readonly List<HitTestStack> _subLayers = new();
     private readonly List<HitTestZone> _zones = new();
     public event Action? BeforeLayerResolved;
 
     public HitTestStack(Matrix worldMatrix)
     {
-        _worldMatrix = worldMatrix;
+        WorldMatrix = worldMatrix;
     }
 
     internal void OnBeforeResolve()
@@ -39,7 +39,7 @@ public class HitTestStack
 
         foreach (var zone in _zones)
         {
-            if (zone.Contains(position, _worldMatrix))
+            if (zone.Contains(position, WorldMatrix))
             {
                 return zone;
             }
@@ -69,7 +69,7 @@ public class HitTestStack
 
     public HitTestStack AddLayer(Matrix layerMatrix)
     {
-        var hitTestStack = new HitTestStack(_worldMatrix * layerMatrix);
+        var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix);
         _subLayers.Add(hitTestStack);
         return hitTestStack;
     }

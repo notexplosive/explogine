@@ -1,6 +1,7 @@
 ﻿using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Gui;
 
@@ -28,6 +29,7 @@ public class ButtonBehavior
             {
                 IsEngaged = true;
             }
+            Client.Window.SetCursor(MouseCursor.Hand);
         }
 
         if (wasMouseReleased)

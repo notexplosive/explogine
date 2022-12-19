@@ -94,4 +94,22 @@ public class PrimitiveGuiTheme : IGuiTheme
                 new LineDrawSettings {Depth = checkbox.Depth - 2, Color = SecondaryColor, Thickness = 8});
         }
     }
+
+    public void DrawSlider(Painter painter, Slider slider)
+    {
+        painter.DrawRectangle(
+            slider.BodyRectangle, 
+            new DrawSettings {Depth = slider.Depth, Color = PrimaryColor});
+        painter.DrawRectangle(
+            slider.ThumbEngaged ? slider.ThumbRectangle.Inflated(2, 2) : slider.ThumbRectangle,
+            new DrawSettings {Depth = slider.Depth - 2, Color = SecondaryColor}
+        );
+        
+        if (slider.BodyHovered || slider.ThumbHovered)
+        {
+            painter.DrawLineRectangle(slider.BodyRectangle.Inflated(-2, -2),
+                new LineDrawSettings
+                    {Color = SecondaryColor, Depth = slider.Depth - 1, Thickness = slider.IsDragging ? 2f : 1f});
+        }
+    }
 }

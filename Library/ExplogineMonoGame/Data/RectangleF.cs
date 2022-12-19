@@ -219,6 +219,11 @@ public struct RectangleF : IEquatable<RectangleF>
         Offset(new Vector2(x, y));
     }
 
+    public RectangleF Inflated(Vector2 amount)
+    {
+        return Inflated(amount.X, amount.Y);
+    }
+
     public RectangleF Inflated(float horizontalAmount, float verticalAmount)
     {
         var copy = this;
