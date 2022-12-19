@@ -24,18 +24,14 @@ public class ImmediateGui : IUpdateInput
         _widgets.Add(new Button(rectangle, label, onPress, depth));
     }
 
-    public Wrapped<bool> Checkbox(RectangleF totalRectangle, string label, Depth depth)
+    public void Checkbox(RectangleF totalRectangle, string label, Depth depth, Wrapped<bool> state)
     {
-        var state = new Wrapped<bool>();
         _widgets.Add(new Checkbox(totalRectangle, label, depth, state));
-        return state;
     }
     
-    public Wrapped<int> Slider(RectangleF rectangle, Orientation orientation, int numberOfNotches, Depth depth)
+    public void Slider(RectangleF rectangle, Orientation orientation, int numberOfNotches, Depth depth, Wrapped<int> state)
     {
-        var state = new Wrapped<int>();
         _widgets.Add(new Slider(rectangle, orientation, numberOfNotches, depth, state));
-        return state;
     }
 
     public ImmediateGui Panel(RectangleF rectangle, Depth depth)
