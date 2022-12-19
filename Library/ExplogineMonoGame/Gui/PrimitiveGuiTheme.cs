@@ -58,7 +58,7 @@ public class PrimitiveGuiTheme : IGuiTheme
 
     public void DrawCheckbox(Painter painter, Checkbox checkbox)
     {
-        var layout = L.Create(checkbox.Rectangle, PrimitiveGuiTheme.CheckboxLayoutTemplate);
+        var layout = L.Compute(checkbox.Rectangle, PrimitiveGuiTheme.CheckboxLayoutTemplate);
         var checkboxRect = layout.FindElement("checkbox").Rectangle;
         var labelRect = layout.FindElement("label").Rectangle;
         var isPressed = checkbox.IsEngaged && checkbox.IsHovered;

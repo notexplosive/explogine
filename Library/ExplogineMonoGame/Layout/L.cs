@@ -19,6 +19,11 @@ public static class L
         return L.FixedElement(x, y) with {Name = new ElementName(name)};
     }
 
+    public static LayoutElement FixedElement(string name, Vector2 size)
+    {
+        return L.FixedElement(name, size.X, size.Y);
+    }
+
     public static LayoutElement Group(LayoutElement parentElement, ArrangementSettings settings,
         LayoutElement[] children)
     {
@@ -62,15 +67,15 @@ public static class L
     {
         return new LayoutElement(new ElementName(name), new FillEdgeSize(), new FillEdgeSize());
     }
-    
+
     public static LayoutElement FillBoth()
     {
         return new LayoutElement(new ElementBlankName(), new FillEdgeSize(), new FillEdgeSize());
     }
 
-    public static LayoutArrangement Create(RectangleF outerRectangle, LayoutElementGroup group)
+    public static LayoutArrangement Compute(RectangleF outerRectangle, LayoutElementGroup group)
     {
-        return L.CreateNested(outerRectangle, group);
+        return L.ComputeNested(outerRectangle, group);
     }
 
     public static string ToJson(LayoutArrangement arrangement)
@@ -84,10 +89,10 @@ public static class L
         var serialized = JsonConvert.DeserializeObject<LayoutSerialization.SerializedGroup>(json);
         var group = serialized.Deserialize();
 
-        return L.Create(outerRectangle, group);
+        return L.Compute(outerRectangle, group);
     }
 
-    private static LayoutArrangement CreateNested(RectangleF outerRectangle, LayoutElementGroup group,
+    private static LayoutArrangement ComputeNested(RectangleF outerRectangle, LayoutElementGroup group,
         int nestLevel = 0)
     {
         var settings = group.ArrangementSettings;
@@ -166,7 +171,7 @@ public static class L
 
             if (element.Children.HasValue)
             {
-                var childArrangement = L.CreateNested(elementRectangle, element.Children.Value, nestLevel + 1);
+                var childArrangement = L.ComputeNested(elementRectangle, element.Children.Value, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
                     namedRects.Add(keyVal.Key, keyVal.Value);
