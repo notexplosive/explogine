@@ -8,11 +8,9 @@ public class PrimitiveGuiTheme : IGuiTheme
 {
     public static LayoutElementGroup CheckboxLayoutTemplate = L.Root(
         new Style
-            {PaddingBetweenElements = 5, Margin = new Vector2(0, 5), Alignment = Alignment.CenterLeft}, new[]
-        {
-            L.FixedElement("checkbox", 32, 32),
-            L.FillBoth("label")
-        });
+            {PaddingBetweenElements = 5, Margin = new Vector2(0, 5), Alignment = Alignment.CenterLeft},
+        L.FixedElement("checkbox", 32, 32), 
+        L.FillBoth("label"));
 
     public PrimitiveGuiTheme(Color primaryColor, Color secondaryColor, Color backgroundColor, IFontGetter fontGetter)
     {
@@ -98,13 +96,13 @@ public class PrimitiveGuiTheme : IGuiTheme
     public void DrawSlider(Painter painter, Slider slider)
     {
         painter.DrawRectangle(
-            slider.BodyRectangle, 
+            slider.BodyRectangle,
             new DrawSettings {Depth = slider.Depth, Color = PrimaryColor});
         painter.DrawRectangle(
             slider.ThumbEngaged ? slider.ThumbRectangle.Inflated(2, 2) : slider.ThumbRectangle,
             new DrawSettings {Depth = slider.Depth - 2, Color = SecondaryColor}
         );
-        
+
         if (slider.BodyHovered || slider.ThumbHovered)
         {
             painter.DrawLineRectangle(slider.BodyRectangle.Inflated(-2, -2),
@@ -120,7 +118,9 @@ public class PrimitiveGuiTheme : IGuiTheme
             new DrawSettings
             {
                 Depth = radialCheckbox.Depth,
-                Color = isPressed || radialCheckbox.IsToggled ? ColorExtensions.Lerp(PrimaryColor, SecondaryColor, 0.25f) : PrimaryColor
+                Color = isPressed || !radialCheckbox.IsToggled
+                    ? ColorExtensions.Lerp(PrimaryColor, SecondaryColor, 0.25f)
+                    : PrimaryColor
             });
 
         if (radialCheckbox.IsHovered)
