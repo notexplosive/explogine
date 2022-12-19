@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
-public class PrimitiveGuiTheme : IGuiTheme
+public class SimpleGuiTheme : IGuiTheme
 {
     public static LayoutElementGroup CheckboxLayoutTemplate = L.Root(
         new Style
@@ -12,7 +12,7 @@ public class PrimitiveGuiTheme : IGuiTheme
         L.FixedElement("checkbox", 32, 32),
         L.FillBoth("label"));
 
-    public PrimitiveGuiTheme(Color primaryColor, Color secondaryColor, Color backgroundColor, IFontGetter fontGetter)
+    public SimpleGuiTheme(Color primaryColor, Color secondaryColor, Color backgroundColor, IFontGetter fontGetter)
     {
         PrimaryColor = primaryColor;
         SecondaryColor = secondaryColor;
@@ -50,7 +50,7 @@ public class PrimitiveGuiTheme : IGuiTheme
 
     public void DrawCheckbox(Painter painter, Checkbox checkbox)
     {
-        var layout = L.Compute(checkbox.Rectangle, PrimitiveGuiTheme.CheckboxLayoutTemplate);
+        var layout = L.Compute(checkbox.Rectangle, SimpleGuiTheme.CheckboxLayoutTemplate);
         var checkboxRect = layout.FindElement("checkbox").Rectangle;
         var labelRect = layout.FindElement("label").Rectangle;
         var isPressed = checkbox.IsEngaged && checkbox.IsHovered;
