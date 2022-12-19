@@ -68,8 +68,13 @@ public class Gui : IUpdateInput
 
     public Gui AddSubGui(bool startEnabled = false)
     {
-        var page = new SubGuiWidget();
-        page.InnerGui.Enabled = startEnabled;
+        var page = new SubGuiWidget
+        {
+            InnerGui =
+            {
+                Enabled = startEnabled
+            }
+        };
         _widgets.Add(page);
         return page.InnerGui;
     }
