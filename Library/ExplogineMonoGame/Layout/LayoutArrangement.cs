@@ -69,4 +69,16 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
             yield return rect;
         }
     }
+
+    public List<RectangleF> FindRectangles(string elementName)
+    {
+        var elements = FindElements(elementName);
+        var rectangles = new List<RectangleF>(elements.Count);
+        for (var i = 0; i < elements.Count; i++)
+        {
+            rectangles[i] = elements[i].Rectangle;
+        }
+
+        return rectangles;
+    }
 }
