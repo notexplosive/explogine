@@ -280,4 +280,15 @@ public static class L
     {
         return new LayoutElementGroup(settings, elements);
     }
+
+    public static LayoutElement[] CreateMany(int size, LayoutElement sourceElement)
+    {
+        var elements = new LayoutElement[size];
+        for (int i = 0; i < size; i++)
+        {
+            elements[i] = sourceElement;
+        }
+
+        return elements;
+    }
 }
