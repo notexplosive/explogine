@@ -432,7 +432,7 @@ public struct RectangleF : IEquatable<RectangleF>
     }
 
     [Pure]
-    public Matrix CanvasToScreen(Point outputDimensions, float angle)
+    public Matrix CanvasToScreen(Point outputDimensions, float angle = 0)
     {
         var halfSize = Size / 2;
         var rotation =
@@ -446,7 +446,7 @@ public struct RectangleF : IEquatable<RectangleF>
     }
 
     [Pure]
-    public Matrix ScreenToCanvas(Point outputDimensions, float angle)
+    public Matrix ScreenToCanvas(Point outputDimensions, float angle = 0)
     {
         return Matrix.Invert(CanvasToScreen(outputDimensions, angle));
     }
