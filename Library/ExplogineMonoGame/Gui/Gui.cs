@@ -10,9 +10,15 @@ public class Gui : IUpdateInput
 {
     private readonly List<IGuiWidget> _widgets = new();
     private bool _isReadyToDraw;
+    public bool Enabled { get; set; } = true;
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
+        if (!Enabled)
+        {
+            return;
+        }
+
         foreach (var element in _widgets)
         {
             element.UpdateInput(input, hitTestStack);
@@ -35,6 +41,11 @@ public class Gui : IUpdateInput
         _widgets.Add(new Slider(rectangle, orientation, numberOfNotches, depth, state));
     }
 
+    public void DynamicLabel(RectangleF rectangle, Depth depth, Action<Painter, IGuiTheme, RectangleF, Depth> action)
+    {
+        _widgets.Add(new DynamicLabel(rectangle, depth, action));
+    }
+
     /// <summary>
     ///     You can call this or Radial.Add, they do the same thing
     /// </summary>
@@ -55,8 +66,20 @@ public class Gui : IUpdateInput
         return panel.InnerGui;
     }
 
-    public void Draw(Painter painter, IGuiTheme uiTheme)
+    public Gui AddSubGui()
     {
+        var page = new SubGuiWidget();
+        _widgets.Add(page);
+        return page.InnerGui;
+    }
+
+    public void Draw(Painter painter, IGuiTheme theme)
+    {
+        if (!Enabled)
+        {
+            return;
+        }
+
         if (!_isReadyToDraw)
         {
             throw new Exception(
@@ -68,19 +91,25 @@ public class Gui : IUpdateInput
             switch (widget)
             {
                 case Button button:
-                    uiTheme.DrawButton(painter, button);
+                    theme.DrawButton(painter, button);
                     break;
                 case Panel panel:
-                    uiTheme.DrawPanel(painter, panel);
+                    panel.Draw(painter, theme);
                     break;
                 case Checkbox checkbox:
-                    uiTheme.DrawCheckbox(painter, checkbox);
+                    theme.DrawCheckbox(painter, checkbox);
                     break;
                 case Slider slider:
-                    uiTheme.DrawSlider(painter, slider);
+                    theme.DrawSlider(painter, slider);
                     break;
                 case RadialCheckbox radialCheckbox:
-                    uiTheme.DrawRadialCheckbox(painter, radialCheckbox);
+                    theme.DrawRadialCheckbox(painter, radialCheckbox);
+                    break;
+                case SubGuiWidget page:
+                    page.Draw(painter, theme);
+                    break;
+                case DynamicLabel dynamicLabel:
+                    dynamicLabel.Draw(painter, theme);
                     break;
                 default:
                     throw new Exception($"Unknown UI Widget type: {widget}");
@@ -92,6 +121,11 @@ public class Gui : IUpdateInput
 
     public void PrepareCanvases(Painter painter, IGuiTheme uiTheme)
     {
+        if (!Enabled)
+        {
+            return;
+        }
+
         foreach (var widget in _widgets)
         {
             if (widget is IPreDrawWidget iWidgetThatDoesPreDraw)

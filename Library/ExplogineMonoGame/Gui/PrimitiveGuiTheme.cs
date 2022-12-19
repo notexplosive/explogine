@@ -48,12 +48,6 @@ public class PrimitiveGuiTheme : IGuiTheme
             new DrawSettings {Depth = button.Depth - 2, Color = SecondaryColor});
     }
 
-    public void DrawPanel(Painter painter, Panel panel)
-    {
-        painter.DrawRectangle(panel.Rectangle, new DrawSettings {Depth = panel.Depth, Color = BackgroundColor});
-        painter.DrawAsRectangle(panel.Canvas.Texture, panel.Rectangle, new DrawSettings {Depth = panel.Depth - 1});
-    }
-
     public void DrawCheckbox(Painter painter, Checkbox checkbox)
     {
         var layout = L.Compute(checkbox.Rectangle, PrimitiveGuiTheme.CheckboxLayoutTemplate);

@@ -42,4 +42,10 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
         painter.EndSpriteBatch();
         Client.Graphics.PopCanvas();
     }
+
+    public void Draw(Painter painter, IGuiTheme uiTheme)
+    {
+        painter.DrawRectangle(Rectangle, new DrawSettings {Depth = Depth, Color = uiTheme.BackgroundColor});
+        painter.DrawAsRectangle(Canvas.Texture, Rectangle, new DrawSettings {Depth = Depth - 1});
+    }
 }

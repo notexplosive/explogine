@@ -74,9 +74,9 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
     {
         var elements = FindElements(elementName);
         var rectangles = new List<RectangleF>(elements.Count);
-        for (var i = 0; i < elements.Count; i++)
+        foreach (var element in elements)
         {
-            rectangles[i] = elements[i].Rectangle;
+            rectangles.Add(element.Rectangle);
         }
 
         return rectangles;
