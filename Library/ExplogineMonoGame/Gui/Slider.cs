@@ -9,7 +9,7 @@ namespace ExplogineMonoGame.Gui;
 
 public class Slider : IGuiWidget
 {
-    private readonly Drag<RectangleF> _thumbDrag;
+    private readonly Drag<RectangleF> _thumbDrag = new();
     private readonly int _totalNotches;
 
     public Slider(RectangleF entireRectangle, Orientation orientation, int totalNotches, Depth depth,
@@ -21,7 +21,6 @@ public class Slider : IGuiWidget
         EntireRectangle = entireRectangle;
         BodyRectangle = entireRectangle.Inflated(new Vector2(-5).JustAxis(AlongAxis.Opposite()));
         _totalNotches = totalNotches;
-        _thumbDrag = new Drag<RectangleF>();
     }
 
     public Axis AlongAxis { get; }

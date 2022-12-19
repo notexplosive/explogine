@@ -26,6 +26,6 @@ public class ScrollableArea
 
     public void SetPosition(Vector2 position)
     {
-        _viewPosition = (ViewBounds with {Location = Vector2.Zero}).ConstrainedTo(InnerWorldBoundaries).TopLeft;
+        _viewPosition = (ViewBounds with {Location = position}).ConstrainedTo(InnerWorldBoundaries).TopLeft;
     }
 }

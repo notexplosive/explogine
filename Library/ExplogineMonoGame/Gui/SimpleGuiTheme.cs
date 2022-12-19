@@ -126,4 +126,20 @@ public class SimpleGuiTheme : IGuiTheme
             radialCheckbox.Rectangle.Moved(isPressed ? new Vector2(1) : Vector2.Zero), Alignment.Center,
             new DrawSettings {Depth = radialCheckbox.Depth - 2, Color = SecondaryColor});
     }
+
+    public void DrawScrollbar(Painter painter, Scrollbar scrollBar)
+    {
+        painter.DrawRectangle(scrollBar.BodyRectangle,
+            new DrawSettings {Color = PrimaryColor, Depth = scrollBar.Depth});
+
+        var thumbRect = scrollBar.ThumbRectangle;
+
+        thumbRect.Inflate(-2, -2);
+
+        painter.DrawRectangle(thumbRect,
+            new DrawSettings {Color = SecondaryColor, Depth = scrollBar.Depth});
+
+        painter.DrawRectangle(new RectangleF(scrollBar.BodyRectangle.BottomLeft, new Vector2(scrollBar.Thickness)),
+            new DrawSettings {Color = BackgroundColor, Depth = scrollBar.Depth});
+    }
 }
