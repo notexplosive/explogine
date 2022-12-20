@@ -15,13 +15,14 @@ public class Font : IFontGetter, IFont
     public SpriteFont SpriteFont { get; }
     public int FontSize { get; }
     public float ScaleFactor { get; }
+    public float Height => FontSize;
 
     public Font GetFont()
     {
         // no-op
         return this;
     }
-
+    
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
         if (!restrictedWidth.HasValue)
