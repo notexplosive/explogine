@@ -31,12 +31,12 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
                     strategy.StartNewLine();
                 }
 
-                strategy.AppendCurrentTokenToLineAndClearCurrentToken();
+                strategy.AddTokenToLine();
             }
             
             if (strategy.IsNewline(character))
             {
-                strategy.AppendCurrentTokenToLineAndClearCurrentToken();
+                strategy.AddTokenToLine();
                 strategy.StartNewLine();
             }
         }

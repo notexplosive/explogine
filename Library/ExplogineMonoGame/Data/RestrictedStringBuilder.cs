@@ -20,6 +20,15 @@ public static class RestrictedStringBuilder
     public static RestrictedString<FormattedText.FragmentLine> FromFragments(FormattedText.IFragment[] fragments,
         float restrictedWidth)
     {
+        var lettersAsFragments = RestrictedStringBuilder.BreakFragmentsIntoIndividualLetters(fragments);
+
+        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy(new FragmentStrategy(),
+            lettersAsFragments,
+            restrictedWidth);
+    }
+
+    private static FormattedText.IGlyphData[] BreakFragmentsIntoIndividualLetters(FormattedText.IFragment[] fragments)
+    {
         var combinedText = string.Empty;
         foreach (var fragment in fragments)
         {
@@ -51,7 +60,7 @@ public static class RestrictedStringBuilder
                     charIndexWithinCurrentFragment = 0;
                 }
             }
-            else if(currentFragment is FormattedText.IGlyphData glyphData)
+            else if (currentFragment is FormattedText.IGlyphData glyphData)
             {
                 lettersAsFragments[i] = glyphData;
                 currentFragmentIndex++;
@@ -63,9 +72,7 @@ public static class RestrictedStringBuilder
             }
         }
 
-        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy(new FragmentStrategy(),
-            lettersAsFragments,
-            restrictedWidth);
+        return lettersAsFragments;
     }
 
     public interface IStrategy<in TChar, TString>
@@ -74,7 +81,7 @@ public static class RestrictedStringBuilder
         float CurrentLineWidth { get; }
         void FinishCurrentLine();
         void StartNewLine();
-        void AppendCurrentTokenToLineAndClearCurrentToken();
+        void AddTokenToLine();
         float CurrentTokenWidth();
         void AppendTextToToken(TChar character);
         bool HasContentInCurrentLine();
@@ -155,7 +162,7 @@ public static class RestrictedStringBuilder
             _currentLineFragments.Clear();
         }
 
-        public void AppendCurrentTokenToLineAndClearCurrentToken()
+        public void AddTokenToLine()
         {
             _currentLineFragments.AddRange(_currentTokenFragments);
             _currentTokenFragments.Clear();
@@ -232,7 +239,7 @@ public static class RestrictedStringBuilder
             CurrentLine.Clear();
         }
 
-        public void AppendCurrentTokenToLineAndClearCurrentToken()
+        public void AddTokenToLine()
         {
             CurrentLineWidth += CurrentTokenWidth();
             CurrentLine.Append(_currentToken.ToString());
