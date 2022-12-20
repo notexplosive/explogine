@@ -94,7 +94,7 @@ public readonly struct FormattedText
 
     public readonly record struct Fragment(IFontGetter FontGetter, string Text, Color? Color = null) : IFragment
     {
-        public Font Font => FontGetter.GetFont();
+        public IFont Font => FontGetter.GetFont();
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
 
@@ -104,7 +104,7 @@ public readonly struct FormattedText
         }
     }
 
-    public readonly record struct FragmentChar(Font Font, char Text, Color? Color = null) : IGlyphData
+    public readonly record struct FragmentChar(IFont Font, char Text, Color? Color = null) : IGlyphData
     {
         public Vector2 Size => Font.MeasureString(Text.ToString());
         public float ScaleFactor => Font.ScaleFactor;
@@ -126,6 +126,11 @@ public readonly struct FormattedText
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
             // this function is intentionally left blank
+        }
+        
+        public override string ToString()
+        {
+            return $"{Size} (whitespace)";
         }
     }
 

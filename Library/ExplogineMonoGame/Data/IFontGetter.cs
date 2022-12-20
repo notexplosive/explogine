@@ -2,5 +2,5 @@
 
 public interface IFontGetter
 {
-    Font GetFont();
+    IFont GetFont();
 }

@@ -19,14 +19,9 @@ public class IndirectFont : IFontGetter
     public int FontSize { get; }
 
     [Pure]
-    public Font GetFont()
+    public IFont GetFont()
     {
         return _lazy.Value;
-    }
-
-    public static implicit operator Font(IndirectFont indirectFont)
-    {
-        return indirectFont.GetFont();
     }
 
     [Pure]

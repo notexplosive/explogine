@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
-public class Font : IFontGetter, IFont
+public class Font : IFont
 {
     public Font(SpriteFont spriteFont, int size)
     {
@@ -17,7 +17,7 @@ public class Font : IFontGetter, IFont
     public float ScaleFactor { get; }
     public float Height => FontSize;
 
-    public Font GetFont()
+    public IFont GetFont()
     {
         // no-op
         return this;
@@ -40,7 +40,7 @@ public class Font : IFontGetter, IFont
 
     public RestrictedString<string> GetRestrictedString(string text, float restrictedWidth)
     {
-        return RestrictedStringBuilder.FromText(text, restrictedWidth, SpriteFont, ScaleFactor);
+        return RestrictedStringBuilder.FromText(text, restrictedWidth, this);
     }
 
     public Font WithFontSize(int size)

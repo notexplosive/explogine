@@ -10,13 +10,14 @@ public class Painter
     private readonly GraphicsDevice _graphicsDevice;
     private readonly SpriteBatch _spriteBatch;
     private Texture2D? _pixelAsset;
-    public bool SpriteBatchIsInProgress { get; private set; }
 
     public Painter(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
         _spriteBatch = new SpriteBatch(graphicsDevice);
     }
+
+    public bool SpriteBatchIsInProgress { get; private set; }
 
     public Texture2D PixelAsset => _pixelAsset ??= Client.Assets.GetTexture("white-pixel");
 
@@ -69,16 +70,23 @@ public class Painter
         DrawSettings settings)
     {
         var font = fontLike.GetFont();
-        _spriteBatch.DrawString(
-            font.SpriteFont,
-            text,
-            position,
-            settings.Color,
-            settings.Angle,
-            settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
-            scale.Value * font.ScaleFactor,
-            settings.FlipEffect,
-            settings.Depth);
+        if (font is Font realFont)
+        {
+            _spriteBatch.DrawString(
+                realFont.SpriteFont,
+                text,
+                position,
+                settings.Color,
+                settings.Angle,
+                settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
+                scale.Value * font.ScaleFactor,
+                settings.FlipEffect,
+                settings.Depth);
+        }
+        else
+        {
+            throw new Exception("Attempted to draw text without a backing SpriteFont");
+        }
     }
 
     public void DrawStringAtPosition(IFontGetter font, string text, Vector2 position, DrawSettings settings)
@@ -90,8 +98,9 @@ public class Painter
     {
         DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
     }
-    
-    public void DrawFormattedStringAtPosition(FormattedText formattedText, Vector2 position, Alignment alignment, DrawSettings settings)
+
+    public void DrawFormattedStringAtPosition(FormattedText formattedText, Vector2 position, Alignment alignment,
+        DrawSettings settings)
     {
         var rectangle = new RectangleF(position, formattedText.OneLineSize()).ToRectangle();
         var movedRectangle = rectangle.Moved(-settings.Origin.Value(rectangle.Size));
@@ -112,16 +121,23 @@ public class Painter
 
             if (glyph.Data is FormattedText.FragmentChar fragmentChar)
             {
-                _spriteBatch.DrawString(
-                    fragmentChar.Font.SpriteFont,
-                    fragmentChar.Text.ToString(),
-                    rectTopLeft,
-                    fragmentChar.Color ?? settings.Color,
-                    settings.Angle,
-                    letterOrigin,
-                    Vector2.One * fragmentChar.Font.ScaleFactor,
-                    settings.FlipEffect,
-                    settings.Depth);
+                if (fragmentChar.Font is Font realFont)
+                {
+                    _spriteBatch.DrawString(
+                        realFont.SpriteFont,
+                        fragmentChar.Text.ToString(),
+                        rectTopLeft,
+                        fragmentChar.Color ?? settings.Color,
+                        settings.Angle,
+                        letterOrigin,
+                        Vector2.One * fragmentChar.Font.ScaleFactor,
+                        settings.FlipEffect,
+                        settings.Depth);
+                }
+                else
+                {
+                    throw new Exception("Attempted to draw string with Font that has no SpriteFont");
+                }
             }
 
             if (glyph.Data is FormattedText.FragmentImage fragmentImage)
@@ -165,7 +181,8 @@ public class Painter
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin.Value(settings.SourceRectangle.Value.Size), scale2D.Value, settings.FlipEffect, settings.Depth);
+            settings.Origin.Value(settings.SourceRectangle.Value.Size), scale2D.Value, settings.FlipEffect,
+            settings.Depth);
     }
 
     #endregion

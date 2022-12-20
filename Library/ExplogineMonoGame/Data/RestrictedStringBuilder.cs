@@ -9,10 +9,9 @@ namespace ExplogineMonoGame.Data;
 
 public static class RestrictedStringBuilder
 {
-    public static RestrictedString<string> FromText(string text, float restrictedWidth, SpriteFont spriteFont,
-        float scaleFactor)
+    public static RestrictedString<string> FromText(string text, float restrictedWidth, IFont font)
     {
-        return RestrictedString<string>.ExecuteStrategy(new TextStrategy(spriteFont, scaleFactor),
+        return RestrictedString<string>.ExecuteStrategy(new TextStrategy(font),
             text.ToCharArray(),
             restrictedWidth);
     }
@@ -204,14 +203,12 @@ public static class RestrictedStringBuilder
         private readonly StringBuilder _currentToken = new();
         private readonly float _heightOfOneLine;
         private readonly List<string> _resultLines = new();
-        private readonly float _scaleFactor;
-        private readonly SpriteFont _spriteFont;
+        private readonly IFont _font;
 
-        public TextStrategy(SpriteFont spriteFont, float scaleFactor)
+        public TextStrategy(IFont font)
         {
-            _heightOfOneLine = spriteFont.LineSpacing * scaleFactor;
-            _spriteFont = spriteFont;
-            _scaleFactor = scaleFactor;
+            _heightOfOneLine = font.Height;
+            _font = font;
             Height = _heightOfOneLine;
         }
 
@@ -248,7 +245,7 @@ public static class RestrictedStringBuilder
 
         public float CurrentTokenWidth()
         {
-            return _spriteFont.MeasureString(_currentToken).X * _scaleFactor;
+            return _font.MeasureString(_currentToken.ToString()).X;
         }
 
         public void AppendTextToToken(char content)
