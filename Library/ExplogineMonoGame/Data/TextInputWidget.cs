@@ -35,11 +35,6 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             EnterText(input.Keyboard.GetEnteredCharacters());
 
-            if (input.Keyboard.GetButton(Keys.Delete).WasPressed)
-            {
-                ReverseBackspace();
-            }
-
             if (input.Keyboard.GetButton(Keys.Left).WasPressed)
             {
                 MoveLeft();
@@ -140,6 +135,10 @@ public class TextInputWidget : Widget, IUpdateInput
             else if (character == '\r')
             {
                 EnterCharacter('\n');
+            }
+            else if (character == 127)
+            {
+                ReverseBackspace();
             }
             else
             {
