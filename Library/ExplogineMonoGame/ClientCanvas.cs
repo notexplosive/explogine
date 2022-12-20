@@ -5,7 +5,10 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
 
-public class RenderCanvas
+/// <summary>
+/// Formerly known as RenderCanvas but that name sucks
+/// </summary>
+public class ClientCanvas
 {
     public Canvas Canvas { get; private set; } = null!;
 
@@ -14,7 +17,7 @@ public class RenderCanvas
                                             Client.Window.RenderResolution)), 1))
                                     * Matrix.CreateTranslation(new Vector3(CalculateTopLeftCorner(), 0));
 
-    public Matrix ScreenToCanvas => Matrix.Invert(Client.RenderCanvas.CanvasToScreen);
+    public Matrix ScreenToCanvas => Matrix.Invert(Client.ClientCanvas.CanvasToScreen);
 
     public void ResizeCanvas(Point newWindowSize)
     {

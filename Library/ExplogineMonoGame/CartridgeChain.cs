@@ -40,7 +40,7 @@ internal class CartridgeChain : IUpdateInput
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity));
-        Current.UpdateInput(input, hitTestStack.AddLayer(Client.RenderCanvas.ScreenToCanvas));
+        Current.UpdateInput(input, hitTestStack.AddLayer(Client.ClientCanvas.ScreenToCanvas));
     }
 
     public void Update(float dt)
