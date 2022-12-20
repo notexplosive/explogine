@@ -75,7 +75,7 @@ public class Scrollbar
         }
     }
 
-    public float ThumbPercent => ThumbRectangle.Height / BodyRectangle.Height;
+    public float ThumbPercent => ThumbRectangle.Size.GetAxis(AlongAxis) / BodyRectangle.Size.GetAxis(AlongAxis);
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
