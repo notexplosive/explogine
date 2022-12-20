@@ -20,6 +20,7 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
 
     public LayoutElementGroup RawGroup { get; }
     public RectangleF UsedSpace { get; }
+    public RectangleF UsedSpaceIncludingMargin => UsedSpace.Inflated(RawGroup.Style.Margin.X, RawGroup.Style.Margin.Y);
 
     public IEnumerator<KeyValuePair<string, BakedLayoutElement>> GetEnumerator()
     {
