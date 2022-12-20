@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
-internal readonly record struct HitTestZone(RectangleF Rectangle, Depth Depth, Action? BeforeResolve, Action Callback)
+internal readonly record struct HitTestZone(RectangleF Rectangle, Depth Depth, Action? BeforeResolve, Action Callback, bool PassThrough)
 {
     public bool Contains(Vector2 position, Matrix worldMatrix)
     {

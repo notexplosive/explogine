@@ -40,15 +40,29 @@ public class HitTestStack
         }
     }
 
-    internal HitTestZone? GetTopZoneAt(Vector2 position)
+    /// <summary>
+    /// Gets all PassThrough Zones at the position, as well as the top non-PassThrough Zone at the position if it exists
+    /// </summary>
+    /// <param name="position">The position, before being transformed by the world matrix</param>
+    /// <returns></returns>
+    internal List<HitTestZone> GetZonesAt(Vector2 position)
     {
         _zones.Sort((x, y) => x.Depth - y.Depth);
 
+        var result = new List<HitTestZone>();
+        
+        // todo: one day layers and zones will be sorted in the same list so we won't do zones then layers, it'll just be one for loop where we do them all
+        
         foreach (var zone in _zones)
         {
             if (zone.Contains(position, WorldMatrix))
             {
-                return zone;
+                result.Add(zone);
+
+                if (!zone.PassThrough)
+                {
+                    return result;
+                }
             }
         }
 
@@ -56,25 +70,34 @@ public class HitTestStack
         {
             if (layer.IsWithinMaskRectangle(position, WorldMatrix))
             {
-                var zone = layer.GetTopZoneAt(position);
-                if (zone.HasValue)
+                var zones = layer.GetZonesAt(position);
+                result.AddRange(zones);
+                foreach (var zone in zones)
                 {
-                    return zone;
+                    if (!zone.PassThrough)
+                    {
+                        return result;
+                    }
                 }
             }
         }
 
-        return null;
+        return result;
     }
 
-    public void AddZone(RectangleF rect, Depth depth, Action callback)
+    public void AddZone(RectangleF rect, Depth depth, HoverState hoverState, bool passThrough = false)
     {
-        _zones.Add(new HitTestZone(rect, depth, null, callback));
+        AddZone(rect, depth, hoverState.Unset, hoverState.Set, passThrough);
     }
 
-    public void AddZone(RectangleF rect, Depth depth, Action? beforeResolve, Action callback)
+    public void AddZone(RectangleF rect, Depth depth, Action callback, bool passThrough = false)
     {
-        _zones.Add(new HitTestZone(rect, depth, beforeResolve, callback));
+        AddZone(rect, depth, null, callback, passThrough);
+    }
+
+    public void AddZone(RectangleF rect, Depth depth, Action? beforeResolve, Action callback, bool passThrough = false)
+    {
+        _zones.Add(new HitTestZone(rect, depth, beforeResolve, callback, passThrough));
     }
 
     public HitTestStack AddLayer(Matrix layerMatrix, RectangleF? layerRectangle = null)

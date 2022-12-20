@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Data;
+﻿using System.Collections.Generic;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
@@ -15,8 +16,9 @@ internal class HitTestRoot
         }
 
         BaseStack.OnBeforeResolve();
-
-        var hit = BaseStack.GetTopZoneAt(position);
-        hit?.Callback?.Invoke();
+        foreach (var zone in BaseStack.GetZonesAt(position))
+        {
+            zone.Callback.Invoke();
+        }
     }
 }
