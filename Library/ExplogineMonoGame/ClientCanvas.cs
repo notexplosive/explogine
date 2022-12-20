@@ -24,13 +24,13 @@ public class ClientCanvas
 
     public void ResizeCanvas(Point newWindowSize)
     {
-        if (_canvas.Size == Client.Window.RenderResolution)
+        if (_canvas.Size == newWindowSize)
         {
             return;
         }
 
         _canvas.Dispose();
-        _canvas = new Canvas(Client.Window.RenderResolution);
+        _canvas = new Canvas(newWindowSize);
     }
 
     public void Setup()
