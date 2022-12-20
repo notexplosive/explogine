@@ -20,9 +20,9 @@ public class HitTestStack
     public Matrix WorldMatrix { get; }
     public event Action? BeforeLayerResolved;
 
-    public bool IsWithinMaskRectangle(Vector2 transformedLocation)
+    public bool IsWithinMaskRectangle(Vector2 position, Matrix parentMatrix)
     {
-        return !_maskRectangle.HasValue || _maskRectangle.Value.Contains(transformedLocation);
+        return !_maskRectangle.HasValue || _maskRectangle.Value.Contains(Vector2.Transform(position, parentMatrix));
     }
 
     internal void OnBeforeResolve()
@@ -54,7 +54,7 @@ public class HitTestStack
 
         foreach (var layer in _subLayers)
         {
-            if (layer.IsWithinMaskRectangle(position))
+            if (layer.IsWithinMaskRectangle(position, WorldMatrix))
             {
                 var zone = layer.GetTopZoneAt(position);
                 if (zone.HasValue)
