@@ -231,8 +231,11 @@ public class TextInputWidget : Widget, IUpdateInput
     private RectangleF RectangleAtCharIndex(int targetIndex)
     {
         // todo: cache this!!
-        var formattedText = new FormattedText(_font, ContentString());
-        var currentRect = new RectangleF(0, 0, 0, _font.GetFont().Height);
+        var contentString = ContentString();
+        // If the current buffer is empty, we act like we have just one character so we format it in the right spot
+        var formattedText = new FormattedText(_font, contentString.Length > 0 ? contentString : " ");
+
+        var currentRect = new RectangleF(Vector2.Zero, new Vector2(0, _font.GetFont().Height));
 
         var glyphIndex = 0;
         foreach (var glyph in formattedText.GetGlyphs(InnerRectangle, _alignment))
