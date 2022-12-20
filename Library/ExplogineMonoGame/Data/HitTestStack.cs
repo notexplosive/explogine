@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExplogineCore.Data;
-using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
 public class HitTestStack
 {
-    public Matrix WorldMatrix { get; }
+    private readonly RectangleF? _maskRectangle;
     private readonly List<HitTestStack> _subLayers = new();
     private readonly List<HitTestZone> _zones = new();
-    public event Action? BeforeLayerResolved;
 
-    public HitTestStack(Matrix worldMatrix)
+    public HitTestStack(Matrix worldMatrix, RectangleF? maskRectangle = null)
     {
         WorldMatrix = worldMatrix;
+        _maskRectangle = maskRectangle;
+    }
+
+    public Matrix WorldMatrix { get; }
+    public event Action? BeforeLayerResolved;
+
+    public bool IsWithinMaskRectangle(Vector2 transformedLocation)
+    {
+        return !_maskRectangle.HasValue || _maskRectangle.Value.Contains(transformedLocation);
     }
 
     internal void OnBeforeResolve()
@@ -26,7 +33,7 @@ public class HitTestStack
         {
             zone.BeforeResolve?.Invoke();
         }
-        
+
         foreach (var layer in _subLayers)
         {
             layer.OnBeforeResolve();
@@ -47,10 +54,13 @@ public class HitTestStack
 
         foreach (var layer in _subLayers)
         {
-            var zone = layer.GetTopZoneAt(position);
-            if (zone.HasValue)
+            if (layer.IsWithinMaskRectangle(position))
             {
-                return zone;
+                var zone = layer.GetTopZoneAt(position);
+                if (zone.HasValue)
+                {
+                    return zone;
+                }
             }
         }
 
@@ -61,15 +71,15 @@ public class HitTestStack
     {
         _zones.Add(new HitTestZone(rect, depth, null, callback));
     }
-    
+
     public void AddZone(RectangleF rect, Depth depth, Action? beforeResolve, Action callback)
     {
         _zones.Add(new HitTestZone(rect, depth, beforeResolve, callback));
     }
 
-    public HitTestStack AddLayer(Matrix layerMatrix)
+    public HitTestStack AddLayer(Matrix layerMatrix, RectangleF? layerRectangle = null)
     {
-        var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix);
+        var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix, layerRectangle);
         _subLayers.Add(hitTestStack);
         return hitTestStack;
     }
