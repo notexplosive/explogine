@@ -33,13 +33,13 @@ public readonly struct MouseFrameState
     public Vector2 CanvasPosition(Matrix? toCanvasTransform = null)
     {
         var transform = toCanvasTransform ?? Matrix.Identity;
-        return Position(Client.ClientCanvas.ScreenToCanvas * transform);
+        return Position(Client.Canvas.ScreenToCanvas * transform);
     }
 
     public Vector2 CanvasDelta(Matrix? toCanvasTransform = null)
     {
         var transform = toCanvasTransform ?? Matrix.Identity;
-        return Delta(Client.ClientCanvas.ScreenToCanvas * transform);
+        return Delta(Client.Canvas.ScreenToCanvas * transform);
     }
 
     public ButtonFrameState GetButton(MouseButton mouseButton)

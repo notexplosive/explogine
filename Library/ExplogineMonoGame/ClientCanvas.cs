@@ -2,6 +2,7 @@
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame;
 
@@ -10,34 +11,36 @@ namespace ExplogineMonoGame;
 /// </summary>
 public class ClientCanvas
 {
-    public Canvas Canvas { get; private set; } = null!;
+    private Canvas _canvas = null!;
 
     public Matrix CanvasToScreen => Matrix.CreateScale(new Vector3(
                                         new Vector2(PointExtensions.CalculateScalarDifference(Client.Window.Size,
                                             Client.Window.RenderResolution)), 1))
                                     * Matrix.CreateTranslation(new Vector3(CalculateTopLeftCorner(), 0));
 
-    public Matrix ScreenToCanvas => Matrix.Invert(Client.ClientCanvas.CanvasToScreen);
+    public Matrix ScreenToCanvas => Matrix.Invert(Client.Canvas.CanvasToScreen);
+    public Texture2D Texture => _canvas.Texture;
+    public Point Size => _canvas.Size;
 
     public void ResizeCanvas(Point newWindowSize)
     {
-        if (Canvas.Size == Client.Window.RenderResolution)
+        if (_canvas.Size == Client.Window.RenderResolution)
         {
             return;
         }
 
-        Canvas.Dispose();
-        Canvas = new Canvas(Client.Window.RenderResolution);
+        _canvas.Dispose();
+        _canvas = new Canvas(Client.Window.RenderResolution);
     }
 
     public void Setup()
     {
-        Canvas = new Canvas(1, 1);
+        _canvas = new Canvas(1, 1);
     }
 
     public void DrawWithin(Action<Painter> drawAction)
     {
-        Client.Graphics.PushCanvas(Canvas);
+        Client.Graphics.PushCanvas(_canvas);
         Client.Graphics.Painter.Clear(Color.Black);
         drawAction(Client.Graphics.Painter);
         Client.Graphics.PopCanvas();
@@ -46,7 +49,7 @@ public class ClientCanvas
     public void Draw(Painter painter)
     {
         painter.BeginSpriteBatch(CanvasToScreen);
-        painter.DrawAtPosition(Canvas.Texture, Vector2.Zero);
+        painter.DrawAtPosition(_canvas.Texture, Vector2.Zero);
         painter.EndSpriteBatch();
     }
 
