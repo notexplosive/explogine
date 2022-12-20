@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Text;
+using ApprovalTests;
 using ExplogineMonoGame.Data;
 using FluentAssertions;
 using Microsoft.Xna.Framework;
@@ -64,6 +66,24 @@ public class TestFormattedText
             }
         }
     }
+
+    [Fact]
+    public void linebreak_pinning_test()
+    {
+        var font = new TestFont();
+        var formattedText = new FormattedText(font, "This is a very long string with\nmany\n\nlinebreaks. Some of them are manual linebreaks and some of them are natural.\nThere are also     several consecutive spaces.");
+        var glyphs = formattedText
+            .GetGlyphs(new RectangleF(0, 0, 500, 500), Alignment.TopLeft).ToList();
+
+        var verifyString = new StringBuilder();
+
+        foreach (var glyph in glyphs)
+        {
+            verifyString.AppendLine(glyph.ToString());
+        }
+        
+        Approvals.Verify(verifyString);
+    }
 }
 
 /// <summary>
@@ -82,9 +102,18 @@ public class TestFont : IFont
 
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
+        var lineCount = 1;
+        foreach (var character in text)
+        {
+            if (character == '\n')
+            {
+                lineCount++;
+            }
+        }
+        
         if (!restrictedWidth.HasValue)
         {
-            return new Vector2(text.Length * ScaleFactor, Height);
+            return new Vector2(text.Length * 32 * ScaleFactor, Height * lineCount);
         }
 
         return RestrictedStringBuilder.FromText(text, restrictedWidth.Value, this).Size;

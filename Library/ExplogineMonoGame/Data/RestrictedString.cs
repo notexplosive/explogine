@@ -7,7 +7,8 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
 {
     public readonly string CombinedText = string.Join("\n", Lines);
 
-    public static RestrictedString<TOutput> ExecuteStrategy<TChar>(RestrictedStringBuilder.IStrategy<TChar, TOutput> strategy,
+    public static RestrictedString<TOutput> ExecuteStrategy<TChar>(
+        RestrictedStringBuilder.IStrategy<TChar, TOutput> strategy,
         TChar[] text, float restrictedWidth)
     {
         if (text.Length == 0)
@@ -24,26 +25,28 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
                 strategy.AppendTextToToken(character);
             }
 
-            if (strategy.IsWhiteSpace(character) || i == text.Length - 1)
+            if (strategy.IsNewline(character))
+            {
+                strategy.FinishToken();
+                strategy.FinishLine();
+                strategy.StartNewLine();
+                strategy.AppendManualLinebreak(character);
+            }
+            else if (strategy.IsWhiteSpace(character) || i == text.Length - 1)
             {
                 if (strategy.CurrentLineWidth + strategy.CurrentTokenWidth() >= restrictedWidth)
                 {
+                    strategy.FinishLine();
                     strategy.StartNewLine();
                 }
 
-                strategy.AddTokenToLine();
-            }
-            
-            if (strategy.IsNewline(character))
-            {
-                strategy.AddTokenToLine();
-                strategy.StartNewLine();
+                strategy.FinishToken();
             }
         }
 
         if (strategy.HasContentInCurrentLine())
         {
-            strategy.FinishCurrentLine();
+            strategy.FinishLine();
         }
 
         return strategy.Result;

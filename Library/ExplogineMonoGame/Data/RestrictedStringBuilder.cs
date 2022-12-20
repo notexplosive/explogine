@@ -78,14 +78,15 @@ public static class RestrictedStringBuilder
     {
         RestrictedString<TString> Result { get; }
         float CurrentLineWidth { get; }
-        void FinishCurrentLine();
+        void FinishLine();
         void StartNewLine();
-        void AddTokenToLine();
+        void FinishToken();
         float CurrentTokenWidth();
         void AppendTextToToken(TChar character);
         bool HasContentInCurrentLine();
         bool IsNewline(TChar character);
         bool IsWhiteSpace(TChar character);
+        void AppendManualLinebreak(TChar newlineCharacter);
     }
 
     public class FragmentStrategy : IStrategy<FormattedText.IGlyphData, FormattedText.FragmentLine>
@@ -148,7 +149,7 @@ public static class RestrictedStringBuilder
 
         public float CurrentLineWidth => CurrentLineSize.X;
 
-        public void FinishCurrentLine()
+        public void FinishLine()
         {
             _totalSize.X = MathF.Max(_totalSize.X, CurrentLineSize.X);
             _totalSize.Y += CurrentLineSize.Y;
@@ -157,14 +158,19 @@ public static class RestrictedStringBuilder
 
         public void StartNewLine()
         {
-            FinishCurrentLine();
             _currentLineFragments.Clear();
         }
 
-        public void AddTokenToLine()
+        public void FinishToken()
         {
             _currentLineFragments.AddRange(_currentTokenFragments);
             _currentTokenFragments.Clear();
+        }
+
+        public void AppendManualLinebreak(FormattedText.IGlyphData newlineCharacter)
+        {
+            var size = new Vector2(0, newlineCharacter.Size.Y / 2);
+            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor));
         }
 
         public float CurrentTokenWidth()
@@ -222,7 +228,7 @@ public static class RestrictedStringBuilder
 
         public float CurrentLineWidth { get; private set; }
 
-        public void FinishCurrentLine()
+        public void FinishLine()
         {
             MaxWidth = MathF.Max(MaxWidth, CurrentLineWidth);
             CurrentLineWidth = 0;
@@ -231,12 +237,11 @@ public static class RestrictedStringBuilder
 
         public void StartNewLine()
         {
-            FinishCurrentLine();
             Height += _heightOfOneLine;
             CurrentLine.Clear();
         }
 
-        public void AddTokenToLine()
+        public void FinishToken()
         {
             CurrentLineWidth += CurrentTokenWidth();
             CurrentLine.Append(_currentToken.ToString());
@@ -266,6 +271,11 @@ public static class RestrictedStringBuilder
         public bool IsWhiteSpace(char character)
         {
             return char.IsWhiteSpace(character);
+        }
+        
+        public void AppendManualLinebreak(char newlineCharacter)
+        {
+            // does nothing
         }
     }
 }
