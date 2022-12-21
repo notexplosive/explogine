@@ -128,23 +128,6 @@ public static class RestrictedStringBuilder
             }
         }
 
-        public string CurrentLineString
-        {
-            get
-            {
-                var result = string.Empty;
-                foreach (var data in _currentLineFragments)
-                {
-                    if (data is FormattedText.FragmentChar fragmentChar)
-                    {
-                        result += fragmentChar.Text;
-                    }
-                }
-
-                return result;
-            }
-        }
-
         public RestrictedString<FormattedText.FragmentLine> Result => new(_resultLines.ToArray(), _totalSize);
 
         public float CurrentLineWidth => CurrentLineSize.X;
@@ -170,7 +153,7 @@ public static class RestrictedStringBuilder
         public void AppendManualLinebreak(FormattedText.IGlyphData newlineCharacter)
         {
             var size = new Vector2(0, newlineCharacter.Size.Y / 2);
-            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor));
+            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor, true));
         }
 
         public float CurrentTokenWidth()
@@ -185,7 +168,7 @@ public static class RestrictedStringBuilder
 
         public bool HasContentInCurrentLine()
         {
-            return CurrentLineString.Length > 0;
+            return _currentLineFragments.Count > 0;
         }
 
         public bool IsNewline(FormattedText.IGlyphData character)
