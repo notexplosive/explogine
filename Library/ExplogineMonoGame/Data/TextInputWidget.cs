@@ -228,6 +228,12 @@ public class TextInputWidget : Widget, IUpdateInput
     }
 
     [Pure]
+    private char CharacterAt(int index)
+    {
+        return ContentString()[index];
+    }
+
+    [Pure]
     private RectangleF RectangleAtCharIndex(int targetIndex)
     {
         // todo: cache this!!
