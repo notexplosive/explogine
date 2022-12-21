@@ -19,12 +19,12 @@ public class TextInputWidget : Widget, IUpdateInput
     private bool _selected;
     private readonly CharSequence _charSequence;
 
-    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth) : base(position, size, depth)
+    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText) : base(position, size, depth)
     {
         _font = font;
         
         // Content will need to be rebuilt every time these values change
-        _charSequence = new CharSequence(font, InnerRectangle, _alignment);
+        _charSequence = new CharSequence(font, startingText, InnerRectangle, _alignment);
     }
 
     public RectangleF InnerRectangle => new RectangleF(Vector2.Zero, Rectangle.Size).Inflated(-5, -5);
@@ -220,12 +220,16 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly Alignment _alignment;
         private readonly List<char> _content = new();
 
-        public CharSequence(IFontGetter font, RectangleF innerRectangle, Alignment alignment)
+        public CharSequence(IFontGetter font, string text, RectangleF innerRectangle, Alignment alignment)
         {
             _font = font;
             _innerRectangle = innerRectangle;
             _alignment = alignment;
-            _content.AddRange(new[] {'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', char.MinValue});
+            foreach (var character in text)
+            {
+                _content.Add(character);
+            }
+            _content.Add(char.MinValue);
         }
 
         public int NumberOfNodes => _content.Count;
