@@ -16,12 +16,12 @@ public static class RestrictedStringBuilder
             restrictedWidth);
     }
 
-    public static RestrictedString<FormattedText.FragmentLine> FromFragments(FormattedText.IFragment[] fragments,
+    public static RestrictedString<FormattedText.GlyphDataLine> FromFragments(FormattedText.IFragment[] fragments,
         float restrictedWidth)
     {
         var lettersAsFragments = RestrictedStringBuilder.BreakFragmentsIntoIndividualLetters(fragments);
 
-        return RestrictedString<FormattedText.FragmentLine>.ExecuteStrategy(new FragmentStrategy(),
+        return RestrictedString<FormattedText.GlyphDataLine>.ExecuteStrategy(new FragmentStrategy(),
             lettersAsFragments,
             restrictedWidth);
     }
@@ -51,7 +51,7 @@ public static class RestrictedStringBuilder
             if (currentFragment is FormattedText.Fragment fragment)
             {
                 lettersAsFragments[i] =
-                    new FormattedText.FragmentChar(fragment.Font, combinedText[i], fragment.Color);
+                    new FormattedText.CharGlyphData(fragment.Font, combinedText[i], fragment.Color);
                 charIndexWithinCurrentFragment++;
                 if (charIndexWithinCurrentFragment > fragment.NumberOfChars - 1)
                 {
@@ -59,15 +59,11 @@ public static class RestrictedStringBuilder
                     charIndexWithinCurrentFragment = 0;
                 }
             }
-            else if (currentFragment is FormattedText.IGlyphData glyphData)
-            {
-                lettersAsFragments[i] = glyphData;
-                currentFragmentIndex++;
-                charIndexWithinCurrentFragment = 0;
-            }
             else
             {
-                throw new Exception($"Unable to convert {currentFragment} into {nameof(FormattedText.IGlyphData)}");
+                lettersAsFragments[i] = currentFragment.ToGlyphData();
+                currentFragmentIndex++;
+                charIndexWithinCurrentFragment = 0;
             }
         }
 
@@ -89,12 +85,13 @@ public static class RestrictedStringBuilder
         void AppendManualLinebreak(TChar newlineCharacter);
     }
 
-    public class FragmentStrategy : IStrategy<FormattedText.IGlyphData, FormattedText.FragmentLine>
+    public class FragmentStrategy : IStrategy<FormattedText.IGlyphData, FormattedText.GlyphDataLine>
     {
         private readonly List<FormattedText.IGlyphData> _currentLineFragments = new();
         private readonly List<FormattedText.IGlyphData> _currentTokenFragments = new();
-        private readonly List<FormattedText.FragmentLine> _resultLines = new();
+        private readonly List<FormattedText.GlyphDataLine> _resultLines = new();
         private Vector2 _totalSize;
+        private int _lineNumber;
 
         public Vector2 CurrentLineSize
         {
@@ -128,15 +125,16 @@ public static class RestrictedStringBuilder
             }
         }
 
-        public RestrictedString<FormattedText.FragmentLine> Result => new(_resultLines.ToArray(), _totalSize);
+        public RestrictedString<FormattedText.GlyphDataLine> Result => new(_resultLines.ToArray(), _totalSize);
 
         public float CurrentLineWidth => CurrentLineSize.X;
 
         public void FinishLine()
         {
+            _lineNumber++;
             _totalSize.X = MathF.Max(_totalSize.X, CurrentLineSize.X);
             _totalSize.Y += CurrentLineSize.Y;
-            _resultLines.Add(new FormattedText.FragmentLine(_currentLineFragments.ToImmutableArray()));
+            _resultLines.Add(new FormattedText.GlyphDataLine(_currentLineFragments.ToImmutableArray()));
         }
 
         public void StartNewLine()
@@ -173,12 +171,12 @@ public static class RestrictedStringBuilder
 
         public bool IsNewline(FormattedText.IGlyphData character)
         {
-            return character is FormattedText.FragmentChar {Text: '\n'};
+            return character is FormattedText.CharGlyphData {Text: '\n'};
         }
 
         public bool IsWhiteSpace(FormattedText.IGlyphData character)
         {
-            if (character is FormattedText.FragmentChar fragmentChar)
+            if (character is FormattedText.CharGlyphData fragmentChar)
             {
                 return char.IsWhiteSpace(fragmentChar.Text);
             }

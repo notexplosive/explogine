@@ -119,7 +119,7 @@ public class Painter
         {
             var letterOrigin = (rectTopLeft - glyph.Position) / glyph.Data.ScaleFactor;
 
-            if (glyph.Data is FormattedText.FragmentChar fragmentChar)
+            if (glyph.Data is FormattedText.CharGlyphData fragmentChar)
             {
                 if (fragmentChar.Font is Font realFont)
                 {
@@ -140,7 +140,7 @@ public class Painter
                 }
             }
 
-            if (glyph.Data is FormattedText.FragmentImage fragmentImage)
+            if (glyph.Data is FormattedText.ImageGlyphData fragmentImage)
             {
                 DrawAtPosition(
                     fragmentImage.Image.Get().Texture,

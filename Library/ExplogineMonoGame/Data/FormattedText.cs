@@ -40,6 +40,7 @@ public readonly struct FormattedText
         var restrictedBounds =
             RectangleF.FromSizeAlignedWithin(rectangle, restrictedSize, alignment.JustVertical());
 
+        var lineNumber = 0;
         var verticalSpaceUsedByPreviousLines = 0f;
         foreach (var fragmentLine in lines)
         {
@@ -58,38 +59,57 @@ public readonly struct FormattedText
                 var letterSize = letterFragment.Size;
                 var position = actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() -
                                letterSize.JustY();
-                var isWhiteSpace = letterFragment is FragmentChar fragmentChar && char.IsWhiteSpace(fragmentChar.Text);
+                var isWhiteSpace = letterFragment is CharGlyphData fragmentChar && char.IsWhiteSpace(fragmentChar.Text);
 
                 var glyphData = letterFragment;
                 if (isWhiteSpace)
                 {
                     // White space still has a size and scale factor, but it's a different type so it's not caught like regular text
-                    glyphData = new WhiteSpaceGlyphData(letterFragment.Size, letterFragment.ScaleFactor, false);
+                    glyphData = new WhiteSpaceGlyphData(letterFragment.Size, letterFragment.ScaleFactor,
+                        false);
                 }
 
-                yield return new FormattedGlyph(position, glyphData);
+                yield return new FormattedGlyph(position, glyphData, lineNumber);
                 letterPosition += letterSize.JustX();
             }
+
+            lineNumber++;
         }
     }
 
+    /// <summary>
+    ///     GlyphData is the guts of the output
+    /// </summary>
     public interface IGlyphData
     {
-        public Vector2 Size { get; }
+        Vector2 Size { get; }
         float ScaleFactor { get; }
         void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings);
     }
 
     /// <summary>
-    ///     Fragments are input (and sometimes output)
+    ///     Fragments are input
     /// </summary>
     public interface IFragment
     {
         Vector2 Size { get; }
+        IGlyphData ToGlyphData();
     }
 
-    public readonly record struct FormattedGlyph(Vector2 Position, IGlyphData Data)
+    /// <summary>
+    ///     This is the final output of the FormattedText. These are the things you interface with.
+    /// </summary>
+    /// <param name="Position"></param>
+    /// <param name="Data"></param>
+    /// <param name="LineNumber"></param>
+    public readonly record struct FormattedGlyph(Vector2 Position, IGlyphData Data, int LineNumber)
     {
+        public RectangleF Rectangle => new(Position, Data.Size);
+
+        public void Draw(Painter painter, Vector2 offset, DrawSettings settings)
+        {
+            Data.OneOffDraw(painter, Position + offset, settings);
+        }
     }
 
     public readonly record struct Fragment(IFontGetter FontGetter, string Text, Color? Color = null) : IFragment
@@ -98,13 +118,20 @@ public readonly struct FormattedText
         public int NumberOfChars => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
 
+        public IGlyphData ToGlyphData()
+        {
+            // Sucks that this is written this way
+            throw new Exception(
+                $"{nameof(Fragment)} contains more than one character so it cannot be converted to {nameof(IGlyphData)}");
+        }
+
         public override string ToString()
         {
             return $"{Size} \"{Text}\"";
         }
     }
 
-    public readonly record struct FragmentChar(IFont Font, char Text, Color? Color = null) : IGlyphData
+    public readonly record struct CharGlyphData(IFont Font, char Text, Color? Color = null) : IGlyphData
     {
         public Vector2 Size => Font.MeasureString(Text.ToString());
         public float ScaleFactor => Font.ScaleFactor;
@@ -121,32 +148,50 @@ public readonly struct FormattedText
         }
     }
 
-    public readonly record struct WhiteSpaceGlyphData(Vector2 Size, float ScaleFactor, bool IsManualNewLine) : IGlyphData
+    public readonly record struct WhiteSpaceGlyphData(Vector2 Size, float ScaleFactor,
+        bool IsManualNewLine) : IGlyphData
     {
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
             // this function is intentionally left blank
         }
-        
+
         public override string ToString()
         {
             return $"{Size} (whitespace)";
         }
     }
 
-    public readonly record struct FragmentImage(IndirectAsset<StaticImageAsset> Image, float ScaleFactor = 1f,
-        Color? Color = null) : IFragment, IGlyphData
+    public readonly record struct ImageGlyphData(IndirectAsset<StaticImageAsset> Image,
+        float ScaleFactor = 1f, Color? Color = null) : IGlyphData
     {
-        public FragmentImage(Texture2D texture, float scaleFactor = 1f, Color? color = null) : this(new StaticImageAsset(texture, texture.Bounds), scaleFactor, color)
-        {
-        }
-        
-        public Vector2 Size => Image.Get().SourceRectangle.Size.ToVector2() * ScaleFactor;
-
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
             painter.DrawAtPosition(Image.Get().Texture, position, new Scale2D(ScaleFactor),
                 drawSettings with {SourceRectangle = Image.Get().SourceRectangle, Color = Color ?? drawSettings.Color});
+        }
+
+        public Vector2 Size => Image.Get().SourceRectangle.Size.ToVector2() * ScaleFactor;
+
+        public override string ToString()
+        {
+            return $"{Size} (image)";
+        }
+    }
+
+    public readonly record struct FragmentImage(IndirectAsset<StaticImageAsset> Image, float ScaleFactor = 1f,
+        Color? Color = null) : IFragment
+    {
+        public FragmentImage(Texture2D texture, float scaleFactor = 1f, Color? color = null) : this(
+            new StaticImageAsset(texture, texture.Bounds), scaleFactor, color)
+        {
+        }
+
+        public Vector2 Size => Image.Get().SourceRectangle.Size.ToVector2() * ScaleFactor;
+
+        public IGlyphData ToGlyphData()
+        {
+            return new ImageGlyphData(Image, ScaleFactor, Color);
         }
 
         public override string ToString()
@@ -155,7 +200,7 @@ public readonly struct FormattedText
         }
     }
 
-    public readonly record struct FragmentLine(ImmutableArray<IGlyphData> Fragments) : IEnumerable<IGlyphData>
+    public readonly record struct GlyphDataLine(ImmutableArray<IGlyphData> Fragments) : IEnumerable<IGlyphData>
     {
         public Vector2 Size
         {
@@ -190,12 +235,12 @@ public readonly struct FormattedText
             var result = new StringBuilder();
             foreach (var fragment in Fragments)
             {
-                if (fragment is FragmentChar fragmentChar)
+                if (fragment is CharGlyphData fragmentChar)
                 {
                     result.Append(fragmentChar.Text);
                 }
 
-                if (fragment is FragmentImage)
+                if (fragment is ImageGlyphData)
                 {
                     result.Append("(image)");
                 }

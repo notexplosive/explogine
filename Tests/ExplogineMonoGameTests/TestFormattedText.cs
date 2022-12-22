@@ -37,7 +37,7 @@ public class TestFormattedText
         // this is a janky way to find the newline but at time of writing this test case the glyph count does not equal char count so there's really no good way to do this.
         foreach (var glyph in glyphs)
         {
-            if (glyph.Data is FormattedText.FragmentChar fragmentChar)
+            if (glyph.Data is FormattedText.CharGlyphData fragmentChar)
             {
                 if (fragmentChar.Text == 'O') // the O in "One newline"
                 {
@@ -57,7 +57,7 @@ public class TestFormattedText
 
         foreach (var glyph in glyphs)
         {
-            if (glyph.Data is FormattedText.FragmentChar fragmentChar)
+            if (glyph.Data is FormattedText.CharGlyphData fragmentChar)
             {
                 if (fragmentChar.Text == 'T')
                 {
