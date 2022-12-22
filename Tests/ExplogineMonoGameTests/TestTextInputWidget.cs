@@ -34,6 +34,10 @@ public class TestTextInputWidget
         private readonly TextInputWidget _manualManyLine = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
             Depth.Middle,
             "Several\nLines\nOf\nText");
+        
+        private readonly TextInputWidget _naturalMultiLine = new(Vector2.Zero, new Point(300, 300), new TestFont(),
+            Depth.Middle,
+            "This should have natural linebreaks");
 
         [Fact]
         public void one_line_home()
@@ -90,6 +94,34 @@ public class TestTextInputWidget
                 _manualManyLine.CurrentLine().Should().NotBe(startingLine);
             }
         }
+        
+        [Fact]
+        public void natural_multiline_home()
+        {
+            var startingLine = _naturalMultiLine.CurrentLine();
+            _naturalMultiLine.MoveToStartOfLine();
+            _naturalMultiLine.CurrentLine().Should().Be(startingLine);
+
+            if (_naturalMultiLine.CursorIndex != 0)
+            {
+                _naturalMultiLine.MoveLeft();
+                _naturalMultiLine.CurrentLine().Should().NotBe(startingLine);
+            }
+        }
+        
+        [Fact]
+        public void natural_multiline_end()
+        {
+            var startingLine = _naturalMultiLine.CurrentLine();
+            _naturalMultiLine.MoveToEndOfLine();
+            _naturalMultiLine.CurrentLine().Should().Be(startingLine);
+
+            if (_naturalMultiLine.CursorIndex != _naturalMultiLine.LastIndex)
+            {
+                _naturalMultiLine.MoveRight();
+                _naturalMultiLine.CurrentLine().Should().NotBe(startingLine);
+            }
+        }
 
         public class StartAtMiddle : HomeAndEnd
         {
@@ -97,6 +129,7 @@ public class TestTextInputWidget
             {
                 _oneLineWidget.MoveTo(_oneLineWidget.LastIndex / 2);
                 _manualManyLine.MoveTo(_manualManyLine.LastIndex / 2);
+                _naturalMultiLine.MoveTo(_naturalMultiLine.LastIndex / 2);
             }
         }
         
@@ -114,6 +147,7 @@ public class TestTextInputWidget
             {
                 _oneLineWidget.MoveTo(_oneLineWidget.LastIndex);
                 _manualManyLine.MoveTo(_manualManyLine.LastIndex);
+                _naturalMultiLine.MoveTo(_naturalMultiLine.LastIndex);
             }
         }
     }
