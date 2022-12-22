@@ -15,7 +15,6 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly Alignment _alignment = Alignment.TopLeft;
     private readonly CharSequence _charSequence;
     private readonly IFontGetter _font;
-    private int _cursorIndex;
     private int? _hoveredLetterIndex;
     private LeftRight _hoveredSide;
     private bool _selected;
@@ -28,6 +27,10 @@ public class TextInputWidget : Widget, IUpdateInput
         // Content will need to be rebuilt every time these values change
         _charSequence = new CharSequence(font, startingText, InnerRectangle, _alignment);
     }
+
+    public string Text => _charSequence.Cache.Text;
+
+    public int CursorIndex { get; private set; }
 
     public RectangleF InnerRectangle => new RectangleF(Vector2.Zero, Rectangle.Size).Inflated(-5, -5);
 
@@ -51,11 +54,12 @@ public class TextInputWidget : Widget, IUpdateInput
 
             if (input.Keyboard.GetButton(Keys.Home).WasPressed)
             {
-                var startHeight = _charSequence.Cache.RectangleAtNode(_cursorIndex).Y;
-                var newIndex = _charSequence.ScanUntil(_cursorIndex, LeftRight.Left,
-                    i => Math.Abs(_charSequence.Cache.RectangleAtNode(i).Y - startHeight) > float.Epsilon) + 1;
-                Client.Debug.Log(newIndex);
-                _cursorIndex = newIndex;
+                MoveToStartOfLine();
+            }
+
+            if (input.Keyboard.GetButton(Keys.End).WasPressed)
+            {
+                MoveToEndOfLine();
             }
         }
 
@@ -68,10 +72,10 @@ public class TextInputWidget : Widget, IUpdateInput
                 if (_hoveredLetterIndex.HasValue)
                 {
                     var offset = _hoveredSide == LeftRight.Right ? 1 : 0;
-                    _cursorIndex = _hoveredLetterIndex.Value + offset;
-                    if (_cursorIndex > _charSequence.NumberOfChars)
+                    CursorIndex = _hoveredLetterIndex.Value + offset;
+                    if (CursorIndex > _charSequence.NumberOfChars)
                     {
-                        _cursorIndex = _charSequence.NumberOfChars;
+                        CursorIndex = _charSequence.NumberOfChars;
                     }
                 }
             }
@@ -109,6 +113,29 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    public void MoveToStartOfLine()
+    {
+        var currentLine = _charSequence.Cache.LineNumberAt(CursorIndex);
+        var newIndex = _charSequence.ScanUntil(CursorIndex, LeftRight.Left,
+            currentIndex => currentLine != _charSequence.Cache.LineNumberAt(currentIndex));
+
+        CursorIndex = newIndex;
+    }
+    
+    public void MoveToEndOfLine()
+    {
+        var currentLine = _charSequence.Cache.LineNumberAt(CursorIndex);
+        var newIndex = _charSequence.ScanUntil(CursorIndex, LeftRight.Right,
+            currentIndex => currentLine != _charSequence.Cache.LineNumberAt(currentIndex));
+
+        if (newIndex != 0)
+        {
+            newIndex--;
+        }
+
+        CursorIndex = newIndex;
+    }
+
     public void PrepareDraw(Painter painter)
     {
         Client.Graphics.PushCanvas(Canvas);
@@ -119,7 +146,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (_selected)
         {
-            var cursorRect = _charSequence.Cache.RectangleAtNode(_cursorIndex);
+            var cursorRect = _charSequence.Cache.RectangleAtNode(CursorIndex);
             var size = cursorRect.Size;
             size.X = 2f;
             cursorRect.Offset(-size.X / 2f, 0);
@@ -156,8 +183,9 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (Client.Debug.IsActive)
         {
-            var lineNumber = _charSequence.Cache.LineNumberAt(_cursorIndex);
-            painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16), $"{_cursorIndex}, line: {lineNumber}",
+            var lineNumber = _charSequence.Cache.LineNumberAt(CursorIndex);
+            painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16),
+                $"{CursorIndex}, line: {lineNumber}",
                 InnerRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
 
             for (var i = 0; i < _charSequence.NumberOfNodes; i++)
@@ -172,7 +200,7 @@ public class TextInputWidget : Widget, IUpdateInput
                     color = isLastChar ? Color.Green : Color.Blue;
                 }
 
-                if (_cursorIndex == i)
+                if (CursorIndex == i)
                 {
                     painter.DrawRectangle(rectangle,
                         new DrawSettings
@@ -190,25 +218,34 @@ public class TextInputWidget : Widget, IUpdateInput
         Client.Graphics.PopCanvas();
     }
 
-    private void MoveRight()
+    public void MoveRight()
     {
-        if (_cursorIndex < _charSequence.NumberOfChars)
+        if (CursorIndex < _charSequence.NumberOfChars)
         {
-            _cursorIndex++;
+            CursorIndex++;
+        }
+    }
+    
+    
+    public void MoveTo(int targetIndex)
+    {
+        if (targetIndex >= 0 && targetIndex < _charSequence.NumberOfNodes)
+        {
+            CursorIndex = targetIndex;
         }
     }
 
-    private void MoveLeft()
+    public void MoveLeft()
     {
-        if (_cursorIndex > 0)
+        if (CursorIndex > 0)
         {
-            _cursorIndex--;
+            CursorIndex--;
         }
     }
 
-    private void ReverseBackspace()
+    public void ReverseBackspace()
     {
-        _charSequence.RemoveAt(_cursorIndex);
+        _charSequence.RemoveAt(CursorIndex);
     }
 
     private void EnterText(char[] enteredCharacters)
@@ -241,20 +278,22 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    private void EnterCharacter(char character)
+    public void EnterCharacter(char character)
     {
-        _charSequence.Insert(_cursorIndex, character);
-        _cursorIndex++;
+        _charSequence.Insert(CursorIndex, character);
+        CursorIndex++;
     }
 
-    private void Backspace()
+    public void Backspace()
     {
-        if (_cursorIndex > 0)
+        if (CursorIndex > 0)
         {
-            _cursorIndex--;
-            _charSequence.RemoveAt(_cursorIndex);
+            CursorIndex--;
+            _charSequence.RemoveAt(CursorIndex);
         }
     }
+
+    private delegate bool ScanFindDelegate(int index);
 
     private class CharSequence
     {
@@ -294,15 +333,25 @@ public class TextInputWidget : Widget, IUpdateInput
             Cache = Cache.Rebuild(_nodes.ToArray());
         }
 
-        public int ScanUntil(int startIndex, LeftRight direction, Predicate<int> found)
+        public int ScanUntil(int startIndex, LeftRight direction, ScanFindDelegate found)
         {
             var step = direction == LeftRight.Left ? -1 : 1;
             var index = startIndex;
 
-            while (index > 0 && index < NumberOfChars)
+            while (true)
             {
                 index += step;
 
+                if (index < 0)
+                {
+                    return 0;
+                }
+
+                if (index >= NumberOfNodes)
+                {
+                    return NumberOfNodes;
+                }
+                
                 if (found(index))
                 {
                     break;
@@ -321,8 +370,8 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly char[] _nodes;
         private readonly RectangleF[] _rectangles;
         private FormattedText? _formattedTextOrNull;
-        private string? _textOrNull;
         private FormattedText.FormattedGlyph[]? _glyphs;
+        private string? _textOrNull;
 
         public Cache(char[] nodes, IFontGetter font, RectangleF containerRectangle, Alignment alignment)
         {
@@ -378,14 +427,14 @@ public class TextInputWidget : Widget, IUpdateInput
 
             return stringBuilder.ToString();
         }
-        
+
         public int LineNumberAt(int nodeIndex)
         {
             PrepareFormattedTextCache();
 
             if (_glyphs == null)
             {
-                throw new Exception($"{nameof(_glyphs)} array was not generated");
+                throw new Exception($"{nameof(Cache._glyphs)} array was not generated");
             }
 
             FormattedText.FormattedGlyph glyph;
@@ -394,11 +443,8 @@ public class TextInputWidget : Widget, IUpdateInput
                 glyph = _glyphs[^1];
                 return glyph.LineNumber;
             }
-            else
-            {
-                glyph = _glyphs[nodeIndex];
-            }
 
+            glyph = _glyphs[nodeIndex];
 
             if (glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true})
             {
