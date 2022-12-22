@@ -30,6 +30,10 @@ public class TestTextInputWidget
         private readonly TextInputWidget _oneLineWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
             Depth.Middle,
             "Simple test text");
+        
+        private readonly TextInputWidget _manualManyLine = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
+            Depth.Middle,
+            "Several\nLines\nOf\nText");
 
         [Fact]
         public void one_line_home()
@@ -56,14 +60,43 @@ public class TestTextInputWidget
         public void empty_end()
         {
             _emptyStringWidget.MoveToEndOfLine();
-            _emptyStringWidget.CursorIndex.Should().Be(_emptyStringWidget.Text.Length);
+            _emptyStringWidget.CursorIndex.Should().Be(_emptyStringWidget.LastIndex);
+        }
+        
+        [Fact]
+        public void manual_multiline_home()
+        {
+            var startingLine = _manualManyLine.CurrentLine();
+            _manualManyLine.MoveToStartOfLine();
+            _manualManyLine.CurrentLine().Should().Be(startingLine);
+
+            if (_manualManyLine.CursorIndex != 0)
+            {
+                _manualManyLine.MoveLeft();
+                _manualManyLine.CurrentLine().Should().NotBe(startingLine);
+            }
+        }
+        
+        [Fact]
+        public void manual_multiline_end()
+        {
+            var startingLine = _manualManyLine.CurrentLine();
+            _manualManyLine.MoveToEndOfLine();
+            _manualManyLine.CurrentLine().Should().Be(startingLine);
+
+            if (_manualManyLine.CursorIndex != _manualManyLine.LastIndex)
+            {
+                _manualManyLine.MoveRight();
+                _manualManyLine.CurrentLine().Should().NotBe(startingLine);
+            }
         }
 
         public class StartAtMiddle : HomeAndEnd
         {
             public StartAtMiddle()
             {
-                _oneLineWidget.MoveTo(_oneLineWidget.Text.Length / 2);
+                _oneLineWidget.MoveTo(_oneLineWidget.LastIndex / 2);
+                _manualManyLine.MoveTo(_manualManyLine.LastIndex / 2);
             }
         }
         
@@ -79,7 +112,8 @@ public class TestTextInputWidget
         {
             public StartAtEnd()
             {
-                _oneLineWidget.MoveTo(_oneLineWidget.Text.Length);
+                _oneLineWidget.MoveTo(_oneLineWidget.LastIndex);
+                _manualManyLine.MoveTo(_manualManyLine.LastIndex);
             }
         }
     }

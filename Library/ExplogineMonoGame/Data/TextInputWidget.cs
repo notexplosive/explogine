@@ -33,6 +33,7 @@ public class TextInputWidget : Widget, IUpdateInput
     public int CursorIndex { get; private set; }
 
     public RectangleF InnerRectangle => new RectangleF(Vector2.Zero, Rectangle.Size).Inflated(-5, -5);
+    public int LastIndex => _charSequence.NumberOfChars;
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
@@ -119,6 +120,11 @@ public class TextInputWidget : Widget, IUpdateInput
         var newIndex = _charSequence.ScanUntil(CursorIndex, LeftRight.Left,
             currentIndex => currentLine != _charSequence.Cache.LineNumberAt(currentIndex));
 
+        if (_charSequence.Cache.LineNumberAt(newIndex) != currentLine)
+        {
+            newIndex++;
+        }
+        
         CursorIndex = newIndex;
     }
     
@@ -520,5 +526,10 @@ public class TextInputWidget : Widget, IUpdateInput
                 _formattedTextOrNull = BuildFormattedText();
             }
         }
+    }
+
+    public int CurrentLine()
+    {
+        return _charSequence.Cache.LineNumberAt(CursorIndex);
     }
 }
