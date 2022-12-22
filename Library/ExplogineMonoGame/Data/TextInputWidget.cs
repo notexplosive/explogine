@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Text;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Input;
@@ -45,6 +47,15 @@ public class TextInputWidget : Widget, IUpdateInput
             if (input.Keyboard.GetButton(Keys.Right).WasPressed)
             {
                 MoveRight();
+            }
+
+            if (input.Keyboard.GetButton(Keys.Home).WasPressed)
+            {
+                var startHeight = _charSequence.Cache.RectangleAtNode(_cursorIndex).Y;
+                var newIndex = _charSequence.ScanUntil(_cursorIndex, LeftRight.Left,
+                    i => Math.Abs(_charSequence.Cache.RectangleAtNode(i).Y - startHeight) > float.Epsilon) + 1;
+                Client.Debug.Log(newIndex);
+                _cursorIndex = newIndex;
             }
         }
 
@@ -145,12 +156,16 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (Client.Debug.IsActive)
         {
+            var lineNumber = _charSequence.Cache.LineNumberAt(_cursorIndex);
+            painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16), $"{_cursorIndex}, line: {lineNumber}",
+                InnerRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
+
             for (var i = 0; i < _charSequence.NumberOfNodes; i++)
             {
                 var isLastChar = i == _charSequence.NumberOfNodes - 1;
                 var rectangle = _charSequence.Cache.RectangleAtNode(i);
                 var color = Color.Red;
-                
+
                 if (rectangle.Area == 0)
                 {
                     rectangle.Size = new Vector2(_font.GetFont().Height) / 2f;
@@ -159,13 +174,16 @@ public class TextInputWidget : Widget, IUpdateInput
 
                 if (_cursorIndex == i)
                 {
-                    painter.DrawRectangle(rectangle, new DrawSettings{Color = (isLastChar ? Color.Green : Color.Yellow).WithMultipliedOpacity(0.5f)});
+                    painter.DrawRectangle(rectangle,
+                        new DrawSettings
+                            {Color = (isLastChar ? Color.Green : Color.Yellow).WithMultipliedOpacity(0.5f)});
                 }
 
-                painter.DrawLineRectangle(rectangle, new LineDrawSettings{Color = color});
+                painter.DrawLineRectangle(rectangle, new LineDrawSettings {Color = color});
             }
-            
-            painter.DrawLineRectangle(_charSequence.Cache.UsedSpace, new LineDrawSettings {Depth = Depth.Back, Thickness = 2, Color = Color.Orange});
+
+            painter.DrawLineRectangle(_charSequence.Cache.UsedSpace,
+                new LineDrawSettings {Depth = Depth.Back, Thickness = 2, Color = Color.Orange});
         }
 
         painter.EndSpriteBatch();
@@ -275,6 +293,24 @@ public class TextInputWidget : Widget, IUpdateInput
             _nodes.Insert(cursorIndex, character);
             Cache = Cache.Rebuild(_nodes.ToArray());
         }
+
+        public int ScanUntil(int startIndex, LeftRight direction, Predicate<int> found)
+        {
+            var step = direction == LeftRight.Left ? -1 : 1;
+            var index = startIndex;
+
+            while (index > 0 && index < NumberOfChars)
+            {
+                index += step;
+
+                if (found(index))
+                {
+                    break;
+                }
+            }
+
+            return index;
+        }
     }
 
     private class Cache
@@ -282,10 +318,11 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly Alignment _alignment;
         private readonly RectangleF _containerRectangle;
         private readonly IFontGetter _font;
+        private readonly char[] _nodes;
         private readonly RectangleF[] _rectangles;
         private FormattedText? _formattedTextOrNull;
         private string? _textOrNull;
-        private readonly char[] _nodes;
+        private FormattedText.FormattedGlyph[]? _glyphs;
 
         public Cache(char[] nodes, IFontGetter font, RectangleF containerRectangle, Alignment alignment)
         {
@@ -311,7 +348,8 @@ public class TextInputWidget : Widget, IUpdateInput
             }
         }
 
-        public RectangleF UsedSpace {
+        public RectangleF UsedSpace
+        {
             get
             {
                 if (!_formattedTextOrNull.HasValue)
@@ -340,6 +378,35 @@ public class TextInputWidget : Widget, IUpdateInput
 
             return stringBuilder.ToString();
         }
+        
+        public int LineNumberAt(int nodeIndex)
+        {
+            PrepareFormattedTextCache();
+
+            if (_glyphs == null)
+            {
+                throw new Exception($"{nameof(_glyphs)} array was not generated");
+            }
+
+            FormattedText.FormattedGlyph glyph;
+            if (nodeIndex >= _nodes.Length - 1)
+            {
+                glyph = _glyphs[^1];
+                return glyph.LineNumber;
+            }
+            else
+            {
+                glyph = _glyphs[nodeIndex];
+            }
+
+
+            if (glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true})
+            {
+                return glyph.LineNumber - 1;
+            }
+
+            return glyph.LineNumber;
+        }
 
         private FormattedText BuildFormattedText()
         {
@@ -350,7 +417,8 @@ public class TextInputWidget : Widget, IUpdateInput
             var previousGlyphRect = currentRect;
             var glyphIndex = 0;
             var wasPreviousNewLine = false;
-            foreach (var glyph in result.GetGlyphs(_containerRectangle, _alignment))
+            _glyphs = result.GetGlyphs(_containerRectangle, _alignment).ToArray();
+            foreach (var glyph in _glyphs)
             {
                 glyphRect = new RectangleF(glyph.Position, glyph.Data.Size);
                 var isNewLine = glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true};
@@ -366,6 +434,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 {
                     currentRect = glyphRect;
                 }
+
                 _rectangles[glyphIndex++] = currentRect;
                 wasPreviousNewLine = isNewLine;
                 previousGlyphRect = glyphRect;
@@ -376,9 +445,13 @@ public class TextInputWidget : Widget, IUpdateInput
                 currentRect = glyphRect;
             }
 
-            // We're at the very end of the string, we want a zero-width rect at the end of the string 
-            _rectangles[glyphIndex] = new RectangleF(new Vector2(currentRect.X + currentRect.Width, currentRect.Y),
-                new Vector2(0, _font.GetFont().Height));
+            if (_rectangles.Length > 1)
+            {
+                // We're at the very end of the string, we want a zero-width rect at the end of the string 
+                _rectangles[glyphIndex] = new RectangleF(new Vector2(currentRect.X + currentRect.Width, currentRect.Y),
+                    new Vector2(0, _font.GetFont().Height));
+            }
+
             return result;
         }
 
@@ -390,12 +463,16 @@ public class TextInputWidget : Widget, IUpdateInput
         [Pure]
         public RectangleF RectangleAtNode(int targetIndex)
         {
+            PrepareFormattedTextCache();
+            return _rectangles[targetIndex];
+        }
+
+        private void PrepareFormattedTextCache()
+        {
             if (!_formattedTextOrNull.HasValue)
             {
                 _formattedTextOrNull = BuildFormattedText();
             }
-
-            return _rectangles[targetIndex];
         }
     }
 }

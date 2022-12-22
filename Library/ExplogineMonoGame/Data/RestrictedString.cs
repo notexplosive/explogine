@@ -27,6 +27,12 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
 
             if (strategy.IsNewline(character))
             {
+                if (strategy.CurrentLineWidth + strategy.CurrentTokenWidth() >= restrictedWidth)
+                {
+                    strategy.FinishLine();
+                    strategy.StartNewLine();
+                }
+                
                 strategy.FinishToken();
                 strategy.FinishLine();
                 strategy.StartNewLine();
