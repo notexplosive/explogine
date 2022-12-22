@@ -1,161 +1,161 @@
-﻿FormattedGlyph { Position = {X:0 Y:0}, Data = {X:32 Y:32} 'T' }
-FormattedGlyph { Position = {X:32 Y:0}, Data = {X:32 Y:32} 'h' }
-FormattedGlyph { Position = {X:64 Y:0}, Data = {X:32 Y:32} 'i' }
-FormattedGlyph { Position = {X:96 Y:0}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:128 Y:0}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:160 Y:0}, Data = {X:32 Y:32} 'i' }
-FormattedGlyph { Position = {X:192 Y:0}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:224 Y:0}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:256 Y:0}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:288 Y:0}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:320 Y:0}, Data = {X:32 Y:32} 'v' }
-FormattedGlyph { Position = {X:352 Y:0}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:384 Y:0}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:416 Y:0}, Data = {X:32 Y:32} 'y' }
-FormattedGlyph { Position = {X:448 Y:0}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:32}, Data = {X:32 Y:32} 'l' }
-FormattedGlyph { Position = {X:32 Y:32}, Data = {X:32 Y:32} 'o' }
-FormattedGlyph { Position = {X:64 Y:32}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:96 Y:32}, Data = {X:32 Y:32} 'g' }
-FormattedGlyph { Position = {X:128 Y:32}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:160 Y:32}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:192 Y:32}, Data = {X:32 Y:32} 't' }
-FormattedGlyph { Position = {X:224 Y:32}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:256 Y:32}, Data = {X:32 Y:32} 'i' }
-FormattedGlyph { Position = {X:288 Y:32}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:320 Y:32}, Data = {X:32 Y:32} 'g' }
-FormattedGlyph { Position = {X:352 Y:32}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:384 Y:32}, Data = {X:32 Y:32} 'w' }
-FormattedGlyph { Position = {X:416 Y:32}, Data = {X:32 Y:32} 'i' }
-FormattedGlyph { Position = {X:448 Y:32}, Data = {X:32 Y:32} 't' }
-FormattedGlyph { Position = {X:480 Y:32}, Data = {X:32 Y:32} 'h' }
-FormattedGlyph { Position = {X:0 Y:64}, Data = {X:0 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:64}, Data = {X:32 Y:32} 'm' }
-FormattedGlyph { Position = {X:32 Y:64}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:64 Y:64}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:96 Y:64}, Data = {X:32 Y:32} 'y' }
-FormattedGlyph { Position = {X:0 Y:96}, Data = {X:0 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:128}, Data = {X:0 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:128}, Data = {X:32 Y:32} 'l' }
-FormattedGlyph { Position = {X:32 Y:128}, Data = {X:32 Y:32} 'i' }
-FormattedGlyph { Position = {X:64 Y:128}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:96 Y:128}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:128 Y:128}, Data = {X:32 Y:32} 'b' }
-FormattedGlyph { Position = {X:160 Y:128}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:192 Y:128}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:224 Y:128}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:256 Y:128}, Data = {X:32 Y:32} 'k' }
-FormattedGlyph { Position = {X:288 Y:128}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:320 Y:128}, Data = {X:32 Y:32} '.' }
-FormattedGlyph { Position = {X:352 Y:128}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:160}, Data = {X:32 Y:32} 'S' }
-FormattedGlyph { Position = {X:32 Y:160}, Data = {X:32 Y:32} 'o' }
-FormattedGlyph { Position = {X:64 Y:160}, Data = {X:32 Y:32} 'm' }
-FormattedGlyph { Position = {X:96 Y:160}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:128 Y:160}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:160 Y:160}, Data = {X:32 Y:32} 'o' }
-FormattedGlyph { Position = {X:192 Y:160}, Data = {X:32 Y:32} 'f' }
-FormattedGlyph { Position = {X:224 Y:160}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:256 Y:160}, Data = {X:32 Y:32} 't' }
-FormattedGlyph { Position = {X:288 Y:160}, Data = {X:32 Y:32} 'h' }
-FormattedGlyph { Position = {X:320 Y:160}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:352 Y:160}, Data = {X:32 Y:32} 'm' }
-FormattedGlyph { Position = {X:384 Y:160}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:192}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:32 Y:192}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:64 Y:192}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:96 Y:192}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:128 Y:192}, Data = {X:32 Y:32} 'm' }
-FormattedGlyph { Position = {X:160 Y:192}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:192 Y:192}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:224 Y:192}, Data = {X:32 Y:32} 'u' }
-FormattedGlyph { Position = {X:256 Y:192}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:288 Y:192}, Data = {X:32 Y:32} 'l' }
-FormattedGlyph { Position = {X:320 Y:192}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:224}, Data = {X:32 Y:32} 'l' }
-FormattedGlyph { Position = {X:32 Y:224}, Data = {X:32 Y:32} 'i' }
-FormattedGlyph { Position = {X:64 Y:224}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:96 Y:224}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:128 Y:224}, Data = {X:32 Y:32} 'b' }
-FormattedGlyph { Position = {X:160 Y:224}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:192 Y:224}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:224 Y:224}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:256 Y:224}, Data = {X:32 Y:32} 'k' }
-FormattedGlyph { Position = {X:288 Y:224}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:320 Y:224}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:352 Y:224}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:384 Y:224}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:416 Y:224}, Data = {X:32 Y:32} 'd' }
-FormattedGlyph { Position = {X:448 Y:224}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:256}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:32 Y:256}, Data = {X:32 Y:32} 'o' }
-FormattedGlyph { Position = {X:64 Y:256}, Data = {X:32 Y:32} 'm' }
-FormattedGlyph { Position = {X:96 Y:256}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:128 Y:256}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:160 Y:256}, Data = {X:32 Y:32} 'o' }
-FormattedGlyph { Position = {X:192 Y:256}, Data = {X:32 Y:32} 'f' }
-FormattedGlyph { Position = {X:224 Y:256}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:256 Y:256}, Data = {X:32 Y:32} 't' }
-FormattedGlyph { Position = {X:288 Y:256}, Data = {X:32 Y:32} 'h' }
-FormattedGlyph { Position = {X:320 Y:256}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:352 Y:256}, Data = {X:32 Y:32} 'm' }
-FormattedGlyph { Position = {X:384 Y:256}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:288}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:32 Y:288}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:64 Y:288}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:96 Y:288}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:128 Y:288}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:160 Y:288}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:192 Y:288}, Data = {X:32 Y:32} 't' }
-FormattedGlyph { Position = {X:224 Y:288}, Data = {X:32 Y:32} 'u' }
-FormattedGlyph { Position = {X:256 Y:288}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:288 Y:288}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:320 Y:288}, Data = {X:32 Y:32} 'l' }
-FormattedGlyph { Position = {X:352 Y:288}, Data = {X:32 Y:32} '.' }
-FormattedGlyph { Position = {X:0 Y:320}, Data = {X:0 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:320}, Data = {X:32 Y:32} 'T' }
-FormattedGlyph { Position = {X:32 Y:320}, Data = {X:32 Y:32} 'h' }
-FormattedGlyph { Position = {X:64 Y:320}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:96 Y:320}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:128 Y:320}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:160 Y:320}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:192 Y:320}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:224 Y:320}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:256 Y:320}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:288 Y:320}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:320 Y:320}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:352 Y:320}, Data = {X:32 Y:32} 'l' }
-FormattedGlyph { Position = {X:384 Y:320}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:416 Y:320}, Data = {X:32 Y:32} 'o' }
-FormattedGlyph { Position = {X:448 Y:320}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:352}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:32 Y:352}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:64 Y:352}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:96 Y:352}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:128 Y:352}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:160 Y:352}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:192 Y:352}, Data = {X:32 Y:32} 'v' }
-FormattedGlyph { Position = {X:224 Y:352}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:256 Y:352}, Data = {X:32 Y:32} 'r' }
-FormattedGlyph { Position = {X:288 Y:352}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:320 Y:352}, Data = {X:32 Y:32} 'l' }
-FormattedGlyph { Position = {X:352 Y:352}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:384}, Data = {X:32 Y:32} 'c' }
-FormattedGlyph { Position = {X:32 Y:384}, Data = {X:32 Y:32} 'o' }
-FormattedGlyph { Position = {X:64 Y:384}, Data = {X:32 Y:32} 'n' }
-FormattedGlyph { Position = {X:96 Y:384}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:128 Y:384}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:160 Y:384}, Data = {X:32 Y:32} 'c' }
-FormattedGlyph { Position = {X:192 Y:384}, Data = {X:32 Y:32} 'u' }
-FormattedGlyph { Position = {X:224 Y:384}, Data = {X:32 Y:32} 't' }
-FormattedGlyph { Position = {X:256 Y:384}, Data = {X:32 Y:32} 'i' }
-FormattedGlyph { Position = {X:288 Y:384}, Data = {X:32 Y:32} 'v' }
-FormattedGlyph { Position = {X:320 Y:384}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:352 Y:384}, Data = {X:32 Y:32} (whitespace) }
-FormattedGlyph { Position = {X:0 Y:416}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:32 Y:416}, Data = {X:32 Y:32} 'p' }
-FormattedGlyph { Position = {X:64 Y:416}, Data = {X:32 Y:32} 'a' }
-FormattedGlyph { Position = {X:96 Y:416}, Data = {X:32 Y:32} 'c' }
-FormattedGlyph { Position = {X:128 Y:416}, Data = {X:32 Y:32} 'e' }
-FormattedGlyph { Position = {X:160 Y:416}, Data = {X:32 Y:32} 's' }
-FormattedGlyph { Position = {X:192 Y:416}, Data = {X:32 Y:32} '.' }
+﻿FormattedGlyph { Position = {X:0 Y:0}, Data = {X:32 Y:32} 'T', LineNumber = 0, Rectangle = (0, 0) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:0}, Data = {X:32 Y:32} 'h', LineNumber = 0, Rectangle = (32, 0) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:0}, Data = {X:32 Y:32} 'i', LineNumber = 0, Rectangle = (64, 0) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:0}, Data = {X:32 Y:32} 's', LineNumber = 0, Rectangle = (96, 0) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:0}, Data = {X:32 Y:32} (whitespace), LineNumber = 0, Rectangle = (128, 0) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:0}, Data = {X:32 Y:32} 'i', LineNumber = 0, Rectangle = (160, 0) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:0}, Data = {X:32 Y:32} 's', LineNumber = 0, Rectangle = (192, 0) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:0}, Data = {X:32 Y:32} (whitespace), LineNumber = 0, Rectangle = (224, 0) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:0}, Data = {X:32 Y:32} 'a', LineNumber = 0, Rectangle = (256, 0) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:0}, Data = {X:32 Y:32} (whitespace), LineNumber = 0, Rectangle = (288, 0) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:0}, Data = {X:32 Y:32} 'v', LineNumber = 0, Rectangle = (320, 0) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:0}, Data = {X:32 Y:32} 'e', LineNumber = 0, Rectangle = (352, 0) (32, 32) }
+FormattedGlyph { Position = {X:384 Y:0}, Data = {X:32 Y:32} 'r', LineNumber = 0, Rectangle = (384, 0) (32, 32) }
+FormattedGlyph { Position = {X:416 Y:0}, Data = {X:32 Y:32} 'y', LineNumber = 0, Rectangle = (416, 0) (32, 32) }
+FormattedGlyph { Position = {X:448 Y:0}, Data = {X:32 Y:32} (whitespace), LineNumber = 0, Rectangle = (448, 0) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:32}, Data = {X:32 Y:32} 'l', LineNumber = 1, Rectangle = (0, 32) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:32}, Data = {X:32 Y:32} 'o', LineNumber = 1, Rectangle = (32, 32) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:32}, Data = {X:32 Y:32} 'n', LineNumber = 1, Rectangle = (64, 32) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:32}, Data = {X:32 Y:32} 'g', LineNumber = 1, Rectangle = (96, 32) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:32}, Data = {X:32 Y:32} (whitespace), LineNumber = 1, Rectangle = (128, 32) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:32}, Data = {X:32 Y:32} 's', LineNumber = 1, Rectangle = (160, 32) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:32}, Data = {X:32 Y:32} 't', LineNumber = 1, Rectangle = (192, 32) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:32}, Data = {X:32 Y:32} 'r', LineNumber = 1, Rectangle = (224, 32) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:32}, Data = {X:32 Y:32} 'i', LineNumber = 1, Rectangle = (256, 32) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:32}, Data = {X:32 Y:32} 'n', LineNumber = 1, Rectangle = (288, 32) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:32}, Data = {X:32 Y:32} 'g', LineNumber = 1, Rectangle = (320, 32) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:32}, Data = {X:32 Y:32} (whitespace), LineNumber = 1, Rectangle = (352, 32) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:64}, Data = {X:32 Y:32} 'w', LineNumber = 2, Rectangle = (0, 64) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:64}, Data = {X:32 Y:32} 'i', LineNumber = 2, Rectangle = (32, 64) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:64}, Data = {X:32 Y:32} 't', LineNumber = 2, Rectangle = (64, 64) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:64}, Data = {X:32 Y:32} 'h', LineNumber = 2, Rectangle = (96, 64) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:96}, Data = {X:0 Y:32} (whitespace), LineNumber = 3, Rectangle = (0, 96) (0, 32) }
+FormattedGlyph { Position = {X:0 Y:96}, Data = {X:32 Y:32} 'm', LineNumber = 3, Rectangle = (0, 96) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:96}, Data = {X:32 Y:32} 'a', LineNumber = 3, Rectangle = (32, 96) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:96}, Data = {X:32 Y:32} 'n', LineNumber = 3, Rectangle = (64, 96) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:96}, Data = {X:32 Y:32} 'y', LineNumber = 3, Rectangle = (96, 96) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:128}, Data = {X:0 Y:32} (whitespace), LineNumber = 4, Rectangle = (0, 128) (0, 32) }
+FormattedGlyph { Position = {X:0 Y:160}, Data = {X:0 Y:32} (whitespace), LineNumber = 5, Rectangle = (0, 160) (0, 32) }
+FormattedGlyph { Position = {X:0 Y:160}, Data = {X:32 Y:32} 'l', LineNumber = 5, Rectangle = (0, 160) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:160}, Data = {X:32 Y:32} 'i', LineNumber = 5, Rectangle = (32, 160) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:160}, Data = {X:32 Y:32} 'n', LineNumber = 5, Rectangle = (64, 160) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:160}, Data = {X:32 Y:32} 'e', LineNumber = 5, Rectangle = (96, 160) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:160}, Data = {X:32 Y:32} 'b', LineNumber = 5, Rectangle = (128, 160) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:160}, Data = {X:32 Y:32} 'r', LineNumber = 5, Rectangle = (160, 160) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:160}, Data = {X:32 Y:32} 'e', LineNumber = 5, Rectangle = (192, 160) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:160}, Data = {X:32 Y:32} 'a', LineNumber = 5, Rectangle = (224, 160) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:160}, Data = {X:32 Y:32} 'k', LineNumber = 5, Rectangle = (256, 160) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:160}, Data = {X:32 Y:32} 's', LineNumber = 5, Rectangle = (288, 160) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:160}, Data = {X:32 Y:32} '.', LineNumber = 5, Rectangle = (320, 160) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:160}, Data = {X:32 Y:32} (whitespace), LineNumber = 5, Rectangle = (352, 160) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:192}, Data = {X:32 Y:32} 'S', LineNumber = 6, Rectangle = (0, 192) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:192}, Data = {X:32 Y:32} 'o', LineNumber = 6, Rectangle = (32, 192) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:192}, Data = {X:32 Y:32} 'm', LineNumber = 6, Rectangle = (64, 192) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:192}, Data = {X:32 Y:32} 'e', LineNumber = 6, Rectangle = (96, 192) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:192}, Data = {X:32 Y:32} (whitespace), LineNumber = 6, Rectangle = (128, 192) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:192}, Data = {X:32 Y:32} 'o', LineNumber = 6, Rectangle = (160, 192) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:192}, Data = {X:32 Y:32} 'f', LineNumber = 6, Rectangle = (192, 192) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:192}, Data = {X:32 Y:32} (whitespace), LineNumber = 6, Rectangle = (224, 192) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:192}, Data = {X:32 Y:32} 't', LineNumber = 6, Rectangle = (256, 192) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:192}, Data = {X:32 Y:32} 'h', LineNumber = 6, Rectangle = (288, 192) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:192}, Data = {X:32 Y:32} 'e', LineNumber = 6, Rectangle = (320, 192) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:192}, Data = {X:32 Y:32} 'm', LineNumber = 6, Rectangle = (352, 192) (32, 32) }
+FormattedGlyph { Position = {X:384 Y:192}, Data = {X:32 Y:32} (whitespace), LineNumber = 6, Rectangle = (384, 192) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:224}, Data = {X:32 Y:32} 'a', LineNumber = 7, Rectangle = (0, 224) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:224}, Data = {X:32 Y:32} 'r', LineNumber = 7, Rectangle = (32, 224) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:224}, Data = {X:32 Y:32} 'e', LineNumber = 7, Rectangle = (64, 224) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:224}, Data = {X:32 Y:32} (whitespace), LineNumber = 7, Rectangle = (96, 224) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:224}, Data = {X:32 Y:32} 'm', LineNumber = 7, Rectangle = (128, 224) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:224}, Data = {X:32 Y:32} 'a', LineNumber = 7, Rectangle = (160, 224) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:224}, Data = {X:32 Y:32} 'n', LineNumber = 7, Rectangle = (192, 224) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:224}, Data = {X:32 Y:32} 'u', LineNumber = 7, Rectangle = (224, 224) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:224}, Data = {X:32 Y:32} 'a', LineNumber = 7, Rectangle = (256, 224) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:224}, Data = {X:32 Y:32} 'l', LineNumber = 7, Rectangle = (288, 224) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:224}, Data = {X:32 Y:32} (whitespace), LineNumber = 7, Rectangle = (320, 224) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:256}, Data = {X:32 Y:32} 'l', LineNumber = 8, Rectangle = (0, 256) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:256}, Data = {X:32 Y:32} 'i', LineNumber = 8, Rectangle = (32, 256) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:256}, Data = {X:32 Y:32} 'n', LineNumber = 8, Rectangle = (64, 256) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:256}, Data = {X:32 Y:32} 'e', LineNumber = 8, Rectangle = (96, 256) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:256}, Data = {X:32 Y:32} 'b', LineNumber = 8, Rectangle = (128, 256) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:256}, Data = {X:32 Y:32} 'r', LineNumber = 8, Rectangle = (160, 256) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:256}, Data = {X:32 Y:32} 'e', LineNumber = 8, Rectangle = (192, 256) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:256}, Data = {X:32 Y:32} 'a', LineNumber = 8, Rectangle = (224, 256) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:256}, Data = {X:32 Y:32} 'k', LineNumber = 8, Rectangle = (256, 256) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:256}, Data = {X:32 Y:32} 's', LineNumber = 8, Rectangle = (288, 256) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:256}, Data = {X:32 Y:32} (whitespace), LineNumber = 8, Rectangle = (320, 256) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:256}, Data = {X:32 Y:32} 'a', LineNumber = 8, Rectangle = (352, 256) (32, 32) }
+FormattedGlyph { Position = {X:384 Y:256}, Data = {X:32 Y:32} 'n', LineNumber = 8, Rectangle = (384, 256) (32, 32) }
+FormattedGlyph { Position = {X:416 Y:256}, Data = {X:32 Y:32} 'd', LineNumber = 8, Rectangle = (416, 256) (32, 32) }
+FormattedGlyph { Position = {X:448 Y:256}, Data = {X:32 Y:32} (whitespace), LineNumber = 8, Rectangle = (448, 256) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:288}, Data = {X:32 Y:32} 's', LineNumber = 9, Rectangle = (0, 288) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:288}, Data = {X:32 Y:32} 'o', LineNumber = 9, Rectangle = (32, 288) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:288}, Data = {X:32 Y:32} 'm', LineNumber = 9, Rectangle = (64, 288) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:288}, Data = {X:32 Y:32} 'e', LineNumber = 9, Rectangle = (96, 288) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:288}, Data = {X:32 Y:32} (whitespace), LineNumber = 9, Rectangle = (128, 288) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:288}, Data = {X:32 Y:32} 'o', LineNumber = 9, Rectangle = (160, 288) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:288}, Data = {X:32 Y:32} 'f', LineNumber = 9, Rectangle = (192, 288) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:288}, Data = {X:32 Y:32} (whitespace), LineNumber = 9, Rectangle = (224, 288) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:288}, Data = {X:32 Y:32} 't', LineNumber = 9, Rectangle = (256, 288) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:288}, Data = {X:32 Y:32} 'h', LineNumber = 9, Rectangle = (288, 288) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:288}, Data = {X:32 Y:32} 'e', LineNumber = 9, Rectangle = (320, 288) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:288}, Data = {X:32 Y:32} 'm', LineNumber = 9, Rectangle = (352, 288) (32, 32) }
+FormattedGlyph { Position = {X:384 Y:288}, Data = {X:32 Y:32} (whitespace), LineNumber = 9, Rectangle = (384, 288) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:320}, Data = {X:32 Y:32} 'a', LineNumber = 10, Rectangle = (0, 320) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:320}, Data = {X:32 Y:32} 'r', LineNumber = 10, Rectangle = (32, 320) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:320}, Data = {X:32 Y:32} 'e', LineNumber = 10, Rectangle = (64, 320) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:320}, Data = {X:32 Y:32} (whitespace), LineNumber = 10, Rectangle = (96, 320) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:320}, Data = {X:32 Y:32} 'n', LineNumber = 10, Rectangle = (128, 320) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:320}, Data = {X:32 Y:32} 'a', LineNumber = 10, Rectangle = (160, 320) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:320}, Data = {X:32 Y:32} 't', LineNumber = 10, Rectangle = (192, 320) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:320}, Data = {X:32 Y:32} 'u', LineNumber = 10, Rectangle = (224, 320) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:320}, Data = {X:32 Y:32} 'r', LineNumber = 10, Rectangle = (256, 320) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:320}, Data = {X:32 Y:32} 'a', LineNumber = 10, Rectangle = (288, 320) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:320}, Data = {X:32 Y:32} 'l', LineNumber = 10, Rectangle = (320, 320) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:320}, Data = {X:32 Y:32} '.', LineNumber = 10, Rectangle = (352, 320) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:352}, Data = {X:0 Y:32} (whitespace), LineNumber = 11, Rectangle = (0, 352) (0, 32) }
+FormattedGlyph { Position = {X:0 Y:352}, Data = {X:32 Y:32} 'T', LineNumber = 11, Rectangle = (0, 352) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:352}, Data = {X:32 Y:32} 'h', LineNumber = 11, Rectangle = (32, 352) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:352}, Data = {X:32 Y:32} 'e', LineNumber = 11, Rectangle = (64, 352) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:352}, Data = {X:32 Y:32} 'r', LineNumber = 11, Rectangle = (96, 352) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:352}, Data = {X:32 Y:32} 'e', LineNumber = 11, Rectangle = (128, 352) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:352}, Data = {X:32 Y:32} (whitespace), LineNumber = 11, Rectangle = (160, 352) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:352}, Data = {X:32 Y:32} 'a', LineNumber = 11, Rectangle = (192, 352) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:352}, Data = {X:32 Y:32} 'r', LineNumber = 11, Rectangle = (224, 352) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:352}, Data = {X:32 Y:32} 'e', LineNumber = 11, Rectangle = (256, 352) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:352}, Data = {X:32 Y:32} (whitespace), LineNumber = 11, Rectangle = (288, 352) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:352}, Data = {X:32 Y:32} 'a', LineNumber = 11, Rectangle = (320, 352) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:352}, Data = {X:32 Y:32} 'l', LineNumber = 11, Rectangle = (352, 352) (32, 32) }
+FormattedGlyph { Position = {X:384 Y:352}, Data = {X:32 Y:32} 's', LineNumber = 11, Rectangle = (384, 352) (32, 32) }
+FormattedGlyph { Position = {X:416 Y:352}, Data = {X:32 Y:32} 'o', LineNumber = 11, Rectangle = (416, 352) (32, 32) }
+FormattedGlyph { Position = {X:448 Y:352}, Data = {X:32 Y:32} (whitespace), LineNumber = 11, Rectangle = (448, 352) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:384}, Data = {X:32 Y:32} (whitespace), LineNumber = 12, Rectangle = (0, 384) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:384}, Data = {X:32 Y:32} (whitespace), LineNumber = 12, Rectangle = (32, 384) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:384}, Data = {X:32 Y:32} (whitespace), LineNumber = 12, Rectangle = (64, 384) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:384}, Data = {X:32 Y:32} (whitespace), LineNumber = 12, Rectangle = (96, 384) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:384}, Data = {X:32 Y:32} 's', LineNumber = 12, Rectangle = (128, 384) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:384}, Data = {X:32 Y:32} 'e', LineNumber = 12, Rectangle = (160, 384) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:384}, Data = {X:32 Y:32} 'v', LineNumber = 12, Rectangle = (192, 384) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:384}, Data = {X:32 Y:32} 'e', LineNumber = 12, Rectangle = (224, 384) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:384}, Data = {X:32 Y:32} 'r', LineNumber = 12, Rectangle = (256, 384) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:384}, Data = {X:32 Y:32} 'a', LineNumber = 12, Rectangle = (288, 384) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:384}, Data = {X:32 Y:32} 'l', LineNumber = 12, Rectangle = (320, 384) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:384}, Data = {X:32 Y:32} (whitespace), LineNumber = 12, Rectangle = (352, 384) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:416}, Data = {X:32 Y:32} 'c', LineNumber = 13, Rectangle = (0, 416) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:416}, Data = {X:32 Y:32} 'o', LineNumber = 13, Rectangle = (32, 416) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:416}, Data = {X:32 Y:32} 'n', LineNumber = 13, Rectangle = (64, 416) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:416}, Data = {X:32 Y:32} 's', LineNumber = 13, Rectangle = (96, 416) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:416}, Data = {X:32 Y:32} 'e', LineNumber = 13, Rectangle = (128, 416) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:416}, Data = {X:32 Y:32} 'c', LineNumber = 13, Rectangle = (160, 416) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:416}, Data = {X:32 Y:32} 'u', LineNumber = 13, Rectangle = (192, 416) (32, 32) }
+FormattedGlyph { Position = {X:224 Y:416}, Data = {X:32 Y:32} 't', LineNumber = 13, Rectangle = (224, 416) (32, 32) }
+FormattedGlyph { Position = {X:256 Y:416}, Data = {X:32 Y:32} 'i', LineNumber = 13, Rectangle = (256, 416) (32, 32) }
+FormattedGlyph { Position = {X:288 Y:416}, Data = {X:32 Y:32} 'v', LineNumber = 13, Rectangle = (288, 416) (32, 32) }
+FormattedGlyph { Position = {X:320 Y:416}, Data = {X:32 Y:32} 'e', LineNumber = 13, Rectangle = (320, 416) (32, 32) }
+FormattedGlyph { Position = {X:352 Y:416}, Data = {X:32 Y:32} (whitespace), LineNumber = 13, Rectangle = (352, 416) (32, 32) }
+FormattedGlyph { Position = {X:0 Y:448}, Data = {X:32 Y:32} 's', LineNumber = 14, Rectangle = (0, 448) (32, 32) }
+FormattedGlyph { Position = {X:32 Y:448}, Data = {X:32 Y:32} 'p', LineNumber = 14, Rectangle = (32, 448) (32, 32) }
+FormattedGlyph { Position = {X:64 Y:448}, Data = {X:32 Y:32} 'a', LineNumber = 14, Rectangle = (64, 448) (32, 32) }
+FormattedGlyph { Position = {X:96 Y:448}, Data = {X:32 Y:32} 'c', LineNumber = 14, Rectangle = (96, 448) (32, 32) }
+FormattedGlyph { Position = {X:128 Y:448}, Data = {X:32 Y:32} 'e', LineNumber = 14, Rectangle = (128, 448) (32, 32) }
+FormattedGlyph { Position = {X:160 Y:448}, Data = {X:32 Y:32} 's', LineNumber = 14, Rectangle = (160, 448) (32, 32) }
+FormattedGlyph { Position = {X:192 Y:448}, Data = {X:32 Y:32} '.', LineNumber = 14, Rectangle = (192, 448) (32, 32) }
