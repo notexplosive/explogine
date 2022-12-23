@@ -354,7 +354,6 @@ public class TextInputWidget : Widget, IUpdateInput
                 _nodes.Add(character);
             }
 
-            _nodes.Add('\0');
             Cache = new Cache(_nodes.ToArray(), font, containerRectangle, alignment);
         }
 
@@ -465,62 +464,43 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly Alignment _alignment;
         private readonly RectangleF _containerRectangle;
         private readonly IFontGetter _font;
-        private readonly char[] _nodes;
-        private readonly RectangleF[] _rectangles;
-        private FormattedText? _formattedTextOrNull;
-        private FormattedText.FormattedGlyph[]? _glyphs;
-        private string? _textOrNull;
+        private readonly CacheNode[] _nodes;
+        private readonly char[] _originalChars;
 
-        public Cache(char[] nodes, IFontGetter font, RectangleF containerRectangle, Alignment alignment)
+        public Cache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment)
         {
+            _originalChars = chars;
             _font = font;
             _containerRectangle = containerRectangle;
             _alignment = alignment;
-            _nodes = nodes;
-            _rectangles = new RectangleF[_nodes.Length];
-            _formattedTextOrNull = null;
-            _textOrNull = null;
+            _nodes = new CacheNode[chars.Length + 1];
+            Text = BuildString(chars);
+            BuildFormattedText();
         }
 
-        public string Text
-        {
-            get
-            {
-                if (_textOrNull == null)
-                {
-                    _textOrNull = BuildString();
-                }
-
-                return _textOrNull;
-            }
-        }
+        public string Text { get; }
 
         public RectangleF UsedSpace
         {
             get
             {
-                if (!_formattedTextOrNull.HasValue)
+                var result = _nodes[0].Rectangle;
+                foreach (var node in _nodes)
                 {
-                    _formattedTextOrNull = BuildFormattedText();
-                }
-
-                var result = _rectangles[0];
-                foreach (var rectangle in _rectangles)
-                {
-                    result = RectangleF.Union(result, rectangle);
+                    result = RectangleF.Union(result, node.Rectangle);
                 }
 
                 return result;
             }
         }
 
-        private string BuildString()
+        private string BuildString(char[] chars)
         {
             var stringBuilder = new StringBuilder();
-            // note: length - 1 because we skip the null terminator
-            for (var i = 0; i < _nodes.Length - 1; i++)
+            // We do length - 1 because we want to skip the null terminator
+            foreach(var character in chars)
             {
-                stringBuilder.Append(_nodes[i]);
+                stringBuilder.Append(character);
             }
 
             return stringBuilder.ToString();
@@ -528,42 +508,29 @@ public class TextInputWidget : Widget, IUpdateInput
 
         public int LineNumberAt(int nodeIndex)
         {
-            PrepareFormattedTextCache();
-
-            if (_glyphs == null)
-            {
-                throw new Exception($"{nameof(Cache._glyphs)} array was not generated");
-            }
-
-            FormattedText.FormattedGlyph glyph;
-            if (nodeIndex >= _nodes.Length - 1)
-            {
-                glyph = _glyphs[^1];
-                return glyph.LineNumber;
-            }
-
-            glyph = _glyphs[nodeIndex];
-
-            if (glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true})
-            {
-                return glyph.LineNumber - 1;
-            }
-
-            return glyph.LineNumber;
+            return _nodes[nodeIndex].LineNumber;
         }
 
-        private FormattedText BuildFormattedText()
+        private void BuildFormattedText()
         {
             // If the current buffer is empty, we act like we have just one character so we format it in the right spot
-            var result = new FormattedText(_font, Text.Length > 0 ? Text : " ");
+            var formattedText = new FormattedText(_font, Text.Length > 0 ? Text : " ");
             var glyphRect = RectangleF.Empty;
             var currentRect = new RectangleF(Vector2.Zero, new Vector2(0, _font.GetFont().Height));
             var previousGlyphRect = currentRect;
-            var glyphIndex = 0;
+            var nodeIndex = 0;
             var wasPreviousNewLine = false;
-            _glyphs = result.GetGlyphs(_containerRectangle, _alignment).ToArray();
-            foreach (var glyph in _glyphs)
+            var glyphs = formattedText.GetGlyphs(_containerRectangle, _alignment).ToArray();
+            var lineNumber = 0;
+            
+            foreach (var glyph in glyphs)
             {
+                lineNumber = glyph.LineNumber;
+                if (glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true})
+                {
+                    lineNumber--;
+                }
+
                 glyphRect = new RectangleF(glyph.Position, glyph.Data.Size);
                 var isNewLine = glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true};
                 if (isNewLine && !wasPreviousNewLine)
@@ -579,7 +546,15 @@ public class TextInputWidget : Widget, IUpdateInput
                     currentRect = glyphRect;
                 }
 
-                _rectangles[glyphIndex++] = currentRect;
+                char character = '\0';
+                if (nodeIndex < _originalChars.Length)
+                {
+                    character = _originalChars[nodeIndex];
+                }
+
+                _nodes[nodeIndex] = new CacheNode(currentRect, lineNumber, character, glyph);
+                
+                nodeIndex++;
                 wasPreviousNewLine = isNewLine;
                 previousGlyphRect = glyphRect;
             }
@@ -589,14 +564,14 @@ public class TextInputWidget : Widget, IUpdateInput
                 currentRect = glyphRect;
             }
 
-            if (_rectangles.Length > 1)
+            if (_nodes.Length > 1)
             {
-                // We're at the very end of the string, we want a zero-width rect at the end of the string 
-                _rectangles[glyphIndex] = new RectangleF(new Vector2(currentRect.X + currentRect.Width, currentRect.Y),
+                var rectangle = new RectangleF(new Vector2(currentRect.X + currentRect.Width, currentRect.Y),
                     new Vector2(0, _font.GetFont().Height));
+                
+                // We want a zero-width rect at the end of the string 
+                _nodes[nodeIndex] = new CacheNode(rectangle, lineNumber, '\0', new FormattedText.FormattedGlyph());
             }
-
-            return result;
         }
 
         public Cache Rebuild(char[] newNodes)
@@ -605,18 +580,12 @@ public class TextInputWidget : Widget, IUpdateInput
         }
 
         [Pure]
-        public RectangleF RectangleAtNode(int targetIndex)
+        public RectangleF RectangleAtNode(int nodeIndex)
         {
-            PrepareFormattedTextCache();
-            return _rectangles[targetIndex];
+            return _nodes[nodeIndex].Rectangle;
         }
 
-        private void PrepareFormattedTextCache()
-        {
-            if (!_formattedTextOrNull.HasValue)
-            {
-                _formattedTextOrNull = BuildFormattedText();
-            }
-        }
+        private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
+            FormattedText.FormattedGlyph OriginalGlyph);
     }
 }
