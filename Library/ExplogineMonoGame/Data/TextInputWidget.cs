@@ -127,30 +127,12 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveToStartOfLine()
     {
-        var currentLine = _charSequence.Cache.LineNumberAt(CursorIndex);
-        var newIndex = _charSequence.ScanUntil(CursorIndex, LeftRight.Left,
-            currentIndex => currentLine != _charSequence.Cache.LineNumberAt(currentIndex));
-
-        if (_charSequence.Cache.LineNumberAt(newIndex) != currentLine)
-        {
-            newIndex++;
-        }
-
-        CursorIndex = newIndex;
+        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine())[0];
     }
 
     public void MoveToEndOfLine()
     {
-        var currentLine = _charSequence.Cache.LineNumberAt(CursorIndex);
-        var newIndex = _charSequence.ScanUntil(CursorIndex, LeftRight.Right,
-            currentIndex => currentLine != _charSequence.Cache.LineNumberAt(currentIndex));
-
-        if (newIndex != 0)
-        {
-            newIndex--;
-        }
-
-        CursorIndex = newIndex;
+        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine())[^1];
     }
 
     public void MoveUp()
