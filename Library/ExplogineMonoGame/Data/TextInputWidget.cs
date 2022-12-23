@@ -89,6 +89,30 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 MoveToEndOfLine();
             }
+
+            if (input.Keyboard.GetButton(Keys.Back).WasPressed)
+            {
+                if (input.Keyboard.Modifiers.ControlInclusive)
+                {
+                    BackspaceWholeWord();
+                }
+                else
+                {
+                    Backspace();
+                }
+            }
+            
+            if (input.Keyboard.GetButton(Keys.Delete).WasPressed)
+            {
+                if (input.Keyboard.Modifiers.ControlInclusive)
+                {
+                    ReverseBackspaceWholeWord();
+                }
+                else
+                {
+                    ReverseBackspace();
+                }
+            }
         }
 
         var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
@@ -141,6 +165,49 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    private void BackspaceWholeWord()
+    {
+        var index = CursorIndex;
+        if (_charSequence.IsValidIndex(index - 1) && IsWordBoundary(index - 1))
+        {
+            index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundary);
+        }
+        else
+        {
+            index = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Left, IsWordBoundary);
+        }
+
+        if (_charSequence.IsValidIndex(index + 1) && index != 0)
+        {
+            index++;
+        }
+        
+        var distance = CursorIndex - index;
+        for (int i = 0; i < distance; i++)
+        {
+            Backspace();
+        }
+    }
+
+    private void ReverseBackspaceWholeWord()
+    {
+        var index = CursorIndex;
+        if (IsWordBoundary(index))
+        {
+            index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundary);
+        }
+        else
+        {
+            index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsWordBoundary);
+        }
+
+        var distance = index - CursorIndex;
+        for (int i = 0; i < distance; i++)
+        {
+            ReverseBackspace();
+        }
+    }
+
     public int GetWordBoundaryLeftOf(int index)
     {
         if (_charSequence.IsValidIndex(index - 1) && IsWordBoundary(index - 1))
@@ -157,7 +224,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
         return index;
     }
-    
+
     public void MoveWordLeft()
     {
         CursorIndex = GetWordBoundaryLeftOf(CursorIndex);
@@ -169,12 +236,12 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundary);
         }
-        
+
         index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsWordBoundary);
 
         return index;
     }
-    
+
     public void MoveWordRight()
     {
         CursorIndex = GetWordBoundaryRightOf(CursorIndex);
@@ -187,9 +254,9 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private bool IsWordBoundary(int nodeIndex)
     {
-        return char.IsWhiteSpace(_charSequence.Cache.Text[nodeIndex]);
+        return nodeIndex == LastIndex || char.IsWhiteSpace(_charSequence.Cache.Text[nodeIndex]);
     }
-    
+
     public void MoveToStartOfLine()
     {
         CursorIndex = _charSequence.GetNodesOnLine(CurrentLine)[0];
@@ -355,27 +422,29 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         foreach (var character in enteredCharacters)
         {
-            if (!char.IsControl(character))
+            switch (char.IsControl(character))
             {
-                EnterCharacter(character);
-            }
-            else if (character == '\b')
-            {
-                Backspace();
-            }
-            else if (character == '\r')
-            {
-                EnterCharacter('\n');
-            }
-            else if (character == 127)
-            {
-                ReverseBackspace();
-            }
-            else
-            {
-                if (char.IsControl(character))
+                case false:
+                    EnterCharacter(character);
+                    break;
+                default:
                 {
-                    Client.Debug.LogWarning($"Unsafe control character, ignored {(int) character}");
+                    if (character == '\b')
+                    {
+                    }
+                    else if (character == '\r')
+                    {
+                        EnterCharacter('\n');
+                    }
+                    else
+                    {
+                        if (char.IsControl(character) && character != 127)
+                        {
+                            Client.Debug.LogWarning($"Unsafe control character, ignored {(int) character}");
+                        }
+                    }
+
+                    break;
                 }
             }
         }
@@ -427,10 +496,6 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 _nodes.RemoveAt(cursorIndex);
                 Cache = Cache.Rebuild(_nodes.ToArray());
-            }
-            else
-            {
-                Client.Debug.LogWarning("Attempted to remove null terminator");
             }
         }
 
