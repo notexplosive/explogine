@@ -18,6 +18,7 @@ public class TextInputWidget : Widget, IUpdateInput
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
     private bool _selected;
+    private RepeatedAction? _mostRecentAction;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText) : base(
         position, size, depth)
@@ -41,75 +42,26 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (_selected)
         {
-            EnterText(input.Keyboard.GetEnteredCharacters());
+            var keyboard = input.Keyboard;
 
-            if (input.Keyboard.GetButton(Keys.Left).WasPressed)
-            {
-                if (input.Keyboard.Modifiers.ControlInclusive)
-                {
-                    MoveWordLeft();
-                }
-                else
-                {
-                    MoveLeft();
-                }
-            }
+            EnterText(keyboard.GetEnteredCharacters());
 
-            if (input.Keyboard.GetButton(Keys.Right).WasPressed)
-            {
-                if (input.Keyboard.Modifiers.ControlInclusive)
-                {
-                    MoveWordRight();
-                }
-                else
-                {
-                    MoveRight();
-                }
-            }
+            bool ControlIsDown(ModifierKeys modifierKeys) => modifierKeys.ControlInclusive;
+            bool ControlIsNotDown(ModifierKeys modifierKeys) => !modifierKeys.ControlInclusive;
+            bool ModifierAgnostic(ModifierKeys modifierKeys) => true;
 
-            if (input.Keyboard.GetButton(Keys.Up).WasPressed)
-            {
-                MoveUp();
-            }
-
-            if (input.Keyboard.GetButton(Keys.Down).WasPressed)
-            {
-                MoveDown();
-            }
-
-            if (input.Keyboard.GetButton(Keys.Home).WasPressed)
-            {
-                MoveToStartOfLine();
-            }
-
-            if (input.Keyboard.GetButton(Keys.End).WasPressed)
-            {
-                MoveToEndOfLine();
-            }
-
-            if (input.Keyboard.GetButton(Keys.Back).WasPressed)
-            {
-                if (input.Keyboard.Modifiers.ControlInclusive)
-                {
-                    BackspaceWholeWord();
-                }
-                else
-                {
-                    Backspace();
-                }
-            }
-            
-            if (input.Keyboard.GetButton(Keys.Delete).WasPressed)
-            {
-                if (input.Keyboard.Modifiers.ControlInclusive)
-                {
-                    ReverseBackspaceWholeWord();
-                }
-                else
-                {
-                    ReverseBackspace();
-                }
-            }
+            KeyBind(keyboard, Keys.Left, ControlIsDown, MoveWordLeft);
+            KeyBind(keyboard, Keys.Left, ControlIsNotDown, MoveLeft);
+            KeyBind(keyboard, Keys.Right, ControlIsDown, MoveWordRight);
+            KeyBind(keyboard, Keys.Right, ControlIsNotDown, MoveRight);
+            KeyBind(keyboard, Keys.Up, ModifierAgnostic, MoveUp);
+            KeyBind(keyboard, Keys.Down, ModifierAgnostic, MoveDown);
+            KeyBind(keyboard, Keys.Home, ModifierAgnostic, MoveToStartOfLine);
+            KeyBind(keyboard, Keys.End, ModifierAgnostic, MoveToEndOfLine);
+            KeyBind(keyboard, Keys.Back, ControlIsDown, BackspaceWholeWord);
+            KeyBind(keyboard, Keys.Back, ControlIsNotDown, Backspace);
+            KeyBind(keyboard, Keys.Delete, ControlIsDown, ReverseBackspaceWholeWord);
+            KeyBind(keyboard, Keys.Delete, ControlIsNotDown, ReverseBackspace);
         }
 
         var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
@@ -162,12 +114,37 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<ModifierKeys, bool> checkModifier, Action action)
+    {
+        var modifiers = checkModifier.Invoke(keyboard.Modifiers);
+        var isDown = keyboard.GetButton(button).IsDown && modifiers;
+        var wasPressed = keyboard.GetButton(button).WasPressed && modifiers;
+        if (wasPressed)
+        {
+            action();
+            _mostRecentAction = new RepeatedAction(action);
+        }
+
+        if (_mostRecentAction?.Action == action)
+        {
+            if (isDown)
+            {
+                _mostRecentAction.Poll();
+            }
+            else
+            {
+                _mostRecentAction = null;
+            }
+        }
+
+    }
+
     private void BackspaceWholeWord()
     {
         var index = GetWordBoundaryLeftOf(CursorIndex);
-        
+
         var distance = CursorIndex - index;
-        for (int i = 0; i < distance; i++)
+        for (var i = 0; i < distance; i++)
         {
             Backspace();
         }
@@ -178,7 +155,7 @@ public class TextInputWidget : Widget, IUpdateInput
         var index = GetWordBoundaryRightOf(CursorIndex);
 
         var distance = index - CursorIndex;
-        for (int i = 0; i < distance; i++)
+        for (var i = 0; i < distance; i++)
         {
             ReverseBackspace();
         }
@@ -693,5 +670,30 @@ public class TextInputWidget : Widget, IUpdateInput
 
         private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
             FormattedText.FormattedGlyph OriginalGlyph);
+    }
+    
+    private class RepeatedAction
+    {
+        private DateTime _timeStarted;
+        public Action Action { get; }
+
+        public RepeatedAction(Action action)
+        {
+            _timeStarted = DateTime.Now;
+            Action = action;
+        }
+
+        public void Poll()
+        {
+            var timeSinceStart = DateTime.Now - _timeStarted;
+            double staticFriction = 0.5f;
+            double tick = 0.05f;
+            
+            if (timeSinceStart.TotalSeconds - staticFriction > tick)
+            {
+                Action();
+                _timeStarted = _timeStarted.AddSeconds(tick);
+            }
+        }
     }
 }
