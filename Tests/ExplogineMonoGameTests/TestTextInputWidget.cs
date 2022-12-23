@@ -62,9 +62,9 @@ public class TestTextInputWidget
     {
         var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle,
             "Simple test text");
-        inputWidget.MoveRight();
-        inputWidget.MoveRight();
-        inputWidget.ReverseBackspace();
+        inputWidget.MoveRight(false);
+        inputWidget.MoveRight(false);
+        inputWidget.ReverseBackspace(false);
         inputWidget.EnterCharacter('p');
         // ReSharper disable once StringLiteralTypo
         inputWidget.Text.Should().Be("Sipple test text");
@@ -91,28 +91,28 @@ public class TestTextInputWidget
         [Fact]
         public void one_line_home()
         {
-            _oneLineWidget.MoveToStartOfLine();
+            _oneLineWidget.MoveToStartOfLine(false);
             _oneLineWidget.CursorIndex.Should().Be(0);
         }
 
         [Fact]
         public void one_line_end()
         {
-            _oneLineWidget.MoveToEndOfLine();
+            _oneLineWidget.MoveToEndOfLine(false);
             _oneLineWidget.CursorIndex.Should().Be(_oneLineWidget.Text.Length);
         }
 
         [Fact]
         public void empty_home()
         {
-            _emptyStringWidget.MoveToStartOfLine();
+            _emptyStringWidget.MoveToStartOfLine(false);
             _emptyStringWidget.CursorIndex.Should().Be(0);
         }
 
         [Fact]
         public void empty_end()
         {
-            _emptyStringWidget.MoveToEndOfLine();
+            _emptyStringWidget.MoveToEndOfLine(false);
             _emptyStringWidget.CursorIndex.Should().Be(_emptyStringWidget.LastIndex);
         }
 
@@ -120,12 +120,12 @@ public class TestTextInputWidget
         public void manual_multiline_home()
         {
             var startingLine = _manualManyLine.CurrentLine;
-            _manualManyLine.MoveToStartOfLine();
+            _manualManyLine.MoveToStartOfLine(false);
             _manualManyLine.CurrentLine.Should().Be(startingLine);
 
             if (_manualManyLine.CursorIndex != 0)
             {
-                _manualManyLine.MoveLeft();
+                _manualManyLine.MoveLeft(false);
                 _manualManyLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
@@ -134,12 +134,12 @@ public class TestTextInputWidget
         public void manual_multiline_end()
         {
             var startingLine = _manualManyLine.CurrentLine;
-            _manualManyLine.MoveToEndOfLine();
+            _manualManyLine.MoveToEndOfLine(false);
             _manualManyLine.CurrentLine.Should().Be(startingLine);
 
             if (_manualManyLine.CursorIndex != _manualManyLine.LastIndex)
             {
-                _manualManyLine.MoveRight();
+                _manualManyLine.MoveRight(false);
                 _manualManyLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
@@ -148,12 +148,12 @@ public class TestTextInputWidget
         public void natural_multiline_home()
         {
             var startingLine = _naturalMultiLine.CurrentLine;
-            _naturalMultiLine.MoveToStartOfLine();
+            _naturalMultiLine.MoveToStartOfLine(false);
             _naturalMultiLine.CurrentLine.Should().Be(startingLine);
 
             if (_naturalMultiLine.CursorIndex != 0)
             {
-                _naturalMultiLine.MoveLeft();
+                _naturalMultiLine.MoveLeft(false);
                 _naturalMultiLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
@@ -162,12 +162,12 @@ public class TestTextInputWidget
         public void natural_multiline_end()
         {
             var startingLine = _naturalMultiLine.CurrentLine;
-            _naturalMultiLine.MoveToEndOfLine();
+            _naturalMultiLine.MoveToEndOfLine(false);
             _naturalMultiLine.CurrentLine.Should().Be(startingLine);
 
             if (_naturalMultiLine.CursorIndex != _naturalMultiLine.LastIndex)
             {
-                _naturalMultiLine.MoveRight();
+                _naturalMultiLine.MoveRight(false);
                 _naturalMultiLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
@@ -176,7 +176,7 @@ public class TestTextInputWidget
         public void one_line_up_arrow()
         {
             var startingIndex = _oneLineWidget.CursorIndex;
-            _oneLineWidget.MoveUp();
+            _oneLineWidget.MoveUp(false);
             _oneLineWidget.CursorIndex.Should().Be(startingIndex);
         }
 
@@ -184,21 +184,21 @@ public class TestTextInputWidget
         public void one_line_down_arrow()
         {
             var startingIndex = _oneLineWidget.CursorIndex;
-            _oneLineWidget.MoveDown();
+            _oneLineWidget.MoveDown(false);
             _oneLineWidget.CursorIndex.Should().Be(startingIndex);
         }
 
         [Fact]
         public void empty_up_arrow()
         {
-            _emptyStringWidget.MoveUp();
+            _emptyStringWidget.MoveUp(false);
             _emptyStringWidget.CursorIndex.Should().Be(0);
         }
 
         [Fact]
         public void empty_down_arrow()
         {
-            _emptyStringWidget.MoveDown();
+            _emptyStringWidget.MoveDown(false);
             _emptyStringWidget.CursorIndex.Should().Be(0);
         }
 
@@ -206,7 +206,7 @@ public class TestTextInputWidget
         public void manual_multiline_up_arrow()
         {
             var column = _manualManyLine.CurrentColumn;
-            _manualManyLine.MoveUp();
+            _manualManyLine.MoveUp(false);
             var newLineLength = _manualManyLine.LineLength(_manualManyLine.CurrentLine);
             _manualManyLine.CurrentColumn.Should().Be(Math.Min(column, newLineLength - 1));
         }
@@ -216,7 +216,7 @@ public class TestTextInputWidget
         {
             // this should look like the up arrow equivalent but I'm lazy
             var column = _manualManyLine.CurrentColumn;
-            _manualManyLine.MoveDown();
+            _manualManyLine.MoveDown(false);
             _manualManyLine.CurrentColumn.Should().Be(column);
         }
 
@@ -224,7 +224,7 @@ public class TestTextInputWidget
         public void natural_multiline_up_arrow()
         {
             var column = _naturalMultiLine.CurrentColumn;
-            _naturalMultiLine.MoveUp();
+            _naturalMultiLine.MoveUp(false);
             var newLineLength = _naturalMultiLine.LineLength(_naturalMultiLine.CurrentLine);
             _naturalMultiLine.CurrentColumn.Should().Be(Math.Min(column, newLineLength - 1));
         }
@@ -234,7 +234,7 @@ public class TestTextInputWidget
         {
             // this should look like the up arrow equivalent but I'm lazy
             var column = _naturalMultiLine.CurrentColumn;
-            _naturalMultiLine.MoveDown();
+            _naturalMultiLine.MoveDown(false);
             _naturalMultiLine.CurrentColumn.Should().Be(column);
         }
 
@@ -242,9 +242,9 @@ public class TestTextInputWidget
         {
             public StartAtMiddle()
             {
-                _oneLineWidget.MoveTo(_oneLineWidget.LastIndex / 2);
-                _manualManyLine.MoveTo(_manualManyLine.LastIndex / 2);
-                _naturalMultiLine.MoveTo(_naturalMultiLine.LastIndex / 2);
+                _oneLineWidget.MoveTo(_oneLineWidget.LastIndex / 2, false);
+                _manualManyLine.MoveTo(_manualManyLine.LastIndex / 2, false);
+                _naturalMultiLine.MoveTo(_naturalMultiLine.LastIndex / 2, false);
             }
         }
 
@@ -252,7 +252,7 @@ public class TestTextInputWidget
         {
             public StartAtStart()
             {
-                _oneLineWidget.MoveTo(0);
+                _oneLineWidget.MoveTo(0, false);
             }
         }
 
@@ -260,9 +260,9 @@ public class TestTextInputWidget
         {
             public StartAtEnd()
             {
-                _oneLineWidget.MoveTo(_oneLineWidget.LastIndex);
-                _manualManyLine.MoveTo(_manualManyLine.LastIndex);
-                _naturalMultiLine.MoveTo(_naturalMultiLine.LastIndex);
+                _oneLineWidget.MoveTo(_oneLineWidget.LastIndex, false);
+                _manualManyLine.MoveTo(_manualManyLine.LastIndex, false);
+                _naturalMultiLine.MoveTo(_naturalMultiLine.LastIndex, false);
             }
         }
     }

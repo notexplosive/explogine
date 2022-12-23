@@ -21,6 +21,7 @@ public class TextInputWidget : Widget, IUpdateInput
     private HorizontalDirection _hoveredSide;
     private RepeatedAction? _mostRecentAction;
     private bool _selected;
+    private bool _isDragging;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText) : base(
         position, size, depth)
@@ -39,6 +40,27 @@ public class TextInputWidget : Widget, IUpdateInput
     public int LastIndex => _charSequence.NumberOfChars;
     public int CurrentColumn => _charSequence.GetColumn(CursorIndex);
     public int CurrentLine => _charSequence.Cache.LineNumberAt(CursorIndex);
+
+    private int? HoveredNodeIndex
+    {
+        get
+        {
+            if (!_hoveredLetterIndex.HasValue)
+            {
+                return null;
+            }
+
+            var offset = _hoveredSide == HorizontalDirection.Right ? 1 : 0;
+            var result = _hoveredLetterIndex.Value + offset;
+
+            if (result > _charSequence.NumberOfChars)
+            {
+                result = _charSequence.NumberOfChars;
+            }
+
+            return result;
+        }
+    }
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
@@ -80,23 +102,40 @@ public class TextInputWidget : Widget, IUpdateInput
         }
 
         var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
+        
+        innerHitTestStack.BeforeLayerResolved += () => { _hoveredLetterIndex = null; };
+        
         if (IsHovered)
         {
+            var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
+
+            if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
+            {
+                _isDragging = false;
+            }
+
             if (input.Mouse.GetButton(MouseButton.Left).WasPressed)
             {
                 _selected = true;
-                if (_hoveredLetterIndex.HasValue)
+
+                if (HoveredNodeIndex.HasValue)
                 {
-                    var offset = _hoveredSide == HorizontalDirection.Right ? 1 : 0;
-                    _cursor.SetIndex(_hoveredLetterIndex.Value + offset);
-                    if (CursorIndex > _charSequence.NumberOfChars)
+                    _cursor.SetIndex(HoveredNodeIndex.Value, leaveAnchor);
+                }
+
+                _isDragging = true;
+            }
+            else
+            {
+                if (_isDragging && _selected && !leaveAnchor)
+                {
+                    if (HoveredNodeIndex.HasValue)
                     {
-                        _cursor.SetIndex(_charSequence.NumberOfChars);
+                        _cursor.SetAnchorIndex(HoveredNodeIndex.Value);
                     }
                 }
             }
 
-            innerHitTestStack.BeforeLayerResolved += () => { _hoveredLetterIndex = null; };
 
             for (var i = 0; i < _charSequence.NumberOfChars; i++)
             {
@@ -130,15 +169,16 @@ public class TextInputWidget : Widget, IUpdateInput
     }
 
     private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<ModifierKeys, bool> checkModifier,
-        Action action)
+        Action<bool> action)
     {
-        var modifiers = checkModifier.Invoke(keyboard.Modifiers);
-        var isDown = keyboard.GetButton(button).IsDown && modifiers;
-        var wasPressed = keyboard.GetButton(button).WasPressed && modifiers;
+        var hasRequiredModifier = checkModifier.Invoke(keyboard.Modifiers);
+        var isDown = keyboard.GetButton(button).IsDown && hasRequiredModifier;
+        var wasPressed = keyboard.GetButton(button).WasPressed && hasRequiredModifier;
         if (wasPressed)
         {
-            action();
-            _mostRecentAction = new RepeatedAction(action);
+            var arg = keyboard.Modifiers.ShiftInclusive;
+            action(arg);
+            _mostRecentAction = new RepeatedAction(action, arg);
         }
 
         if (_mostRecentAction?.Action == action)
@@ -154,25 +194,25 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    private void BackspaceWholeWord()
+    private void BackspaceWholeWord(bool leaveAnchor)
     {
         var index = GetWordBoundaryLeftOf(CursorIndex);
 
         var distance = CursorIndex - index;
         for (var i = 0; i < distance; i++)
         {
-            Backspace();
+            Backspace(leaveAnchor);
         }
     }
 
-    private void ReverseBackspaceWholeWord()
+    private void ReverseBackspaceWholeWord(bool leaveAnchor)
     {
         var index = GetWordBoundaryRightOf(CursorIndex);
 
         var distance = index - CursorIndex;
         for (var i = 0; i < distance; i++)
         {
-            ReverseBackspace();
+            ReverseBackspace(leaveAnchor);
         }
     }
 
@@ -193,9 +233,9 @@ public class TextInputWidget : Widget, IUpdateInput
         return index;
     }
 
-    public void MoveWordLeft()
+    public void MoveWordLeft(bool leaveAnchor)
     {
-        _cursor.SetIndex(GetWordBoundaryLeftOf(CursorIndex));
+        _cursor.SetIndex(GetWordBoundaryLeftOf(CursorIndex), leaveAnchor);
     }
 
     public int GetWordBoundaryRightOf(int index)
@@ -210,9 +250,9 @@ public class TextInputWidget : Widget, IUpdateInput
         return index;
     }
 
-    public void MoveWordRight()
+    public void MoveWordRight(bool leaveAnchor)
     {
-        _cursor.SetIndex(GetWordBoundaryRightOf(CursorIndex));
+        _cursor.SetIndex(GetWordBoundaryRightOf(CursorIndex), leaveAnchor);
     }
 
     private bool IsNotWordBoundary(int nodeIndex)
@@ -225,17 +265,17 @@ public class TextInputWidget : Widget, IUpdateInput
         return nodeIndex == LastIndex || char.IsWhiteSpace(Text[nodeIndex]);
     }
 
-    public void MoveToStartOfLine()
+    public void MoveToStartOfLine(bool leaveAnchor)
     {
-        _cursor.SetIndex(_charSequence.GetNodesOnLine(CurrentLine)[0]);
+        _cursor.SetIndex(_charSequence.GetNodesOnLine(CurrentLine)[0], leaveAnchor);
     }
 
-    public void MoveToEndOfLine()
+    public void MoveToEndOfLine(bool leaveAnchor)
     {
-        _cursor.SetIndex(_charSequence.GetNodesOnLine(CurrentLine)[^1]);
+        _cursor.SetIndex(_charSequence.GetNodesOnLine(CurrentLine)[^1], leaveAnchor);
     }
 
-    public void MoveUp()
+    public void MoveUp(bool leaveAnchor)
     {
         var targetLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex) - 1);
         var currentColumn = _charSequence.GetColumn(CursorIndex);
@@ -247,15 +287,15 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (targetLineIndices.Length <= currentColumn)
         {
-            _cursor.SetIndex(targetLineIndices[^1]);
+            _cursor.SetIndex(targetLineIndices[^1], leaveAnchor);
         }
         else
         {
-            _cursor.SetIndex(targetLineIndices[currentColumn]);
+            _cursor.SetIndex(targetLineIndices[currentColumn], leaveAnchor);
         }
     }
 
-    public void MoveDown()
+    public void MoveDown(bool leaveAnchor)
     {
         var targetLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex) + 1);
         var currentColumn = _charSequence.GetColumn(CursorIndex);
@@ -267,11 +307,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (targetLineIndices.Length <= currentColumn)
         {
-            _cursor.SetIndex(targetLineIndices[^1]);
+            _cursor.SetIndex(targetLineIndices[^1], leaveAnchor);
         }
         else
         {
-            _cursor.SetIndex(targetLineIndices[currentColumn]);
+            _cursor.SetIndex(targetLineIndices[currentColumn], leaveAnchor);
         }
     }
 
@@ -365,31 +405,31 @@ public class TextInputWidget : Widget, IUpdateInput
         Client.Graphics.PopCanvas();
     }
 
-    public void MoveRight()
+    public void MoveRight(bool leaveAnchor)
     {
         if (CursorIndex < _charSequence.NumberOfChars)
         {
-            _cursor.SetIndex(CursorIndex + 1);
+            _cursor.SetIndex(CursorIndex + 1, leaveAnchor);
         }
     }
 
-    public void MoveTo(int targetIndex)
+    public void MoveTo(int targetIndex, bool leaveAnchor)
     {
         if (targetIndex >= 0 && targetIndex < _charSequence.NumberOfNodes)
         {
-            _cursor.SetIndex(targetIndex);
+            _cursor.SetIndex(targetIndex, leaveAnchor);
         }
     }
 
-    public void MoveLeft()
+    public void MoveLeft(bool leaveAnchor)
     {
         if (CursorIndex > 0)
         {
-            _cursor.SetIndex(CursorIndex - 1);
+            _cursor.SetIndex(CursorIndex - 1, leaveAnchor);
         }
     }
 
-    public void ReverseBackspace()
+    public void ReverseBackspace(bool leaveAnchor)
     {
         _charSequence.RemoveAt(CursorIndex);
     }
@@ -429,14 +469,14 @@ public class TextInputWidget : Widget, IUpdateInput
     public void EnterCharacter(char character)
     {
         _charSequence.Insert(CursorIndex, character);
-        _cursor.SetIndex(CursorIndex + 1);
+        _cursor.SetIndex(CursorIndex + 1, false);
     }
 
-    public void Backspace()
+    public void Backspace(bool leaveAnchor)
     {
         if (CursorIndex > 0)
         {
-            _cursor.SetIndex(CursorIndex - 1);
+            _cursor.SetIndex(CursorIndex - 1, false);
             _charSequence.RemoveAt(CursorIndex);
         }
     }
@@ -570,14 +610,19 @@ public class TextInputWidget : Widget, IUpdateInput
         public int Index { get; private set; }
         public int SelectionAnchorIndex { get; private set; }
 
-        public void SetIndex(int index)
+        public void SetIndex(int index, bool leaveAnchor)
         {
             Index = index;
+
+            if (!leaveAnchor)
+            {
+                SelectionAnchorIndex = index;
+            }
         }
 
-        public void SetSelectionAnchor(int index)
+        public void SetAnchorIndex(int anchorIndex)
         {
-            SelectionAnchorIndex = index;
+            SelectionAnchorIndex = anchorIndex;
         }
     }
 
@@ -714,15 +759,18 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private class RepeatedAction
     {
+        private readonly bool _arg;
         private DateTime _timeStarted;
 
-        public RepeatedAction(Action action)
+        public RepeatedAction(Action<bool> action, bool arg)
         {
+            // arg could be a template type, but for now all we need is bool
             _timeStarted = DateTime.Now;
+            _arg = arg;
             Action = action;
         }
 
-        public Action Action { get; }
+        public Action<bool> Action { get; }
 
         public void Poll()
         {
@@ -732,7 +780,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
             if (timeSinceStart.TotalSeconds - staticFriction > tick)
             {
-                Action();
+                Action(_arg);
                 _timeStarted = _timeStarted.AddSeconds(tick);
             }
         }

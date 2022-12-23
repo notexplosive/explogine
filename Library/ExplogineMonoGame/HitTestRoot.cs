@@ -10,12 +10,13 @@ internal class HitTestRoot
 
     public void Resolve(Vector2 position)
     {
+        BaseStack.OnBeforeResolve();
+        
         if (!Client.IsInFocus)
         {
             return;
         }
 
-        BaseStack.OnBeforeResolve();
         foreach (var zone in BaseStack.GetZonesAt(position))
         {
             zone.Callback.Invoke();
