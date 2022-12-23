@@ -350,13 +350,51 @@ public class TextInputWidget : Widget, IUpdateInput
             var cursorRectangle = new RectangleF(cursorRect.TopLeft, size);
             painter.DrawRectangle(cursorRectangle, new DrawSettings {Depth = depth - 1, Color = Color.Black});
 
-            // temporary
-            var anchorRect = _charSequence.Cache.RectangleAtNode(_cursor.SelectionAnchorIndex);
-            var anchorSize = anchorRect.Size;
-            anchorSize.X = 2f;
-            anchorRect.Offset(-anchorSize.X / 2f, 0);
-            var anchorRectangle = new RectangleF(anchorRect.TopLeft, size);
-            painter.DrawRectangle(anchorRectangle, new DrawSettings {Depth = depth - 1, Color = Color.Red});
+            var selectionRects = new List<RectangleF>();
+            RectangleF? pendingSelectionRect = null;
+            for (var i = _cursor.SelectedRangeStart; i < _cursor.SelectedRangeEnd; i++)
+            {
+                var glyphRect = _charSequence.Cache.GlyphAt(i).Rectangle.Inflated(2,0);
+
+                if (pendingSelectionRect == null)
+                {
+                    pendingSelectionRect = glyphRect;
+                }
+                else
+                {
+                    var newPendingRect = RectangleF.Union(pendingSelectionRect.Value, glyphRect);
+
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
+                    if (glyphRect.Height != newPendingRect.Height)
+                    {
+                        selectionRects.Add(pendingSelectionRect.Value);
+                        pendingSelectionRect = glyphRect;
+                    }
+                    else
+                    {
+                        pendingSelectionRect = newPendingRect;
+                    }
+                }
+            }
+
+            if (pendingSelectionRect.HasValue)
+            {
+                selectionRects.Add(pendingSelectionRect.Value);
+            }
+
+            var random = new NoiseBasedRng(123);
+            var selectionColor = Color.Blue;
+
+            foreach (var selectionRect in selectionRects)
+            {
+                if (Client.Debug.IsActive)
+                {
+                    selectionColor = random.NextColor();
+                }
+                
+                painter.DrawRectangle(selectionRect,
+                    new DrawSettings {Depth = depth + 1, Color = selectionColor.WithMultipliedOpacity(0.5f)});
+            }
         }
 
         painter.DrawStringWithinRectangle(_font, Text, InnerRectangle, _alignment,
@@ -789,6 +827,11 @@ public class TextInputWidget : Widget, IUpdateInput
         public RectangleF RectangleAtNode(int nodeIndex)
         {
             return _nodes[nodeIndex].Rectangle;
+        }
+
+        public FormattedText.FormattedGlyph GlyphAt(int nodeIndex)
+        {
+            return _nodes[nodeIndex].OriginalGlyph;
         }
 
         private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
