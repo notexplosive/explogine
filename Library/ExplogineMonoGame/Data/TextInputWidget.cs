@@ -141,29 +141,43 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    public int GetWordBoundaryLeftOf(int index)
+    {
+        if (_charSequence.IsValidIndex(index - 1) && IsWordBoundary(index - 1))
+        {
+            index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundary);
+        }
+
+        index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsWordBoundary);
+
+        if (_charSequence.IsValidIndex(index + 1) && index != 0)
+        {
+            index++;
+        }
+
+        return index;
+    }
+    
     public void MoveWordLeft()
     {
-        if (_charSequence.IsValidIndex(CursorIndex - 1) && IsWordBoundary(CursorIndex - 1))
-        {
-            CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Left, IsNotWordBoundary);
-        }
-
-        CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Left, IsWordBoundary);
-
-        if (_charSequence.IsValidIndex(CursorIndex + 1) && CursorIndex != 0)
-        {
-            CursorIndex++;
-        }
+        CursorIndex = GetWordBoundaryLeftOf(CursorIndex);
     }
 
-    public void MoveWordRight()
+    public int GetWordBoundaryRightOf(int index)
     {
-        if (IsWordBoundary(CursorIndex))
+        if (IsWordBoundary(index))
         {
-            CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Right, IsNotWordBoundary);
+            index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundary);
         }
         
-        CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Right, IsWordBoundary);
+        index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsWordBoundary);
+
+        return index;
+    }
+    
+    public void MoveWordRight()
+    {
+        CursorIndex = GetWordBoundaryRightOf(CursorIndex);
     }
 
     private bool IsNotWordBoundary(int nodeIndex)

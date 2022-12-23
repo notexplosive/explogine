@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ApprovalTests;
 using ExplogineCore.Data;
@@ -20,46 +21,40 @@ public class TestTextInputWidget
             // ReSharper disable once StringLiteralTypo
             str);
 
-        var rightwardIndices = new List<int>();
-        var leftwardIndices = new List<int>();
-
-        var right = new char[str.Length + 1];
-        var left = new char[str.Length + 1];
-
-        while (inputWidget.CursorIndex != inputWidget.LastIndex)
+        var resultLines = new List<string>();
+        
+        resultLines.Add(str);
+        
+        for (int i = 0; i < str.Length; i++)
         {
-            rightwardIndices.Add(inputWidget.CursorIndex);
-            inputWidget.MoveWordRight();
-        }
+            var from = i;
+            var toLeft = inputWidget.GetWordBoundaryLeftOf(i);
+            var toRight = inputWidget.GetWordBoundaryRightOf(i);
+            
+            var chars = Enumerable.Repeat(' ', str.Length + 1).ToArray();
 
-        while (inputWidget.CursorIndex != 0)
-        {
-            leftwardIndices.Add(inputWidget.CursorIndex);
-            inputWidget.MoveWordLeft();
-        }
-
-        for (int i = 0; i < right.Length; i++)
-        {
-            if (rightwardIndices.Contains(i))
+            for (int j = 0; j < str.Length + 1; j++)
             {
-                right[i] = '>';
-            }
-            else
-            {
-                right[i] = ' ';
+                if (j == from)
+                {
+                    chars[j] = '-';
+                }
+
+                if (j == toLeft)
+                {
+                    chars[j] = '<';
+                }
+                
+                if (j == toRight)
+                {
+                    chars[j] = '>';
+                }
             }
             
-            if (leftwardIndices.Contains(i))
-            {
-                left[i] = '<';
-            }
-            else
-            {
-                left[i] = ' ';
-            }
+            resultLines.Add(string.Join("",chars));
         }
 
-        Approvals.Verify($"{string.Join(',', rightwardIndices)}\n{str}\n{string.Join("",left)}\n{string.Join("",right)}");
+        Approvals.Verify(string.Join('\n', resultLines));
     }
 
     [Fact]
