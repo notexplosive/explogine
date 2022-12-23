@@ -19,9 +19,9 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly IFontGetter _font;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
+    private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
     private bool _selected;
-    private bool _isDragging;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText) : base(
         position, size, depth)
@@ -102,9 +102,9 @@ public class TextInputWidget : Widget, IUpdateInput
         }
 
         var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
-        
+
         innerHitTestStack.BeforeLayerResolved += () => { _hoveredLetterIndex = null; };
-        
+
         if (IsHovered)
         {
             var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
@@ -135,7 +135,6 @@ public class TextInputWidget : Widget, IUpdateInput
                     }
                 }
             }
-
 
             for (var i = 0; i < _charSequence.NumberOfChars; i++)
             {
@@ -436,6 +435,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void EnterText(char[] enteredCharacters)
     {
+        if (enteredCharacters.Length > 0)
+        {
+            ClearSelectedRange();
+        }
+
         foreach (var character in enteredCharacters)
         {
             switch (char.IsControl(character))
@@ -462,6 +466,20 @@ public class TextInputWidget : Widget, IUpdateInput
 
                     break;
                 }
+            }
+        }
+    }
+
+    private void ClearSelectedRange()
+    {
+        if (_cursor.SelectedRangeSize > 0)
+        {
+            var size = _cursor.SelectedRangeSize;
+            var end = _cursor.SelectedRangeEnd;
+            _cursor.SetIndex(end, false);
+            for (var i = 0; i < size; i++)
+            {
+                Backspace(false);
             }
         }
     }
@@ -609,6 +627,11 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         public int Index { get; private set; }
         public int SelectionAnchorIndex { get; private set; }
+
+        public bool HasSelection => SelectedRangeSize > 0;
+        public int SelectedRangeSize => Math.Abs(Index - SelectionAnchorIndex);
+        public int SelectedRangeStart => Math.Min(Index, SelectionAnchorIndex);
+        public int SelectedRangeEnd => Math.Max(Index, SelectionAnchorIndex);
 
         public void SetIndex(int index, bool leaveAnchor)
         {
