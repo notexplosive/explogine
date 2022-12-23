@@ -645,6 +645,7 @@ public class TextInputWidget : Widget, IUpdateInput
             if (wasPreviousNewLine)
             {
                 currentRect = glyphRect;
+                lineNumber++;
             }
 
             if (_nodes.Length > 1)
