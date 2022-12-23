@@ -29,13 +29,10 @@ public class TextInputWidget : Widget, IUpdateInput
     }
 
     public string Text => _charSequence.Cache.Text;
-
     public int CursorIndex { get; private set; }
-
     public RectangleF InnerRectangle => new RectangleF(Vector2.Zero, Rectangle.Size).Inflated(-5, -5);
     public int LastIndex => _charSequence.NumberOfChars;
     public int CurrentColumn => _charSequence.GetColumn(CursorIndex);
-
     public int CurrentLine => _charSequence.Cache.LineNumberAt(CursorIndex);
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
@@ -254,7 +251,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private bool IsWordBoundary(int nodeIndex)
     {
-        return nodeIndex == LastIndex || char.IsWhiteSpace(_charSequence.Cache.Text[nodeIndex]);
+        return nodeIndex == LastIndex || char.IsWhiteSpace(Text[nodeIndex]);
     }
 
     public void MoveToStartOfLine()
@@ -325,7 +322,7 @@ public class TextInputWidget : Widget, IUpdateInput
             painter.DrawRectangle(cursorRectangle, new DrawSettings {Depth = depth - 1, Color = Color.Black});
         }
 
-        painter.DrawStringWithinRectangle(_font, _charSequence.Cache.Text, InnerRectangle, _alignment,
+        painter.DrawStringWithinRectangle(_font, Text, InnerRectangle, _alignment,
             new DrawSettings {Color = Color.Black, Depth = depth});
 
         if (_hoveredLetterIndex.HasValue)
