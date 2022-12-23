@@ -87,18 +87,35 @@ public class TextInputWidget : Widget, IUpdateInput
                 return true;
             }
 
-            KeyBind(keyboard, Keys.Left, ControlIsDown, MoveWordLeft);
-            KeyBind(keyboard, Keys.Left, ControlIsNotDown, MoveLeft);
-            KeyBind(keyboard, Keys.Right, ControlIsDown, MoveWordRight);
-            KeyBind(keyboard, Keys.Right, ControlIsNotDown, MoveRight);
-            KeyBind(keyboard, Keys.Up, ModifierAgnostic, MoveUp);
-            KeyBind(keyboard, Keys.Down, ModifierAgnostic, MoveDown);
-            KeyBind(keyboard, Keys.Home, ModifierAgnostic, MoveToStartOfLine);
-            KeyBind(keyboard, Keys.End, ModifierAgnostic, MoveToEndOfLine);
-            KeyBind(keyboard, Keys.Back, ControlIsDown, BackspaceWholeWord);
-            KeyBind(keyboard, Keys.Back, ControlIsNotDown, Backspace);
-            KeyBind(keyboard, Keys.Delete, ControlIsDown, ReverseBackspaceWholeWord);
-            KeyBind(keyboard, Keys.Delete, ControlIsNotDown, ReverseBackspace);
+            bool SelectionAgnostic()
+            {
+                return true;
+            }
+
+            bool HasSelection()
+            {
+                return _cursor.HasSelection;
+            }
+
+            bool DoesNotHaveSelection()
+            {
+                return !_cursor.HasSelection;
+            }
+
+            KeyBind(keyboard, Keys.Left, SelectionAgnostic, ControlIsDown, MoveWordLeft);
+            KeyBind(keyboard, Keys.Left, SelectionAgnostic, ControlIsNotDown, MoveLeft);
+            KeyBind(keyboard, Keys.Right, SelectionAgnostic, ControlIsDown, MoveWordRight);
+            KeyBind(keyboard, Keys.Right, SelectionAgnostic, ControlIsNotDown, MoveRight);
+            KeyBind(keyboard, Keys.Up, SelectionAgnostic, ModifierAgnostic, MoveUp);
+            KeyBind(keyboard, Keys.Down, SelectionAgnostic, ModifierAgnostic, MoveDown);
+            KeyBind(keyboard, Keys.Home, SelectionAgnostic, ModifierAgnostic, MoveToStartOfLine);
+            KeyBind(keyboard, Keys.End, SelectionAgnostic, ModifierAgnostic, MoveToEndOfLine);
+            KeyBind(keyboard, Keys.Back, DoesNotHaveSelection, ControlIsDown, BackspaceWholeWord);
+            KeyBind(keyboard, Keys.Back, DoesNotHaveSelection, ControlIsNotDown, Backspace);
+            KeyBind(keyboard, Keys.Back, HasSelection, ModifierAgnostic, ClearSelectedRange);
+            KeyBind(keyboard, Keys.Delete, DoesNotHaveSelection, ControlIsDown, ReverseBackspaceWholeWord);
+            KeyBind(keyboard, Keys.Delete, DoesNotHaveSelection, ControlIsNotDown, ReverseBackspace);
+            KeyBind(keyboard, Keys.Delete, HasSelection, ModifierAgnostic, ClearSelectedRange);
         }
 
         var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
@@ -167,12 +184,14 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<ModifierKeys, bool> checkModifier,
+    private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<bool> checkSelectionCriteria,
+        Func<ModifierKeys, bool> checkModifierCriteria,
         Action<bool> action)
     {
-        var hasRequiredModifier = checkModifier.Invoke(keyboard.Modifiers);
-        var isDown = keyboard.GetButton(button).IsDown && hasRequiredModifier;
-        var wasPressed = keyboard.GetButton(button).WasPressed && hasRequiredModifier;
+        var hasSelectionCriteria = checkSelectionCriteria.Invoke();
+        var hasRequiredModifier = checkModifierCriteria.Invoke(keyboard.Modifiers);
+        var isDown = keyboard.GetButton(button).IsDown && hasRequiredModifier && hasSelectionCriteria;
+        var wasPressed = keyboard.GetButton(button).WasPressed && hasRequiredModifier && hasSelectionCriteria;
         if (wasPressed)
         {
             var arg = keyboard.Modifiers.ShiftInclusive;
@@ -435,11 +454,6 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void EnterText(char[] enteredCharacters)
     {
-        if (enteredCharacters.Length > 0)
-        {
-            ClearSelectedRange();
-        }
-
         foreach (var character in enteredCharacters)
         {
             switch (char.IsControl(character))
@@ -470,7 +484,7 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    private void ClearSelectedRange()
+    private void ClearSelectedRange(bool leaveAnchor = true)
     {
         if (_cursor.SelectedRangeSize > 0)
         {
@@ -486,6 +500,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void EnterCharacter(char character)
     {
+        ClearSelectedRange();
         _charSequence.Insert(CursorIndex, character);
         _cursor.SetIndex(CursorIndex + 1, false);
     }
