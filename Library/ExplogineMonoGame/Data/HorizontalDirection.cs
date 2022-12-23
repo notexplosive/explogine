@@ -1,6 +1,6 @@
 ﻿namespace ExplogineMonoGame.Data;
 
-public enum LeftRight
+public enum HorizontalDirection
 {
     Left,
     Right

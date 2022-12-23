@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using ApprovalTests;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using FluentAssertions;
@@ -9,6 +12,56 @@ namespace ExplogineMonoGameTests;
 
 public class TestTextInputWidget
 {
+    [Fact]
+    public void move_by_words_pinning()
+    {
+        var str = "The fish was delish and it made quite a dish";
+        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle,
+            // ReSharper disable once StringLiteralTypo
+            str);
+
+        var rightwardIndices = new List<int>();
+        var leftwardIndices = new List<int>();
+
+        var right = new char[str.Length + 1];
+        var left = new char[str.Length + 1];
+
+        while (inputWidget.CursorIndex != inputWidget.LastIndex)
+        {
+            rightwardIndices.Add(inputWidget.CursorIndex);
+            inputWidget.MoveWordRight();
+        }
+
+        while (inputWidget.CursorIndex != 0)
+        {
+            leftwardIndices.Add(inputWidget.CursorIndex);
+            inputWidget.MoveWordLeft();
+        }
+
+        for (int i = 0; i < right.Length; i++)
+        {
+            if (rightwardIndices.Contains(i))
+            {
+                right[i] = '>';
+            }
+            else
+            {
+                right[i] = ' ';
+            }
+            
+            if (leftwardIndices.Contains(i))
+            {
+                left[i] = '<';
+            }
+            else
+            {
+                left[i] = ' ';
+            }
+        }
+
+        Approvals.Verify($"{string.Join(',', rightwardIndices)}\n{str}\n{string.Join("",left)}\n{string.Join("",right)}");
+    }
+
     [Fact]
     public void move_remove_and_replace()
     {
@@ -71,56 +124,56 @@ public class TestTextInputWidget
         [Fact]
         public void manual_multiline_home()
         {
-            var startingLine = _manualManyLine.CurrentLine();
+            var startingLine = _manualManyLine.CurrentLine;
             _manualManyLine.MoveToStartOfLine();
-            _manualManyLine.CurrentLine().Should().Be(startingLine);
+            _manualManyLine.CurrentLine.Should().Be(startingLine);
 
             if (_manualManyLine.CursorIndex != 0)
             {
                 _manualManyLine.MoveLeft();
-                _manualManyLine.CurrentLine().Should().NotBe(startingLine);
+                _manualManyLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
 
         [Fact]
         public void manual_multiline_end()
         {
-            var startingLine = _manualManyLine.CurrentLine();
+            var startingLine = _manualManyLine.CurrentLine;
             _manualManyLine.MoveToEndOfLine();
-            _manualManyLine.CurrentLine().Should().Be(startingLine);
+            _manualManyLine.CurrentLine.Should().Be(startingLine);
 
             if (_manualManyLine.CursorIndex != _manualManyLine.LastIndex)
             {
                 _manualManyLine.MoveRight();
-                _manualManyLine.CurrentLine().Should().NotBe(startingLine);
+                _manualManyLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
 
         [Fact]
         public void natural_multiline_home()
         {
-            var startingLine = _naturalMultiLine.CurrentLine();
+            var startingLine = _naturalMultiLine.CurrentLine;
             _naturalMultiLine.MoveToStartOfLine();
-            _naturalMultiLine.CurrentLine().Should().Be(startingLine);
+            _naturalMultiLine.CurrentLine.Should().Be(startingLine);
 
             if (_naturalMultiLine.CursorIndex != 0)
             {
                 _naturalMultiLine.MoveLeft();
-                _naturalMultiLine.CurrentLine().Should().NotBe(startingLine);
+                _naturalMultiLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
 
         [Fact]
         public void natural_multiline_end()
         {
-            var startingLine = _naturalMultiLine.CurrentLine();
+            var startingLine = _naturalMultiLine.CurrentLine;
             _naturalMultiLine.MoveToEndOfLine();
-            _naturalMultiLine.CurrentLine().Should().Be(startingLine);
+            _naturalMultiLine.CurrentLine.Should().Be(startingLine);
 
             if (_naturalMultiLine.CursorIndex != _naturalMultiLine.LastIndex)
             {
                 _naturalMultiLine.MoveRight();
-                _naturalMultiLine.CurrentLine().Should().NotBe(startingLine);
+                _naturalMultiLine.CurrentLine.Should().NotBe(startingLine);
             }
         }
 
@@ -159,7 +212,7 @@ public class TestTextInputWidget
         {
             var column = _manualManyLine.CurrentColumn;
             _manualManyLine.MoveUp();
-            var newLineLength = _manualManyLine.LineLength(_manualManyLine.CurrentLine());
+            var newLineLength = _manualManyLine.LineLength(_manualManyLine.CurrentLine);
             _manualManyLine.CurrentColumn.Should().Be(Math.Min(column, newLineLength - 1));
         }
 
@@ -177,7 +230,7 @@ public class TestTextInputWidget
         {
             var column = _naturalMultiLine.CurrentColumn;
             _naturalMultiLine.MoveUp();
-            var newLineLength = _naturalMultiLine.LineLength(_naturalMultiLine.CurrentLine());
+            var newLineLength = _naturalMultiLine.LineLength(_naturalMultiLine.CurrentLine);
             _naturalMultiLine.CurrentColumn.Should().Be(Math.Min(column, newLineLength - 1));
         }
 

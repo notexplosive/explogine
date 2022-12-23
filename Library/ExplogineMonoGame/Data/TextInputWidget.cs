@@ -16,7 +16,7 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly CharSequence _charSequence;
     private readonly IFontGetter _font;
     private int? _hoveredLetterIndex;
-    private LeftRight _hoveredSide;
+    private HorizontalDirection _hoveredSide;
     private bool _selected;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText) : base(
@@ -36,6 +36,8 @@ public class TextInputWidget : Widget, IUpdateInput
     public int LastIndex => _charSequence.NumberOfChars;
     public int CurrentColumn => _charSequence.GetColumn(CursorIndex);
 
+    public int CurrentLine => _charSequence.Cache.LineNumberAt(CursorIndex);
+
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         UpdateHovered(hitTestStack);
@@ -46,12 +48,26 @@ public class TextInputWidget : Widget, IUpdateInput
 
             if (input.Keyboard.GetButton(Keys.Left).WasPressed)
             {
-                MoveLeft();
+                if (input.Keyboard.Modifiers.ControlInclusive)
+                {
+                    MoveWordLeft();
+                }
+                else
+                {
+                    MoveLeft();
+                }
             }
 
             if (input.Keyboard.GetButton(Keys.Right).WasPressed)
             {
-                MoveRight();
+                if (input.Keyboard.Modifiers.ControlInclusive)
+                {
+                    MoveWordRight();
+                }
+                else
+                {
+                    MoveRight();
+                }
             }
 
             if (input.Keyboard.GetButton(Keys.Up).WasPressed)
@@ -83,7 +99,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 _selected = true;
                 if (_hoveredLetterIndex.HasValue)
                 {
-                    var offset = _hoveredSide == LeftRight.Right ? 1 : 0;
+                    var offset = _hoveredSide == HorizontalDirection.Right ? 1 : 0;
                     CursorIndex = _hoveredLetterIndex.Value + offset;
                     if (CursorIndex > _charSequence.NumberOfChars)
                     {
@@ -110,7 +126,7 @@ public class TextInputWidget : Widget, IUpdateInput
                     () =>
                     {
                         _hoveredLetterIndex = index;
-                        _hoveredSide = LeftRight.Left;
+                        _hoveredSide = HorizontalDirection.Left;
                         Client.Window.SetCursor(MouseCursor.IBeam);
                     });
 
@@ -118,21 +134,56 @@ public class TextInputWidget : Widget, IUpdateInput
                     () =>
                     {
                         _hoveredLetterIndex = index;
-                        _hoveredSide = LeftRight.Right;
+                        _hoveredSide = HorizontalDirection.Right;
                         Client.Window.SetCursor(MouseCursor.IBeam);
                     });
             }
         }
     }
 
+    public void MoveWordLeft()
+    {
+        if (_charSequence.IsValidIndex(CursorIndex - 1) && IsWordBoundary(CursorIndex - 1))
+        {
+            CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Left, IsNotWordBoundary);
+        }
+
+        CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Left, IsWordBoundary);
+
+        if (_charSequence.IsValidIndex(CursorIndex + 1) && CursorIndex != 0)
+        {
+            CursorIndex++;
+        }
+    }
+
+    public void MoveWordRight()
+    {
+        if (IsWordBoundary(CursorIndex))
+        {
+            CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Right, IsNotWordBoundary);
+        }
+        
+        CursorIndex = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Right, IsWordBoundary);
+    }
+
+    private bool IsNotWordBoundary(int nodeIndex)
+    {
+        return !IsWordBoundary(nodeIndex);
+    }
+
+    private bool IsWordBoundary(int nodeIndex)
+    {
+        return char.IsWhiteSpace(_charSequence.Cache.Text[nodeIndex]);
+    }
+    
     public void MoveToStartOfLine()
     {
-        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine())[0];
+        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine)[0];
     }
 
     public void MoveToEndOfLine()
     {
-        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine())[^1];
+        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine)[^1];
     }
 
     public void MoveUp()
@@ -209,11 +260,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
             if (Client.Debug.IsActive)
             {
-                painter.DrawRectangle(_hoveredSide == LeftRight.Left ? leftRectangle : rightRectangle,
+                painter.DrawRectangle(_hoveredSide == HorizontalDirection.Left ? leftRectangle : rightRectangle,
                     new DrawSettings
                     {
                         Depth = depth + 1,
-                        Color = _hoveredSide == LeftRight.Left
+                        Color = _hoveredSide == HorizontalDirection.Left
                             ? Color.Red.WithMultipliedOpacity(0.2f)
                             : Color.Blue.WithMultipliedOpacity(0.2f)
                     });
@@ -331,11 +382,6 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    public int CurrentLine()
-    {
-        return _charSequence.Cache.LineNumberAt(CursorIndex);
-    }
-
     public int LineLength(int line)
     {
         return _charSequence.CountNodesOnLine(line);
@@ -380,9 +426,9 @@ public class TextInputWidget : Widget, IUpdateInput
             Cache = Cache.Rebuild(_nodes.ToArray());
         }
 
-        public int ScanUntil(int startIndex, LeftRight direction, ScanFindDelegate found)
+        public int ScanUntil(int startIndex, HorizontalDirection direction, ScanFindDelegate found)
         {
-            var step = direction == LeftRight.Left ? -1 : 1;
+            var step = direction == HorizontalDirection.Left ? -1 : 1;
             var index = startIndex;
 
             while (true)
@@ -394,9 +440,9 @@ public class TextInputWidget : Widget, IUpdateInput
                     return 0;
                 }
 
-                if (index >= NumberOfNodes)
+                if (index >= NumberOfChars)
                 {
-                    return NumberOfNodes;
+                    return NumberOfChars;
                 }
 
                 if (found(index))
@@ -457,6 +503,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
             throw new Exception("could not find column");
         }
+
+        public bool IsValidIndex(int nodeIndex)
+        {
+            return nodeIndex >= 0 && nodeIndex < NumberOfNodes;
+        }
     }
 
     private class Cache
@@ -498,7 +549,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             var stringBuilder = new StringBuilder();
             // We do length - 1 because we want to skip the null terminator
-            foreach(var character in chars)
+            foreach (var character in chars)
             {
                 stringBuilder.Append(character);
             }
@@ -522,7 +573,7 @@ public class TextInputWidget : Widget, IUpdateInput
             var wasPreviousNewLine = false;
             var glyphs = formattedText.GetGlyphs(_containerRectangle, _alignment).ToArray();
             var lineNumber = 0;
-            
+
             foreach (var glyph in glyphs)
             {
                 lineNumber = glyph.LineNumber;
@@ -546,14 +597,14 @@ public class TextInputWidget : Widget, IUpdateInput
                     currentRect = glyphRect;
                 }
 
-                char character = '\0';
+                var character = '\0';
                 if (nodeIndex < _originalChars.Length)
                 {
                     character = _originalChars[nodeIndex];
                 }
 
                 _nodes[nodeIndex] = new CacheNode(currentRect, lineNumber, character, glyph);
-                
+
                 nodeIndex++;
                 wasPreviousNewLine = isNewLine;
                 previousGlyphRect = glyphRect;
@@ -568,7 +619,7 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 var rectangle = new RectangleF(new Vector2(currentRect.X + currentRect.Width, currentRect.Y),
                     new Vector2(0, _font.GetFont().Height));
-                
+
                 // We want a zero-width rect at the end of the string 
                 _nodes[nodeIndex] = new CacheNode(rectangle, lineNumber, '\0', new FormattedText.FormattedGlyph());
             }
