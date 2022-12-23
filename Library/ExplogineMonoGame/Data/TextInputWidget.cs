@@ -14,6 +14,8 @@ public class TextInputWidget : Widget, IUpdateInput
 {
     private readonly Alignment _alignment = Alignment.TopLeft;
     private readonly CharSequence _charSequence;
+
+    private readonly TextCursor _cursor = new();
     private readonly IFontGetter _font;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
@@ -30,7 +32,9 @@ public class TextInputWidget : Widget, IUpdateInput
     }
 
     public string Text => _charSequence.Cache.Text;
-    public int CursorIndex { get; private set; }
+
+    public int CursorIndex => _cursor.Index;
+
     public RectangleF InnerRectangle => new RectangleF(Vector2.Zero, Rectangle.Size).Inflated(-5, -5);
     public int LastIndex => _charSequence.NumberOfChars;
     public int CurrentColumn => _charSequence.GetColumn(CursorIndex);
@@ -84,10 +88,10 @@ public class TextInputWidget : Widget, IUpdateInput
                 if (_hoveredLetterIndex.HasValue)
                 {
                     var offset = _hoveredSide == HorizontalDirection.Right ? 1 : 0;
-                    CursorIndex = _hoveredLetterIndex.Value + offset;
+                    _cursor.SetIndex(_hoveredLetterIndex.Value + offset);
                     if (CursorIndex > _charSequence.NumberOfChars)
                     {
-                        CursorIndex = _charSequence.NumberOfChars;
+                        _cursor.SetIndex(_charSequence.NumberOfChars);
                     }
                 }
             }
@@ -191,7 +195,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveWordLeft()
     {
-        CursorIndex = GetWordBoundaryLeftOf(CursorIndex);
+        _cursor.SetIndex(GetWordBoundaryLeftOf(CursorIndex));
     }
 
     public int GetWordBoundaryRightOf(int index)
@@ -208,7 +212,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveWordRight()
     {
-        CursorIndex = GetWordBoundaryRightOf(CursorIndex);
+        _cursor.SetIndex(GetWordBoundaryRightOf(CursorIndex));
     }
 
     private bool IsNotWordBoundary(int nodeIndex)
@@ -223,12 +227,12 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveToStartOfLine()
     {
-        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine)[0];
+        _cursor.SetIndex(_charSequence.GetNodesOnLine(CurrentLine)[0]);
     }
 
     public void MoveToEndOfLine()
     {
-        CursorIndex = _charSequence.GetNodesOnLine(CurrentLine)[^1];
+        _cursor.SetIndex(_charSequence.GetNodesOnLine(CurrentLine)[^1]);
     }
 
     public void MoveUp()
@@ -243,11 +247,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (targetLineIndices.Length <= currentColumn)
         {
-            CursorIndex = targetLineIndices[^1];
+            _cursor.SetIndex(targetLineIndices[^1]);
         }
         else
         {
-            CursorIndex = targetLineIndices[currentColumn];
+            _cursor.SetIndex(targetLineIndices[currentColumn]);
         }
     }
 
@@ -263,11 +267,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (targetLineIndices.Length <= currentColumn)
         {
-            CursorIndex = targetLineIndices[^1];
+            _cursor.SetIndex(targetLineIndices[^1]);
         }
         else
         {
-            CursorIndex = targetLineIndices[currentColumn];
+            _cursor.SetIndex(targetLineIndices[currentColumn]);
         }
     }
 
@@ -287,6 +291,14 @@ public class TextInputWidget : Widget, IUpdateInput
             cursorRect.Offset(-size.X / 2f, 0);
             var cursorRectangle = new RectangleF(cursorRect.TopLeft, size);
             painter.DrawRectangle(cursorRectangle, new DrawSettings {Depth = depth - 1, Color = Color.Black});
+
+            // temporary
+            var anchorRect = _charSequence.Cache.RectangleAtNode(_cursor.SelectionAnchorIndex);
+            var anchorSize = anchorRect.Size;
+            anchorSize.X = 2f;
+            anchorRect.Offset(-anchorSize.X / 2f, 0);
+            var anchorRectangle = new RectangleF(anchorRect.TopLeft, size);
+            painter.DrawRectangle(anchorRectangle, new DrawSettings {Depth = depth - 1, Color = Color.Red});
         }
 
         painter.DrawStringWithinRectangle(_font, Text, InnerRectangle, _alignment,
@@ -320,7 +332,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             var lineNumber = _charSequence.Cache.LineNumberAt(CursorIndex);
             painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16),
-                $"{CursorIndex}, line: {lineNumber}",
+                $"{CursorIndex}, line: {lineNumber}, anchor: {_cursor.SelectionAnchorIndex}",
                 InnerRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
 
             for (var i = 0; i < _charSequence.NumberOfNodes; i++)
@@ -357,7 +369,7 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         if (CursorIndex < _charSequence.NumberOfChars)
         {
-            CursorIndex++;
+            _cursor.SetIndex(CursorIndex + 1);
         }
     }
 
@@ -365,7 +377,7 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         if (targetIndex >= 0 && targetIndex < _charSequence.NumberOfNodes)
         {
-            CursorIndex = targetIndex;
+            _cursor.SetIndex(targetIndex);
         }
     }
 
@@ -373,7 +385,7 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         if (CursorIndex > 0)
         {
-            CursorIndex--;
+            _cursor.SetIndex(CursorIndex - 1);
         }
     }
 
@@ -417,14 +429,14 @@ public class TextInputWidget : Widget, IUpdateInput
     public void EnterCharacter(char character)
     {
         _charSequence.Insert(CursorIndex, character);
-        CursorIndex++;
+        _cursor.SetIndex(CursorIndex + 1);
     }
 
     public void Backspace()
     {
         if (CursorIndex > 0)
         {
-            CursorIndex--;
+            _cursor.SetIndex(CursorIndex - 1);
             _charSequence.RemoveAt(CursorIndex);
         }
     }
@@ -550,6 +562,22 @@ public class TextInputWidget : Widget, IUpdateInput
         public bool IsValidIndex(int nodeIndex)
         {
             return nodeIndex >= 0 && nodeIndex < NumberOfNodes;
+        }
+    }
+
+    private class TextCursor
+    {
+        public int Index { get; private set; }
+        public int SelectionAnchorIndex { get; private set; }
+
+        public void SetIndex(int index)
+        {
+            Index = index;
+        }
+
+        public void SetSelectionAnchor(int index)
+        {
+            SelectionAnchorIndex = index;
         }
     }
 
