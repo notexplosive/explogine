@@ -166,6 +166,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return new RectangleF(location, size);
     }
 
+    [Pure]
     public static RectangleF Union(RectangleF a, RectangleF b)
     {
         var location = Vector2.Min(a.Location, b.Location);
