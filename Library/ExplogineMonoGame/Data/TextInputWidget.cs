@@ -17,8 +17,8 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly IFontGetter _font;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
-    private bool _selected;
     private RepeatedAction? _mostRecentAction;
+    private bool _selected;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText) : base(
         position, size, depth)
@@ -46,9 +46,20 @@ public class TextInputWidget : Widget, IUpdateInput
 
             EnterText(keyboard.GetEnteredCharacters());
 
-            bool ControlIsDown(ModifierKeys modifierKeys) => modifierKeys.ControlInclusive;
-            bool ControlIsNotDown(ModifierKeys modifierKeys) => !modifierKeys.ControlInclusive;
-            bool ModifierAgnostic(ModifierKeys modifierKeys) => true;
+            bool ControlIsDown(ModifierKeys modifierKeys)
+            {
+                return modifierKeys.ControlInclusive;
+            }
+
+            bool ControlIsNotDown(ModifierKeys modifierKeys)
+            {
+                return !modifierKeys.ControlInclusive;
+            }
+
+            bool ModifierAgnostic(ModifierKeys modifierKeys)
+            {
+                return true;
+            }
 
             KeyBind(keyboard, Keys.Left, ControlIsDown, MoveWordLeft);
             KeyBind(keyboard, Keys.Left, ControlIsNotDown, MoveLeft);
@@ -114,7 +125,8 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<ModifierKeys, bool> checkModifier, Action action)
+    private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<ModifierKeys, bool> checkModifier,
+        Action action)
     {
         var modifiers = checkModifier.Invoke(keyboard.Modifiers);
         var isDown = keyboard.GetButton(button).IsDown && modifiers;
@@ -136,7 +148,6 @@ public class TextInputWidget : Widget, IUpdateInput
                 _mostRecentAction = null;
             }
         }
-
     }
 
     private void BackspaceWholeWord()
@@ -672,11 +683,10 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
             FormattedText.FormattedGlyph OriginalGlyph);
     }
-    
+
     private class RepeatedAction
     {
         private DateTime _timeStarted;
-        public Action Action { get; }
 
         public RepeatedAction(Action action)
         {
@@ -684,12 +694,14 @@ public class TextInputWidget : Widget, IUpdateInput
             Action = action;
         }
 
+        public Action Action { get; }
+
         public void Poll()
         {
             var timeSinceStart = DateTime.Now - _timeStarted;
             double staticFriction = 0.5f;
             double tick = 0.05f;
-            
+
             if (timeSinceStart.TotalSeconds - staticFriction > tick)
             {
                 Action();
