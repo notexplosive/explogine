@@ -34,6 +34,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public RectangleF InnerRectangle => new RectangleF(Vector2.Zero, Rectangle.Size).Inflated(-5, -5);
     public int LastIndex => _charSequence.NumberOfChars;
+    public int CurrentColumn => _charSequence.GetColumn(CursorIndex);
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
@@ -51,6 +52,16 @@ public class TextInputWidget : Widget, IUpdateInput
             if (input.Keyboard.GetButton(Keys.Right).WasPressed)
             {
                 MoveRight();
+            }
+
+            if (input.Keyboard.GetButton(Keys.Up).WasPressed)
+            {
+                MoveUp();
+            }
+
+            if (input.Keyboard.GetButton(Keys.Down).WasPressed)
+            {
+                MoveDown();
             }
 
             if (input.Keyboard.GetButton(Keys.Home).WasPressed)
@@ -124,10 +135,10 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             newIndex++;
         }
-        
+
         CursorIndex = newIndex;
     }
-    
+
     public void MoveToEndOfLine()
     {
         var currentLine = _charSequence.Cache.LineNumberAt(CursorIndex);
@@ -140,6 +151,46 @@ public class TextInputWidget : Widget, IUpdateInput
         }
 
         CursorIndex = newIndex;
+    }
+
+    public void MoveUp()
+    {
+        var targetLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex) - 1);
+        var currentColumn = _charSequence.GetColumn(CursorIndex);
+
+        if (targetLineIndices.Length == 0)
+        {
+            return;
+        }
+
+        if (targetLineIndices.Length <= currentColumn)
+        {
+            CursorIndex = targetLineIndices[^1];
+        }
+        else
+        {
+            CursorIndex = targetLineIndices[currentColumn];
+        }
+    }
+
+    public void MoveDown()
+    {
+        var targetLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex) + 1);
+        var currentColumn = _charSequence.GetColumn(CursorIndex);
+
+        if (targetLineIndices.Length == 0)
+        {
+            return;
+        }
+
+        if (targetLineIndices.Length <= currentColumn)
+        {
+            CursorIndex = targetLineIndices[^1];
+        }
+        else
+        {
+            CursorIndex = targetLineIndices[currentColumn];
+        }
     }
 
     public void PrepareDraw(Painter painter)
@@ -231,8 +282,7 @@ public class TextInputWidget : Widget, IUpdateInput
             CursorIndex++;
         }
     }
-    
-    
+
     public void MoveTo(int targetIndex)
     {
         if (targetIndex >= 0 && targetIndex < _charSequence.NumberOfNodes)
@@ -299,6 +349,16 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    public int CurrentLine()
+    {
+        return _charSequence.Cache.LineNumberAt(CursorIndex);
+    }
+
+    public int LineLength(int line)
+    {
+        return _charSequence.CountNodesOnLine(line);
+    }
+
     private delegate bool ScanFindDelegate(int index);
 
     private class CharSequence
@@ -357,7 +417,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 {
                     return NumberOfNodes;
                 }
-                
+
                 if (found(index))
                 {
                     break;
@@ -365,6 +425,56 @@ public class TextInputWidget : Widget, IUpdateInput
             }
 
             return index;
+        }
+
+        public int CountNodesOnLine(int currentLine)
+        {
+            var count = 0;
+            for (var i = 0; i < NumberOfNodes; i++)
+            {
+                if (Cache.LineNumberAt(i) == currentLine)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        public int[] GetNodesOnLine(int targetLine)
+        {
+            var result = new int[CountNodesOnLine(targetLine)];
+            var j = 0;
+            for (var i = 0; i < NumberOfNodes; i++)
+            {
+                if (Cache.LineNumberAt(i) == targetLine)
+                {
+                    result[j++] = i;
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        public int GetColumn(int nodeIndex)
+        {
+            var currentLine = Cache.LineNumberAt(nodeIndex);
+
+            var col = 0;
+            for (var i = 0; i < NumberOfNodes; i++)
+            {
+                if (Cache.LineNumberAt(i) == currentLine)
+                {
+                    if (i == nodeIndex)
+                    {
+                        return col;
+                    }
+
+                    col++;
+                }
+            }
+
+            throw new Exception("could not find column");
         }
     }
 
@@ -526,10 +636,5 @@ public class TextInputWidget : Widget, IUpdateInput
                 _formattedTextOrNull = BuildFormattedText();
             }
         }
-    }
-
-    public int CurrentLine()
-    {
-        return _charSequence.Cache.LineNumberAt(CursorIndex);
     }
 }
