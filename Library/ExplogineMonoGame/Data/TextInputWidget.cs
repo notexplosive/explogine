@@ -164,20 +164,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void BackspaceWholeWord()
     {
-        var index = CursorIndex;
-        if (_charSequence.IsValidIndex(index - 1) && IsWordBoundary(index - 1))
-        {
-            index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundary);
-        }
-        else
-        {
-            index = _charSequence.ScanUntil(CursorIndex, HorizontalDirection.Left, IsWordBoundary);
-        }
-
-        if (_charSequence.IsValidIndex(index + 1) && index != 0)
-        {
-            index++;
-        }
+        var index = GetWordBoundaryLeftOf(CursorIndex);
         
         var distance = CursorIndex - index;
         for (int i = 0; i < distance; i++)
@@ -188,15 +175,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void ReverseBackspaceWholeWord()
     {
-        var index = CursorIndex;
-        if (IsWordBoundary(index))
-        {
-            index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundary);
-        }
-        else
-        {
-            index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsWordBoundary);
-        }
+        var index = GetWordBoundaryRightOf(CursorIndex);
 
         var distance = index - CursorIndex;
         for (int i = 0; i < distance; i++)
