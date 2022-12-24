@@ -222,6 +222,7 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 left++;
             }
+
             SelectRange(left, right);
         }
         else
@@ -231,7 +232,7 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 nudgeLeft = true;
             }
-            
+
             SelectRange(GetWordBoundaryLeftOf(index + (nudgeLeft ? 1 : 0)), GetWordBoundaryRightOf(index));
         }
     }
@@ -498,6 +499,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 if (rectangle.Area == 0)
                 {
                     rectangle.Size = new Vector2(_font.GetFont().Height) / 2f;
+                    rectangle.Inflate(-1, -1);
                     color = isLastChar ? Color.Green : Color.Blue;
                 }
 
@@ -827,37 +829,24 @@ public class TextInputWidget : Widget, IUpdateInput
             foreach (var glyph in glyphs)
             {
                 lineNumber = glyph.LineNumber;
-                if (glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true})
-                {
-                    lineNumber--;
-                }
-
                 glyphRect = new RectangleF(glyph.Position, glyph.Data.Size);
-                var isNewLine = glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true};
-                if (isNewLine && !wasPreviousNewLine)
-                {
-                    currentRect = new RectangleF(currentRect.Location + currentRect.Size.JustX(), glyphRect.Size);
-                }
-                else if (isNewLine && wasPreviousNewLine)
-                {
-                    currentRect = previousGlyphRect;
-                }
-                else
-                {
-                    currentRect = glyphRect;
-                }
+                currentRect = glyphRect;
 
                 var character = '\0';
-                if (nodeIndex < _originalChars.Length)
+                if (glyph.Data is FormattedText.WhiteSpaceGlyphData whiteSpaceGlyphData)
                 {
-                    character = _originalChars[nodeIndex];
+                    character = whiteSpaceGlyphData.IsManualNewLine ? '\n' : ' ';
+                }
+
+                if (glyph.Data is FormattedText.CharGlyphData charGlyphData)
+                {
+                    character = charGlyphData.Text;
                 }
 
                 _nodes[nodeIndex] = new CacheNode(currentRect, lineNumber, character, glyph);
 
+                wasPreviousNewLine = glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true};
                 nodeIndex++;
-                wasPreviousNewLine = isNewLine;
-                previousGlyphRect = glyphRect;
             }
 
             if (wasPreviousNewLine)

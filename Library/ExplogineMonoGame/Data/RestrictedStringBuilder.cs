@@ -150,6 +150,7 @@ public static class RestrictedStringBuilder
 
         public void AppendManualLinebreak(FormattedText.IGlyphData newlineCharacter)
         {
+            // we divide size by 2 because MeasureString('\n') gives us 2x the height you expect
             var size = new Vector2(0, newlineCharacter.Size.Y / 2);
             _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor, true));
         }

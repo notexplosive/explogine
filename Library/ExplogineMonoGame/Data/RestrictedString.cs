@@ -34,9 +34,9 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
                 }
                 
                 strategy.FinishToken();
+                strategy.AppendManualLinebreak(character);
                 strategy.FinishLine();
                 strategy.StartNewLine();
-                strategy.AppendManualLinebreak(character);
             }
             else if (strategy.IsWhiteSpace(character) || i == text.Length - 1)
             {
