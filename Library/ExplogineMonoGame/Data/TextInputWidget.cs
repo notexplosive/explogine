@@ -14,6 +14,7 @@ public class TextInputWidget : Widget, IUpdateInput
 {
     private readonly Alignment _alignment = Alignment.TopLeft;
     private readonly CharSequence _charSequence;
+    private readonly ClickCounter _clickCounter = new();
 
     private readonly TextCursor _cursor = new();
     private readonly IFontGetter _font;
@@ -133,14 +134,28 @@ public class TextInputWidget : Widget, IUpdateInput
 
             if (input.Mouse.GetButton(MouseButton.Left).WasPressed)
             {
+                _isDragging = true;
                 _selected = true;
 
                 if (HoveredNodeIndex.HasValue)
                 {
                     _cursor.SetIndex(HoveredNodeIndex.Value, leaveAnchor);
-                }
 
-                _isDragging = true;
+                    _clickCounter.Increment(input.Mouse.Position());
+                    if (_clickCounter.NumberOfClicks > 1)
+                    {
+                        if (_clickCounter.NumberOfClicks == 2)
+                        {
+                            SelectWordFromIndex(HoveredNodeIndex.Value);
+                        }
+                        else if (_clickCounter.NumberOfClicks == 3)
+                        {
+                            SelectLineAtIndex(HoveredNodeIndex.Value);
+                        }
+
+                        _isDragging = false;
+                    }
+                }
             }
             else
             {
@@ -182,6 +197,44 @@ public class TextInputWidget : Widget, IUpdateInput
                     });
             }
         }
+    }
+
+    private void SelectLineAtIndex(int index)
+    {
+        // we probably actually want this to scan for manual newlines
+        var nodesOnLine = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(index));
+        SelectRange(nodesOnLine[0], nodesOnLine[^1]);
+    }
+
+    private void SelectWordFromIndex(int index)
+    {
+        if (IsWordBoundaryAtIndex(index))
+        {
+            var left = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundaryAtIndex);
+            var right = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundaryAtIndex);
+
+            if (IsNotWordBoundaryAtIndex(left))
+            {
+                left++;
+            }
+            SelectRange(left, right);
+        }
+        else
+        {
+            var nudgeLeft = false;
+            if (_charSequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1))
+            {
+                nudgeLeft = true;
+            }
+            
+            SelectRange(GetWordBoundaryLeftOf(index + (nudgeLeft ? 1 : 0)), GetWordBoundaryRightOf(index));
+        }
+    }
+
+    private void SelectRange(int left, int right)
+    {
+        _cursor.SetIndex(left, false);
+        _cursor.SetIndex(right, true);
     }
 
     private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<bool> checkSelectionCriteria,
@@ -236,12 +289,12 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public int GetWordBoundaryLeftOf(int index)
     {
-        if (_charSequence.IsValidIndex(index - 1) && IsWordBoundary(index - 1))
+        if (_charSequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1))
         {
-            index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundary);
+            index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundaryAtIndex);
         }
 
-        index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsWordBoundary);
+        index = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsWordBoundaryAtIndex);
 
         if (_charSequence.IsValidIndex(index + 1) && index != 0)
         {
@@ -258,12 +311,12 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public int GetWordBoundaryRightOf(int index)
     {
-        if (IsWordBoundary(index))
+        if (IsWordBoundaryAtIndex(index))
         {
-            index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundary);
+            index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundaryAtIndex);
         }
 
-        index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsWordBoundary);
+        index = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsWordBoundaryAtIndex);
 
         return index;
     }
@@ -273,12 +326,12 @@ public class TextInputWidget : Widget, IUpdateInput
         _cursor.SetIndex(GetWordBoundaryRightOf(CursorIndex), leaveAnchor);
     }
 
-    private bool IsNotWordBoundary(int nodeIndex)
+    private bool IsNotWordBoundaryAtIndex(int nodeIndex)
     {
-        return !IsWordBoundary(nodeIndex);
+        return !IsWordBoundaryAtIndex(nodeIndex);
     }
 
-    private bool IsWordBoundary(int nodeIndex)
+    private bool IsWordBoundaryAtIndex(int nodeIndex)
     {
         return nodeIndex == LastIndex || char.IsWhiteSpace(Text[nodeIndex]);
     }
@@ -354,7 +407,7 @@ public class TextInputWidget : Widget, IUpdateInput
             RectangleF? pendingSelectionRect = null;
             for (var i = _cursor.SelectedRangeStart; i < _cursor.SelectedRangeEnd; i++)
             {
-                var glyphRect = _charSequence.Cache.GlyphAt(i).Rectangle.Inflated(2,0);
+                var glyphRect = _charSequence.Cache.GlyphAt(i).Rectangle.Inflated(2, 0);
 
                 if (pendingSelectionRect == null)
                 {
@@ -391,7 +444,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 {
                     selectionColor = random.NextColor();
                 }
-                
+
                 painter.DrawRectangle(selectionRect,
                     new DrawSettings {Depth = depth + 1, Color = selectionColor.WithMultipliedOpacity(0.5f)});
             }
@@ -856,14 +909,38 @@ public class TextInputWidget : Widget, IUpdateInput
         public void Poll()
         {
             var timeSinceStart = DateTime.Now - _timeStarted;
-            double staticFriction = 0.5f;
-            double tick = 0.05f;
+            var staticFriction = 0.5f;
+            var tick = 0.05f;
 
             if (timeSinceStart.TotalSeconds - staticFriction > tick)
             {
                 Action(_arg);
                 _timeStarted = _timeStarted.AddSeconds(tick);
             }
+        }
+    }
+
+    private class ClickCounter
+    {
+        private Vector2 _mousePosition;
+        private DateTime _timeOfLastClick = DateTime.UnixEpoch;
+        public int NumberOfClicks { get; private set; }
+
+        public void Increment(Vector2 mousePosition)
+        {
+            var interval = 0.2f;
+            var timeSinceLastClick = DateTime.Now - _timeOfLastClick;
+            if (timeSinceLastClick.TotalSeconds < interval && mousePosition == _mousePosition)
+            {
+                NumberOfClicks++;
+            }
+            else
+            {
+                NumberOfClicks = 1;
+            }
+
+            _mousePosition = mousePosition;
+            _timeOfLastClick = DateTime.Now;
         }
     }
 }
