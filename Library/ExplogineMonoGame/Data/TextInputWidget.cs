@@ -193,6 +193,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
         if (IsHovered || _isDragging)
         {
+            if (_hoveredLetterIndex != null)
+            {
+                Client.Window.SetCursor(MouseCursor.IBeam);
+            }
+            
             var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
 
             if (input.Mouse.GetButton(MouseButton.Left).WasPressed)
@@ -226,7 +231,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 {
                     if (HoveredNodeIndex.HasValue)
                     {
-                        _cursor.SetAnchorIndex(HoveredNodeIndex.Value);
+                        _cursor.SetIndex(HoveredNodeIndex.Value, true);
                     }
                 }
             }
@@ -248,7 +253,6 @@ public class TextInputWidget : Widget, IUpdateInput
                     {
                         _hoveredLetterIndex = index;
                         _hoveredSide = HorizontalDirection.Left;
-                        Client.Window.SetCursor(MouseCursor.IBeam);
                     });
 
                 innerHitTestStack.AddZone(rightRectangle, Depth.Middle,
@@ -256,7 +260,6 @@ public class TextInputWidget : Widget, IUpdateInput
                     {
                         _hoveredLetterIndex = index;
                         _hoveredSide = HorizontalDirection.Right;
-                        Client.Window.SetCursor(MouseCursor.IBeam);
                     });
             }
         }
