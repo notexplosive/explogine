@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -201,9 +201,14 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void SelectLineAtIndex(int index)
     {
-        // we probably actually want this to scan for manual newlines
-        var nodesOnLine = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(index));
-        SelectRange(nodesOnLine[0], nodesOnLine[^1]);
+        var left = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsManualNewlineAtIndex);
+        var right = _charSequence.ScanUntil(index, HorizontalDirection.Right, IsManualNewlineAtIndex);
+        SelectRange(left, right);
+    }
+
+    private bool IsManualNewlineAtIndex(int index)
+    {
+        return Text[index] == '\n';
     }
 
     private void SelectWordFromIndex(int index)
