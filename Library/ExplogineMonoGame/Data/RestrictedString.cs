@@ -49,11 +49,14 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
                 strategy.FinishToken();
             }
         }
+        
+        strategy.AddTerminatorToCurrentLine();
 
         if (strategy.HasContentInCurrentLine())
         {
             strategy.FinishLine();
         }
+
 
         return strategy.Result;
     }

@@ -776,7 +776,8 @@ public class TextInputWidget : Widget, IUpdateInput
             _font = font;
             _containerRectangle = containerRectangle;
             _alignment = alignment;
-            _nodes = new CacheNode[chars.Length + 1];
+            var numberOfNodes = chars.Length + 1;
+            _nodes = new CacheNode[numberOfNodes];
             Text = BuildString(chars);
             BuildFormattedText();
         }
@@ -816,13 +817,10 @@ public class TextInputWidget : Widget, IUpdateInput
 
         private void BuildFormattedText()
         {
-            // If the current buffer is empty, we act like we have just one character so we format it in the right spot
-            var formattedText = new FormattedText(_font, Text.Length > 0 ? Text : " ");
-            var glyphRect = RectangleF.Empty;
+            var formattedText = new FormattedText(_font, Text);
+            RectangleF glyphRect;
             var currentRect = new RectangleF(Vector2.Zero, new Vector2(0, _font.GetFont().Height));
-            var previousGlyphRect = currentRect;
             var nodeIndex = 0;
-            var wasPreviousNewLine = false;
             var glyphs = formattedText.GetGlyphs(_containerRectangle, _alignment).ToArray();
             var lineNumber = 0;
 
@@ -842,26 +840,8 @@ public class TextInputWidget : Widget, IUpdateInput
                 {
                     character = charGlyphData.Text;
                 }
-
                 _nodes[nodeIndex] = new CacheNode(currentRect, lineNumber, character, glyph);
-
-                wasPreviousNewLine = glyph.Data is FormattedText.WhiteSpaceGlyphData {IsManualNewLine: true};
                 nodeIndex++;
-            }
-
-            if (wasPreviousNewLine)
-            {
-                currentRect = glyphRect;
-                lineNumber++;
-            }
-
-            if (_nodes.Length > 1)
-            {
-                var rectangle = new RectangleF(new Vector2(currentRect.X + currentRect.Width, currentRect.Y),
-                    new Vector2(0, _font.GetFont().Height));
-
-                // We want a zero-width rect at the end of the string 
-                _nodes[nodeIndex] = new CacheNode(rectangle, lineNumber, '\0', new FormattedText.FormattedGlyph());
             }
         }
 
