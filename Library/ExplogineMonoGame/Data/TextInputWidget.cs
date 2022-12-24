@@ -122,14 +122,76 @@ public class TextInputWidget : Widget, IUpdateInput
 
         var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
 
-        innerHitTestStack.BeforeLayerResolved += () => { _hoveredLetterIndex = null; };
+        innerHitTestStack.BeforeLayerResolved += () =>
+        {
+            _hoveredLetterIndex = null;
+
+            if (_selected)
+            {
+                var lineRectangles = _charSequence.Cache.GetLineRectangles();
+                var targetIndex = 0;
+                var mousePosition = input.Mouse.Position(innerHitTestStack.WorldMatrix);
+                
+                for (var lineNumber = 0; lineNumber < lineRectangles.Length; lineNumber++)
+                {
+                    var isFirstLine = lineNumber == 0;
+                    var isLastLine = lineNumber == lineRectangles.Length - 1;
+                    
+                    var lineRectangle = lineRectangles[lineNumber];
+
+                    if (lineRectangle.Contains(mousePosition))
+                    {
+                        // We hit inside a line, let the HitTestZones figure it out
+                        return;
+                    }
+
+                    var isBelowTop = mousePosition.Y >= lineRectangle.Top;
+                    var isAboveBottom = mousePosition.Y < lineRectangle.Bottom;
+                    var isWithin = isAboveBottom && isBelowTop;
+                    bool forceToStart = false;
+                    bool forceToEnd = false;
+
+                    if (!isWithin)
+                    {
+                        if (isFirstLine)
+                        {
+                            isWithin = mousePosition.Y < lineRectangle.Top;
+                            forceToStart = isWithin;
+                        }
+
+                        if (isLastLine)
+                        {
+                            isWithin = mousePosition.Y >= lineRectangle.Bottom;
+                            forceToEnd = isWithin;
+                        }
+                    }
+
+                    if (isWithin)
+                    {
+                        var nodesOnLine = _charSequence.GetNodesOnLine(lineNumber);
+                        if (mousePosition.X > lineRectangle.Right || forceToEnd)
+                        {
+                            targetIndex = nodesOnLine[^1];
+                        }
+
+                        if (mousePosition.X < lineRectangle.Left || forceToStart)
+                        {
+                            targetIndex = nodesOnLine[0];
+                        }
+                    }
+                }
+
+                _hoveredLetterIndex = targetIndex;
+                _hoveredSide = HorizontalDirection.Left;
+            }
+        };
 
         if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
         {
             _isDragging = false;
         }
 
-        if (IsHovered)
+        if (IsHovered || _isDragging)
         {
             var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
 
@@ -488,9 +550,16 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             var lineNumber = _charSequence.Cache.LineNumberAt(CursorIndex);
             painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16),
-                $"{CursorIndex}, line: {lineNumber}, anchor: {_cursor.SelectionAnchorIndex}",
+                $"{CursorIndex}, line: {lineNumber}, anchor: {_cursor.SelectionAnchorIndex}, hovered: {_hoveredLetterIndex} {(_hoveredSide == HorizontalDirection.Left ? '<' : '>')}",
                 InnerRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
 
+            for (int line = 0; line < _charSequence.Cache.NumberOfLines; line++)
+            {
+                painter.DrawLineRectangle(_charSequence.Cache.GetLineRectangle(line).Inflated(2,2),
+                    new LineDrawSettings
+                        {Color = Color.ForestGreen.WithMultipliedOpacity(0.5f), Thickness = 2});
+            }
+            
             for (var i = 0; i < _charSequence.NumberOfNodes; i++)
             {
                 var isLastChar = i == _charSequence.NumberOfNodes - 1;
@@ -511,7 +580,7 @@ public class TextInputWidget : Widget, IUpdateInput
                             {Color = (isLastChar ? Color.Green : Color.Yellow).WithMultipliedOpacity(0.5f)});
                 }
 
-                painter.DrawLineRectangle(rectangle, new LineDrawSettings {Color = color});
+                painter.DrawLineRectangle(rectangle.Inflated(-1, -1), new LineDrawSettings {Color = color});
             }
 
             painter.DrawLineRectangle(_charSequence.Cache.UsedSpace,
@@ -770,6 +839,7 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly IFontGetter _font;
         private readonly CacheNode[] _nodes;
         private readonly char[] _originalChars;
+        private readonly RectangleF[] _lineRects;
 
         public Cache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment)
         {
@@ -781,6 +851,35 @@ public class TextInputWidget : Widget, IUpdateInput
             _nodes = new CacheNode[numberOfNodes];
             Text = BuildString(chars);
             BuildFormattedText();
+            
+            _lineRects = new RectangleF[NumberOfLines];
+            var currentLineNumber = 0;
+            RectangleF? currentLineRectangle = null;
+            foreach (var node in _nodes)
+            {
+                if (currentLineRectangle == null)
+                {
+                    currentLineRectangle = node.Rectangle;
+                }
+                else
+                {
+                    if (node.LineNumber != currentLineNumber)
+                    {
+                        _lineRects[currentLineNumber] = currentLineRectangle.Value;
+                        currentLineNumber++;
+                        currentLineRectangle = node.Rectangle;
+                    }
+                    else
+                    {
+                        currentLineRectangle = RectangleF.Union(currentLineRectangle.Value, node.Rectangle);
+                    }
+                }
+            }
+
+            if (currentLineRectangle.HasValue)
+            {
+                _lineRects[NumberOfLines - 1] = currentLineRectangle.Value;
+            }
         }
 
         public string Text { get; }
@@ -798,6 +897,8 @@ public class TextInputWidget : Widget, IUpdateInput
                 return result;
             }
         }
+
+        public int NumberOfLines => _nodes[^1].LineNumber + 1;
 
         private string BuildString(char[] chars)
         {
@@ -857,6 +958,16 @@ public class TextInputWidget : Widget, IUpdateInput
 
         private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
             FormattedText.FormattedGlyph OriginalGlyph);
+
+        public RectangleF GetLineRectangle(int lineNumber)
+        {
+            return _lineRects[lineNumber];
+        }
+
+        public RectangleF[] GetLineRectangles()
+        {
+            return _lineRects;
+        }
     }
 
     private class RepeatedAction
