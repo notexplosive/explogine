@@ -117,6 +117,7 @@ public class TextInputWidget : Widget, IUpdateInput
             KeyBind(keyboard, Keys.Delete, DoesNotHaveSelection, ControlIsDown, ReverseBackspaceWholeWord);
             KeyBind(keyboard, Keys.Delete, DoesNotHaveSelection, ControlIsNotDown, ReverseBackspace);
             KeyBind(keyboard, Keys.Delete, HasSelection, ModifierAgnostic, ClearSelectedRange);
+            KeyBind(keyboard, Keys.A, SelectionAgnostic, ControlIsDown, SelectEverything);
         }
 
         var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
@@ -127,7 +128,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             _isDragging = false;
         }
-        
+
         if (IsHovered)
         {
             var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
@@ -199,6 +200,11 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    private void SelectEverything(bool leaveAnchor)
+    {
+        SelectRange(0, _charSequence.NumberOfChars);
+    }
+
     private void SelectLineAtIndex(int index)
     {
         var left = _charSequence.ScanUntil(index, HorizontalDirection.Left, IsManualNewlineAtIndex);
@@ -227,7 +233,7 @@ public class TextInputWidget : Widget, IUpdateInput
         }
         else
         {
-            bool nudgeLeft = _charSequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1);
+            var nudgeLeft = _charSequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1);
             SelectRange(GetWordBoundaryLeftOf(index + (nudgeLeft ? 1 : 0)), GetWordBoundaryRightOf(index));
         }
     }
@@ -826,7 +832,9 @@ public class TextInputWidget : Widget, IUpdateInput
                 {
                     character = charGlyphData.Text;
                 }
-                _nodes[nodeIndex] = new CacheNode(new RectangleF(glyph.Position, glyph.Data.Size), glyph.LineNumber, character, glyph);
+
+                _nodes[nodeIndex] = new CacheNode(new RectangleF(glyph.Position, glyph.Data.Size), glyph.LineNumber,
+                    character, glyph);
                 nodeIndex++;
             }
         }
