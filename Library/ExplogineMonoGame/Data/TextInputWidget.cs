@@ -860,6 +860,11 @@ public class TextInputWidget : Widget, IUpdateInput
             RectangleF? currentLineRectangle = null;
             foreach (var node in _nodes)
             {
+                if (node.OriginalGlyph.Data is FormattedText.WhiteSpaceGlyphData {WhiteSpaceType: WhiteSpaceType.NullTerminator})
+                {
+                    break;
+                }
+                
                 if (currentLineRectangle == null)
                 {
                     currentLineRectangle = node.Rectangle;
@@ -929,7 +934,11 @@ public class TextInputWidget : Widget, IUpdateInput
                 var character = '\0';
                 if (glyph.Data is FormattedText.WhiteSpaceGlyphData whiteSpaceGlyphData)
                 {
-                    character = whiteSpaceGlyphData.IsManualNewLine ? '\n' : ' ';
+                    character = whiteSpaceGlyphData.WhiteSpaceType switch
+                    {
+                        WhiteSpaceType.Newline => '\n',
+                        _ => ' '
+                    };
                 }
 
                 if (glyph.Data is FormattedText.CharGlyphData charGlyphData)

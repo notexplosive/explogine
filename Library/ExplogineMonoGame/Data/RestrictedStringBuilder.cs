@@ -73,7 +73,7 @@ public static class RestrictedStringBuilder
             var finalLetterFragment =
                 new FormattedText.CharGlyphData(finalFragmentAsFragment.Font, ' ');
             
-            lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(finalLetterFragment.Size, finalLetterFragment.ScaleFactor, false);
+            lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(finalLetterFragment.Size, finalLetterFragment.ScaleFactor, WhiteSpaceType.NullTerminator);
         }
         else
         {
@@ -166,7 +166,7 @@ public static class RestrictedStringBuilder
         {
             // we divide size by 2 because MeasureString('\n') gives us 2x the height you expect
             var size = new Vector2(0, newlineCharacter.Size.Y / 2);
-            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor, true));
+            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor, WhiteSpaceType.Newline));
         }
 
         public float CurrentTokenWidth()

@@ -66,7 +66,7 @@ public readonly struct FormattedText
                 {
                     // White space still has a size and scale factor, but it's a different type so it's not caught like regular text
                     glyphData = new WhiteSpaceGlyphData(letterFragment.Size, letterFragment.ScaleFactor,
-                        false);
+                        WhiteSpaceType.Space);
                 }
 
                 yield return new FormattedGlyph(position, glyphData, lineNumber);
@@ -149,7 +149,7 @@ public readonly struct FormattedText
     }
 
     public readonly record struct WhiteSpaceGlyphData(Vector2 Size, float ScaleFactor,
-        bool IsManualNewLine) : IGlyphData
+        WhiteSpaceType WhiteSpaceType) : IGlyphData
     {
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
