@@ -227,12 +227,7 @@ public class TextInputWidget : Widget, IUpdateInput
         }
         else
         {
-            var nudgeLeft = false;
-            if (_charSequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1))
-            {
-                nudgeLeft = true;
-            }
-
+            bool nudgeLeft = _charSequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1);
             SelectRange(GetWordBoundaryLeftOf(index + (nudgeLeft ? 1 : 0)), GetWordBoundaryRightOf(index));
         }
     }
