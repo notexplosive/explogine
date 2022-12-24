@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
@@ -44,8 +43,8 @@ public static class RestrictedStringBuilder
 
         var currentFragmentIndex = 0;
         var charIndexWithinCurrentFragment = 0;
-        var lettersAsFragments = new FormattedText.IGlyphData[combinedText.Length];
-        for (var i = 0; i < lettersAsFragments.Length; i++)
+        var lettersAsFragments = new FormattedText.IGlyphData[combinedText.Length + 1];
+        for (var i = 0; i < combinedText.Length; i++)
         {
             var currentFragment = fragments[currentFragmentIndex];
             if (currentFragment is FormattedText.Fragment fragment)
@@ -67,6 +66,20 @@ public static class RestrictedStringBuilder
             }
         }
 
+        // Append Terminator
+        var finalFragment = fragments[^1];
+        if (finalFragment is FormattedText.Fragment finalFragmentAsFragment)
+        {
+            var finalLetterFragment =
+                new FormattedText.CharGlyphData(finalFragmentAsFragment.Font, ' ');
+            
+            lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(finalLetterFragment.Size, finalLetterFragment.ScaleFactor, false);
+        }
+        else
+        {
+            lettersAsFragments[^1] = finalFragment.ToGlyphData();
+        }
+
         return lettersAsFragments;
     }
 
@@ -83,7 +96,6 @@ public static class RestrictedStringBuilder
         bool IsNewline(TChar character);
         bool IsWhiteSpace(TChar character);
         void AppendManualLinebreak(TChar newlineCharacter);
-        void AddTerminatorToCurrentLine();
     }
 
     public class FragmentStrategy : IStrategy<FormattedText.IGlyphData, FormattedText.GlyphDataLine>
@@ -91,9 +103,9 @@ public static class RestrictedStringBuilder
         private readonly List<FormattedText.IGlyphData> _currentLineFragments = new();
         private readonly List<FormattedText.IGlyphData> _currentTokenFragments = new();
         private readonly List<FormattedText.GlyphDataLine> _resultLines = new();
-        private Vector2 _totalSize;
         private int _lineNumber;
         private FormattedText.IGlyphData? _mostRecentGlyphData;
+        private Vector2 _totalSize;
 
         public Vector2 CurrentLineSize
         {
@@ -157,19 +169,6 @@ public static class RestrictedStringBuilder
             _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor, true));
         }
 
-        public void AddTerminatorToCurrentLine()
-        {
-            var size = new Vector2();
-            var scaleFactor = 1f;
-            if (_mostRecentGlyphData != null)
-            {
-                size = _mostRecentGlyphData.Size;
-                size.X = 0;
-                scaleFactor = _mostRecentGlyphData.ScaleFactor;
-            }
-            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, scaleFactor, false));
-        }
-
         public float CurrentTokenWidth()
         {
             return CurrentTokenSize.X;
@@ -205,9 +204,9 @@ public static class RestrictedStringBuilder
     private class TextStrategy : IStrategy<char, string>
     {
         private readonly StringBuilder _currentToken = new();
+        private readonly IFont _font;
         private readonly float _heightOfOneLine;
         private readonly List<string> _resultLines = new();
-        private readonly IFont _font;
 
         public TextStrategy(IFont font)
         {
@@ -270,13 +269,8 @@ public static class RestrictedStringBuilder
         {
             return char.IsWhiteSpace(character);
         }
-        
-        public void AppendManualLinebreak(char newlineCharacter)
-        {
-            // does nothing
-        }
 
-        public void AddTerminatorToCurrentLine()
+        public void AppendManualLinebreak(char newlineCharacter)
         {
             // does nothing
         }

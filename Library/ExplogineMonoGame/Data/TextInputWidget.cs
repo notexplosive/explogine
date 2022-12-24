@@ -817,19 +817,10 @@ public class TextInputWidget : Widget, IUpdateInput
 
         private void BuildFormattedText()
         {
-            var formattedText = new FormattedText(_font, Text);
-            RectangleF glyphRect;
-            var currentRect = new RectangleF(Vector2.Zero, new Vector2(0, _font.GetFont().Height));
             var nodeIndex = 0;
-            var glyphs = formattedText.GetGlyphs(_containerRectangle, _alignment).ToArray();
-            var lineNumber = 0;
 
-            foreach (var glyph in glyphs)
+            foreach (var glyph in new FormattedText(_font, Text).GetGlyphs(_containerRectangle, _alignment).ToArray())
             {
-                lineNumber = glyph.LineNumber;
-                glyphRect = new RectangleF(glyph.Position, glyph.Data.Size);
-                currentRect = glyphRect;
-
                 var character = '\0';
                 if (glyph.Data is FormattedText.WhiteSpaceGlyphData whiteSpaceGlyphData)
                 {
@@ -840,7 +831,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 {
                     character = charGlyphData.Text;
                 }
-                _nodes[nodeIndex] = new CacheNode(currentRect, lineNumber, character, glyph);
+                _nodes[nodeIndex] = new CacheNode(new RectangleF(glyph.Position, glyph.Data.Size), glyph.LineNumber, character, glyph);
                 nodeIndex++;
             }
         }
