@@ -123,14 +123,14 @@ public class TextInputWidget : Widget, IUpdateInput
 
         innerHitTestStack.BeforeLayerResolved += () => { _hoveredLetterIndex = null; };
 
+        if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
+        {
+            _isDragging = false;
+        }
+        
         if (IsHovered)
         {
             var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
-
-            if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
-            {
-                _isDragging = false;
-            }
 
             if (input.Mouse.GetButton(MouseButton.Left).WasPressed)
             {
