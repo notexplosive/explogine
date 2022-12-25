@@ -8,15 +8,15 @@ namespace ExplogineMonoGame;
 
 public class ScrollableArea : IUpdateInput
 {
+    private readonly Scrollbar _horizontalScrollbar;
+    private readonly Scrollbar _verticalScrollbar;
     private Vector2 _viewPosition;
-    private Scrollbar _verticalScrollbar;
-    private Scrollbar _horizontalScrollbar;
 
     public ScrollableArea(Point canvasSize, RectangleF innerWorldBoundaries)
     {
         CanvasSize = canvasSize;
         InnerWorldBoundaries = innerWorldBoundaries;
-        
+
         _verticalScrollbar = new Scrollbar(this, Orientation.Vertical, Depth.Middle);
         _horizontalScrollbar = new Scrollbar(this, Orientation.Horizontal, Depth.Middle);
     }
@@ -26,6 +26,12 @@ public class ScrollableArea : IUpdateInput
     public RectangleF ViewBounds => new(_viewPosition, CanvasSize.ToVector2());
     public Matrix CanvasToScreen => ViewBounds.CanvasToScreen(CanvasSize);
     public Matrix ScreenToCanvas => ViewBounds.ScreenToCanvas(CanvasSize);
+
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    {
+        _verticalScrollbar.UpdateInput(input, hitTestStack);
+        _horizontalScrollbar.UpdateInput(input, hitTestStack);
+    }
 
     public void Move(Vector2 offset)
     {
@@ -41,11 +47,5 @@ public class ScrollableArea : IUpdateInput
     {
         theme.DrawScrollbar(painter, _verticalScrollbar);
         theme.DrawScrollbar(painter, _horizontalScrollbar);
-    }
-
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
-    {
-        _verticalScrollbar.UpdateInput(input, hitTestStack);
-        _horizontalScrollbar.UpdateInput(input, hitTestStack);
     }
 }

@@ -18,18 +18,18 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private readonly TextCursor _cursor = new();
     private readonly IFontGetter _font;
+    private readonly ScrollableArea _scrollableArea;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
     private bool _selected;
-    private RectangleF _viewBounds;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText)
         : base(position, size, depth)
     {
         _font = font;
-        _viewBounds = new RectangleF(Vector2.Zero, size.ToVector2());
+        _scrollableArea = new ScrollableArea(Size, InnerRectangle);
 
         _cursor.MovedCursor += OnCursorMoved;
 
@@ -70,6 +70,8 @@ public class TextInputWidget : Widget, IUpdateInput
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         UpdateHovered(hitTestStack);
+
+        _scrollableArea.InnerWorldBoundaries = new RectangleF(InnerRectangle.Location, new Vector2(InnerRectangle.Width, InnerRectangle.Height + _charSequence.Cache.UsedSpace.Height));
 
         if (_selected)
         {
@@ -124,7 +126,7 @@ public class TextInputWidget : Widget, IUpdateInput
             KeyBind(keyboard, Keys.A, SelectionAgnostic, ControlIsDown, SelectEverything);
         }
 
-        var innerHitTestStack = hitTestStack.AddLayer(_viewBounds.ScreenToCanvas(Size) * ScreenToCanvas);
+        var innerHitTestStack = hitTestStack.AddLayer(_scrollableArea.ScreenToCanvas * ScreenToCanvas);
 
         innerHitTestStack.BeforeLayerResolved += () =>
         {
@@ -273,20 +275,22 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         var nodeRect = _charSequence.Cache.RectangleAtNode(nodeIndex);
 
-        if (!_viewBounds.Contains(nodeRect))
+        var viewBounds = _scrollableArea.ViewBounds;
+
+        if (!viewBounds.Contains(nodeRect))
         {
             var verticalDistance = 0f;
-            if (nodeRect.Bottom > _viewBounds.Bottom)
+            if (nodeRect.Bottom > viewBounds.Bottom)
             {
-                verticalDistance = nodeRect.Bottom - _viewBounds.Bottom;
+                verticalDistance = nodeRect.Bottom - viewBounds.Bottom;
             }
 
-            if (nodeRect.Top < _viewBounds.Top)
+            if (nodeRect.Top < viewBounds.Top)
             {
-                verticalDistance = nodeRect.Top - _viewBounds.Top;
+                verticalDistance = nodeRect.Top - viewBounds.Top;
             }
 
-            _viewBounds = _viewBounds.Moved(new Vector2(0, verticalDistance));
+            _scrollableArea.Move(new Vector2(0, verticalDistance));
         }
     }
 
@@ -486,7 +490,7 @@ public class TextInputWidget : Widget, IUpdateInput
     public void PrepareDraw(Painter painter)
     {
         Client.Graphics.PushCanvas(Canvas);
-        painter.BeginSpriteBatch(_viewBounds.CanvasToScreen(Size));
+        painter.BeginSpriteBatch(_scrollableArea.CanvasToScreen);
         var depth = Depth.Middle;
 
         painter.Clear(_selected ? Color.LightBlue : Color.White);
