@@ -828,11 +828,6 @@ public class TextInputWidget : Widget, IUpdateInput
                 SelectionAnchorIndex = index;
             }
         }
-
-        public void SetAnchorIndex(int anchorIndex)
-        {
-            SelectionAnchorIndex = anchorIndex;
-        }
     }
 
     private class Cache
