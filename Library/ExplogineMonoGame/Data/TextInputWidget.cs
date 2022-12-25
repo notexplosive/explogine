@@ -23,11 +23,15 @@ public class TextInputWidget : Widget, IUpdateInput
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
     private bool _selected;
+    private RectangleF _viewBounds;
 
-    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText) : base(
-        position, size, depth)
+    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText)
+        : base(position, size, depth)
     {
         _font = font;
+        _viewBounds = new RectangleF(Vector2.Zero, size.ToVector2());
+
+        _cursor.MovedCursor += OnCursorMoved;
 
         // Content will need to be rebuilt every time these values change
         _charSequence = new CharSequence(font, startingText, InnerRectangle, _alignment);
@@ -120,7 +124,7 @@ public class TextInputWidget : Widget, IUpdateInput
             KeyBind(keyboard, Keys.A, SelectionAgnostic, ControlIsDown, SelectEverything);
         }
 
-        var innerHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
+        var innerHitTestStack = hitTestStack.AddLayer(_viewBounds.ScreenToCanvas(Size) * ScreenToCanvas);
 
         innerHitTestStack.BeforeLayerResolved += () =>
         {
@@ -128,15 +132,15 @@ public class TextInputWidget : Widget, IUpdateInput
 
             if (_selected)
             {
-                var lineRectangles = _charSequence.Cache.GetLineRectangles();
+                var lineRectangles = _charSequence.Cache.LineRectangles();
                 var targetIndex = 0;
                 var mousePosition = input.Mouse.Position(innerHitTestStack.WorldMatrix);
-                
+
                 for (var lineNumber = 0; lineNumber < lineRectangles.Length; lineNumber++)
                 {
                     var isFirstLine = lineNumber == 0;
                     var isLastLine = lineNumber == lineRectangles.Length - 1;
-                    
+
                     var lineRectangle = lineRectangles[lineNumber];
 
                     if (lineRectangle.Contains(mousePosition))
@@ -148,8 +152,8 @@ public class TextInputWidget : Widget, IUpdateInput
                     var isBelowTop = mousePosition.Y >= lineRectangle.Top;
                     var isAboveBottom = mousePosition.Y < lineRectangle.Bottom;
                     var isWithin = isAboveBottom && isBelowTop;
-                    bool forceToStart = false;
-                    bool forceToEnd = false;
+                    var forceToStart = false;
+                    var forceToEnd = false;
 
                     if (!isWithin)
                     {
@@ -197,7 +201,7 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 Client.Window.SetCursor(MouseCursor.IBeam);
             }
-            
+
             var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
 
             if (input.Mouse.GetButton(MouseButton.Left).WasPressed)
@@ -262,6 +266,27 @@ public class TextInputWidget : Widget, IUpdateInput
                         _hoveredSide = HorizontalDirection.Right;
                     });
             }
+        }
+    }
+
+    private void OnCursorMoved(int nodeIndex)
+    {
+        var nodeRect = _charSequence.Cache.RectangleAtNode(nodeIndex);
+
+        if (!_viewBounds.Contains(nodeRect))
+        {
+            var verticalDistance = 0f;
+            if (nodeRect.Bottom > _viewBounds.Bottom)
+            {
+                verticalDistance = nodeRect.Bottom - _viewBounds.Bottom;
+            }
+
+            if (nodeRect.Top < _viewBounds.Top)
+            {
+                verticalDistance = nodeRect.Top - _viewBounds.Top;
+            }
+
+            _viewBounds = _viewBounds.Moved(new Vector2(0, verticalDistance));
         }
     }
 
@@ -461,7 +486,7 @@ public class TextInputWidget : Widget, IUpdateInput
     public void PrepareDraw(Painter painter)
     {
         Client.Graphics.PushCanvas(Canvas);
-        painter.BeginSpriteBatch();
+        painter.BeginSpriteBatch(_viewBounds.CanvasToScreen(Size));
         var depth = Depth.Middle;
 
         painter.Clear(_selected ? Color.LightBlue : Color.White);
@@ -556,13 +581,13 @@ public class TextInputWidget : Widget, IUpdateInput
                 $"{CursorIndex}, line: {lineNumber}, anchor: {_cursor.SelectionAnchorIndex}, hovered: {_hoveredLetterIndex} {(_hoveredSide == HorizontalDirection.Left ? '<' : '>')}",
                 InnerRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
 
-            for (int line = 0; line < _charSequence.Cache.NumberOfLines; line++)
+            for (var line = 0; line < _charSequence.Cache.NumberOfLines; line++)
             {
-                painter.DrawLineRectangle(_charSequence.Cache.GetLineRectangle(line).Inflated(2,2),
+                painter.DrawLineRectangle(_charSequence.Cache.LineRectangleAtLine(line).Inflated(2, 2),
                     new LineDrawSettings
                         {Color = Color.ForestGreen.WithMultipliedOpacity(0.5f), Thickness = 2});
             }
-            
+
             for (var i = 0; i < _charSequence.NumberOfNodes; i++)
             {
                 var isLastChar = i == _charSequence.NumberOfNodes - 1;
@@ -827,7 +852,11 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 SelectionAnchorIndex = index;
             }
+
+            MovedCursor?.Invoke(index);
         }
+
+        public event Action<int>? MovedCursor;
     }
 
     private class Cache
@@ -835,9 +864,9 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly Alignment _alignment;
         private readonly RectangleF _containerRectangle;
         private readonly IFontGetter _font;
+        private readonly RectangleF[] _lineRects;
         private readonly CacheNode[] _nodes;
         private readonly char[] _originalChars;
-        private readonly RectangleF[] _lineRects;
 
         public Cache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment)
         {
@@ -849,17 +878,20 @@ public class TextInputWidget : Widget, IUpdateInput
             _nodes = new CacheNode[numberOfNodes];
             Text = BuildString(chars);
             BuildFormattedText();
-            
+
             _lineRects = new RectangleF[NumberOfLines];
             var currentLineNumber = 0;
             RectangleF? currentLineRectangle = null;
             foreach (var node in _nodes)
             {
-                if (node.OriginalGlyph.Data is FormattedText.WhiteSpaceGlyphData {WhiteSpaceType: WhiteSpaceType.NullTerminator})
+                if (node.OriginalGlyph.Data is FormattedText.WhiteSpaceGlyphData
+                    {
+                        WhiteSpaceType: WhiteSpaceType.NullTerminator
+                    })
                 {
                     break;
                 }
-                
+
                 if (currentLineRectangle == null)
                 {
                     currentLineRectangle = node.Rectangle;
@@ -963,18 +995,18 @@ public class TextInputWidget : Widget, IUpdateInput
             return _nodes[nodeIndex].OriginalGlyph;
         }
 
-        private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
-            FormattedText.FormattedGlyph OriginalGlyph);
-
-        public RectangleF GetLineRectangle(int lineNumber)
+        public RectangleF LineRectangleAtLine(int lineNumber)
         {
             return _lineRects[lineNumber];
         }
 
-        public RectangleF[] GetLineRectangles()
+        public RectangleF[] LineRectangles()
         {
             return _lineRects;
         }
+
+        private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
+            FormattedText.FormattedGlyph OriginalGlyph);
     }
 
     private class RepeatedAction
