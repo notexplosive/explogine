@@ -11,14 +11,14 @@ namespace ExplogineMonoGameTests;
 public class TestFormattedText
 {
     [Fact]
-    public void chars_in_equals_glyphs_out()
+    public void char_count_plus_one_is_glyphs_out()
     {
         void TestCase(string input)
         {
             var formattedText = new FormattedText(new TestFont(), input);
             var glyphs = formattedText
                 .GetGlyphs(new RectangleF(0, 0, float.MaxValue, float.MaxValue), Alignment.TopLeft).ToList();
-            glyphs.Count.Should().Be(input.Length, $"\"{input}\" should have {input.Length} glyphs");
+            glyphs.Count.Should().Be(input.Length + 1, $"\"{input}\" should have {input.Length} glyphs");
         }
 
         TestCase("There is just one line");
