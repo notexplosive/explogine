@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using ExplogineCore.Data;
+using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -24,24 +25,28 @@ public class TextInputWidget : Widget, IUpdateInput
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
     private bool _selected;
+    private readonly HoverState _isTextAreaHovered;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText)
         : base(position, size, depth)
     {
         _font = font;
-        _scrollableArea = new ScrollableArea(Size, InnerRectangle);
+        _scrollableArea = new ScrollableArea(Size, InnerRectangle, Depth.Front);
+        _scrollableArea.EnableInput = new XyBool(false, true);
+
+        _isTextAreaHovered = new HoverState();
 
         _cursor.MovedCursor += OnCursorMoved;
 
         // Content will need to be rebuilt every time these values change
-        _charSequence = new CharSequence(font, startingText, InnerRectangle, _alignment);
+        _charSequence = new CharSequence(font, startingText, TextAreaRectangle, _alignment);
+        _charSequence.CacheUpdated += () => OnCursorMoved(CursorIndex);
     }
 
     public string Text => _charSequence.Cache.Text;
-
     public int CursorIndex => _cursor.Index;
-
-    public RectangleF InnerRectangle => new RectangleF(Vector2.Zero, Rectangle.Size).Inflated(-5, -5);
+    public RectangleF TextAreaRectangle => InnerRectangle.Inflated(-5, -5).ResizedOnEdge(RectEdge.Right, new Vector2(-_scrollableArea.ScrollBarWidth, 0));
+    public RectangleF InnerRectangle => new(Vector2.Zero, Rectangle.Size);
     public int LastIndex => _charSequence.NumberOfChars;
     public int CurrentColumn => _charSequence.GetColumn(CursorIndex);
     public int CurrentLine => _charSequence.Cache.LineNumberAt(CursorIndex);
@@ -71,7 +76,6 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         UpdateHovered(hitTestStack);
 
-        _scrollableArea.InnerWorldBoundaries = new RectangleF(InnerRectangle.Location, new Vector2(InnerRectangle.Width, InnerRectangle.Height + _charSequence.Cache.UsedSpace.Height));
 
         if (_selected)
         {
@@ -126,17 +130,28 @@ public class TextInputWidget : Widget, IUpdateInput
             KeyBind(keyboard, Keys.A, SelectionAgnostic, ControlIsDown, SelectEverything);
         }
 
-        var innerHitTestStack = hitTestStack.AddLayer(_scrollableArea.ScreenToCanvas * ScreenToCanvas);
+        var unscrolledHitTestStack = hitTestStack.AddLayer(ScreenToCanvas);
+        var scrollingHitTestStack = hitTestStack.AddLayer(_scrollableArea.ScreenToCanvas * ScreenToCanvas);
 
-        innerHitTestStack.BeforeLayerResolved += () =>
+        _scrollableArea.UpdateInput(input, unscrolledHitTestStack);
+
+        scrollingHitTestStack.BeforeLayerResolved += () =>
         {
             _hoveredLetterIndex = null;
+        };
 
+        unscrolledHitTestStack.AddZone(TextAreaRectangle, Depth.Middle, _isTextAreaHovered, true);
+
+        var scrollDelta = input.Mouse.ScrollDelta();
+        _scrollableArea.Move(new Vector2(0, -scrollDelta / 5f));
+
+        scrollingHitTestStack.AddInfiniteZone(Depth.Back, () =>
+        {
             if (_selected)
             {
                 var lineRectangles = _charSequence.Cache.LineRectangles();
                 var targetIndex = 0;
-                var mousePosition = input.Mouse.Position(innerHitTestStack.WorldMatrix);
+                var mousePosition = input.Mouse.Position(scrollingHitTestStack.WorldMatrix);
 
                 for (var lineNumber = 0; lineNumber < lineRectangles.Length; lineNumber++)
                 {
@@ -190,14 +205,14 @@ public class TextInputWidget : Widget, IUpdateInput
                 _hoveredLetterIndex = targetIndex;
                 _hoveredSide = HorizontalDirection.Left;
             }
-        };
+        });
 
         if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
         {
             _isDragging = false;
         }
 
-        if (IsHovered || _isDragging)
+        if (_isTextAreaHovered || _isDragging)
         {
             if (_hoveredLetterIndex != null)
             {
@@ -254,14 +269,14 @@ public class TextInputWidget : Widget, IUpdateInput
                         new Vector2(halfWidth, charRectangle.Size.Y))
                     .Moved(new Vector2(halfWidth, 0));
 
-                innerHitTestStack.AddZone(leftRectangle, Depth.Middle,
+                scrollingHitTestStack.AddZone(leftRectangle, Depth.Middle,
                     () =>
                     {
                         _hoveredLetterIndex = index;
                         _hoveredSide = HorizontalDirection.Left;
                     });
 
-                innerHitTestStack.AddZone(rightRectangle, Depth.Middle,
+                scrollingHitTestStack.AddZone(rightRectangle, Depth.Middle,
                     () =>
                     {
                         _hoveredLetterIndex = index;
@@ -273,10 +288,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void OnCursorMoved(int nodeIndex)
     {
+        _scrollableArea.InnerWorldBoundaries =
+            RectangleF.Union(InnerRectangle, _charSequence.Cache.UsedSpace);
+
         var nodeRect = _charSequence.Cache.RectangleAtNode(nodeIndex);
-
         var viewBounds = _scrollableArea.ViewBounds;
-
         if (!viewBounds.Contains(nodeRect))
         {
             var verticalDistance = 0f;
@@ -292,6 +308,8 @@ public class TextInputWidget : Widget, IUpdateInput
 
             _scrollableArea.Move(new Vector2(0, verticalDistance));
         }
+
+        _scrollableArea.ReConstrain();
     }
 
     private void SelectEverything(bool leaveAnchor)
@@ -551,7 +569,7 @@ public class TextInputWidget : Widget, IUpdateInput
             }
         }
 
-        painter.DrawStringWithinRectangle(_font, Text, InnerRectangle, _alignment,
+        painter.DrawStringWithinRectangle(_font, Text, TextAreaRectangle, _alignment,
             new DrawSettings {Color = Color.Black, Depth = depth});
 
         if (_hoveredLetterIndex.HasValue)
@@ -583,7 +601,7 @@ public class TextInputWidget : Widget, IUpdateInput
             var lineNumber = _charSequence.Cache.LineNumberAt(CursorIndex);
             painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16),
                 $"{CursorIndex}, line: {lineNumber}, anchor: {_cursor.SelectionAnchorIndex}, hovered: {_hoveredLetterIndex} {(_hoveredSide == HorizontalDirection.Left ? '<' : '>')}",
-                InnerRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
+                TextAreaRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
 
             for (var line = 0; line < _charSequence.Cache.NumberOfLines; line++)
             {
@@ -619,6 +637,12 @@ public class TextInputWidget : Widget, IUpdateInput
                 new LineDrawSettings {Depth = Depth.Back, Thickness = 2, Color = Color.Orange});
         }
 
+        painter.EndSpriteBatch();
+
+        painter.BeginSpriteBatch();
+        var theme = new SimpleGuiTheme(Color.LightBlue, Color.DarkBlue, Color.SlateBlue,
+            Client.Assets.GetFont("engine/logo-font", 32));
+        _scrollableArea.DrawScrollbars(painter, theme);
         painter.EndSpriteBatch();
         Client.Graphics.PopCanvas();
     }
@@ -738,6 +762,7 @@ public class TextInputWidget : Widget, IUpdateInput
         public Cache Cache { get; private set; }
         public int NumberOfNodes => Cache.Text.Length + 1;
         public int NumberOfChars => Cache.Text.Length;
+        public event Action? CacheUpdated;
 
         public void RemoveAt(int cursorIndex)
         {
@@ -745,6 +770,7 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 _nodes.RemoveAt(cursorIndex);
                 Cache = Cache.Rebuild(_nodes.ToArray());
+                CacheUpdated?.Invoke();
             }
         }
 
@@ -752,6 +778,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             _nodes.Insert(cursorIndex, character);
             Cache = Cache.Rebuild(_nodes.ToArray());
+            CacheUpdated?.Invoke();
         }
 
         public int ScanUntil(int startIndex, HorizontalDirection direction, ScanFindDelegate found)

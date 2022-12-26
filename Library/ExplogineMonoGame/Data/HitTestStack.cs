@@ -9,7 +9,7 @@ public class HitTestStack
 {
     private readonly RectangleF? _maskRectangle;
     private readonly List<HitTestStack> _subLayers = new();
-    private readonly List<HitTestZone> _zones = new();
+    private readonly List<IHitTestZone> _zones = new();
 
     public HitTestStack(Matrix worldMatrix, RectangleF? maskRectangle = null)
     {
@@ -45,11 +45,11 @@ public class HitTestStack
     /// </summary>
     /// <param name="position">The position, before being transformed by the world matrix</param>
     /// <returns></returns>
-    internal List<HitTestZone> GetZonesAt(Vector2 position)
+    internal List<IHitTestZone> GetZonesAt(Vector2 position)
     {
         _zones.Sort((x, y) => x.Depth - y.Depth);
 
-        var result = new List<HitTestZone>();
+        var result = new List<IHitTestZone>();
         
         // todo: one day layers and zones will be sorted in the same list so we won't do zones then layers, it'll just be one for loop where we do them all
         
@@ -98,6 +98,16 @@ public class HitTestStack
     public void AddZone(RectangleF rect, Depth depth, Action? beforeResolve, Action callback, bool passThrough = false)
     {
         _zones.Add(new HitTestZone(rect, depth, beforeResolve, callback, passThrough));
+    }
+
+    public void AddInfiniteZone(Depth depth, HoverState hoverState, bool passThrough = false)
+    {
+        _zones.Add(new InfiniteHitTestZone(depth, hoverState.Unset, hoverState.Set, passThrough));
+    }
+    
+    public void AddInfiniteZone(Depth depth, Action callback, bool passThrough = false)
+    {
+        _zones.Add(new InfiniteHitTestZone(depth, null, callback, passThrough));
     }
 
     public HitTestStack AddLayer(Matrix layerMatrix, RectangleF? layerRectangle = null)
