@@ -467,41 +467,58 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveUp(bool leaveAnchor)
     {
-        var targetLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex) - 1);
-        var currentColumn = _charSequence.GetColumn(CursorIndex);
-
-        if (targetLineIndices.Length == 0)
-        {
-            return;
-        }
-
-        if (targetLineIndices.Length <= currentColumn)
-        {
-            _cursor.SetIndex(targetLineIndices[^1], leaveAnchor);
-        }
-        else
-        {
-            _cursor.SetIndex(targetLineIndices[currentColumn], leaveAnchor);
-        }
+        MoveVertically(-1, leaveAnchor);
     }
-
+    
     public void MoveDown(bool leaveAnchor)
     {
-        var targetLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex) + 1);
-        var currentColumn = _charSequence.GetColumn(CursorIndex);
+        MoveVertically(1, leaveAnchor);
+    }
+
+    private void MoveVertically(int delta, bool leaveAnchor)
+    {
+        var currentLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex));
+        var targetLineIndices = _charSequence.GetNodesOnLine(_charSequence.Cache.LineNumberAt(CursorIndex) + delta);
+
+        var currentX = 0f;
+        foreach (var nodeIndex in currentLineIndices)
+        {
+            if (nodeIndex == CursorIndex)
+            {
+                break;
+            }
+            currentX += _charSequence.Cache.RectangleAtNode(nodeIndex).Width;
+        }
+
+        var targetLineX = 0f;
+        var targetColumn = 0;
+        foreach (var nodeIndex in targetLineIndices)
+        {
+            var nextCharWidth = _charSequence.Cache.RectangleAtNode(nodeIndex).Width;
+
+            var distanceToCurrent = Math.Abs(targetLineX - currentX);
+            var distanceToNext = Math.Abs(targetLineX + nextCharWidth - currentX);
+            if (distanceToCurrent < distanceToNext)
+            {
+                break;
+            }
+            
+            targetColumn++;
+            targetLineX += nextCharWidth;
+        }
 
         if (targetLineIndices.Length == 0)
         {
             return;
         }
 
-        if (targetLineIndices.Length <= currentColumn)
+        if (targetLineIndices.Length <= targetColumn)
         {
             _cursor.SetIndex(targetLineIndices[^1], leaveAnchor);
         }
         else
         {
-            _cursor.SetIndex(targetLineIndices[currentColumn], leaveAnchor);
+            _cursor.SetIndex(targetLineIndices[targetColumn], leaveAnchor);
         }
     }
 
