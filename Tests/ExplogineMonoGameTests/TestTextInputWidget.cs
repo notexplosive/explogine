@@ -17,7 +17,7 @@ public class TestTextInputWidget
     public void move_by_words_pinning()
     {
         var str = "The fish was delish and it made quite a dish";
-        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle,
+        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle, false,
             // ReSharper disable once StringLiteralTypo
             str);
 
@@ -60,7 +60,7 @@ public class TestTextInputWidget
     [Fact]
     public void move_remove_and_replace()
     {
-        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle,
+        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle, false,
             "Simple test text");
         inputWidget.MoveRight(false);
         inputWidget.MoveRight(false);
@@ -73,19 +73,19 @@ public class TestTextInputWidget
     public abstract class KeyboardNavigation
     {
         private readonly TextInputWidget _emptyStringWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle,
+            Depth.Middle, false,
             "");
 
         private readonly TextInputWidget _manualManyLine = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle,
+            Depth.Middle, false,
             "Several\nLines\nOf\nText");
 
         private readonly TextInputWidget _naturalMultiLine = new(Vector2.Zero, new Point(300, 300), new TestFont(),
-            Depth.Middle,
+            Depth.Middle, false,
             "This should have natural linebreaks");
 
         private readonly TextInputWidget _oneLineWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle,
+            Depth.Middle, false,
             "Simple test text");
 
         [Fact]

@@ -19,33 +19,63 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private readonly TextCursor _cursor = new();
     private readonly IFontGetter _font;
+    private readonly bool _isSingleLine;
+    private readonly HoverState _isTextAreaHovered;
     private readonly ScrollableArea _scrollableArea;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
     private bool _selected;
-    private readonly HoverState _isTextAreaHovered;
 
-    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, string startingText)
+    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, bool isSingleLine,
+        string startingText)
         : base(position, size, depth)
     {
         _font = font;
-        _scrollableArea = new ScrollableArea(Size, InnerRectangle, Depth.Front);
-        _scrollableArea.EnableInput = new XyBool(false, true);
+        _isSingleLine = isSingleLine;
+
+        var shouldScrollY = ScrollableAxis == Axis.Y;
+        _scrollableArea = new ScrollableArea(Size, InnerRectangle, Depth.Front)
+        {
+            EnableInput = new XyBool(!shouldScrollY, shouldScrollY)
+        };
 
         _isTextAreaHovered = new HoverState();
-
         _cursor.MovedCursor += OnCursorMoved;
-
         // Content will need to be rebuilt every time these values change
-        _charSequence = new CharSequence(font, startingText, TextAreaRectangle, _alignment);
+        _charSequence = new CharSequence(font, startingText, TextAreaRectangle, _alignment, _isSingleLine);
         _charSequence.CacheUpdated += () => OnCursorMoved(CursorIndex);
     }
 
     public string Text => _charSequence.Cache.Text;
     public int CursorIndex => _cursor.Index;
-    public RectangleF TextAreaRectangle => InnerRectangle.Inflated(-5, -5).ResizedOnEdge(RectEdge.Right, new Vector2(-_scrollableArea.ScrollBarWidth, 0));
+    public int MarginSize => 5;
+
+    public RectangleF TextAreaRectangle
+    {
+        get
+        {
+            var withMargin = InnerRectangle.Inflated(-MarginSize, -MarginSize);
+            var scrollBarSide = _isSingleLine ? RectEdge.Bottom : RectEdge.Right;
+            return withMargin.ResizedOnEdge(scrollBarSide,
+                new Vector2(-_scrollableArea.ScrollBarWidth).JustAxis(ScrollableAxis));
+        }
+    }
+
+    private Axis ScrollableAxis
+    {
+        get
+        {
+            if (_isSingleLine)
+            {
+                return Axis.X;
+            }
+
+            return Axis.Y;
+        }
+    }
+
     public RectangleF InnerRectangle => new(Vector2.Zero, Rectangle.Size);
     public int LastIndex => _charSequence.NumberOfChars;
     public int CurrentColumn => _charSequence.GetColumn(CursorIndex);
@@ -75,7 +105,6 @@ public class TextInputWidget : Widget, IUpdateInput
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         UpdateHovered(hitTestStack);
-
 
         if (_selected)
         {
@@ -135,10 +164,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
         _scrollableArea.UpdateInput(input, unscrolledHitTestStack);
 
-        scrollingHitTestStack.BeforeLayerResolved += () =>
-        {
-            _hoveredLetterIndex = null;
-        };
+        scrollingHitTestStack.BeforeLayerResolved += () => { _hoveredLetterIndex = null; };
 
         unscrolledHitTestStack.AddZone(TextAreaRectangle, Depth.Middle, _isTextAreaHovered, true);
 
@@ -286,6 +312,11 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    /// <summary>
+    ///     Fired when you attempt a newline in single line mode
+    /// </summary>
+    public event Action? Submitted;
+
     private void OnCursorMoved(int nodeIndex)
     {
         _scrollableArea.InnerWorldBoundaries =
@@ -293,20 +324,41 @@ public class TextInputWidget : Widget, IUpdateInput
 
         var nodeRect = _charSequence.Cache.RectangleAtNode(nodeIndex);
         var viewBounds = _scrollableArea.ViewBounds;
+
+        float Far(RectangleF rect)
+        {
+            if (ScrollableAxis == Axis.Y)
+            {
+                return rect.Bottom;
+            }
+
+            return rect.Right;
+        }
+
+        float Near(RectangleF rect)
+        {
+            if (ScrollableAxis == Axis.Y)
+            {
+                return rect.Top;
+            }
+
+            return rect.Left;
+        }
+        
         if (!viewBounds.Contains(nodeRect))
         {
-            var verticalDistance = 0f;
-            if (nodeRect.Bottom > viewBounds.Bottom)
+            var distance = 0f;
+            if (Far(nodeRect) > Far(viewBounds))
             {
-                verticalDistance = nodeRect.Bottom - viewBounds.Bottom;
+                distance = Far(nodeRect) - Far(viewBounds);
             }
 
-            if (nodeRect.Top < viewBounds.Top)
+            if (Near(nodeRect) < Near(viewBounds))
             {
-                verticalDistance = nodeRect.Top - viewBounds.Top;
+                distance = Near(nodeRect) - Near(viewBounds);
             }
 
-            _scrollableArea.Move(new Vector2(0, verticalDistance));
+            _scrollableArea.Move(new Vector2(distance).JustAxis(ScrollableAxis) + new Vector2(distance).Normalized() * MarginSize);
         }
 
         _scrollableArea.ReConstrain();
@@ -469,7 +521,7 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         MoveVertically(-1, leaveAnchor);
     }
-    
+
     public void MoveDown(bool leaveAnchor)
     {
         MoveVertically(1, leaveAnchor);
@@ -487,6 +539,7 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 break;
             }
+
             currentX += _charSequence.Cache.RectangleAtNode(nodeIndex).Width;
         }
 
@@ -502,7 +555,7 @@ public class TextInputWidget : Widget, IUpdateInput
             {
                 break;
             }
-            
+
             targetColumn++;
             targetLineX += nextCharWidth;
         }
@@ -586,7 +639,7 @@ public class TextInputWidget : Widget, IUpdateInput
             }
         }
 
-        painter.DrawStringWithinRectangle(_font, Text, TextAreaRectangle, _alignment,
+        painter.DrawStringWithinRectangle(_font, Text, _charSequence.Cache.ContainerRectangle, _alignment,
             new DrawSettings {Color = Color.Black, Depth = depth});
 
         if (_hoveredLetterIndex.HasValue)
@@ -709,7 +762,14 @@ public class TextInputWidget : Widget, IUpdateInput
                     }
                     else if (character == '\r')
                     {
-                        EnterCharacter('\n');
+                        if (!_isSingleLine)
+                        {
+                            EnterCharacter('\n');
+                        }
+                        else
+                        {
+                            Submitted?.Invoke();
+                        }
                     }
                     else
                     {
@@ -766,14 +826,15 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         private readonly List<char> _nodes = new();
 
-        public CharSequence(IFontGetter font, string text, RectangleF containerRectangle, Alignment alignment)
+        public CharSequence(IFontGetter font, string text, RectangleF containerRectangle, Alignment alignment,
+            bool isSingleLine)
         {
             foreach (var character in text)
             {
                 _nodes.Add(character);
             }
 
-            Cache = new Cache(_nodes.ToArray(), font, containerRectangle, alignment);
+            Cache = new Cache(_nodes.ToArray(), font, containerRectangle, alignment, isSingleLine);
         }
 
         public Cache Cache { get; private set; }
@@ -910,59 +971,30 @@ public class TextInputWidget : Widget, IUpdateInput
     private class Cache
     {
         private readonly Alignment _alignment;
-        private readonly RectangleF _containerRectangle;
+        public RectangleF ContainerRectangle { get; }
         private readonly IFontGetter _font;
+        private readonly bool _isSingleLine;
         private readonly RectangleF[] _lineRects;
         private readonly CacheNode[] _nodes;
-        private readonly char[] _originalChars;
 
-        public Cache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment)
+        public Cache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment,
+            bool isSingleLine)
         {
-            _originalChars = chars;
             _font = font;
-            _containerRectangle = containerRectangle;
+            ContainerRectangle = containerRectangle;
+            if (isSingleLine)
+            {
+                ContainerRectangle =
+                    new RectangleF(containerRectangle.Location, new Vector2(float.MaxValue, containerRectangle.Height));
+            }
+
             _alignment = alignment;
+            _isSingleLine = isSingleLine;
             var numberOfNodes = chars.Length + 1;
             _nodes = new CacheNode[numberOfNodes];
             Text = BuildString(chars);
             BuildFormattedText();
-
-            _lineRects = new RectangleF[NumberOfLines];
-            var currentLineNumber = 0;
-            RectangleF? currentLineRectangle = null;
-            foreach (var node in _nodes)
-            {
-                if (node.OriginalGlyph.Data is FormattedText.WhiteSpaceGlyphData
-                    {
-                        WhiteSpaceType: WhiteSpaceType.NullTerminator
-                    })
-                {
-                    break;
-                }
-
-                if (currentLineRectangle == null)
-                {
-                    currentLineRectangle = node.Rectangle;
-                }
-                else
-                {
-                    if (node.LineNumber != currentLineNumber)
-                    {
-                        _lineRects[currentLineNumber] = currentLineRectangle.Value;
-                        currentLineNumber++;
-                        currentLineRectangle = node.Rectangle;
-                    }
-                    else
-                    {
-                        currentLineRectangle = RectangleF.Union(currentLineRectangle.Value, node.Rectangle);
-                    }
-                }
-            }
-
-            if (currentLineRectangle.HasValue)
-            {
-                _lineRects[NumberOfLines - 1] = currentLineRectangle.Value;
-            }
+            _lineRects = BuildLineRects();
         }
 
         public string Text { get; }
@@ -982,6 +1014,49 @@ public class TextInputWidget : Widget, IUpdateInput
         }
 
         public int NumberOfLines => _nodes[^1].LineNumber + 1;
+
+        private RectangleF[] BuildLineRects()
+        {
+            var result = new RectangleF[NumberOfLines];
+            var currentLineNumber = 0;
+            RectangleF? currentLineRectangle = null;
+
+            foreach (var node in _nodes)
+            {
+                if (node.OriginalGlyph.Data is FormattedText.WhiteSpaceGlyphData
+                    {
+                        WhiteSpaceType: WhiteSpaceType.NullTerminator
+                    })
+                {
+                    break;
+                }
+
+                if (currentLineRectangle == null)
+                {
+                    currentLineRectangle = node.Rectangle;
+                }
+                else
+                {
+                    if (node.LineNumber != currentLineNumber)
+                    {
+                        result[currentLineNumber] = currentLineRectangle.Value;
+                        currentLineNumber++;
+                        currentLineRectangle = node.Rectangle;
+                    }
+                    else
+                    {
+                        currentLineRectangle = RectangleF.Union(currentLineRectangle.Value, node.Rectangle);
+                    }
+                }
+            }
+
+            if (currentLineRectangle.HasValue)
+            {
+                result[NumberOfLines - 1] = currentLineRectangle.Value;
+            }
+
+            return result;
+        }
 
         private string BuildString(char[] chars)
         {
@@ -1004,7 +1079,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             var nodeIndex = 0;
 
-            foreach (var glyph in new FormattedText(_font, Text).GetGlyphs(_containerRectangle, _alignment).ToArray())
+            foreach (var glyph in new FormattedText(_font, Text).GetGlyphs(ContainerRectangle, _alignment).ToArray())
             {
                 var character = '\0';
                 if (glyph.Data is FormattedText.WhiteSpaceGlyphData whiteSpaceGlyphData)
@@ -1029,7 +1104,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
         public Cache Rebuild(char[] newNodes)
         {
-            return new Cache(newNodes, _font, _containerRectangle, _alignment);
+            return new Cache(newNodes, _font, ContainerRectangle, _alignment, _isSingleLine);
         }
 
         [Pure]
