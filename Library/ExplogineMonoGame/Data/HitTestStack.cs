@@ -33,7 +33,7 @@ public class HitTestStack
     }
 
     /// <summary>
-    /// Gets all PassThrough Zones at the position, as well as the top non-PassThrough Zone at the position if it exists
+    ///     Gets all PassThrough Zones at the position, as well as the top non-PassThrough Zone at the position if it exists
     /// </summary>
     /// <param name="position">The position, before being transformed by the world matrix</param>
     /// <returns></returns>
@@ -42,12 +42,11 @@ public class HitTestStack
         _zones.Sort((x, y) => x.Depth - y.Depth);
 
         var result = new List<IHitTestZone>();
-        
+
         foreach (var zone in _zones)
         {
             if (zone.Contains(position, WorldMatrix))
             {
-
                 if (zone is NestedHitTestZone nestedHitTestZone)
                 {
                     var lowerZones = nestedHitTestZone.HitTestStack.GetZonesAt(position);
@@ -94,7 +93,7 @@ public class HitTestStack
     {
         _zones.Add(new InfiniteHitTestZone(depth, hoverState.Unset, hoverState.Set, passThrough));
     }
-    
+
     public void AddInfiniteZone(Depth depth, Action callback, bool passThrough = false)
     {
         _zones.Add(new InfiniteHitTestZone(depth, null, callback, passThrough));
@@ -106,7 +105,7 @@ public class HitTestStack
         {
             // clumsy, in any other scenario I want HitTestZones to have a callback, so I don't want it as `Action?`
         }
-        
+
         IHitTestZone zone;
         if (rect.HasValue)
         {
@@ -116,12 +115,12 @@ public class HitTestStack
         {
             zone = new InfiniteHitTestZone(depth, null, DoNothing, true);
         }
-        
+
         var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix);
         _zones.Add(new NestedHitTestZone(hitTestStack, zone));
         return hitTestStack;
     }
-    
+
     private HitTestStack AddLayer(Matrix layerMatrix, IHitTestZone zone)
     {
         var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix);
