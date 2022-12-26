@@ -30,7 +30,7 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         var translation = Matrix.CreateTranslation(new Vector3(-Rectangle.TopLeft, 0));
-        InnerGui.UpdateInput(input, hitTestStack.AddLayer(translation));
+        InnerGui.UpdateInput(input, hitTestStack.AddLayer(translation, Depth));
     }
 
     public void PreDraw(Painter painter, IGuiTheme uiTheme)

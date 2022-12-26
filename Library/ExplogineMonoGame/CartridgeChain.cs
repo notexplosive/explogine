@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExplogineCore;
+using ExplogineCore.Data;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Debugging;
@@ -39,8 +40,8 @@ internal class CartridgeChain : IUpdateInput
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
-        DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity));
-        Current.UpdateInput(input, hitTestStack.AddLayer(Client.Canvas.ScreenToCanvas));
+        DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
+        Current.UpdateInput(input, hitTestStack.AddLayer(Client.Canvas.ScreenToCanvas, Depth.Middle + 1));
     }
 
     public void Update(float dt)

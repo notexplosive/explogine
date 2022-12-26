@@ -7,23 +7,15 @@ namespace ExplogineMonoGame.Data;
 
 public class HitTestStack
 {
-    private readonly RectangleF? _maskRectangle;
-    private readonly List<HitTestStack> _subLayers = new();
     private readonly List<IHitTestZone> _zones = new();
 
-    public HitTestStack(Matrix worldMatrix, RectangleF? maskRectangle = null)
+    public HitTestStack(Matrix worldMatrix)
     {
         WorldMatrix = worldMatrix;
-        _maskRectangle = maskRectangle;
     }
 
     public Matrix WorldMatrix { get; }
     public event Action? BeforeLayerResolved;
-
-    public bool IsWithinMaskRectangle(Vector2 position, Matrix parentMatrix)
-    {
-        return !_maskRectangle.HasValue || _maskRectangle.Value.Contains(Vector2.Transform(position, parentMatrix));
-    }
 
     internal void OnBeforeResolve()
     {
@@ -32,11 +24,11 @@ public class HitTestStack
         foreach (var zone in _zones)
         {
             zone.BeforeResolve?.Invoke();
-        }
 
-        foreach (var layer in _subLayers)
-        {
-            layer.OnBeforeResolve();
+            if (zone is NestedHitTestZone nest)
+            {
+                nest.HitTestStack.OnBeforeResolve();
+            }
         }
     }
 
@@ -51,33 +43,31 @@ public class HitTestStack
 
         var result = new List<IHitTestZone>();
         
-        // todo: one day layers and zones will be sorted in the same list so we won't do zones then layers, it'll just be one for loop where we do them all
-        
         foreach (var zone in _zones)
         {
             if (zone.Contains(position, WorldMatrix))
             {
-                result.Add(zone);
+
+                if (zone is NestedHitTestZone nestedHitTestZone)
+                {
+                    var lowerZones = nestedHitTestZone.HitTestStack.GetZonesAt(position);
+                    result.AddRange(lowerZones);
+                    foreach (var lowerZone in lowerZones)
+                    {
+                        if (!lowerZone.PassThrough)
+                        {
+                            return result;
+                        }
+                    }
+                }
+                else
+                {
+                    result.Add(zone);
+                }
 
                 if (!zone.PassThrough)
                 {
                     return result;
-                }
-            }
-        }
-
-        foreach (var layer in _subLayers)
-        {
-            if (layer.IsWithinMaskRectangle(position, WorldMatrix))
-            {
-                var zones = layer.GetZonesAt(position);
-                result.AddRange(zones);
-                foreach (var zone in zones)
-                {
-                    if (!zone.PassThrough)
-                    {
-                        return result;
-                    }
                 }
             }
         }
@@ -110,10 +100,32 @@ public class HitTestStack
         _zones.Add(new InfiniteHitTestZone(depth, null, callback, passThrough));
     }
 
-    public HitTestStack AddLayer(Matrix layerMatrix, RectangleF? layerRectangle = null)
+    public HitTestStack AddLayer(Matrix layerMatrix, Depth depth, RectangleF? rect = null)
     {
-        var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix, layerRectangle);
-        _subLayers.Add(hitTestStack);
+        void DoNothing()
+        {
+            // clumsy, in any other scenario I want HitTestZones to have a callback, so I don't want it as `Action?`
+        }
+        
+        IHitTestZone zone;
+        if (rect.HasValue)
+        {
+            zone = new HitTestZone(rect.Value, depth, null, DoNothing, true);
+        }
+        else
+        {
+            zone = new InfiniteHitTestZone(depth, null, DoNothing, true);
+        }
+        
+        var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix);
+        _zones.Add(new NestedHitTestZone(hitTestStack, zone));
+        return hitTestStack;
+    }
+    
+    private HitTestStack AddLayer(Matrix layerMatrix, IHitTestZone zone)
+    {
+        var hitTestStack = new HitTestStack(WorldMatrix * layerMatrix);
+        _zones.Add(new NestedHitTestZone(hitTestStack, zone));
         return hitTestStack;
     }
 }
