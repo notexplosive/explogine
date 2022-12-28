@@ -21,7 +21,7 @@ public class TestTextInputWidget
             new TextInputWidget.Settings(
                 Depth.Middle, false,
                 false,
-                str));
+                str, null));
 
         var resultLines = new List<string> {str};
 
@@ -64,7 +64,7 @@ public class TestTextInputWidget
             new TextInputWidget.Settings(
                 Depth.Middle, false,
                 false,
-                "Simple test text"));
+                "Simple test text", null));
         inputWidget.MoveRight(false);
         inputWidget.MoveRight(false);
         inputWidget.ReverseBackspace(false);
@@ -78,22 +78,22 @@ public class TestTextInputWidget
         private readonly TextInputWidget _emptyStringWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
             new TextInputWidget.Settings(
                 Depth.Middle, false, false,
-                ""));
+                "", null));
 
         private readonly TextInputWidget _manualManyLine = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
             new TextInputWidget.Settings(
                 Depth.Middle, false, false,
-                "Several\nLines\nOf\nText"));
+                "Several\nLines\nOf\nText", null));
 
         private readonly TextInputWidget _naturalMultiLine = new(Vector2.Zero, new Point(300, 300), new TestFont(),
             new TextInputWidget.Settings(
                 Depth.Middle, false, false,
-                "This should have natural linebreaks"));
+                "This should have natural linebreaks", null));
 
         private readonly TextInputWidget _oneLineWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
             new TextInputWidget.Settings(
                 Depth.Middle, false, false,
-                "Simple test text"));
+                "Simple test text", null));
 
         [Fact]
         public void one_line_home()

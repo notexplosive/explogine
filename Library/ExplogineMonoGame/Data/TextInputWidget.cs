@@ -16,6 +16,8 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly ClickCounter _clickCounter = new();
     private readonly bool _isSingleLine;
     private readonly HoverState _isTextAreaHovered;
+    private readonly Selectable _selectable;
+    private readonly ISelector _selector;
     private readonly bool _showScrollbar;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
@@ -26,6 +28,8 @@ public class TextInputWidget : Widget, IUpdateInput
         : base(position, size, settings.Depth)
     {
         Font = font;
+        _selectable = new Selectable();
+        _selector = settings.Selector ?? new AlwaysSelected(_selectable);
         _showScrollbar = settings.ShowScrollbar;
         _isSingleLine = settings.IsSingleLine;
 
@@ -48,7 +52,23 @@ public class TextInputWidget : Widget, IUpdateInput
     public TextCursor Cursor { get; } = new();
     public IFontGetter Font { get; }
     public ScrollableArea ScrollableArea { get; }
-    public bool Selected { get; private set; }
+
+    public bool Selected
+    {
+        get => _selectable.IsSelectedBy(_selector);
+        set
+        {
+            if (value)
+            {
+                _selectable.BecomeSelectedBy(_selector);
+            }
+            else
+            {
+                _selectable.DeselectFrom(_selector);
+            }
+        }
+    }
+
     public string Text => Content.Text;
     public int CursorIndex => Cursor.Index;
     public int MarginSize => 5;
@@ -273,6 +293,12 @@ public class TextInputWidget : Widget, IUpdateInput
             if (input.Mouse.GetButton(MouseButton.Left).WasPressed)
             {
                 _isDragging = true;
+
+                if (!Selected && HoveredNodeIndex.HasValue)
+                {
+                    Cursor.SetIndex(HoveredNodeIndex.Value, false);
+                }
+                
                 Selected = true;
 
                 if (HoveredNodeIndex.HasValue)
@@ -786,7 +812,8 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    public readonly record struct Settings(Depth Depth, bool IsSingleLine, bool ShowScrollbar, string StartingText);
+    public readonly record struct Settings(Depth Depth, bool IsSingleLine, bool ShowScrollbar, string StartingText,
+        ISelector? Selector);
 
     private delegate bool ScanFindDelegate(int index);
 
