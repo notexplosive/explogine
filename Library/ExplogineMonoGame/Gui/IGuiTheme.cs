@@ -9,6 +9,7 @@ public interface IGuiTheme
     void DrawCheckbox(Painter painter, Checkbox checkbox);
     void DrawSlider(Painter painter, Slider slider);
     void DrawRadialCheckbox(Painter painter, RadialCheckbox radialCheckbox);
+    void DrawScrollbar(Painter painter, Scrollbar scrollBar);
     Color BackgroundColor { get; }
     IFontGetter Font { get; }
 }

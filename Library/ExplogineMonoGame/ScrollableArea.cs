@@ -53,7 +53,7 @@ public class ScrollableArea : IUpdateInput
         _viewPosition = (ViewBounds with {Location = position}).ConstrainedTo(InnerWorldBoundaries).TopLeft;
     }
 
-    public void DrawScrollbars(Painter painter, SimpleGuiTheme theme)
+    public void DrawScrollbars(Painter painter, IGuiTheme theme)
     {
         if (EnableInput.X)
         {
