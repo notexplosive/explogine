@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Data;
+﻿using ExplogineCore.Data;
+using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Layout;
 using Microsoft.Xna.Framework;
 
@@ -25,6 +26,49 @@ public class SimpleGuiTheme : IGuiTheme
     public Color BackgroundColor { get; }
 
     public IFontGetter Font { get; }
+
+    public void DrawTextInput(Painter painter, TextInputWidget textInputWidget)
+    {
+        painter.BeginSpriteBatch(textInputWidget.ScrollableArea.CanvasToScreen);
+        var depth = Depth.Middle;
+
+        painter.Clear(BackgroundColor);
+
+        if (textInputWidget.Selected)
+        {
+            painter.DrawRectangle(textInputWidget.CursorRectangle,
+                new DrawSettings {Depth = depth - 1, Color = PrimaryColor});
+
+            var random = new NoiseBasedRng(123);
+            var selectionColor = SecondaryColor;
+
+            foreach (var selectionRect in textInputWidget.GetSelectionRectangles())
+            {
+                if (Client.Debug.IsActive)
+                {
+                    selectionColor = random.NextColor();
+                }
+
+                painter.DrawRectangle(selectionRect,
+                    new DrawSettings {Depth = depth + 1, Color = selectionColor.WithMultipliedOpacity(0.5f)});
+            }
+        }
+
+        painter.DrawStringWithinRectangle(textInputWidget.Font, textInputWidget.Text,
+            textInputWidget.ContainerRectangle, textInputWidget.Alignment,
+            new DrawSettings {Color = PrimaryColor, Depth = depth});
+
+        if (Client.Debug.IsActive)
+        {
+            textInputWidget.DrawDebugInfo(painter);
+        }
+
+        painter.EndSpriteBatch();
+
+        painter.BeginSpriteBatch();
+        textInputWidget.ScrollableArea.DrawScrollbars(painter, this);
+        painter.EndSpriteBatch();
+    }
 
     public void DrawButton(Painter painter, Button button)
     {

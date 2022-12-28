@@ -12,4 +12,5 @@ public interface IGuiTheme
     void DrawScrollbar(Painter painter, Scrollbar scrollBar);
     Color BackgroundColor { get; }
     IFontGetter Font { get; }
+    void DrawTextInput(Painter painter, TextInputWidget textInputWidget);
 }
