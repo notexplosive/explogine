@@ -70,4 +70,10 @@ public class ScrollableArea : IUpdateInput
     {
         _viewPosition = ViewBounds.ConstrainedTo(InnerWorldBoundaries).TopLeft;
     }
+
+    public bool CanScrollAlong(Axis scrollableAxis)
+    {
+        return ViewBounds.Size.GetAxis(scrollableAxis) <
+            InnerWorldBoundaries.Size.GetAxis(scrollableAxis);
+    }
 }

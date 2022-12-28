@@ -16,16 +16,19 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly ClickCounter _clickCounter = new();
     private readonly bool _isSingleLine;
     private readonly HoverState _isTextAreaHovered;
+    private readonly bool _showScrollbar;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, bool isSingleLine,
+        bool showScrollbar,
         string startingText)
         : base(position, size, depth)
     {
         Font = font;
+        _showScrollbar = showScrollbar;
         _isSingleLine = isSingleLine;
 
         var shouldScrollY = ScrollableAxis == Axis.Y;
@@ -43,13 +46,10 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public Alignment Alignment { get; } = Alignment.TopLeft;
     private TextInputContent Content { get; }
-
     public TextCursor Cursor { get; } = new();
     public IFontGetter Font { get; }
-
     public ScrollableArea ScrollableArea { get; }
     public bool Selected { get; private set; }
-
     public string Text => Content.Text;
     public int CursorIndex => Cursor.Index;
     public int MarginSize => 5;
@@ -110,7 +110,7 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         get
         {
-            int index = CursorIndex;
+            var index = CursorIndex;
             var cursorRect = Content.RectangleAtNode(index);
             var size = cursorRect.Size;
             size.X = 2f;
@@ -118,6 +118,8 @@ public class TextInputWidget : Widget, IUpdateInput
             return new RectangleF(cursorRect.TopLeft, size);
         }
     }
+
+    private bool IsShowingScrollbar => ScrollableArea.CanScrollAlong(ScrollableAxis) && _showScrollbar;
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
@@ -181,7 +183,10 @@ public class TextInputWidget : Widget, IUpdateInput
         var scrollingHitTestStack =
             wrapperHitTestStack.AddLayer(ScrollableArea.ScreenToCanvas * ScreenToCanvas, Depth.Middle + 1);
 
-        ScrollableArea.UpdateInput(input, unscrolledHitTestStack);
+        if (IsShowingScrollbar)
+        {
+            ScrollableArea.UpdateInput(input, unscrolledHitTestStack);
+        }
 
         scrollingHitTestStack.BeforeLayerResolved += () => { _hoveredLetterIndex = null; };
 
@@ -597,6 +602,14 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         Client.Graphics.PushCanvas(Canvas);
         theme.DrawTextInput(painter, this);
+
+        if (IsShowingScrollbar)
+        {
+            painter.BeginSpriteBatch();
+            ScrollableArea.DrawScrollbars(painter, theme);
+            painter.EndSpriteBatch();
+        }
+
         Client.Graphics.PopCanvas();
     }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ApprovalTests;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
@@ -18,22 +17,23 @@ public class TestTextInputWidget
     {
         var str = "The fish was delish and it made quite a dish";
         var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle, false,
+            false,
             // ReSharper disable once StringLiteralTypo
             str);
 
         var resultLines = new List<string>();
-        
+
         resultLines.Add(str);
-        
-        for (int i = 0; i < str.Length; i++)
+
+        for (var i = 0; i < str.Length; i++)
         {
             var from = i;
             var toLeft = inputWidget.GetWordBoundaryLeftOf(i);
             var toRight = inputWidget.GetWordBoundaryRightOf(i);
-            
+
             var chars = Enumerable.Repeat(' ', str.Length + 1).ToArray();
 
-            for (int j = 0; j < str.Length + 1; j++)
+            for (var j = 0; j < str.Length + 1; j++)
             {
                 if (j == from)
                 {
@@ -44,14 +44,14 @@ public class TestTextInputWidget
                 {
                     chars[j] = '<';
                 }
-                
+
                 if (j == toRight)
                 {
                     chars[j] = '>';
                 }
             }
-            
-            resultLines.Add(string.Join("",chars));
+
+            resultLines.Add(string.Join("", chars));
         }
 
         Approvals.Verify(string.Join('\n', resultLines));
@@ -61,6 +61,7 @@ public class TestTextInputWidget
     public void move_remove_and_replace()
     {
         var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle, false,
+            false,
             "Simple test text");
         inputWidget.MoveRight(false);
         inputWidget.MoveRight(false);
@@ -73,19 +74,19 @@ public class TestTextInputWidget
     public abstract class KeyboardNavigation
     {
         private readonly TextInputWidget _emptyStringWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle, false,
+            Depth.Middle, false, false,
             "");
 
         private readonly TextInputWidget _manualManyLine = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle, false,
+            Depth.Middle, false, false,
             "Several\nLines\nOf\nText");
 
         private readonly TextInputWidget _naturalMultiLine = new(Vector2.Zero, new Point(300, 300), new TestFont(),
-            Depth.Middle, false,
+            Depth.Middle, false, false,
             "This should have natural linebreaks");
 
         private readonly TextInputWidget _oneLineWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle, false,
+            Depth.Middle, false, false,
             "Simple test text");
 
         [Fact]

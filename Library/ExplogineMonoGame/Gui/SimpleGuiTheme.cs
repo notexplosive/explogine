@@ -64,10 +64,6 @@ public class SimpleGuiTheme : IGuiTheme
         }
 
         painter.EndSpriteBatch();
-
-        painter.BeginSpriteBatch();
-        textInputWidget.ScrollableArea.DrawScrollbars(painter, this);
-        painter.EndSpriteBatch();
     }
 
     public void DrawButton(Painter painter, Button button)
