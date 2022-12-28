@@ -37,12 +37,12 @@ public class TextInputWidget : Widget, IUpdateInput
         _isTextAreaHovered = new HoverState();
         Cursor.MovedCursor += OnCursorMoved;
         // Content will need to be rebuilt every time these values change
-        Sequence = new CharSequence(font, startingText, TextAreaRectangle, Alignment, _isSingleLine);
-        Sequence.CacheUpdated += () => OnCursorMoved(CursorIndex);
+        Content = new TextInputContent(font, startingText, TextAreaRectangle, Alignment, _isSingleLine);
+        Content.CacheUpdated += () => OnCursorMoved(CursorIndex);
     }
 
     public Alignment Alignment { get; } = Alignment.TopLeft;
-    private CharSequence Sequence { get; }
+    private TextInputContent Content { get; }
 
     public TextCursor Cursor { get; } = new();
     public IFontGetter Font { get; }
@@ -50,7 +50,7 @@ public class TextInputWidget : Widget, IUpdateInput
     public ScrollableArea ScrollableArea { get; }
     public bool Selected { get; private set; }
 
-    public string Text => Sequence.Text;
+    public string Text => Content.Text;
     public int CursorIndex => Cursor.Index;
     public int MarginSize => 5;
 
@@ -79,9 +79,9 @@ public class TextInputWidget : Widget, IUpdateInput
     }
 
     public RectangleF InnerRectangle => new(Vector2.Zero, Rectangle.Size);
-    public int LastIndex => Sequence.NumberOfChars;
-    public int CurrentColumn => Sequence.GetColumn(CursorIndex);
-    public int CurrentLine => Sequence.LineNumberAt(CursorIndex);
+    public int LastIndex => Content.NumberOfChars;
+    public int CurrentColumn => Content.GetColumn(CursorIndex);
+    public int CurrentLine => Content.LineNumberAt(CursorIndex);
 
     private int? HoveredNodeIndex
     {
@@ -95,23 +95,23 @@ public class TextInputWidget : Widget, IUpdateInput
             var offset = _hoveredSide == HorizontalDirection.Right ? 1 : 0;
             var result = _hoveredLetterIndex.Value + offset;
 
-            if (result > Sequence.NumberOfChars)
+            if (result > Content.NumberOfChars)
             {
-                result = Sequence.NumberOfChars;
+                result = Content.NumberOfChars;
             }
 
             return result;
         }
     }
 
-    public RectangleF ContainerRectangle => Sequence.ContainerRectangle;
+    public RectangleF ContainerRectangle => Content.ContainerRectangle;
 
     public RectangleF CursorRectangle
     {
         get
         {
             int index = CursorIndex;
-            var cursorRect = Sequence.RectangleAtNode(index);
+            var cursorRect = Content.RectangleAtNode(index);
             var size = cursorRect.Size;
             size.X = 2f;
             cursorRect.Offset(-size.X / 2f, 0);
@@ -194,7 +194,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             if (Selected)
             {
-                var lineRectangles = Sequence.LineRectangles();
+                var lineRectangles = Content.LineRectangles();
                 var targetIndex = 0;
                 var mousePosition = input.Mouse.Position(scrollingHitTestStack.WorldMatrix);
 
@@ -234,7 +234,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
                     if (isWithin)
                     {
-                        var nodesOnLine = Sequence.GetNodesOnLine(lineNumber);
+                        var nodesOnLine = Content.GetNodesOnLine(lineNumber);
                         if (mousePosition.X > lineRectangle.Right || forceToEnd)
                         {
                             targetIndex = nodesOnLine[^1];
@@ -302,10 +302,10 @@ public class TextInputWidget : Widget, IUpdateInput
                 }
             }
 
-            for (var i = 0; i < Sequence.NumberOfChars; i++)
+            for (var i = 0; i < Content.NumberOfChars; i++)
             {
                 var index = i; // index will be captured so we need to set aside a variable
-                var charRectangle = Sequence.RectangleAtNode(i);
+                var charRectangle = Content.RectangleAtNode(i);
                 var halfWidth = charRectangle.Size.X / 2;
                 var leftRectangle = new RectangleF(charRectangle.Location,
                     new Vector2(halfWidth, charRectangle.Size.Y));
@@ -339,9 +339,9 @@ public class TextInputWidget : Widget, IUpdateInput
     private void OnCursorMoved(int nodeIndex)
     {
         ScrollableArea.InnerWorldBoundaries =
-            RectangleF.Union(InnerRectangle, Sequence.UsedSpace);
+            RectangleF.Union(InnerRectangle, Content.UsedSpace);
 
-        var nodeRect = Sequence.RectangleAtNode(nodeIndex);
+        var nodeRect = Content.RectangleAtNode(nodeIndex);
         var viewBounds = ScrollableArea.ViewBounds;
 
         float Far(RectangleF rect)
@@ -386,13 +386,13 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void SelectEverything(bool leaveAnchor)
     {
-        SelectRange(0, Sequence.NumberOfChars);
+        SelectRange(0, Content.NumberOfChars);
     }
 
     private void SelectLineAtIndex(int index)
     {
-        var left = Sequence.ScanUntil(index, HorizontalDirection.Left, IsManualNewlineAtIndex);
-        var right = Sequence.ScanUntil(index, HorizontalDirection.Right, IsManualNewlineAtIndex);
+        var left = Content.ScanUntil(index, HorizontalDirection.Left, IsManualNewlineAtIndex);
+        var right = Content.ScanUntil(index, HorizontalDirection.Right, IsManualNewlineAtIndex);
         SelectRange(left, right);
     }
 
@@ -405,8 +405,8 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         if (IsWordBoundaryAtIndex(index))
         {
-            var left = Sequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundaryAtIndex);
-            var right = Sequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundaryAtIndex);
+            var left = Content.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundaryAtIndex);
+            var right = Content.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundaryAtIndex);
 
             if (IsNotWordBoundaryAtIndex(left))
             {
@@ -417,7 +417,7 @@ public class TextInputWidget : Widget, IUpdateInput
         }
         else
         {
-            var nudgeLeft = Sequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1);
+            var nudgeLeft = Content.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1);
             SelectRange(GetWordBoundaryLeftOf(index + (nudgeLeft ? 1 : 0)), GetWordBoundaryRightOf(index));
         }
     }
@@ -464,7 +464,7 @@ public class TextInputWidget : Widget, IUpdateInput
         if (CursorIndex > 0)
         {
             Cursor.SetIndex(CursorIndex - distance, false);
-            Sequence.RemoveSeveralAt(CursorIndex, distance);
+            Content.RemoveSeveralAt(CursorIndex, distance);
         }
     }
 
@@ -473,19 +473,19 @@ public class TextInputWidget : Widget, IUpdateInput
         var index = GetWordBoundaryRightOf(CursorIndex);
 
         var distance = index - CursorIndex;
-        Sequence.RemoveSeveralAt(CursorIndex, distance);
+        Content.RemoveSeveralAt(CursorIndex, distance);
     }
 
     public int GetWordBoundaryLeftOf(int index)
     {
-        if (Sequence.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1))
+        if (Content.IsValidIndex(index - 1) && IsWordBoundaryAtIndex(index - 1))
         {
-            index = Sequence.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundaryAtIndex);
+            index = Content.ScanUntil(index, HorizontalDirection.Left, IsNotWordBoundaryAtIndex);
         }
 
-        index = Sequence.ScanUntil(index, HorizontalDirection.Left, IsWordBoundaryAtIndex);
+        index = Content.ScanUntil(index, HorizontalDirection.Left, IsWordBoundaryAtIndex);
 
-        if (Sequence.IsValidIndex(index + 1) && index != 0)
+        if (Content.IsValidIndex(index + 1) && index != 0)
         {
             index++;
         }
@@ -502,10 +502,10 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         if (IsWordBoundaryAtIndex(index))
         {
-            index = Sequence.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundaryAtIndex);
+            index = Content.ScanUntil(index, HorizontalDirection.Right, IsNotWordBoundaryAtIndex);
         }
 
-        index = Sequence.ScanUntil(index, HorizontalDirection.Right, IsWordBoundaryAtIndex);
+        index = Content.ScanUntil(index, HorizontalDirection.Right, IsWordBoundaryAtIndex);
 
         return index;
     }
@@ -527,12 +527,12 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveToStartOfLine(bool leaveAnchor)
     {
-        Cursor.SetIndex(Sequence.GetNodesOnLine(CurrentLine)[0], leaveAnchor);
+        Cursor.SetIndex(Content.GetNodesOnLine(CurrentLine)[0], leaveAnchor);
     }
 
     public void MoveToEndOfLine(bool leaveAnchor)
     {
-        Cursor.SetIndex(Sequence.GetNodesOnLine(CurrentLine)[^1], leaveAnchor);
+        Cursor.SetIndex(Content.GetNodesOnLine(CurrentLine)[^1], leaveAnchor);
     }
 
     public void MoveUp(bool leaveAnchor)
@@ -547,8 +547,8 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void MoveVertically(int delta, bool leaveAnchor)
     {
-        var currentLineIndices = Sequence.GetNodesOnLine(Sequence.LineNumberAt(CursorIndex));
-        var targetLineIndices = Sequence.GetNodesOnLine(Sequence.LineNumberAt(CursorIndex) + delta);
+        var currentLineIndices = Content.GetNodesOnLine(Content.LineNumberAt(CursorIndex));
+        var targetLineIndices = Content.GetNodesOnLine(Content.LineNumberAt(CursorIndex) + delta);
 
         var currentX = 0f;
         foreach (var nodeIndex in currentLineIndices)
@@ -558,14 +558,14 @@ public class TextInputWidget : Widget, IUpdateInput
                 break;
             }
 
-            currentX += Sequence.RectangleAtNode(nodeIndex).Width;
+            currentX += Content.RectangleAtNode(nodeIndex).Width;
         }
 
         var targetLineX = 0f;
         var targetColumn = 0;
         foreach (var nodeIndex in targetLineIndices)
         {
-            var nextCharWidth = Sequence.RectangleAtNode(nodeIndex).Width;
+            var nextCharWidth = Content.RectangleAtNode(nodeIndex).Width;
 
             var distanceToCurrent = Math.Abs(targetLineX - currentX);
             var distanceToNext = Math.Abs(targetLineX + nextCharWidth - currentX);
@@ -602,7 +602,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveRight(bool leaveAnchor)
     {
-        if (CursorIndex < Sequence.NumberOfChars)
+        if (CursorIndex < Content.NumberOfChars)
         {
             Cursor.SetIndex(CursorIndex + 1, leaveAnchor);
         }
@@ -610,7 +610,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void MoveTo(int targetIndex, bool leaveAnchor)
     {
-        if (targetIndex >= 0 && targetIndex < Sequence.NumberOfNodes)
+        if (targetIndex >= 0 && targetIndex < Content.NumberOfNodes)
         {
             Cursor.SetIndex(targetIndex, leaveAnchor);
         }
@@ -626,7 +626,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void ReverseBackspace(bool leaveAnchor)
     {
-        Sequence.RemoveAt(CursorIndex);
+        Content.RemoveAt(CursorIndex);
     }
 
     private void EnterText(char[] enteredCharacters)
@@ -674,14 +674,14 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             var size = Cursor.SelectedRangeSize;
             Cursor.SetIndex(Cursor.SelectedRangeStart, false);
-            Sequence.RemoveSeveralAt(CursorIndex, size);
+            Content.RemoveSeveralAt(CursorIndex, size);
         }
     }
 
     public void EnterCharacter(char character)
     {
         ClearSelectedRange();
-        Sequence.Insert(CursorIndex, character);
+        Content.Insert(CursorIndex, character);
         Cursor.SetIndex(CursorIndex + 1, false);
     }
 
@@ -690,33 +690,33 @@ public class TextInputWidget : Widget, IUpdateInput
         if (CursorIndex > 0)
         {
             Cursor.SetIndex(CursorIndex - 1, false);
-            Sequence.RemoveAt(CursorIndex);
+            Content.RemoveAt(CursorIndex);
         }
     }
 
     public int LineLength(int line)
     {
-        return Sequence.CountNodesOnLine(line);
+        return Content.CountNodesOnLine(line);
     }
 
     public void DrawDebugInfo(Painter painter)
     {
-        var lineNumber = Sequence.LineNumberAt(CursorIndex);
+        var lineNumber = Content.LineNumberAt(CursorIndex);
         painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16),
             $"{CursorIndex}, line: {lineNumber}, anchor: {Cursor.SelectionAnchorIndex}, hovered: {_hoveredLetterIndex} {(_hoveredSide == HorizontalDirection.Left ? '<' : '>')}",
             TextAreaRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
 
-        for (var line = 0; line < Sequence.NumberOfLines; line++)
+        for (var line = 0; line < Content.NumberOfLines; line++)
         {
-            painter.DrawLineRectangle(Sequence.LineRectangleAtLine(line).Inflated(2, 2),
+            painter.DrawLineRectangle(Content.LineRectangleAtLine(line).Inflated(2, 2),
                 new LineDrawSettings
                     {Color = Color.ForestGreen.WithMultipliedOpacity(0.5f), Thickness = 2});
         }
 
-        for (var i = 0; i < Sequence.NumberOfNodes; i++)
+        for (var i = 0; i < Content.NumberOfNodes; i++)
         {
-            var isLastChar = i == Sequence.NumberOfNodes - 1;
-            var rectangle = Sequence.RectangleAtNode(i);
+            var isLastChar = i == Content.NumberOfNodes - 1;
+            var rectangle = Content.RectangleAtNode(i);
             var color = Color.Red;
 
             if (rectangle.Area == 0)
@@ -736,7 +736,7 @@ public class TextInputWidget : Widget, IUpdateInput
             painter.DrawLineRectangle(rectangle.Inflated(-1, -1), new LineDrawSettings {Color = color});
         }
 
-        painter.DrawLineRectangle(Sequence.UsedSpace,
+        painter.DrawLineRectangle(Content.UsedSpace,
             new LineDrawSettings {Depth = Depth.Back, Thickness = 2, Color = Color.Orange});
     }
 
@@ -745,7 +745,7 @@ public class TextInputWidget : Widget, IUpdateInput
         RectangleF? pendingSelectionRect = null;
         for (var i = Cursor.SelectedRangeStart; i < Cursor.SelectedRangeEnd; i++)
         {
-            var glyphRect = Sequence.GlyphAt(i).Rectangle.Inflated(2, 0);
+            var glyphRect = Content.GlyphAt(i).Rectangle.Inflated(2, 0);
 
             if (pendingSelectionRect == null)
             {
@@ -776,11 +776,11 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private delegate bool ScanFindDelegate(int index);
 
-    private class CharSequence
+    private class TextInputContent
     {
         private readonly List<char> _nodes = new();
 
-        public CharSequence(IFontGetter font, string text, RectangleF containerRectangle, Alignment alignment,
+        public TextInputContent(IFontGetter font, string text, RectangleF containerRectangle, Alignment alignment,
             bool isSingleLine)
         {
             foreach (var character in text)
