@@ -460,9 +460,10 @@ public class TextInputWidget : Widget, IUpdateInput
         var index = GetWordBoundaryLeftOf(CursorIndex);
 
         var distance = CursorIndex - index;
-        for (var i = 0; i < distance; i++)
+        if (CursorIndex > 0)
         {
-            Backspace(leaveAnchor);
+            Cursor.SetIndex(CursorIndex - distance, false);
+            Sequence.RemoveSeveralAt(CursorIndex, distance);
         }
     }
 
@@ -471,10 +472,7 @@ public class TextInputWidget : Widget, IUpdateInput
         var index = GetWordBoundaryRightOf(CursorIndex);
 
         var distance = index - CursorIndex;
-        for (var i = 0; i < distance; i++)
-        {
-            ReverseBackspace(leaveAnchor);
-        }
+        Sequence.RemoveSeveralAt(CursorIndex,distance);
     }
 
     public int GetWordBoundaryLeftOf(int index)
@@ -674,12 +672,8 @@ public class TextInputWidget : Widget, IUpdateInput
         if (Cursor.SelectedRangeSize > 0)
         {
             var size = Cursor.SelectedRangeSize;
-            var end = Cursor.SelectedRangeEnd;
-            Cursor.SetIndex(end, false);
-            for (var i = 0; i < size; i++)
-            {
-                Backspace(false);
-            }
+            Cursor.SetIndex(Cursor.SelectedRangeStart, false);
+            Sequence.RemoveSeveralAt(CursorIndex, size);
         }
     }
 
@@ -785,6 +779,20 @@ public class TextInputWidget : Widget, IUpdateInput
                 Cache = Cache.Rebuild(_nodes.ToArray());
                 CacheUpdated?.Invoke();
             }
+        }
+
+        public void RemoveSeveralAt(int cursorIndex, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (cursorIndex != NumberOfNodes - 1)
+                {
+                    _nodes.RemoveAt(cursorIndex);
+                }
+            }
+            
+            Cache = Cache.Rebuild(_nodes.ToArray());
+            CacheUpdated?.Invoke();
         }
 
         public void Insert(int cursorIndex, char character)
