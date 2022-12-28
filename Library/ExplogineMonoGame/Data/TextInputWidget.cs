@@ -16,20 +16,20 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly ClickCounter _clickCounter = new();
     private readonly bool _isSingleLine;
     private readonly HoverState _isTextAreaHovered;
-    private readonly Selectable _selectable;
     private readonly ISelector _selector;
     private readonly bool _showScrollbar;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
+    private bool _dragStarted;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Settings settings)
         : base(position, size, settings.Depth)
     {
         Font = font;
-        _selectable = new Selectable();
-        _selector = settings.Selector ?? new AlwaysSelected(_selectable);
+        Selectable = new Selectable();
+        _selector = settings.Selector ?? new AlwaysSelected(Selectable);
         _showScrollbar = settings.ShowScrollbar;
         _isSingleLine = settings.IsSingleLine;
 
@@ -47,6 +47,8 @@ public class TextInputWidget : Widget, IUpdateInput
         Content.CacheUpdated += () => OnCursorMoved(CursorIndex);
     }
 
+    public Selectable Selectable { get; }
+
     public Alignment Alignment { get; } = Alignment.TopLeft;
     private TextInputContent Content { get; }
     public TextCursor Cursor { get; } = new();
@@ -55,16 +57,16 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public bool Selected
     {
-        get => _selectable.IsSelectedBy(_selector);
+        get => Selectable.IsSelectedBy(_selector);
         set
         {
             if (value)
             {
-                _selectable.BecomeSelectedBy(_selector);
+                Selectable.BecomeSelectedBy(_selector);
             }
             else
             {
-                _selectable.DeselectFrom(_selector);
+                Selectable.DeselectFrom(_selector);
             }
         }
     }
@@ -276,11 +278,19 @@ public class TextInputWidget : Widget, IUpdateInput
             }
         });
 
+        if (input.Mouse.Delta().LengthSquared() != 0 && _dragStarted && !_isDragging)
+        {
+            _isDragging = true;
+        }
+        
         if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
         {
             _isDragging = false;
+            _dragStarted = false;
         }
 
+        var shouldSelect = false;
+        
         if (_isTextAreaHovered || _isDragging)
         {
             if (_hoveredLetterIndex != null)
@@ -292,14 +302,14 @@ public class TextInputWidget : Widget, IUpdateInput
 
             if (input.Mouse.GetButton(MouseButton.Left).WasPressed)
             {
-                _isDragging = true;
+                _dragStarted = true;
 
                 if (!Selected && HoveredNodeIndex.HasValue)
                 {
                     Cursor.SetIndex(HoveredNodeIndex.Value, false);
                 }
-                
-                Selected = true;
+
+                shouldSelect = true;
 
                 if (HoveredNodeIndex.HasValue)
                 {
@@ -359,6 +369,11 @@ public class TextInputWidget : Widget, IUpdateInput
                     });
             }
         }
+
+        if (shouldSelect)
+        {
+            Selected = true;
+        }
     }
 
     /// <summary>
@@ -414,6 +429,11 @@ public class TextInputWidget : Widget, IUpdateInput
         ScrollableArea.ReConstrain();
     }
 
+    public void SelectAll()
+    {
+        SelectEverything(false);
+    }
+    
     private void SelectEverything(bool leaveAnchor)
     {
         SelectRange(0, Content.NumberOfChars);

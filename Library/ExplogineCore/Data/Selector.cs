@@ -12,6 +12,7 @@ public class Selector : ISelector
     public void Select(Selectable selectable)
     {
         _selected = selectable;
+        selectable.OnSelected();
     }
 
     public void ClearSelection()

@@ -9,7 +9,10 @@ public class Selectable
 
     public void BecomeSelectedBy(ISelector selector)
     {
-        selector.Select(this);
+        if (!IsSelectedBy(selector))
+        {
+            selector.Select(this);
+        }
     }
 
     public void DeselectFrom(ISelector selector)
@@ -18,5 +21,12 @@ public class Selectable
         {
             selector.ClearSelection();
         }
+    }
+
+    public event Action? Selected;
+
+    public void OnSelected()
+    {
+        Selected?.Invoke();
     }
 }
