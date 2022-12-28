@@ -50,7 +50,7 @@ public class TextInputWidget : Widget, IUpdateInput
     public ScrollableArea ScrollableArea { get; }
     public bool Selected { get; private set; }
 
-    public string Text => Sequence.Cache.Text;
+    public string Text => Sequence.Text;
     public int CursorIndex => Cursor.Index;
     public int MarginSize => 5;
 
@@ -81,7 +81,7 @@ public class TextInputWidget : Widget, IUpdateInput
     public RectangleF InnerRectangle => new(Vector2.Zero, Rectangle.Size);
     public int LastIndex => Sequence.NumberOfChars;
     public int CurrentColumn => Sequence.GetColumn(CursorIndex);
-    public int CurrentLine => Sequence.Cache.LineNumberAt(CursorIndex);
+    public int CurrentLine => Sequence.LineNumberAt(CursorIndex);
 
     private int? HoveredNodeIndex
     {
@@ -104,13 +104,14 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    public RectangleF ContainerRectangle => Sequence.Cache.ContainerRectangle;
+    public RectangleF ContainerRectangle => Sequence.ContainerRectangle;
 
     public RectangleF CursorRectangle
     {
         get
         {
-            var cursorRect = RectangleAtNode(CursorIndex);
+            int index = CursorIndex;
+            var cursorRect = Sequence.RectangleAtNode(index);
             var size = cursorRect.Size;
             size.X = 2f;
             cursorRect.Offset(-size.X / 2f, 0);
@@ -193,7 +194,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             if (Selected)
             {
-                var lineRectangles = Sequence.Cache.LineRectangles();
+                var lineRectangles = Sequence.LineRectangles();
                 var targetIndex = 0;
                 var mousePosition = input.Mouse.Position(scrollingHitTestStack.WorldMatrix);
 
@@ -304,7 +305,7 @@ public class TextInputWidget : Widget, IUpdateInput
             for (var i = 0; i < Sequence.NumberOfChars; i++)
             {
                 var index = i; // index will be captured so we need to set aside a variable
-                var charRectangle = Sequence.Cache.RectangleAtNode(i);
+                var charRectangle = Sequence.RectangleAtNode(i);
                 var halfWidth = charRectangle.Size.X / 2;
                 var leftRectangle = new RectangleF(charRectangle.Location,
                     new Vector2(halfWidth, charRectangle.Size.Y));
@@ -338,9 +339,9 @@ public class TextInputWidget : Widget, IUpdateInput
     private void OnCursorMoved(int nodeIndex)
     {
         ScrollableArea.InnerWorldBoundaries =
-            RectangleF.Union(InnerRectangle, Sequence.Cache.UsedSpace);
+            RectangleF.Union(InnerRectangle, Sequence.UsedSpace);
 
-        var nodeRect = Sequence.Cache.RectangleAtNode(nodeIndex);
+        var nodeRect = Sequence.RectangleAtNode(nodeIndex);
         var viewBounds = ScrollableArea.ViewBounds;
 
         float Far(RectangleF rect)
@@ -472,7 +473,7 @@ public class TextInputWidget : Widget, IUpdateInput
         var index = GetWordBoundaryRightOf(CursorIndex);
 
         var distance = index - CursorIndex;
-        Sequence.RemoveSeveralAt(CursorIndex,distance);
+        Sequence.RemoveSeveralAt(CursorIndex, distance);
     }
 
     public int GetWordBoundaryLeftOf(int index)
@@ -492,7 +493,7 @@ public class TextInputWidget : Widget, IUpdateInput
         return index;
     }
 
-    public void MoveWordLeft(bool leaveAnchor)
+    private void MoveWordLeft(bool leaveAnchor)
     {
         Cursor.SetIndex(GetWordBoundaryLeftOf(CursorIndex), leaveAnchor);
     }
@@ -509,7 +510,7 @@ public class TextInputWidget : Widget, IUpdateInput
         return index;
     }
 
-    public void MoveWordRight(bool leaveAnchor)
+    private void MoveWordRight(bool leaveAnchor)
     {
         Cursor.SetIndex(GetWordBoundaryRightOf(CursorIndex), leaveAnchor);
     }
@@ -546,8 +547,8 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private void MoveVertically(int delta, bool leaveAnchor)
     {
-        var currentLineIndices = Sequence.GetNodesOnLine(Sequence.Cache.LineNumberAt(CursorIndex));
-        var targetLineIndices = Sequence.GetNodesOnLine(Sequence.Cache.LineNumberAt(CursorIndex) + delta);
+        var currentLineIndices = Sequence.GetNodesOnLine(Sequence.LineNumberAt(CursorIndex));
+        var targetLineIndices = Sequence.GetNodesOnLine(Sequence.LineNumberAt(CursorIndex) + delta);
 
         var currentX = 0f;
         foreach (var nodeIndex in currentLineIndices)
@@ -557,14 +558,14 @@ public class TextInputWidget : Widget, IUpdateInput
                 break;
             }
 
-            currentX += Sequence.Cache.RectangleAtNode(nodeIndex).Width;
+            currentX += Sequence.RectangleAtNode(nodeIndex).Width;
         }
 
         var targetLineX = 0f;
         var targetColumn = 0;
         foreach (var nodeIndex in targetLineIndices)
         {
-            var nextCharWidth = Sequence.Cache.RectangleAtNode(nodeIndex).Width;
+            var nextCharWidth = Sequence.RectangleAtNode(nodeIndex).Width;
 
             var distanceToCurrent = Math.Abs(targetLineX - currentX);
             var distanceToNext = Math.Abs(targetLineX + nextCharWidth - currentX);
@@ -700,14 +701,14 @@ public class TextInputWidget : Widget, IUpdateInput
 
     public void DrawDebugInfo(Painter painter)
     {
-        var lineNumber = Sequence.Cache.LineNumberAt(CursorIndex);
+        var lineNumber = Sequence.LineNumberAt(CursorIndex);
         painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 16),
             $"{CursorIndex}, line: {lineNumber}, anchor: {Cursor.SelectionAnchorIndex}, hovered: {_hoveredLetterIndex} {(_hoveredSide == HorizontalDirection.Left ? '<' : '>')}",
             TextAreaRectangle, Alignment.BottomRight, new DrawSettings {Color = Color.Black});
 
-        for (var line = 0; line < Sequence.Cache.NumberOfLines; line++)
+        for (var line = 0; line < Sequence.NumberOfLines; line++)
         {
-            painter.DrawLineRectangle(Sequence.Cache.LineRectangleAtLine(line).Inflated(2, 2),
+            painter.DrawLineRectangle(Sequence.LineRectangleAtLine(line).Inflated(2, 2),
                 new LineDrawSettings
                     {Color = Color.ForestGreen.WithMultipliedOpacity(0.5f), Thickness = 2});
         }
@@ -715,7 +716,7 @@ public class TextInputWidget : Widget, IUpdateInput
         for (var i = 0; i < Sequence.NumberOfNodes; i++)
         {
             var isLastChar = i == Sequence.NumberOfNodes - 1;
-            var rectangle = Sequence.Cache.RectangleAtNode(i);
+            var rectangle = Sequence.RectangleAtNode(i);
             var color = Color.Red;
 
             if (rectangle.Area == 0)
@@ -735,18 +736,42 @@ public class TextInputWidget : Widget, IUpdateInput
             painter.DrawLineRectangle(rectangle.Inflated(-1, -1), new LineDrawSettings {Color = color});
         }
 
-        painter.DrawLineRectangle(Sequence.Cache.UsedSpace,
+        painter.DrawLineRectangle(Sequence.UsedSpace,
             new LineDrawSettings {Depth = Depth.Back, Thickness = 2, Color = Color.Orange});
     }
 
-    public RectangleF RectangleAtNode(int index)
+    public IEnumerable<RectangleF> GetSelectionRectangles()
     {
-        return Sequence.Cache.RectangleAtNode(index);
-    }
+        RectangleF? pendingSelectionRect = null;
+        for (var i = Cursor.SelectedRangeStart; i < Cursor.SelectedRangeEnd; i++)
+        {
+            var glyphRect = Sequence.GlyphAt(i).Rectangle.Inflated(2, 0);
 
-    public FormattedText.FormattedGlyph GlyphAt(int i)
-    {
-        return Sequence.Cache.GlyphAt(i);
+            if (pendingSelectionRect == null)
+            {
+                pendingSelectionRect = glyphRect;
+            }
+            else
+            {
+                var newPendingRect = RectangleF.Union(pendingSelectionRect.Value, glyphRect);
+
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
+                if (glyphRect.Height != newPendingRect.Height)
+                {
+                    yield return pendingSelectionRect.Value;
+                    pendingSelectionRect = glyphRect;
+                }
+                else
+                {
+                    pendingSelectionRect = newPendingRect;
+                }
+            }
+        }
+
+        if (pendingSelectionRect.HasValue)
+        {
+            yield return pendingSelectionRect.Value;
+        }
     }
 
     private delegate bool ScanFindDelegate(int index);
@@ -763,12 +788,17 @@ public class TextInputWidget : Widget, IUpdateInput
                 _nodes.Add(character);
             }
 
-            Cache = new Cache(_nodes.ToArray(), font, containerRectangle, alignment, isSingleLine);
+            Cache = new TextInputCache(_nodes.ToArray(), font, containerRectangle, alignment, isSingleLine);
         }
 
-        public Cache Cache { get; private set; }
+        private TextInputCache Cache { get; set; }
         public int NumberOfNodes => Cache.Text.Length + 1;
         public int NumberOfChars => Cache.Text.Length;
+        public RectangleF UsedSpace => Cache.UsedSpace;
+        public int NumberOfLines => Cache.NumberOfLines;
+        public string Text => Cache.Text;
+        public RectangleF ContainerRectangle => Cache.ContainerRectangle;
+
         public event Action? CacheUpdated;
 
         public void RemoveAt(int cursorIndex)
@@ -783,14 +813,14 @@ public class TextInputWidget : Widget, IUpdateInput
 
         public void RemoveSeveralAt(int cursorIndex, int count)
         {
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 if (cursorIndex != NumberOfNodes - 1)
                 {
                     _nodes.RemoveAt(cursorIndex);
                 }
             }
-            
+
             Cache = Cache.Rebuild(_nodes.ToArray());
             CacheUpdated?.Invoke();
         }
@@ -884,6 +914,31 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             return nodeIndex >= 0 && nodeIndex < NumberOfNodes;
         }
+
+        public RectangleF RectangleAtNode(int index)
+        {
+            return Cache.RectangleAtNode(index);
+        }
+
+        public FormattedText.FormattedGlyph GlyphAt(int index)
+        {
+            return Cache.GlyphAt(index);
+        }
+
+        public int LineNumberAt(int cursorIndex)
+        {
+            return Cache.LineNumberAt(cursorIndex);
+        }
+
+        public RectangleF LineRectangleAtLine(int line)
+        {
+            return Cache.LineRectangleAtLine(line);
+        }
+
+        public RectangleF[] LineRectangles()
+        {
+            return Cache.LineRectangles();
+        }
     }
 
     public class TextCursor
@@ -911,7 +966,7 @@ public class TextInputWidget : Widget, IUpdateInput
         public event Action<int>? MovedCursor;
     }
 
-    private class Cache
+    private class TextInputCache
     {
         private readonly Alignment _alignment;
         private readonly IFontGetter _font;
@@ -919,7 +974,7 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly RectangleF[] _lineRects;
         private readonly CacheNode[] _nodes;
 
-        public Cache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment,
+        public TextInputCache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment,
             bool isSingleLine)
         {
             _font = font;
@@ -1046,9 +1101,9 @@ public class TextInputWidget : Widget, IUpdateInput
             }
         }
 
-        public Cache Rebuild(char[] newNodes)
+        public TextInputCache Rebuild(char[] newNodes)
         {
-            return new Cache(newNodes, _font, ContainerRectangle, _alignment, _isSingleLine);
+            return new TextInputCache(newNodes, _font, ContainerRectangle, _alignment, _isSingleLine);
         }
 
         [Pure]
@@ -1126,40 +1181,6 @@ public class TextInputWidget : Widget, IUpdateInput
 
             _mousePosition = mousePosition;
             _timeOfLastClick = DateTime.Now;
-        }
-    }
-
-    public IEnumerable<RectangleF> GetSelectionRectangles()
-    {
-        RectangleF? pendingSelectionRect = null;
-        for (var i = Cursor.SelectedRangeStart; i < Cursor.SelectedRangeEnd; i++)
-        {
-            var glyphRect = GlyphAt(i).Rectangle.Inflated(2, 0);
-
-            if (pendingSelectionRect == null)
-            {
-                pendingSelectionRect = glyphRect;
-            }
-            else
-            {
-                var newPendingRect = RectangleF.Union(pendingSelectionRect.Value, glyphRect);
-
-                // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if (glyphRect.Height != newPendingRect.Height)
-                {
-                    yield return pendingSelectionRect.Value;
-                    pendingSelectionRect = glyphRect;
-                }
-                else
-                {
-                    pendingSelectionRect = newPendingRect;
-                }
-            }
-        }
-
-        if (pendingSelectionRect.HasValue)
-        {
-            yield return pendingSelectionRect.Value;
         }
     }
 }
