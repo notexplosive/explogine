@@ -22,14 +22,12 @@ public class TextInputWidget : Widget, IUpdateInput
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
 
-    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Depth depth, bool isSingleLine,
-        bool showScrollbar,
-        string startingText)
-        : base(position, size, depth)
+    public TextInputWidget(Vector2 position, Point size, IFontGetter font, Settings settings)
+        : base(position, size, settings.Depth)
     {
         Font = font;
-        _showScrollbar = showScrollbar;
-        _isSingleLine = isSingleLine;
+        _showScrollbar = settings.ShowScrollbar;
+        _isSingleLine = settings.IsSingleLine;
 
         var shouldScrollY = ScrollableAxis == Axis.Y;
         ScrollableArea = new ScrollableArea(Size, InnerRectangle, Depth.Front)
@@ -40,7 +38,8 @@ public class TextInputWidget : Widget, IUpdateInput
         _isTextAreaHovered = new HoverState();
         Cursor.MovedCursor += OnCursorMoved;
         // Content will need to be rebuilt every time these values change
-        Content = new TextInputContent(font, startingText, TextAreaRectangle, Alignment, _isSingleLine);
+        Content = new TextInputContent(font, settings.StartingText, TextAreaRectangle, Alignment,
+            _isSingleLine);
         Content.CacheUpdated += () => OnCursorMoved(CursorIndex);
     }
 
@@ -786,6 +785,8 @@ public class TextInputWidget : Widget, IUpdateInput
             yield return pendingSelectionRect.Value;
         }
     }
+
+    public readonly record struct Settings(Depth Depth, bool IsSingleLine, bool ShowScrollbar, string StartingText);
 
     private delegate bool ScanFindDelegate(int index);
 

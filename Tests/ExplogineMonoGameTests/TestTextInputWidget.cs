@@ -15,15 +15,15 @@ public class TestTextInputWidget
     [Fact]
     public void move_by_words_pinning()
     {
+        // ReSharper disable once StringLiteralTypo
         var str = "The fish was delish and it made quite a dish";
-        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle, false,
-            false,
-            // ReSharper disable once StringLiteralTypo
-            str);
+        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(),
+            new TextInputWidget.Settings(
+                Depth.Middle, false,
+                false,
+                str));
 
-        var resultLines = new List<string>();
-
-        resultLines.Add(str);
+        var resultLines = new List<string> {str};
 
         for (var i = 0; i < str.Length; i++)
         {
@@ -60,9 +60,11 @@ public class TestTextInputWidget
     [Fact]
     public void move_remove_and_replace()
     {
-        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(), Depth.Middle, false,
-            false,
-            "Simple test text");
+        var inputWidget = new TextInputWidget(Vector2.Zero, new Point(300, 300), new TestFont(),
+            new TextInputWidget.Settings(
+                Depth.Middle, false,
+                false,
+                "Simple test text"));
         inputWidget.MoveRight(false);
         inputWidget.MoveRight(false);
         inputWidget.ReverseBackspace(false);
@@ -74,20 +76,24 @@ public class TestTextInputWidget
     public abstract class KeyboardNavigation
     {
         private readonly TextInputWidget _emptyStringWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle, false, false,
-            "");
+            new TextInputWidget.Settings(
+                Depth.Middle, false, false,
+                ""));
 
         private readonly TextInputWidget _manualManyLine = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle, false, false,
-            "Several\nLines\nOf\nText");
+            new TextInputWidget.Settings(
+                Depth.Middle, false, false,
+                "Several\nLines\nOf\nText"));
 
         private readonly TextInputWidget _naturalMultiLine = new(Vector2.Zero, new Point(300, 300), new TestFont(),
-            Depth.Middle, false, false,
-            "This should have natural linebreaks");
+            new TextInputWidget.Settings(
+                Depth.Middle, false, false,
+                "This should have natural linebreaks"));
 
         private readonly TextInputWidget _oneLineWidget = new(Vector2.Zero, new Point(1000, 300), new TestFont(),
-            Depth.Middle, false, false,
-            "Simple test text");
+            new TextInputWidget.Settings(
+                Depth.Middle, false, false,
+                "Simple test text"));
 
         [Fact]
         public void one_line_home()
