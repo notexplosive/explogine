@@ -691,36 +691,22 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         foreach (var character in enteredCharacters)
         {
-            switch (char.IsControl(character))
+            if (!char.IsControl(character))
             {
-                case false:
-                    EnterCharacter(character);
-                    break;
-                default:
+                EnterCharacter(character);
+            }
+            else
+            {
+                if (character == '\r')
                 {
-                    if (character == '\b')
+                    if (!_isSingleLine)
                     {
-                    }
-                    else if (character == '\r')
-                    {
-                        if (!_isSingleLine)
-                        {
-                            EnterCharacter('\n');
-                        }
-                        else
-                        {
-                            Submitted?.Invoke();
-                        }
+                        EnterCharacter('\n');
                     }
                     else
                     {
-                        if (char.IsControl(character) && character != 127)
-                        {
-                            Client.Debug.LogWarning($"Unsafe control character, ignored {(int) character}");
-                        }
+                        Submitted?.Invoke();
                     }
-
-                    break;
                 }
             }
         }
