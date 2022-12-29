@@ -232,6 +232,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return copy;
     }
 
+    [Pure]
     public RectangleF ResizedOnEdge(RectEdge edge, Vector2 delta)
     {
         var x = X;

@@ -2,19 +2,43 @@
 using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Gui;
+using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Logging;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-internal class LogOverlay : ILogCapture
+internal class LogOverlay : ILogCapture, IUpdateInput
 {
     private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
+    private readonly float _maxTimer = 5;
+    private TextInputWidget _textInputWidget = null!;
+    private readonly SimpleGuiTheme _theme;
+    private bool _isTyping;
     private float _timer;
 
-    private float Opacity => Math.Clamp(_timer, 0f, 1f);
+    public LogOverlay()
+    {
+        Client.FinishedLoading.Add(() =>
+        {
+            _textInputWidget = new TextInputWidget(Vector2.Zero, new Point(200, _font.FontSize + 1), _font,
+                new TextInputWidget.Settings
+                {
+                    Depth = 50,
+                    Selector = new AlwaysSelected(),
+                    IsSingleLine = true,
+                    ShowScrollbar = false,
+                }
+            );
+        });
 
+        _theme = new SimpleGuiTheme(Color.White, Color.White, Color.Transparent, _font);
+    }
+
+    private float Opacity => Math.Clamp(_timer, 0f, 1f);
     private int TotalWidth => Client.Window.Size.X;
     private int MaxHeight => Client.Window.Size.Y;
 
@@ -48,11 +72,29 @@ internal class LogOverlay : ILogCapture
         RemoveEntriesUntilFit(usedHeight + newMessage.Size.Y);
 
         _linesBuffer.AddLast(newMessage);
-        _timer = 5;
+        _timer = _maxTimer;
+    }
+
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    {
+        if (input.Keyboard.GetButton(Keys.OemTilde).WasPressed && input.Keyboard.Modifiers.None)
+        {
+            _isTyping = !_isTyping;
+        }
+
+        if (_isTyping)
+        {
+            _textInputWidget.UpdateInput(input, hitTestStack);
+        }
     }
 
     public void Update(float dt)
     {
+        if (_isTyping)
+        {
+            _timer = _maxTimer;
+        }
+
         if (_timer > 0)
         {
             _timer -= dt;
@@ -66,7 +108,10 @@ internal class LogOverlay : ILogCapture
 
     public void Draw(Painter painter, Depth depth)
     {
-        var textRect = new Rectangle(5, 0, TotalWidth - 10, MaxHeight);
+        PrepareDraw(painter);
+
+        painter.BeginSpriteBatch();
+        var latestLogMessageRect = new Rectangle(5, 0, TotalWidth - 10, MaxHeight);
 
         foreach (var message in _linesBuffer)
         {
@@ -75,16 +120,37 @@ internal class LogOverlay : ILogCapture
 
             painter.DrawFormattedStringWithinRectangle(
                 new FormattedText(_font, message.Content.Text, messageColor),
-                textRect,
+                latestLogMessageRect,
                 Alignment.TopLeft,
                 new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
 
-            textRect.Location += new Point(0, (int) message.Size.Y);
+            latestLogMessageRect.Location += new Point(0, (int) message.Size.Y);
         }
 
-        painter.DrawAsRectangle(Client.Assets.GetTexture("white-pixel"),
-            new Rectangle(0, 0, TotalWidth, textRect.Location.Y),
-            new DrawSettings {Color = Color.Black.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
+        var overlayHeight = (float) latestLogMessageRect.Location.Y;
+
+        if (_isTyping)
+        {
+            // +5 so text doesn't get clipped off the bottom
+            var typeAreaHeight = (int) _font.GetFont().Height + 5;
+            _textInputWidget.Position = new Vector2(latestLogMessageRect.X, overlayHeight);
+            _textInputWidget.Size = new Point(latestLogMessageRect.Width, typeAreaHeight);
+            overlayHeight += typeAreaHeight;
+
+            _textInputWidget.Draw(painter);
+        }
+
+        painter.DrawRectangle(new RectangleF(0, 0, TotalWidth, overlayHeight),
+            new DrawSettings {Color = Color.DarkBlue.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
+        painter.EndSpriteBatch();
+    }
+
+    public void PrepareDraw(Painter painter)
+    {
+        if (_isTyping)
+        {
+            _textInputWidget.PrepareDraw(painter, _theme);
+        }
     }
 
     private readonly record struct RenderedMessage(LogMessage Content, Vector2 Size);

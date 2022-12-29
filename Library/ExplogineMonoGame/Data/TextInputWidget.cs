@@ -29,22 +29,29 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         Font = font;
         Selectable = new Selectable();
-        _selector = settings.Selector ?? new AlwaysSelected(Selectable);
+        _selector = settings.Selector ?? new AlwaysSelected();
         _showScrollbar = settings.ShowScrollbar;
         _isSingleLine = settings.IsSingleLine;
 
-        var shouldScrollY = ScrollableAxis == Axis.Y;
-        ScrollableArea = new ScrollableArea(Size, InnerRectangle, Depth.Front)
-        {
-            EnableInput = new XyBool(!shouldScrollY, shouldScrollY)
-        };
+        ScrollableArea = CreateScrollableArea();
+        Resized += ()=> ScrollableArea = CreateScrollableArea();
 
         _isTextAreaHovered = new HoverState();
         Cursor.MovedCursor += OnCursorMoved;
         // Content will need to be rebuilt every time these values change
-        Content = new TextInputContent(font, settings.StartingText, TextAreaRectangle, Alignment,
+        Content = new TextInputContent(font, settings.StartingText ?? "", TextAreaRectangle, Alignment,
             _isSingleLine);
+        Resized += () => Content.ChangeSize(TextAreaRectangle);
         Content.CacheUpdated += () => OnCursorMoved(CursorIndex);
+    }
+
+    private ScrollableArea CreateScrollableArea()
+    {
+        var shouldScrollY = ScrollableAxis == Axis.Y;
+        return new ScrollableArea(InnerRectangle.Size.ToPoint(), InnerRectangle, Depth.Front)
+        {
+            EnableInput = new XyBool(!shouldScrollY, shouldScrollY)
+        };
     }
 
     public Selectable Selectable { get; }
@@ -53,7 +60,7 @@ public class TextInputWidget : Widget, IUpdateInput
     private TextInputContent Content { get; }
     public TextCursor Cursor { get; } = new();
     public IFontGetter Font { get; }
-    public ScrollableArea ScrollableArea { get; }
+    public ScrollableArea ScrollableArea { get; private set; }
 
     public bool Selected
     {
@@ -99,7 +106,7 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    public RectangleF InnerRectangle => new(Vector2.Zero, Rectangle.Size);
+    public RectangleF InnerRectangle => new(Vector2.Zero, new Vector2(Size.X, Math.Max(Size.Y, Font.GetFont().Height + MarginSize * 2)));
     public int LastIndex => Content.NumberOfChars;
     public int CurrentColumn => Content.GetColumn(CursorIndex);
     public int CurrentLine => Content.LineNumberAt(CursorIndex);
@@ -818,7 +825,7 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    public readonly record struct Settings(Depth Depth, bool IsSingleLine, bool ShowScrollbar, string StartingText,
+    public readonly record struct Settings(Depth Depth, bool IsSingleLine, bool ShowScrollbar, string? StartingText,
         ISelector? Selector);
 
     private delegate bool ScanFindDelegate(int index);
@@ -876,6 +883,12 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             _nodes.Insert(cursorIndex, character);
             Cache = Cache.Rebuild(_nodes.ToArray());
+            CacheUpdated?.Invoke();
+        }
+        
+        public void ChangeSize(RectangleF textAreaRectangle)
+        {
+            Cache = Cache.RebuildWithNewSize(textAreaRectangle);
             CacheUpdated?.Invoke();
         }
 
@@ -1020,11 +1033,14 @@ public class TextInputWidget : Widget, IUpdateInput
         private readonly bool _isSingleLine;
         private readonly RectangleF[] _lineRects;
         private readonly CacheNode[] _nodes;
+        private readonly char[] _originalChars;
 
         public TextInputCache(char[] chars, IFontGetter font, RectangleF containerRectangle, Alignment alignment,
             bool isSingleLine)
         {
+            _originalChars = chars;
             _font = font;
+            
             ContainerRectangle = containerRectangle;
             if (isSingleLine)
             {
@@ -1148,9 +1164,16 @@ public class TextInputWidget : Widget, IUpdateInput
             }
         }
 
+        [Pure]
         public TextInputCache Rebuild(char[] newNodes)
         {
             return new TextInputCache(newNodes, _font, ContainerRectangle, _alignment, _isSingleLine);
+        }
+        
+        [Pure]
+        public TextInputCache RebuildWithNewSize(RectangleF textAreaRectangle)
+        {
+            return new TextInputCache(_originalChars, _font, textAreaRectangle, _alignment, _isSingleLine);
         }
 
         [Pure]

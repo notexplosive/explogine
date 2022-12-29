@@ -15,7 +15,7 @@ public class Widget : IDisposable
         Canvas = new Canvas(size);
     }
 
-    public Vector2 Position { get; }
+    public Vector2 Position { get; set; }
 
     public Point Size
     {
@@ -25,7 +25,6 @@ public class Widget : IDisposable
 
     public Texture2D Texture => Canvas.Texture;
     public Canvas Canvas { get; private set; }
-
     public Matrix CanvasToScreen => Matrix.CreateTranslation(new Vector3(Position, 0));
     public Matrix ScreenToCanvas => Matrix.Invert(CanvasToScreen);
     public RectangleF Rectangle => new(Position, Size.ToVector2());
@@ -46,6 +45,7 @@ public class Widget : IDisposable
 
         Canvas.Dispose();
         Canvas = new Canvas(newSize);
+        Resized?.Invoke();
     }
 
     public void Draw(Painter painter)
@@ -57,4 +57,6 @@ public class Widget : IDisposable
     {
         hitTestStack.AddZone(Rectangle, Depth, IsHovered, true);
     }
+
+    public event Action? Resized;
 }

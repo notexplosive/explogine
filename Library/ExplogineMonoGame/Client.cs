@@ -15,15 +15,18 @@ namespace ExplogineMonoGame;
 
 public static class Client
 {
+    // The `OnceReady` initialization needs to happen at the top, other static initializers depend on these
+    public static readonly OnceReady FinishedLoading = new();
+    public static readonly OnceReady InitializedGraphics = new();
+    public static readonly OnceReady Exited = new();
+    //
+
     private static Game currentGame = null!;
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
-
     internal static readonly CartridgeChain CartridgeChain = new();
-    public static readonly OnceReady FinishedLoading = new();
-    public static readonly OnceReady InitializedGraphics = new();
-    public static readonly OnceReady Exited = new();
+    
     public static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
     /// <summary>

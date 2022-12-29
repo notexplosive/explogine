@@ -2,16 +2,9 @@
 
 public class AlwaysSelected : ISelector
 {
-    private readonly Selectable _selectable;
-
-    public AlwaysSelected(Selectable selectable)
+    public bool IsSelected(Selectable selectable)
     {
-        _selectable = selectable;
-    }
-
-    public Selectable GetSelected()
-    {
-        return _selectable;
+        return true;
     }
 
     public void Select(Selectable selectable)

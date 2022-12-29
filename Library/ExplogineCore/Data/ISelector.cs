@@ -2,7 +2,7 @@
 
 public interface ISelector
 {
-    Selectable? GetSelected();
+    bool IsSelected(Selectable selectable);
     void Select(Selectable selectable);
     void ClearSelection();
 }

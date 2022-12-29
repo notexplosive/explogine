@@ -49,16 +49,15 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
     }
 
     public void Draw(Painter painter)
-    {
-        painter.BeginSpriteBatch();
-
-        _demoInterface.Draw(painter, DemoStatusDepth);
-
+    { 
         if (Client.Debug.IsPassiveOrActive)
         {
             _logOverlay.Draw(painter, ConsoleOverlayDepth);
         }
         
+        painter.BeginSpriteBatch();
+        
+        _demoInterface.Draw(painter, DemoStatusDepth);
         _frameStep.Draw(painter, FrameStepDepth);
 
         painter.EndSpriteBatch();
@@ -80,8 +79,13 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         
         if (Client.FinishedLoading.IsReady)
         {
-            _snapshotTaker.Update(input);
-            _frameStep.Update(input);
+            _snapshotTaker.UpdateInput(input, hitTestStack);
+            _frameStep.UpdateInput(input, hitTestStack);
+
+            if (Client.Debug.IsPassiveOrActive)
+            {
+                _logOverlay.UpdateInput(input, hitTestStack);
+            }
         }
     }
 

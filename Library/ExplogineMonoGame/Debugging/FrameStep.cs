@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-public class FrameStep
+public class FrameStep : IUpdateInput
 {
     private readonly TweenableFloat _lineThickness = new();
     private readonly TweenableFloat _opacity = new();
@@ -15,7 +15,7 @@ public class FrameStep
     private readonly SequenceTween _tween = new();
     private bool _shouldDisplay;
 
-    public void Update(InputFrameState input)
+    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
         if (Client.Debug.IsPassiveOrActive)
         {

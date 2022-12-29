@@ -9,6 +9,11 @@ public class Selector : ISelector
         return _selected;
     }
 
+    public bool IsSelected(Selectable selectable)
+    {
+        return _selected == selectable;
+    }
+
     public void Select(Selectable selectable)
     {
         _selected = selectable;
