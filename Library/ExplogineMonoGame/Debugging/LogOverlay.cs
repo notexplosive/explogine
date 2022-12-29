@@ -108,8 +108,6 @@ internal class LogOverlay : ILogCapture, IUpdateInput
 
     public void Draw(Painter painter, Depth depth)
     {
-        PrepareDraw(painter);
-
         painter.BeginSpriteBatch();
         var latestLogMessageRect = new Rectangle(5, 0, TotalWidth - 10, MaxHeight);
 

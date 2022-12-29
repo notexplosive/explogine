@@ -29,15 +29,15 @@ public class ClientCanvas
 
     public PlatformAgnosticWindow Window { get; }
 
-    public void ResizeCanvas(Point newWindowSize)
+    public void ResizeCanvas(Point newRenderResolution)
     {
-        if (Internal.Size == newWindowSize)
+        if (Internal.Size == newRenderResolution)
         {
             return;
         }
 
         Internal.Dispose();
-        Internal = new Canvas(newWindowSize);
+        Internal = new Canvas(newRenderResolution);
     }
 
     public void Setup()

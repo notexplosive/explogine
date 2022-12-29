@@ -211,6 +211,9 @@ public static class Client
         Client.Graphics.Painter.Clear(Color.Black);
         Client.CartridgeChain.DrawCurrentCartridge(Client.Graphics.Painter);
         Client.Graphics.PopCanvas();
+        
+        Client.CartridgeChain.PrepareDebugCartridge(Client.Graphics.Painter);
+        
         Client.Window.Canvas.Draw(Client.Graphics.Painter);
         Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
     }

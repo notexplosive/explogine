@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-public class DebugCartridge : ICartridge, ILoadEventProvider
+public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawer
 {
     private readonly DemoInterface _demoInterface = new();
     private readonly FrameStep _frameStep = new();
@@ -46,6 +46,14 @@ public class DebugCartridge : ICartridge, ILoadEventProvider
         _demoInterface.Update(dt);
         _logOverlay.Update(dt);
         _frameStep.UpdateGraphic(dt);
+    }
+    
+    public void EarlyDraw(Painter painter)
+    {
+        if (Client.Debug.IsPassiveOrActive)
+        {
+            _logOverlay.PrepareDraw(painter);
+        }
     }
 
     public void Draw(Painter painter)

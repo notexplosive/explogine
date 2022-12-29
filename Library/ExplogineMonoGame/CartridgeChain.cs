@@ -171,4 +171,12 @@ internal class CartridgeChain : IUpdateInput
             }
         }
     }
+
+    public void PrepareDebugCartridge(Painter painter)
+    {
+        if (DebugCartridge is IEarlyDrawer preDrawDebug)
+        {
+            preDrawDebug.EarlyDraw(painter);
+        }
+    }
 }
