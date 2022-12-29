@@ -207,7 +207,10 @@ public static class Client
 
     internal static void Draw()
     {
-        Client.Window.Canvas.DrawWithin(painter => { Client.CartridgeChain.DrawCurrentCartridge(painter); });
+        Client.Graphics.PushCanvas(Client.Window.Canvas.Internal);
+        Client.Graphics.Painter.Clear(Color.Black);
+        Client.CartridgeChain.DrawCurrentCartridge(Client.Graphics.Painter);
+        Client.Graphics.PopCanvas();
         Client.Window.Canvas.Draw(Client.Graphics.Painter);
         Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
     }

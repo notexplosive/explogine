@@ -11,7 +11,7 @@ namespace ExplogineMonoGame;
 /// </summary>
 public class ClientCanvas
 {
-    private Canvas _canvas = null!;
+    public Canvas Internal { get; private set; } = null!;
 
     public ClientCanvas(PlatformAgnosticWindow window)
     {
@@ -24,39 +24,31 @@ public class ClientCanvas
                                     * Matrix.CreateTranslation(new Vector3(CalculateTopLeftCorner(), 0));
 
     public Matrix ScreenToCanvas => Matrix.Invert(CanvasToScreen);
-    public Texture2D Texture => _canvas.Texture;
-    public Point Size => _canvas.Size;
+    public Texture2D Texture => Internal.Texture;
+    public Point Size => Internal.Size;
 
     public PlatformAgnosticWindow Window { get; }
 
     public void ResizeCanvas(Point newWindowSize)
     {
-        if (_canvas.Size == newWindowSize)
+        if (Internal.Size == newWindowSize)
         {
             return;
         }
 
-        _canvas.Dispose();
-        _canvas = new Canvas(newWindowSize);
+        Internal.Dispose();
+        Internal = new Canvas(newWindowSize);
     }
 
     public void Setup()
     {
-        _canvas = new Canvas(1, 1);
-    }
-
-    public void DrawWithin(Action<Painter> drawAction)
-    {
-        Client.Graphics.PushCanvas(_canvas);
-        Client.Graphics.Painter.Clear(Color.Black);
-        drawAction(Client.Graphics.Painter);
-        Client.Graphics.PopCanvas();
+        Internal = new Canvas(1, 1);
     }
 
     public void Draw(Painter painter)
     {
         painter.BeginSpriteBatch(CanvasToScreen);
-        painter.DrawAtPosition(_canvas.Texture, Vector2.Zero);
+        painter.DrawAtPosition(Internal.Texture, Vector2.Zero);
         painter.EndSpriteBatch();
     }
 
