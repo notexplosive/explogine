@@ -50,7 +50,7 @@ internal class SnapshotTaker : IUpdateInput
         Directory.CreateDirectory(directory);
         var screenshotFilePath = Path.Join(directory, $"{currentTime.ToFileTimeUtc()}.png");
         using var stream = File.Create(screenshotFilePath);
-        var texture = Client.Canvas.Texture;
+        var texture = Client.Window.Canvas.Texture;
         texture.SaveAsPng(stream, texture.Width, texture.Height);
         Client.Debug.Log("Snapshot:", screenshotFilePath);
     }

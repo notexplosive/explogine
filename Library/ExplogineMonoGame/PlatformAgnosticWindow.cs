@@ -12,6 +12,17 @@ public class PlatformAgnosticWindow
     private Point? _specifiedRenderResolution;
     protected GameWindow Window = null!;
 
+    public PlatformAgnosticWindow()
+    {
+        Canvas = new ClientCanvas(this);
+        RenderResolutionChanged += Canvas.ResizeCanvas;
+    }
+
+    /// <summary>
+    ///     The Canvas that renders the actual game content to the screen.
+    /// </summary>
+    public ClientCanvas Canvas { get; }
+
     public Point RenderResolution => _specifiedRenderResolution ?? Size;
 
     public string Title
@@ -90,6 +101,7 @@ public class PlatformAgnosticWindow
 
     public void Setup(GameWindow window, WindowConfig config)
     {
+        Canvas.Setup();
         Window = window;
         _rememberedBounds = new Rectangle(Position, Size);
         LateSetup(config);

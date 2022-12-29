@@ -90,11 +90,6 @@ public static class Client
     /// </summary>
     public static ClientRandom Random { get; } = new();
 
-    /// <summary>
-    ///     The Canvas that renders the actual game content to the screen.
-    /// </summary>
-    public static ClientCanvas Canvas { get; } = new();
-
     private static ClientEssentials Essentials { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
@@ -167,8 +162,6 @@ public static class Client
     internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, Game game)
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
-        Client.Canvas.Setup();
-        Client.Window.RenderResolutionChanged += Client.Canvas.ResizeCanvas;
         Client.Window.Setup(game.Window, Client.startingConfig);
 
         Client.InitializedGraphics.BecomeReady();
@@ -214,8 +207,8 @@ public static class Client
 
     internal static void Draw()
     {
-        Client.Canvas.DrawWithin(painter => { Client.CartridgeChain.DrawCurrentCartridge(painter); });
-        Client.Canvas.Draw(Client.Graphics.Painter);
+        Client.Window.Canvas.DrawWithin(painter => { Client.CartridgeChain.DrawCurrentCartridge(painter); });
+        Client.Window.Canvas.Draw(Client.Graphics.Painter);
         Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
     }
 }
