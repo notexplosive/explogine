@@ -18,11 +18,11 @@ public class TextInputWidget : Widget, IUpdateInput
     private readonly HoverState _isTextAreaHovered;
     private readonly ISelector _selector;
     private readonly bool _showScrollbar;
+    private bool _dragStarted;
     private int? _hoveredLetterIndex;
     private HorizontalDirection _hoveredSide;
     private bool _isDragging;
     private RepeatedAction? _mostRecentAction;
-    private bool _dragStarted;
 
     public TextInputWidget(Vector2 position, Point size, IFontGetter font, Settings settings)
         : base(position, size, settings.Depth)
@@ -34,7 +34,7 @@ public class TextInputWidget : Widget, IUpdateInput
         _isSingleLine = settings.IsSingleLine;
 
         ScrollableArea = CreateScrollableArea();
-        Resized += ()=> ScrollableArea = CreateScrollableArea();
+        Resized += () => ScrollableArea = CreateScrollableArea();
 
         _isTextAreaHovered = new HoverState();
         Cursor.MovedCursor += OnCursorMoved;
@@ -43,15 +43,6 @@ public class TextInputWidget : Widget, IUpdateInput
             _isSingleLine);
         Resized += () => Content.ChangeSize(TextAreaRectangle);
         Content.CacheUpdated += () => OnCursorMoved(CursorIndex);
-    }
-
-    private ScrollableArea CreateScrollableArea()
-    {
-        var shouldScrollY = ScrollableAxis == Axis.Y;
-        return new ScrollableArea(InnerRectangle.Size.ToPoint(), InnerRectangle, Depth.Front)
-        {
-            EnableInput = new XyBool(!shouldScrollY, shouldScrollY)
-        };
     }
 
     public Selectable Selectable { get; }
@@ -78,7 +69,16 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    public string Text => Content.Text;
+    public string Text
+    {
+        get => Content.Text;
+        set
+        {
+            Cursor.SetIndex(0, false);
+            Content.Text = value;
+        }
+    }
+
     public int CursorIndex => Cursor.Index;
     public int MarginSize => 5;
 
@@ -106,7 +106,9 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
-    public RectangleF InnerRectangle => new(Vector2.Zero, new Vector2(Size.X, Math.Max(Size.Y, Font.GetFont().Height + MarginSize * 2)));
+    public RectangleF InnerRectangle => new(Vector2.Zero,
+        new Vector2(Size.X, Math.Max(Size.Y, Font.GetFont().Height + MarginSize * 2)));
+
     public int LastIndex => Content.NumberOfChars;
     public int CurrentColumn => Content.GetColumn(CursorIndex);
     public int CurrentLine => Content.LineNumberAt(CursorIndex);
@@ -289,7 +291,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             _isDragging = true;
         }
-        
+
         if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
         {
             _isDragging = false;
@@ -297,7 +299,7 @@ public class TextInputWidget : Widget, IUpdateInput
         }
 
         var shouldSelect = false;
-        
+
         if (_isTextAreaHovered || _isDragging)
         {
             if (_hoveredLetterIndex != null)
@@ -383,6 +385,15 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    private ScrollableArea CreateScrollableArea()
+    {
+        var shouldScrollY = ScrollableAxis == Axis.Y;
+        return new ScrollableArea(InnerRectangle.Size.ToPoint(), InnerRectangle, Depth.Front)
+        {
+            EnableInput = new XyBool(!shouldScrollY, shouldScrollY)
+        };
+    }
+
     /// <summary>
     ///     Fired when you attempt a newline in single line mode
     /// </summary>
@@ -440,7 +451,7 @@ public class TextInputWidget : Widget, IUpdateInput
     {
         SelectEverything(false);
     }
-    
+
     private void SelectEverything(bool leaveAnchor)
     {
         SelectRange(0, Content.NumberOfChars);
@@ -850,7 +861,20 @@ public class TextInputWidget : Widget, IUpdateInput
         public int NumberOfChars => Cache.Text.Length;
         public RectangleF UsedSpace => Cache.UsedSpace;
         public int NumberOfLines => Cache.NumberOfLines;
-        public string Text => Cache.Text;
+
+        public string Text
+        {
+            get => Cache.Text;
+            set
+            {
+                _nodes.Clear();
+                var array = value.ToArray();
+                _nodes.AddRange(array);
+                Cache = Cache.Rebuild(array);
+                CacheUpdated?.Invoke();
+            }
+        }
+
         public RectangleF ContainerRectangle => Cache.ContainerRectangle;
 
         public event Action? CacheUpdated;
@@ -885,7 +909,7 @@ public class TextInputWidget : Widget, IUpdateInput
             Cache = Cache.Rebuild(_nodes.ToArray());
             CacheUpdated?.Invoke();
         }
-        
+
         public void ChangeSize(RectangleF textAreaRectangle)
         {
             Cache = Cache.RebuildWithNewSize(textAreaRectangle);
@@ -1040,7 +1064,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             _originalChars = chars;
             _font = font;
-            
+
             ContainerRectangle = containerRectangle;
             if (isSingleLine)
             {
@@ -1169,7 +1193,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             return new TextInputCache(newNodes, _font, ContainerRectangle, _alignment, _isSingleLine);
         }
-        
+
         [Pure]
         public TextInputCache RebuildWithNewSize(RectangleF textAreaRectangle)
         {
