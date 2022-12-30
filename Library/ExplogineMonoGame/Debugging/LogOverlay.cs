@@ -15,26 +15,11 @@ internal class LogOverlay : ILogCapture, IUpdateInput
     private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
     private readonly float _maxTimer = 5;
-    private TextInputWidget _textInputWidget = null!;
     private readonly SimpleGuiTheme _theme;
-    private bool _isTyping;
     private float _timer;
 
     public LogOverlay()
     {
-        Client.FinishedLoading.Add(() =>
-        {
-            _textInputWidget = new TextInputWidget(Vector2.Zero, new Point(200, _font.FontSize + 1), _font,
-                new TextInputWidget.Settings
-                {
-                    Depth = 50,
-                    Selector = new AlwaysSelected(),
-                    IsSingleLine = true,
-                    ShowScrollbar = false,
-                }
-            );
-        });
-
         _theme = new SimpleGuiTheme(Color.White, Color.White, Color.Transparent, _font);
     }
 
@@ -77,24 +62,10 @@ internal class LogOverlay : ILogCapture, IUpdateInput
 
     public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
     {
-        if (input.Keyboard.GetButton(Keys.OemTilde).WasPressed && input.Keyboard.Modifiers.None)
-        {
-            _isTyping = !_isTyping;
-        }
-
-        if (_isTyping)
-        {
-            _textInputWidget.UpdateInput(input, hitTestStack);
-        }
     }
 
     public void Update(float dt)
     {
-        if (_isTyping)
-        {
-            _timer = _maxTimer;
-        }
-
         if (_timer > 0)
         {
             _timer -= dt;
@@ -127,28 +98,9 @@ internal class LogOverlay : ILogCapture, IUpdateInput
 
         var overlayHeight = (float) latestLogMessageRect.Location.Y;
 
-        if (_isTyping)
-        {
-            // +5 so text doesn't get clipped off the bottom
-            var typeAreaHeight = (int) _font.GetFont().Height + 5;
-            _textInputWidget.Position = new Vector2(latestLogMessageRect.X, overlayHeight);
-            _textInputWidget.Size = new Point(latestLogMessageRect.Width, typeAreaHeight);
-            overlayHeight += typeAreaHeight;
-
-            _textInputWidget.Draw(painter);
-        }
-
         painter.DrawRectangle(new RectangleF(0, 0, TotalWidth, overlayHeight),
-            new DrawSettings {Color = Color.DarkBlue.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
+            new DrawSettings {Color = Color.Black.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
         painter.EndSpriteBatch();
-    }
-
-    public void PrepareDraw(Painter painter)
-    {
-        if (_isTyping)
-        {
-            _textInputWidget.PrepareDraw(painter, _theme);
-        }
     }
 
     private readonly record struct RenderedMessage(LogMessage Content, Vector2 Size);

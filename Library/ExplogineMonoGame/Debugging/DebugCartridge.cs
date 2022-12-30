@@ -50,10 +50,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawer
     
     public void EarlyDraw(Painter painter)
     {
-        if (Client.Debug.IsPassiveOrActive)
-        {
-            _logOverlay.PrepareDraw(painter);
-        }
+        // We no longer do anything here, but we might someday
     }
 
     public void Draw(Painter painter)
