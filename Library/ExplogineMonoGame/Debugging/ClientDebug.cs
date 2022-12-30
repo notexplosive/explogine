@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using ExplogineMonoGame.Logging;
 
 namespace ExplogineMonoGame.Debugging;
@@ -10,6 +11,39 @@ public class ClientDebug
         LogFile = new FileLogCapture();
         Output.AddParallel(LogFile);
         Output.PushToStack(new ConsoleLogCapture());
+
+        DeveloperConsole.AddCommand("Help",
+            Array.Empty<DeveloperConsole.ICommandParameter>(),
+            args =>
+            {
+                foreach (var command in DeveloperConsole.Commands)
+                {
+                    Client.Debug.Log(command.Name);
+                }
+            });
+        DeveloperConsole.AddCommand("Add",
+            new DeveloperConsole.ICommandParameter[]
+            {
+                new DeveloperConsole.IntCommandParameter("Left"),
+                new DeveloperConsole.IntCommandParameter("Right")
+            },
+            args =>
+            {
+                Client.Debug.Log(
+                    (args[0] as DeveloperConsole.CommandArgumentValue<int>).Value +
+                    (args[1] as DeveloperConsole.CommandArgumentValue<int>).Value
+                );
+            });
+        
+        DeveloperConsole.AddCommand("Echo",
+            new DeveloperConsole.ICommandParameter[]
+            {
+                new DeveloperConsole.StringCommandParameter("Message"),
+            },
+            args =>
+            {
+                Client.Debug.Log((args[0] as DeveloperConsole.CommandArgumentValue<string>).Value);
+            });
     }
 
     public LogOutput Output { get; } = new();
@@ -18,6 +52,7 @@ public class ClientDebug
     public bool IsPassiveOrActive => Level == DebugLevel.Passive || IsActive;
     public FileLogCapture LogFile { get; }
     public int GameSpeed { get; set; } = 1;
+    public DeveloperConsole DeveloperConsole { get; } = new();
 
     public void CycleDebugMode()
     {
@@ -33,10 +68,10 @@ public class ClientDebug
                 Level = DebugLevel.Passive;
                 break;
         }
-        
+
         Client.Debug.Log($"Debug level set to {Level}");
     }
-    
+
     public bool LaunchedAsDebugMode()
     {
         if (Client.Args.HasValue("debug"))
@@ -62,7 +97,7 @@ public class ClientDebug
         var output = CreateOutputString(message, paramsObjects);
         Output.Emit(new LogMessage(LogMessageType.Fail, output));
     }
-    
+
     public void LogWarning(object? message, params object?[] paramsObjects)
     {
         var output = CreateOutputString(message, paramsObjects);

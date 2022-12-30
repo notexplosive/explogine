@@ -33,9 +33,19 @@ internal class LogOverlay : ILogCapture, IUpdateInput
                     ShowScrollbar = false,
                 }
             );
+
+            _textInputWidget.Submitted += SubmitCommand;
         });
 
         _theme = new SimpleGuiTheme(Color.White, Color.White, Color.Transparent, _font);
+    }
+
+    private void SubmitCommand()
+    {
+        var command = _textInputWidget.Text;
+        _textInputWidget.Text = string.Empty;
+        Client.Debug.Log($">> {command}");
+        Client.Debug.DeveloperConsole.ReceiveCommand(command.Split());
     }
 
     private float Opacity => Math.Clamp(_timer, 0f, 1f);
