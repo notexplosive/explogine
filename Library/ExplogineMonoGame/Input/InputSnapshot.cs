@@ -95,23 +95,23 @@ public readonly struct InputSnapshot
     {
     }
 
-    public InputSnapshot(KeyboardState keyboardState, MouseState mouseState, TextEnteredBuffer buffer,
+    public InputSnapshot(Keys[] pressedKeys, Vector2 mousePosition, ButtonState[] buttonStates, int scrollValue, TextEnteredBuffer buffer,
         GamePadState gamePadStateP1,
         GamePadState gamePadStateP2, GamePadState gamePadStateP3, GamePadState gamePadStateP4)
     {
-        PressedKeys = new Keys[keyboardState.GetPressedKeyCount()];
-        for (var i = 0; i < keyboardState.GetPressedKeyCount(); i++)
+        PressedKeys = new Keys[pressedKeys.Length];
+        for (var i = 0; i < pressedKeys.Length; i++)
         {
-            PressedKeys.Set(i, keyboardState.GetPressedKeys()[i]);
+            PressedKeys.Set(i, pressedKeys[i]);
         }
 
-        MousePosition = mouseState.Position.ToVector2();
+        MousePosition = mousePosition;
         TextEntered = buffer;
-        ScrollValue = mouseState.ScrollWheelValue;
+        ScrollValue = scrollValue;
         MouseButtonStates = new ButtonState[InputSerialization.NumberOfMouseButtons];
-        MouseButtonStates.Set(0, mouseState.LeftButton);
-        MouseButtonStates.Set(1, mouseState.RightButton);
-        MouseButtonStates.Set(2, mouseState.MiddleButton);
+        MouseButtonStates.Set(0, buttonStates[0]);
+        MouseButtonStates.Set(1, buttonStates[1]);
+        MouseButtonStates.Set(2, buttonStates[2]);
 
         GamePadSnapshotOne = new GamePadSnapshot(gamePadStateP1);
         GamePadSnapshotTwo = new GamePadSnapshot(gamePadStateP2);
@@ -158,26 +158,52 @@ public readonly struct InputSnapshot
     ///     Obtains the latest Human Input State (ie: the actual input of the real physical mouse, keyboard, controller, etc.
     ///     If the Window is not in focus we return an almost-empty InputState.
     /// </summary>
-    public static InputSnapshot Human =>
-        Client.IsInFocus
-            ? new InputSnapshot(
-                Keyboard.GetState(),
-                Mouse.GetState(),
-                Client.Window.TextEnteredBuffer,
-                GamePad.GetState(PlayerIndex.One),
-                GamePad.GetState(PlayerIndex.Two),
-                GamePad.GetState(PlayerIndex.Three),
-                GamePad.GetState(PlayerIndex.Four)
-            )
-            : new InputSnapshot(
-                new KeyboardState(),
-                InputSnapshot.AlmostEmptyMouseState,
-                new TextEnteredBuffer(),
-                new GamePadState(),
-                new GamePadState(),
-                new GamePadState(),
-                new GamePadState()
-            );
+    public static InputSnapshot Human
+    {
+        get
+        {
+            if (Client.IsInFocus)
+            {
+                var mouseState = Mouse.GetState();
+                return new InputSnapshot(
+                    Keyboard.GetState().GetPressedKeys(),
+                    mouseState.Position.ToVector2(),
+                    new ButtonState[]
+                    {
+                        // order matters!!
+                        mouseState.LeftButton,
+                        mouseState.RightButton,
+                        mouseState.MiddleButton,
+                    },
+                    mouseState.ScrollWheelValue,
+                    Client.Window.TextEnteredBuffer,
+                    GamePad.GetState(PlayerIndex.One),
+                    GamePad.GetState(PlayerIndex.Two),
+                    GamePad.GetState(PlayerIndex.Three),
+                    GamePad.GetState(PlayerIndex.Four)
+                );
+            }
+            else
+            {
+                return new InputSnapshot(
+                    Array.Empty<Keys>(),
+                    InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
+                    new ButtonState[]
+                    {
+                        ButtonState.Released,
+                        ButtonState.Released,
+                        ButtonState.Released
+                    },
+                    InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
+                    new TextEnteredBuffer(),
+                    new GamePadState(),
+                    new GamePadState(),
+                    new GamePadState(),
+                    new GamePadState()
+                );
+            }
+        }
+    }
 
     /// <summary>
     /// Empty MouseState except it holds the current mouse and scroll position
@@ -197,8 +223,15 @@ public readonly struct InputSnapshot
             ButtonState.Released);
 
     public static InputSnapshot Empty =>
-        new(new KeyboardState(),
-            new MouseState(),
+        new(Array.Empty<Keys>(),
+            AlmostEmptyMouseState.Position.ToVector2(), 
+            new ButtonState[3]
+            {
+                ButtonState.Released,
+                ButtonState.Released,
+                ButtonState.Released
+            },
+            AlmostEmptyMouseState.ScrollWheelValue,
             new TextEnteredBuffer(),
             new GamePadState(),
             new GamePadState(),

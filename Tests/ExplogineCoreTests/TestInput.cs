@@ -24,9 +24,15 @@ public class TestInput
     {
         var input = new InputFrameState(
             new InputSnapshot(
-                new KeyboardState(Keys.Space),
-                new MouseState(0, 0, 0, ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
-                    ButtonState.Released, ButtonState.Released),
+                new[] {Keys.Space},
+                Vector2.Zero,
+                new[]
+                {
+                    ButtonState.Pressed,
+                    ButtonState.Released,
+                    ButtonState.Released
+                },
+                0,
                 new TextEnteredBuffer(),
                 new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.A),
                     new GamePadDPad()),
@@ -60,9 +66,15 @@ public class TestInput
         var input = new InputFrameState(
             InputSnapshot.Empty,
             new InputSnapshot(
-                new KeyboardState(Keys.Space),
-                new MouseState(0, 0, 0, ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
-                    ButtonState.Released, ButtonState.Released),
+                new[] {Keys.Space},
+                Vector2.Zero,
+                new[]
+                {
+                    ButtonState.Pressed,
+                    ButtonState.Released,
+                    ButtonState.Released
+                },
+                0,
                 new TextEnteredBuffer(),
                 new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.A),
                     new GamePadDPad()),
@@ -98,11 +110,13 @@ public class TestInput
     public void serialize_snapshot()
     {
         var before = new InputSnapshot(
-            new KeyboardState(Keys.Space, Keys.A),
-            new MouseState(
-                0, 0, 0,
-                ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
-                ButtonState.Released, ButtonState.Released),
+            new[] {Keys.Space, Keys.A},
+            Vector2.Zero,
+            new[]
+            {
+                ButtonState.Pressed, ButtonState.Released, ButtonState.Released
+            },
+            0,
             new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
             new GamePadState(
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
@@ -150,11 +164,10 @@ public class TestInput
     public void serialization_output()
     {
         var snapshot = new InputSnapshot(
-            new KeyboardState(Keys.Space, Keys.A),
-            new MouseState(
-                2, 4, 16,
-                ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
-                ButtonState.Released, ButtonState.Released),
+            new[] {Keys.Space, Keys.A},
+            new Vector2(2, 4),
+            new[] {ButtonState.Pressed, ButtonState.Released, ButtonState.Released},
+            16,
             new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
             new GamePadState(
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
@@ -179,18 +192,21 @@ public class TestInput
         );
 
         snapshot.Serialize().Should()
-            .Be("M:2,4,16,1|K:32,65|E:97,98,99|G:1,0.5,1,0,0,1,1|G:1,0.5,1,0,0,1,2|G:1,0.5,1,0,0,1,4|G:1,0.5,1,0,0,1,8");
+            .Be(
+                "M:2,4,16,1|K:32,65|E:97,98,99|G:1,0.5,1,0,0,1,1|G:1,0.5,1,0,0,1,2|G:1,0.5,1,0,0,1,4|G:1,0.5,1,0,0,1,8");
     }
 
     [Fact]
     public void serialize_to_and_back()
     {
         var snapshot = new InputSnapshot(
-            new KeyboardState(Keys.Space, Keys.A),
-            new MouseState(
-                2, 4, 16,
-                ButtonState.Pressed, ButtonState.Released, ButtonState.Released,
-                ButtonState.Released, ButtonState.Released),
+            new[] {Keys.Space, Keys.A},
+            new Vector2(2, 4),
+            new[]
+            {
+                ButtonState.Pressed, ButtonState.Released, ButtonState.Released
+            },
+            16,
             new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
             new GamePadState(
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
