@@ -80,15 +80,13 @@ public class TextInputWidget : Widget, IUpdateInput
     }
 
     public int CursorIndex => Cursor.Index;
-    public int MarginSize => 5;
 
     public RectangleF TextAreaRectangle
     {
         get
         {
-            var withMargin = InnerRectangle.Inflated(-MarginSize, -MarginSize);
             var scrollBarSide = _isSingleLine ? RectEdge.Bottom : RectEdge.Right;
-            return withMargin.ResizedOnEdge(scrollBarSide,
+            return InnerRectangle.ResizedOnEdge(scrollBarSide,
                 new Vector2(-ScrollableArea.ScrollBarWidth).JustAxis(ScrollableAxis));
         }
     }
@@ -107,7 +105,7 @@ public class TextInputWidget : Widget, IUpdateInput
     }
 
     public RectangleF InnerRectangle => new(Vector2.Zero,
-        new Vector2(Size.X, Math.Max(Size.Y, Font.GetFont().Height + MarginSize * 2)));
+        new Vector2(Size.X, Math.Max(Size.Y, Font.GetFont().Height)));
 
     public int LastIndex => Content.NumberOfChars;
     public int CurrentColumn => Content.GetColumn(CursorIndex);
@@ -440,8 +438,7 @@ public class TextInputWidget : Widget, IUpdateInput
                 distance = Near(nodeRect) - Near(viewBounds);
             }
 
-            ScrollableArea.Move(new Vector2(distance).JustAxis(ScrollableAxis) +
-                                new Vector2(distance).Normalized() * MarginSize);
+            ScrollableArea.Move(new Vector2(distance).JustAxis(ScrollableAxis));
         }
 
         ScrollableArea.ReConstrain();
