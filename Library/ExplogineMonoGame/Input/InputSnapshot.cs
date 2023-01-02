@@ -155,49 +155,50 @@ public readonly struct InputSnapshot
     {
         get
         {
-            if (Client.IsInFocus)
+            if (!Client.IsInFocus)
             {
-                var p1 = GamePad.GetState(PlayerIndex.One);
-                var p2 = GamePad.GetState(PlayerIndex.Two);
-                var p3 = GamePad.GetState(PlayerIndex.Three);
-                var p4 = GamePad.GetState(PlayerIndex.Four);
-
-                var mouseState = Mouse.GetState();
                 return new InputSnapshot(
-                    Keyboard.GetState().GetPressedKeys(),
-                    mouseState.Position.ToVector2(),
+                    Array.Empty<Keys>(),
+                    InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
                     new[]
                     {
-                        // order matters!!
-                        mouseState.LeftButton,
-                        mouseState.RightButton,
-                        mouseState.MiddleButton
+                        ButtonState.Released,
+                        ButtonState.Released,
+                        ButtonState.Released
                     },
-                    mouseState.ScrollWheelValue,
-                    Client.Window.TextEnteredBuffer,
-                    new GamePadSnapshot(p1.PressedButtons(), p1.ThumbSticks, p1.Triggers),
-                    new GamePadSnapshot(p2.PressedButtons(), p2.ThumbSticks, p2.Triggers),
-                    new GamePadSnapshot(p3.PressedButtons(), p3.ThumbSticks, p3.Triggers),
-                    new GamePadSnapshot(p4.PressedButtons(), p4.ThumbSticks, p4.Triggers)
+                    InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
+                    new TextEnteredBuffer(),
+                    new GamePadSnapshot(),
+                    new GamePadSnapshot(),
+                    new GamePadSnapshot(),
+                    new GamePadSnapshot()
                 );
             }
 
+            var p1 = GamePad.GetState(PlayerIndex.One);
+            var p2 = GamePad.GetState(PlayerIndex.Two);
+            var p3 = GamePad.GetState(PlayerIndex.Three);
+            var p4 = GamePad.GetState(PlayerIndex.Four);
+
+            var mouseState = Mouse.GetState();
             return new InputSnapshot(
-                Array.Empty<Keys>(),
-                InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
+                Keyboard.GetState().GetPressedKeys(),
+                mouseState.Position.ToVector2(),
                 new[]
                 {
-                    ButtonState.Released,
-                    ButtonState.Released,
-                    ButtonState.Released
+                    // order matters!!
+                    mouseState.LeftButton,
+                    mouseState.RightButton,
+                    mouseState.MiddleButton
                 },
-                InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
-                new TextEnteredBuffer(),
-                new GamePadSnapshot(),
-                new GamePadSnapshot(),
-                new GamePadSnapshot(),
-                new GamePadSnapshot()
+                mouseState.ScrollWheelValue,
+                Client.Window.TextEnteredBuffer,
+                new GamePadSnapshot(p1.PressedButtons(), p1.ThumbSticks, p1.Triggers),
+                new GamePadSnapshot(p2.PressedButtons(), p2.ThumbSticks, p2.Triggers),
+                new GamePadSnapshot(p3.PressedButtons(), p3.ThumbSticks, p3.Triggers),
+                new GamePadSnapshot(p4.PressedButtons(), p4.ThumbSticks, p4.Triggers)
             );
+
         }
     }
 
