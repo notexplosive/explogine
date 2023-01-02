@@ -46,7 +46,7 @@ public readonly struct KeyboardFrameState
 
     public bool IsAnyKeyDown()
     {
-        return Current.PressedKeys.Length > 0;
+        return Current.PressedKeys is {Length: > 0};
     }
 
     public IEnumerable<(ButtonFrameState, Keys)> EachKey()

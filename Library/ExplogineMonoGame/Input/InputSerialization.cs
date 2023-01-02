@@ -46,37 +46,48 @@ public static class InputSerialization
 
     public static string AsString(GamePadSnapshot input)
     {
-        
         var buttonsBuilder = new StringBuilder();
-        for (var i = 0; i < input.PressedButtons.Length; i++)
+        if (input.PressedButtons != null)
         {
-            var key = input.PressedButtons[i];
-            buttonsBuilder.Append((int) key);
-
-            if (i < input.PressedButtons.Length - 1)
+            for (var i = 0; i < input.PressedButtons.Length; i++)
             {
-                buttonsBuilder.Append(',');
+                var key = input.PressedButtons[i];
+                buttonsBuilder.Append((int) key);
+
+                if (i < input.PressedButtons.Length - 1)
+                {
+                    buttonsBuilder.Append(',');
+                }
             }
         }
-        
+
         return
             $"{input.GamePadLeftTrigger},{input.GamePadRightTrigger},{input.LeftThumbstick.X},{input.LeftThumbstick.Y},{input.RightThumbstick.X},{input.RightThumbstick.Y},{buttonsBuilder}";
     }
 
     public static string AsString(InputSnapshot input)
     {
+        var mouseButtonStates = 0;
+        if (input.MouseButtonStates != null)
+        {
+            mouseButtonStates = InputSerialization.StatesToInt(input.MouseButtonStates);
+        }
+
         var mouse =
-            $"{input.MousePosition.X},{input.MousePosition.Y},{input.ScrollValue},{InputSerialization.StatesToInt(input.MouseButtonStates)}";
+            $"{input.MousePosition.X},{input.MousePosition.Y},{input.ScrollValue},{mouseButtonStates}";
 
         var keyboardBuilder = new StringBuilder();
-        for (var i = 0; i < input.PressedKeys.Length; i++)
+        if (input.PressedKeys != null)
         {
-            var key = input.PressedKeys[i];
-            keyboardBuilder.Append((int) key);
-
-            if (i < input.PressedKeys.Length - 1)
+            for (var i = 0; i < input.PressedKeys.Length; i++)
             {
-                keyboardBuilder.Append(',');
+                var key = input.PressedKeys[i];
+                keyboardBuilder.Append((int) key);
+
+                if (i < input.PressedKeys.Length - 1)
+                {
+                    keyboardBuilder.Append(',');
+                }
             }
         }
 

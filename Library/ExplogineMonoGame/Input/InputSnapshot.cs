@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -248,5 +249,15 @@ public readonly struct InputSnapshot
     public bool IsDown(Keys key)
     {
         return InputUtil.CheckIsDown(PressedKeys, key);
+    }
+
+    public Keys[] PressedKeysCopy()
+    {
+        return PressedKeys == null ? Array.Empty<Keys>() : PressedKeys.ToArray();
+    }
+
+    public ButtonState[] MouseButtonStatesCopy()
+    {
+        return MouseButtonStates == null ? Array.Empty<ButtonState>() : MouseButtonStates.ToArray();
     }
 }

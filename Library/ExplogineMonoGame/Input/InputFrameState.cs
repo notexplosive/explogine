@@ -1,4 +1,6 @@
-﻿namespace ExplogineMonoGame.Input;
+﻿using Microsoft.Xna.Framework.Input;
+
+namespace ExplogineMonoGame.Input;
 
 public readonly struct InputFrameState
 {
