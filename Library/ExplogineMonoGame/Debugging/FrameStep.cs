@@ -21,7 +21,7 @@ public class FrameStep : IUpdateInput
         {
             if (Client.CartridgeChain.IsFrozen)
             {
-                if (input.Mouse.ScrollDelta() < 0 || input.Keyboard.GetButton(Keys.OemPipe).WasPressed)
+                if (input.Mouse.ScrollDelta(true) < 0 || input.Keyboard.GetButton(Keys.OemPipe, true).WasPressed)
                 {
                     Step();
                 }
