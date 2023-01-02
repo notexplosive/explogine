@@ -15,18 +15,18 @@ internal static class InputUtil
         return buttonStates[index] == ButtonState.Pressed;
     }
 
-    public static bool CheckIsDown(Buttons[]? pressedButtons, Buttons button)
+    public static bool CheckIsDown(Keys[]? pressedKeys, Keys key)
     {
-        if (pressedButtons == null)
-        {
-            return false;
-        }
-        
-        return pressedButtons.Contains(button);
+        return pressedKeys != null && pressedKeys.Contains(key);
     }
 
-    public static bool CheckIsDown(ButtonState[] mouseButtonStates, MouseButton mouseButton)
+    public static bool CheckIsDown(Buttons[]? pressedButtons, Buttons button)
     {
-        return InputUtil.CheckIsDown(mouseButtonStates, (int) mouseButton);
+        return pressedButtons != null && pressedButtons.Contains(button);
+    }
+
+    public static bool CheckIsDown(ButtonState[]? mouseButtonStates, MouseButton mouseButton)
+    {
+        return mouseButtonStates != null && InputUtil.CheckIsDown(mouseButtonStates, (int) mouseButton);
     }
 }

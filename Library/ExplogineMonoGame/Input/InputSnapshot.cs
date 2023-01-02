@@ -103,16 +103,16 @@ public readonly struct InputSnapshot
         PressedKeys = new Keys[pressedKeys.Length];
         for (var i = 0; i < pressedKeys.Length; i++)
         {
-            PressedKeys.Set(i, pressedKeys[i]);
+            PressedKeys[i] = pressedKeys[i];
         }
 
         MousePosition = mousePosition;
         TextEntered = buffer;
         ScrollValue = scrollValue;
         MouseButtonStates = new ButtonState[InputSerialization.NumberOfMouseButtons];
-        MouseButtonStates.Set(0, buttonStates[0]);
-        MouseButtonStates.Set(1, buttonStates[1]);
-        MouseButtonStates.Set(2, buttonStates[2]);
+        MouseButtonStates[0] = buttonStates[0];
+        MouseButtonStates[1] = buttonStates[1];
+        MouseButtonStates[2] = buttonStates[2];
 
         GamePadSnapshot1 = gamePadStateP1;
         GamePadSnapshot2 = gamePadStateP2;
@@ -125,8 +125,8 @@ public readonly struct InputSnapshot
     public GamePadSnapshot GamePadSnapshot2 { get; } = new();
     public GamePadSnapshot GamePadSnapshot3 { get; } = new();
     public GamePadSnapshot GamePadSnapshot4 { get; } = new();
-    public NotNullArray<ButtonState> MouseButtonStates { get; } = new();
-    public NotNullArray<Keys> PressedKeys { get; } = new();
+    public ButtonState[]? MouseButtonStates { get; } = null;
+    public Keys[]? PressedKeys { get; } = null;
     public Vector2 MousePosition { get; } = Vector2.Zero;
     public int ScrollValue { get; } = 0;
 
@@ -242,5 +242,10 @@ public readonly struct InputSnapshot
     public string Serialize()
     {
         return InputSerialization.AsString(this);
+    }
+
+    public bool IsDown(Keys key)
+    {
+        return InputUtil.CheckIsDown(PressedKeys, key);
     }
 }

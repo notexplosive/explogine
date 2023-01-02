@@ -21,8 +21,8 @@ public readonly struct KeyboardFrameState
     
     public ButtonFrameState GetButton(Keys key)
     {
-        var isDown = Current.PressedKeys.Contains(key);
-        var wasDown = Previous.PressedKeys.Contains(key);
+        var isDown = Current.IsDown(key);
+        var wasDown = Previous.IsDown(key);
         return new ButtonFrameState(isDown, wasDown);
     }
 
@@ -30,12 +30,12 @@ public readonly struct KeyboardFrameState
     {
         get
         {
-            var control = Current.PressedKeys.Contains(Keys.LeftControl)
-                          || Current.PressedKeys.Contains(Keys.RightControl);
-            var alt = Current.PressedKeys.Contains(Keys.LeftAlt)
-                      || Current.PressedKeys.Contains(Keys.RightAlt);
-            var shift = Current.PressedKeys.Contains(Keys.LeftShift)
-                        || Current.PressedKeys.Contains(Keys.RightShift);
+            var control = Current.IsDown(Keys.LeftControl)
+                          || Current.IsDown(Keys.RightControl);
+            var alt = Current.IsDown(Keys.LeftAlt)
+                      || Current.IsDown(Keys.RightAlt);
+            var shift = Current.IsDown(Keys.LeftShift)
+                        || Current.IsDown(Keys.RightShift);
 
             return new ModifierKeys(control, alt, shift);
         }

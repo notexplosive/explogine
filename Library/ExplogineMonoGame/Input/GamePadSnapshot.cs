@@ -29,7 +29,7 @@ public readonly struct GamePadSnapshot
         {
             var pressedButtonsText = data[i];
 
-            if (!string.IsNullOrEmpty(pressedButtonsText))
+            if (!string.IsNullOrWhiteSpace(pressedButtonsText))
             {
                 pressedButtons.Add(Enum.Parse<Buttons>(pressedButtonsText));
             }
