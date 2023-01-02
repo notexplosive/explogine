@@ -55,16 +55,16 @@ public readonly struct InputSnapshot
                 switch (playerIndex)
                 {
                     case 0:
-                        GamePadSnapshotOne = gamePadSnapshot;
+                        GamePadSnapshot1 = gamePadSnapshot;
                         break;
                     case 1:
-                        GamePadSnapshotTwo = gamePadSnapshot;
+                        GamePadSnapshot2 = gamePadSnapshot;
                         break;
                     case 2:
-                        GamePadSnapshotThree = gamePadSnapshot;
+                        GamePadSnapshot3 = gamePadSnapshot;
                         break;
                     case 3:
-                        GamePadSnapshotFour = gamePadSnapshot;
+                        GamePadSnapshot4 = gamePadSnapshot;
                         break;
                     default:
                         throw new Exception("Serialized input came in with more than 4 players");
@@ -96,8 +96,7 @@ public readonly struct InputSnapshot
     }
 
     public InputSnapshot(Keys[] pressedKeys, Vector2 mousePosition, ButtonState[] buttonStates, int scrollValue, TextEnteredBuffer buffer,
-        GamePadState gamePadStateP1,
-        GamePadState gamePadStateP2, GamePadState gamePadStateP3, GamePadState gamePadStateP4)
+        GamePadState gamePadStateP1, GamePadState gamePadStateP2, GamePadState gamePadStateP3, GamePadState gamePadStateP4)
     {
         PressedKeys = new Keys[pressedKeys.Length];
         for (var i = 0; i < pressedKeys.Length; i++)
@@ -113,42 +112,34 @@ public readonly struct InputSnapshot
         MouseButtonStates.Set(1, buttonStates[1]);
         MouseButtonStates.Set(2, buttonStates[2]);
 
-        GamePadSnapshotOne = new GamePadSnapshot(gamePadStateP1);
-        GamePadSnapshotTwo = new GamePadSnapshot(gamePadStateP2);
-        GamePadSnapshotThree = new GamePadSnapshot(gamePadStateP3);
-        GamePadSnapshotFour = new GamePadSnapshot(gamePadStateP4);
+        GamePadSnapshot1 = new GamePadSnapshot(gamePadStateP1.PressedButtons(), gamePadStateP1.ThumbSticks, gamePadStateP1.Triggers);
+        GamePadSnapshot2 = new GamePadSnapshot(gamePadStateP2.PressedButtons(), gamePadStateP2.ThumbSticks, gamePadStateP2.Triggers);
+        GamePadSnapshot3 = new GamePadSnapshot(gamePadStateP3.PressedButtons(), gamePadStateP3.ThumbSticks, gamePadStateP3.Triggers);
+        GamePadSnapshot4 = new GamePadSnapshot(gamePadStateP4.PressedButtons(), gamePadStateP4.ThumbSticks, gamePadStateP4.Triggers);
     }
 
     public TextEnteredBuffer TextEntered { get; } = new();
-    public GamePadSnapshot GamePadSnapshotOne { get; } = new();
-    public GamePadSnapshot GamePadSnapshotTwo { get; } = new();
-    public GamePadSnapshot GamePadSnapshotThree { get; } = new();
-    public GamePadSnapshot GamePadSnapshotFour { get; } = new();
+    public GamePadSnapshot GamePadSnapshot1 { get; } = new();
+    public GamePadSnapshot GamePadSnapshot2 { get; } = new();
+    public GamePadSnapshot GamePadSnapshot3 { get; } = new();
+    public GamePadSnapshot GamePadSnapshot4 { get; } = new();
     public NotNullArray<ButtonState> MouseButtonStates { get; } = new();
     public NotNullArray<Keys> PressedKeys { get; } = new();
     public Vector2 MousePosition { get; } = Vector2.Zero;
     public int ScrollValue { get; } = 0;
-
-    public IEnumerable<GamePadSnapshot> GamePadSnapshots()
-    {
-        yield return GamePadSnapshotOne;
-        yield return GamePadSnapshotTwo;
-        yield return GamePadSnapshotThree;
-        yield return GamePadSnapshotFour;
-    }
 
     public GamePadSnapshot GamePadSnapshotOfPlayer(PlayerIndex playerIndex)
     {
         switch (playerIndex)
         {
             case PlayerIndex.One:
-                return GamePadSnapshotOne;
+                return GamePadSnapshot1;
             case PlayerIndex.Two:
-                return GamePadSnapshotTwo;
+                return GamePadSnapshot2;
             case PlayerIndex.Three:
-                return GamePadSnapshotThree;
+                return GamePadSnapshot3;
             case PlayerIndex.Four:
-                return GamePadSnapshotFour;
+                return GamePadSnapshot4;
             default:
                 throw new Exception("PlayerIndex out of range");
         }

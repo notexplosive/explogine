@@ -39,15 +39,13 @@ public readonly struct GamePadSnapshot
         }
     }
 
-    public GamePadSnapshot(GamePadState gamePadState)
+    public GamePadSnapshot(Buttons[] pressedButtons, GamePadThumbSticks thumbSticks, GamePadTriggers triggers)
     {
-        PressedButtons = gamePadState.PressedButtons();
-
-        GamePadLeftTrigger = gamePadState.Triggers.Left;
-        GamePadRightTrigger = gamePadState.Triggers.Right;
-
-        LeftThumbstick = gamePadState.ThumbSticks.Left;
-        RightThumbstick = gamePadState.ThumbSticks.Right;
+        PressedButtons = pressedButtons;
+        GamePadLeftTrigger = triggers.Left;
+        GamePadRightTrigger = triggers.Right;
+        LeftThumbstick = thumbSticks.Left;
+        RightThumbstick = thumbSticks.Right;
     }
 
     public Vector2 RightThumbstick { get; } = Vector2.Zero;
