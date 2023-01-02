@@ -24,7 +24,7 @@ public class Checkbox : IGuiWidget
     public bool IsHovered => _behavior.IsHovered;
     public bool IsEngaged => _behavior.IsEngaged;
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (_behavior.UpdateInputAndReturnClicked(input, hitTestStack, Rectangle, Depth))
         {

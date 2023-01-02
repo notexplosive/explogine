@@ -12,7 +12,7 @@ public class Gui : IUpdateInput
     private bool _isReadyToDraw;
     public bool Enabled { get; set; } = true;
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (!Enabled)
         {

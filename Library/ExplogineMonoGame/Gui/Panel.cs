@@ -27,7 +27,7 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
         Canvas.Dispose();
     }
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         var translation = Matrix.CreateTranslation(new Vector3(-Rectangle.TopLeft, 0));
         InnerGui.UpdateInput(input, hitTestStack.AddLayer(translation, Depth));

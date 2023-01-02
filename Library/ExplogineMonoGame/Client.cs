@@ -197,7 +197,7 @@ public static class Client
             Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
             Client.Input = Client.Demo.ProcessInput(Client.Input);
             var hitTest = new HitTestRoot();
-            Client.CartridgeChain.UpdateInput(Client.Input, hitTest.BaseStack);
+            Client.CartridgeChain.UpdateInput(new ConsumableInput(Client.Input), hitTest.BaseStack);
             hitTest.Resolve(Client.Input.Mouse.Position());
             Client.CartridgeChain.Update(dt);
             Client.Window.TextEnteredBuffer = new TextEnteredBuffer();

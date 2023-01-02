@@ -13,4 +13,6 @@ public readonly struct ButtonFrameState
         WasPressed = isDown && !wasDown;
         WasReleased = !isDown && wasDown;
     }
+
+    public static ButtonFrameState Empty => new(false, false);
 }

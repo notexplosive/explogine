@@ -10,7 +10,7 @@ public class RectResizer
     private RectEdge _edgeGrabbed;
     private RectEdge _edgeHovered;
 
-    public RectangleF GetResizedRect(InputFrameState input, HitTestStack hitTestStack, RectangleF startingRect,
+    public RectangleF GetResizedRect(ConsumableInput input, HitTestStack hitTestStack, RectangleF startingRect,
         Depth depth)
     {
         var leftButton = input.Mouse.GetButton(MouseButton.Left);

@@ -128,26 +128,27 @@ public class MultiCartridge : BasicGameCartridge
 
     public override void OnCartridgeStarted()
     {
-        MetaStart();
+        BeforeStart();
         StartCurrentCartridge();
     }
 
     public override void Update(float dt)
     {
-        MetaUpdate(dt);
+        BeforeUpdate(dt);
         CurrentCartridge.Update(dt);
     }
 
     public override void Draw(Painter painter)
     {
         CurrentCartridge.Draw(painter);
-        MetaDraw(painter);
+        AfterDraw(painter);
     }
 
-    public override void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        MetaUpdateInput(input);
+        BeforeUpdateInput(input, hitTestStack);
         CurrentCartridge.UpdateInput(input, hitTestStack);
+        AfterUpdateInput(input, hitTestStack);
     }
     
     protected virtual IEnumerable<ILoadEvent?> MetaLoadEvents()
@@ -155,19 +156,23 @@ public class MultiCartridge : BasicGameCartridge
         yield return null;
     }
 
-    protected virtual void MetaStart()
+    protected virtual void BeforeStart()
     {
     }
 
-    protected virtual void MetaUpdate(float dt)
+    protected virtual void BeforeUpdate(float dt)
     {
     }
 
-    protected virtual void MetaDraw(Painter painter)
+    protected virtual void AfterDraw(Painter painter)
     {
     }
 
-    protected virtual void MetaUpdateInput(InputFrameState input)
+    protected virtual void BeforeUpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    {
+    }
+    
+    protected virtual void AfterUpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
 

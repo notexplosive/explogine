@@ -38,7 +38,7 @@ internal class CartridgeChain : IUpdateInput
 
     public event Action? AboutToLoadLastCartridge;
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
         Current.UpdateInput(input, hitTestStack.AddLayer(Client.Window.Canvas.ScreenToCanvas, Depth.Middle + 1));

@@ -37,7 +37,7 @@ public class CrashCartridge : ICartridge
     {
     }
     
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
 

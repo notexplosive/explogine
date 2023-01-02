@@ -18,7 +18,7 @@ public class DynamicLabel : IGuiWidget
         _action = action;
     }
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         // do nothing
     }

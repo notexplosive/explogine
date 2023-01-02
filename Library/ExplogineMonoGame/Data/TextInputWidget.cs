@@ -149,7 +149,7 @@ public class TextInputWidget : Widget, IUpdateInput
 
     private bool IsShowingScrollbar => ScrollableArea.CanScrollAlong(ScrollableAxis) && _showScrollbar;
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         UpdateHovered(hitTestStack);
 
@@ -157,7 +157,7 @@ public class TextInputWidget : Widget, IUpdateInput
         {
             var keyboard = input.Keyboard;
 
-            EnterText(keyboard.GetEnteredCharacters());
+            EnterText(input, keyboard.GetEnteredCharacters());
 
             bool ControlIsDown(ModifierKeys modifierKeys)
             {
@@ -204,6 +204,7 @@ public class TextInputWidget : Widget, IUpdateInput
             KeyBind(keyboard, Keys.Delete, DoesNotHaveSelection, ControlIsNotDown, ReverseBackspace);
             KeyBind(keyboard, Keys.Delete, HasSelection, ModifierAgnostic, ClearSelectedRange);
             KeyBind(keyboard, Keys.A, SelectionAgnostic, ControlIsDown, SelectEverything);
+            KeyBind(keyboard, Keys.Escape, SelectionAgnostic, ModifierAgnostic, UnselectWidget);
         }
 
         var wrapperHitTestStack = hitTestStack.AddLayer(Matrix.Identity, Depth, Rectangle);
@@ -383,6 +384,11 @@ public class TextInputWidget : Widget, IUpdateInput
         }
     }
 
+    private void UnselectWidget(bool leaveAnchor)
+    {
+        Selected = false;
+    }
+
     private ScrollableArea CreateScrollableArea()
     {
         var shouldScrollY = ScrollableAxis == Axis.Y;
@@ -493,7 +499,7 @@ public class TextInputWidget : Widget, IUpdateInput
         Cursor.SetIndex(right, true);
     }
 
-    private void KeyBind(KeyboardFrameState keyboard, Keys button, Func<bool> checkSelectionCriteria,
+    private void KeyBind(ConsumableInput.ConsumableKeyboard keyboard, Keys button, Func<bool> checkSelectionCriteria,
         Func<ModifierKeys, bool> checkModifierCriteria,
         Action<bool> action)
     {
@@ -702,7 +708,7 @@ public class TextInputWidget : Widget, IUpdateInput
         Content.RemoveAt(CursorIndex);
     }
 
-    private void EnterText(char[] enteredCharacters)
+    private void EnterText(ConsumableInput input, char[] enteredCharacters)
     {
         foreach (var character in enteredCharacters)
         {
@@ -724,6 +730,8 @@ public class TextInputWidget : Widget, IUpdateInput
                     }
                 }
             }
+
+            input.Keyboard.ConsumeTextInput(character);
         }
     }
 

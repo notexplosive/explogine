@@ -75,7 +75,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawer
 
     }
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (input.Keyboard.Modifiers.ControlShift && input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
         {

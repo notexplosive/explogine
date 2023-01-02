@@ -29,7 +29,7 @@ public class ScrollableArea : IUpdateInput
     public Matrix ScreenToCanvas => ViewBounds.ScreenToCanvas(CanvasSize);
     public int ScrollBarWidth => 32;
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (EnableInput.X)
         {

@@ -58,7 +58,7 @@ public class Slider : IGuiWidget
     public float ThumbTravelDistance =>
         BodyRectangle.Size.GetAxis(AlongAxis) - ThumbSize.GetAxis(AlongAxis);
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         hitTestStack.AddZone(BodyRectangle, Depth, UnsetBodyHovered, SetBodyHovered);
         hitTestStack.AddZone(ThumbRectangle, Depth - 1, UnsetThumbHovered, SetThumbHovered);

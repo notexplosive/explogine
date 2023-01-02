@@ -27,7 +27,7 @@ public class RadialCheckbox : IGuiWidget
     public bool IsEngaged => _behavior.IsEngaged;
     public bool IsToggled => _radial.State.Value == _targetState;
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (_behavior.UpdateInputAndReturnClicked(input, hitTestStack, Rectangle, Depth))
         {

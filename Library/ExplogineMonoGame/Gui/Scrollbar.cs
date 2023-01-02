@@ -77,7 +77,7 @@ public class Scrollbar
 
     public float ThumbPercent => ThumbRectangle.Size.GetAxis(AlongAxis) / BodyRectangle.Size.GetAxis(AlongAxis);
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         var mousePosition = input.Mouse.Position(hitTestStack.WorldMatrix);
         hitTestStack.AddZone(BodyRectangle, Depth, UnsetBodyHovered, SetBodyHovered);

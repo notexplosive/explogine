@@ -20,7 +20,7 @@ internal class SnapshotTaker : IUpdateInput
         _timeLastFrame = DateTime.Now;
     }
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         var now = DateTime.Now;
         if (input.Keyboard.GetButton(Keys.F12).WasPressed)

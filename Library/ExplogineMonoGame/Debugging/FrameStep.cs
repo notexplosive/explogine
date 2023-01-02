@@ -15,7 +15,7 @@ public class FrameStep : IUpdateInput
     private readonly SequenceTween _tween = new();
     private bool _shouldDisplay;
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (Client.Debug.IsPassiveOrActive)
         {

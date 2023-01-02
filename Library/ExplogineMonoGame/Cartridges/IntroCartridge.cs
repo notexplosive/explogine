@@ -99,7 +99,7 @@ public class IntroCartridge : ICartridge
         painter.EndSpriteBatch();
     }
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (input.Keyboard.IsAnyKeyDown() || input.Mouse.WasAnyButtonPressedOrReleased())
         {

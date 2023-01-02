@@ -60,7 +60,7 @@ internal class LogOverlay : ILogCapture, IUpdateInput
         _timer = _maxTimer;
     }
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
 

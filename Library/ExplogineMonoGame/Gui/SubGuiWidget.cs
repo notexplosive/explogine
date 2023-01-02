@@ -12,7 +12,7 @@ public class SubGuiWidget : IGuiWidget, IPreDrawWidget
 
     public Gui InnerGui { get; }
 
-    public void UpdateInput(InputFrameState input, HitTestStack hitTestStack)
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         InnerGui.UpdateInput(input, hitTestStack);
     }
