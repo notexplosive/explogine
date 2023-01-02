@@ -32,11 +32,12 @@ public readonly struct GamePadSnapshot
             if (!string.IsNullOrEmpty(pressedButtonsText))
             {
                 pressedButtons.Add(Enum.Parse<Buttons>(pressedButtonsText));
-                PressedButtons = pressedButtons.ToArray();
             }
 
             i++;
         }
+        
+        PressedButtons = pressedButtons.ToArray();
     }
 
     public GamePadSnapshot(Buttons[] pressedButtons, GamePadThumbSticks thumbSticks, GamePadTriggers triggers)
@@ -52,5 +53,5 @@ public readonly struct GamePadSnapshot
     public Vector2 LeftThumbstick { get; } = Vector2.Zero;
     public float GamePadRightTrigger { get; } = 0f;
     public float GamePadLeftTrigger { get; } = 0f;
-    public Buttons[] PressedButtons { get; } = Array.Empty<Buttons>();
+    public Buttons[]? PressedButtons { get; }
 }

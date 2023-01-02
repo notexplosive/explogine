@@ -15,8 +15,13 @@ internal static class InputUtil
         return buttonStates[index] == ButtonState.Pressed;
     }
 
-    public static bool CheckIsDown(Buttons[] pressedButtons, Buttons button)
+    public static bool CheckIsDown(Buttons[]? pressedButtons, Buttons button)
     {
+        if (pressedButtons == null)
+        {
+            return false;
+        }
+        
         return pressedButtons.Contains(button);
     }
 

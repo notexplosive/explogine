@@ -35,14 +35,22 @@ public class TestInput
                 },
                 0,
                 new TextEnteredBuffer(),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.A),
-                    new GamePadDPad()),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.B),
-                    new GamePadDPad()),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.X),
-                    new GamePadDPad()),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.Y),
-                    new GamePadDPad())
+                new GamePadSnapshot(
+                    new[] {Buttons.A},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers()),
+                new GamePadSnapshot(
+                    new[] {Buttons.B},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers()),
+                new GamePadSnapshot(
+                    new[] {Buttons.X},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers()),
+                new GamePadSnapshot(
+                    new[] {Buttons.Y},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers())
             ),
             InputSnapshot.Empty
         );
@@ -77,14 +85,22 @@ public class TestInput
                 },
                 0,
                 new TextEnteredBuffer(),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.A),
-                    new GamePadDPad()),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.B),
-                    new GamePadDPad()),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.X),
-                    new GamePadDPad()),
-                new GamePadState(new GamePadThumbSticks(), new GamePadTriggers(), new GamePadButtons(Buttons.Y),
-                    new GamePadDPad())
+                new GamePadSnapshot(
+                    new[] {Buttons.A},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers()),
+                new GamePadSnapshot(
+                    new[] {Buttons.B},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers()),
+                new GamePadSnapshot(
+                    new[] {Buttons.X},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers()),
+                new GamePadSnapshot(
+                    new[] {Buttons.Y},
+                    new GamePadThumbSticks(),
+                    new GamePadTriggers())
             )
         );
 
@@ -119,26 +135,22 @@ public class TestInput
             },
             0,
             new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
-            new GamePadState(
+            new GamePadSnapshot(
+                new[] {Buttons.A},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.A),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)),
+            new GamePadSnapshot(
+                new[] {Buttons.B},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.B),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)),
+            new GamePadSnapshot(
+                new[] {Buttons.X},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.X),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)),
+            new GamePadSnapshot(
+                new[] {Buttons.Y},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.Y),
-                new GamePadDPad())
+                new GamePadTriggers(1, 0.5f))
         );
 
         var bytes = InputSerialization.AsString(before);
@@ -170,26 +182,26 @@ public class TestInput
             new[] {ButtonState.Pressed, ButtonState.Released, ButtonState.Released},
             16,
             new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
-            new GamePadState(
+            new GamePadSnapshot(
+                new[] {Buttons.A},
                 new GamePadThumbSticks(new Vector2(0, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.A),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)
+            ),
+            new GamePadSnapshot(
+                new[] {Buttons.B},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.B),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)
+            ),
+            new GamePadSnapshot(
+                new[] {Buttons.X},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(0, 0.5f),
-                new GamePadButtons(Buttons.X),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(0, 0.5f)
+            ),
+            new GamePadSnapshot(
+                new[] {Buttons.Y},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.Y),
-                new GamePadDPad())
+                new GamePadTriggers(1, 0.5f)
+            )
         );
 
         Approvals.Verify(snapshot);
@@ -207,26 +219,26 @@ public class TestInput
             },
             16,
             new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
-            new GamePadState(
+            new GamePadSnapshot(
+                new[] {Buttons.A},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.A),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)
+            ),
+            new GamePadSnapshot(
+                new[] {Buttons.B},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.B),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)
+            ),
+            new GamePadSnapshot(
+                new[] {Buttons.X},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.X),
-                new GamePadDPad()),
-            new GamePadState(
+                new GamePadTriggers(1, 0.5f)
+            ),
+            new GamePadSnapshot(
+                new[] {Buttons.Y},
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
-                new GamePadButtons(Buttons.Y),
-                new GamePadDPad())
+                new GamePadTriggers(1, 0.5f)
+            )
         );
 
         var serialized = snapshot.Serialize();

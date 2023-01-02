@@ -23,7 +23,7 @@ public readonly struct GamePadFrameState
 
     public bool IsAnyButtonDown(PlayerIndex playerIndex)
     {
-        return Current.GamePadSnapshotOfPlayer(playerIndex).PressedButtons.Length > 0;
+        return Current.GamePadSnapshotOfPlayer(playerIndex).PressedButtons is {Length: > 0};
     }
 
     private bool ThumbstickHit(Vector2 previousPosition, Vector2 currentPosition, Vector2 target, float tolerance)

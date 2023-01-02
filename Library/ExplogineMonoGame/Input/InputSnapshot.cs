@@ -95,8 +95,10 @@ public readonly struct InputSnapshot
     {
     }
 
-    public InputSnapshot(Keys[] pressedKeys, Vector2 mousePosition, ButtonState[] buttonStates, int scrollValue, TextEnteredBuffer buffer,
-        GamePadState gamePadStateP1, GamePadState gamePadStateP2, GamePadState gamePadStateP3, GamePadState gamePadStateP4)
+    public InputSnapshot(Keys[] pressedKeys, Vector2 mousePosition, ButtonState[] buttonStates, int scrollValue,
+        TextEnteredBuffer buffer,
+        GamePadSnapshot gamePadStateP1, GamePadSnapshot gamePadStateP2, GamePadSnapshot gamePadStateP3,
+        GamePadSnapshot gamePadStateP4)
     {
         PressedKeys = new Keys[pressedKeys.Length];
         for (var i = 0; i < pressedKeys.Length; i++)
@@ -112,10 +114,10 @@ public readonly struct InputSnapshot
         MouseButtonStates.Set(1, buttonStates[1]);
         MouseButtonStates.Set(2, buttonStates[2]);
 
-        GamePadSnapshot1 = new GamePadSnapshot(gamePadStateP1.PressedButtons(), gamePadStateP1.ThumbSticks, gamePadStateP1.Triggers);
-        GamePadSnapshot2 = new GamePadSnapshot(gamePadStateP2.PressedButtons(), gamePadStateP2.ThumbSticks, gamePadStateP2.Triggers);
-        GamePadSnapshot3 = new GamePadSnapshot(gamePadStateP3.PressedButtons(), gamePadStateP3.ThumbSticks, gamePadStateP3.Triggers);
-        GamePadSnapshot4 = new GamePadSnapshot(gamePadStateP4.PressedButtons(), gamePadStateP4.ThumbSticks, gamePadStateP4.Triggers);
+        GamePadSnapshot1 = gamePadStateP1;
+        GamePadSnapshot2 = gamePadStateP2;
+        GamePadSnapshot3 = gamePadStateP3;
+        GamePadSnapshot4 = gamePadStateP4;
     }
 
     public TextEnteredBuffer TextEntered { get; } = new();
@@ -155,52 +157,55 @@ public readonly struct InputSnapshot
         {
             if (Client.IsInFocus)
             {
+                var p1 = GamePad.GetState(PlayerIndex.One);
+                var p2 = GamePad.GetState(PlayerIndex.Two);
+                var p3 = GamePad.GetState(PlayerIndex.Three);
+                var p4 = GamePad.GetState(PlayerIndex.Four);
+
                 var mouseState = Mouse.GetState();
                 return new InputSnapshot(
                     Keyboard.GetState().GetPressedKeys(),
                     mouseState.Position.ToVector2(),
-                    new ButtonState[]
+                    new[]
                     {
                         // order matters!!
                         mouseState.LeftButton,
                         mouseState.RightButton,
-                        mouseState.MiddleButton,
+                        mouseState.MiddleButton
                     },
                     mouseState.ScrollWheelValue,
                     Client.Window.TextEnteredBuffer,
-                    GamePad.GetState(PlayerIndex.One),
-                    GamePad.GetState(PlayerIndex.Two),
-                    GamePad.GetState(PlayerIndex.Three),
-                    GamePad.GetState(PlayerIndex.Four)
+                    new GamePadSnapshot(p1.PressedButtons(), p1.ThumbSticks, p1.Triggers),
+                    new GamePadSnapshot(p2.PressedButtons(), p2.ThumbSticks, p2.Triggers),
+                    new GamePadSnapshot(p3.PressedButtons(), p3.ThumbSticks, p3.Triggers),
+                    new GamePadSnapshot(p4.PressedButtons(), p4.ThumbSticks, p4.Triggers)
                 );
             }
-            else
-            {
-                return new InputSnapshot(
-                    Array.Empty<Keys>(),
-                    InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
-                    new ButtonState[]
-                    {
-                        ButtonState.Released,
-                        ButtonState.Released,
-                        ButtonState.Released
-                    },
-                    InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
-                    new TextEnteredBuffer(),
-                    new GamePadState(),
-                    new GamePadState(),
-                    new GamePadState(),
-                    new GamePadState()
-                );
-            }
+
+            return new InputSnapshot(
+                Array.Empty<Keys>(),
+                InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
+                new[]
+                {
+                    ButtonState.Released,
+                    ButtonState.Released,
+                    ButtonState.Released
+                },
+                InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
+                new TextEnteredBuffer(),
+                new GamePadSnapshot(),
+                new GamePadSnapshot(),
+                new GamePadSnapshot(),
+                new GamePadSnapshot()
+            );
         }
     }
 
     /// <summary>
-    /// Empty MouseState except it holds the current mouse and scroll position
-    /// We need to detect mouse because otherwise we default to (0,0)
-    /// We need to detect scroll position because the scroll value will go from a potentially very high number to 0
-    /// Scrolling is not received unless the window is hovered so this is probably harmless. 
+    ///     Empty MouseState except it holds the current mouse and scroll position
+    ///     We need to detect mouse because otherwise we default to (0,0)
+    ///     We need to detect scroll position because the scroll value will go from a potentially very high number to 0
+    ///     Scrolling is not received unless the window is hovered so this is probably harmless.
     /// </summary>
     private static MouseState AlmostEmptyMouseState =>
         new(
@@ -215,19 +220,19 @@ public readonly struct InputSnapshot
 
     public static InputSnapshot Empty =>
         new(Array.Empty<Keys>(),
-            AlmostEmptyMouseState.Position.ToVector2(), 
-            new ButtonState[3]
+            InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
+            new[]
             {
                 ButtonState.Released,
                 ButtonState.Released,
                 ButtonState.Released
             },
-            AlmostEmptyMouseState.ScrollWheelValue,
+            InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
             new TextEnteredBuffer(),
-            new GamePadState(),
-            new GamePadState(),
-            new GamePadState(),
-            new GamePadState());
+            new GamePadSnapshot(),
+            new GamePadSnapshot(),
+            new GamePadSnapshot(),
+            new GamePadSnapshot());
 
     public override string ToString()
     {
