@@ -1,4 +1,5 @@
 ﻿using System;
+using ApprovalTests;
 using ExplogineMonoGame;
 using ExplogineMonoGame.Input;
 using FluentAssertions;
@@ -53,11 +54,11 @@ public class TestInput
 
         input.Keyboard.GetButton(Keys.Space).IsDown.Should().BeTrue();
         input.Mouse.GetButton(MouseButton.Left).IsDown.Should().BeTrue();
-        input.GamePad.GetButton(GamePadButton.A, PlayerIndex.One).IsDown.Should().BeTrue();
+        input.GamePad.GetButton(Buttons.A, PlayerIndex.One).IsDown.Should().BeTrue();
 
         input.Keyboard.GetButton(Keys.Space).WasPressed.Should().BeTrue();
         input.Mouse.GetButton(MouseButton.Left).WasPressed.Should().BeTrue();
-        input.GamePad.GetButton(GamePadButton.A, PlayerIndex.One).WasPressed.Should().BeTrue();
+        input.GamePad.GetButton(Buttons.A, PlayerIndex.One).WasPressed.Should().BeTrue();
     }
 
     [Fact]
@@ -93,17 +94,17 @@ public class TestInput
 
         input.Keyboard.GetButton(Keys.Space).IsDown.Should().BeFalse();
         input.Mouse.GetButton(MouseButton.Left).IsDown.Should().BeFalse();
-        input.GamePad.GetButton(GamePadButton.A, PlayerIndex.One).IsDown.Should().BeFalse();
-        input.GamePad.GetButton(GamePadButton.B, PlayerIndex.Two).IsDown.Should().BeFalse();
-        input.GamePad.GetButton(GamePadButton.X, PlayerIndex.Three).IsDown.Should().BeFalse();
-        input.GamePad.GetButton(GamePadButton.Y, PlayerIndex.Four).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(Buttons.A, PlayerIndex.One).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(Buttons.B, PlayerIndex.Two).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(Buttons.X, PlayerIndex.Three).IsDown.Should().BeFalse();
+        input.GamePad.GetButton(Buttons.Y, PlayerIndex.Four).IsDown.Should().BeFalse();
 
         input.Keyboard.GetButton(Keys.Space).WasReleased.Should().BeTrue();
         input.Mouse.GetButton(MouseButton.Left).WasReleased.Should().BeTrue();
-        input.GamePad.GetButton(GamePadButton.A, PlayerIndex.One).WasReleased.Should().BeTrue();
-        input.GamePad.GetButton(GamePadButton.B, PlayerIndex.Two).WasReleased.Should().BeTrue();
-        input.GamePad.GetButton(GamePadButton.X, PlayerIndex.Three).WasReleased.Should().BeTrue();
-        input.GamePad.GetButton(GamePadButton.Y, PlayerIndex.Four).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(Buttons.A, PlayerIndex.One).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(Buttons.B, PlayerIndex.Two).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(Buttons.X, PlayerIndex.Three).WasReleased.Should().BeTrue();
+        input.GamePad.GetButton(Buttons.Y, PlayerIndex.Four).WasReleased.Should().BeTrue();
     }
 
     [Fact]
@@ -149,8 +150,8 @@ public class TestInput
 
         foreach (var playerIndex in Enum.GetValues<PlayerIndex>())
         {
-            after.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates.Should()
-                .BeEquivalentTo(before.GamePadSnapshotOfPlayer(playerIndex).GamePadButtonStates);
+            after.GamePadSnapshotOfPlayer(playerIndex).PressedButtons.Should()
+                .BeEquivalentTo(before.GamePadSnapshotOfPlayer(playerIndex).PressedButtons);
             after.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick.Should()
                 .Be(before.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick);
             after.GamePadSnapshotOfPlayer(playerIndex).GamePadLeftTrigger.Should()
@@ -170,7 +171,7 @@ public class TestInput
             16,
             new TextEnteredBuffer(new[] {'a', 'b', 'c'}),
             new GamePadState(
-                new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
+                new GamePadThumbSticks(new Vector2(0, 0), new Vector2(0, 1)),
                 new GamePadTriggers(1, 0.5f),
                 new GamePadButtons(Buttons.A),
                 new GamePadDPad()),
@@ -181,7 +182,7 @@ public class TestInput
                 new GamePadDPad()),
             new GamePadState(
                 new GamePadThumbSticks(new Vector2(1, 0), new Vector2(0, 1)),
-                new GamePadTriggers(1, 0.5f),
+                new GamePadTriggers(0, 0.5f),
                 new GamePadButtons(Buttons.X),
                 new GamePadDPad()),
             new GamePadState(
@@ -191,9 +192,7 @@ public class TestInput
                 new GamePadDPad())
         );
 
-        snapshot.Serialize().Should()
-            .Be(
-                "M:2,4,16,1|K:32,65|E:97,98,99|G:1,0.5,1,0,0,1,1|G:1,0.5,1,0,0,1,2|G:1,0.5,1,0,0,1,4|G:1,0.5,1,0,0,1,8");
+        Approvals.Verify(snapshot);
     }
 
     [Fact]

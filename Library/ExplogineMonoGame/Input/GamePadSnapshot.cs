@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -20,18 +21,27 @@ public readonly struct GamePadSnapshot
             X = float.Parse(data[4]),
             Y = float.Parse(data[5])
         };
-        GamePadButtonStates =
-            InputSerialization.IntToStates(int.Parse(data[6]), InputSerialization.NumberOfGamepadButtons);
+
+        var pressedButtons = new List<Buttons>();
+        var i = 6;
+
+        while (i < data.Length)
+        {
+            var pressedButtonsText = data[i];
+
+            if (!string.IsNullOrEmpty(pressedButtonsText))
+            {
+                pressedButtons.Add(Enum.Parse<Buttons>(pressedButtonsText));
+                PressedButtons = pressedButtons.ToArray();
+            }
+
+            i++;
+        }
     }
 
     public GamePadSnapshot(GamePadState gamePadState)
     {
-        var gamePadButtons = InputSerialization.AllGamePadButtons;
-        GamePadButtonStates = new ButtonState[gamePadButtons.Length];
-        foreach (var value in gamePadButtons)
-        {
-            GamePadButtonStates[(int) value] = gamePadState.ButtonLookup(value);
-        }
+        PressedButtons = gamePadState.PressedButtons();
 
         GamePadLeftTrigger = gamePadState.Triggers.Left;
         GamePadRightTrigger = gamePadState.Triggers.Right;
@@ -44,5 +54,5 @@ public readonly struct GamePadSnapshot
     public Vector2 LeftThumbstick { get; } = Vector2.Zero;
     public float GamePadRightTrigger { get; } = 0f;
     public float GamePadLeftTrigger { get; } = 0f;
-    public ButtonState[] GamePadButtonStates { get; } = Array.Empty<ButtonState>();
+    public Buttons[] PressedButtons { get; } = Array.Empty<Buttons>();
 }

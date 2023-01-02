@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System.Linq;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Input;
 
@@ -14,9 +15,9 @@ internal static class InputUtil
         return buttonStates[index] == ButtonState.Pressed;
     }
 
-    public static bool CheckIsDown(ButtonState[] gamePadButtonStates, GamePadButton button)
+    public static bool CheckIsDown(Buttons[] pressedButtons, Buttons button)
     {
-        return InputUtil.CheckIsDown(gamePadButtonStates, (int) button);
+        return pressedButtons.Contains(button);
     }
 
     public static bool CheckIsDown(ButtonState[] mouseButtonStates, MouseButton mouseButton)

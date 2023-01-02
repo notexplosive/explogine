@@ -6,8 +6,6 @@ namespace ExplogineMonoGame.Input;
 
 public static class InputSerialization
 {
-    public static readonly GamePadButton[] AllGamePadButtons = Enum.GetValues<GamePadButton>();
-    public static readonly uint NumberOfGamepadButtons = (uint) InputSerialization.AllGamePadButtons.Length;
     public static readonly uint NumberOfMouseButtons = (uint) Enum.GetValues<MouseButton>().Length;
 
     public static int StatesToInt(ButtonState[] states)
@@ -48,8 +46,21 @@ public static class InputSerialization
 
     public static string AsString(GamePadSnapshot input)
     {
+        
+        var buttonsBuilder = new StringBuilder();
+        for (var i = 0; i < input.PressedButtons.Length; i++)
+        {
+            var key = input.PressedButtons[i];
+            buttonsBuilder.Append((int) key);
+
+            if (i < input.PressedButtons.Length - 1)
+            {
+                buttonsBuilder.Append(',');
+            }
+        }
+        
         return
-            $"{input.GamePadLeftTrigger},{input.GamePadRightTrigger},{input.LeftThumbstick.X},{input.LeftThumbstick.Y},{input.RightThumbstick.X},{input.RightThumbstick.Y},{InputSerialization.StatesToInt(input.GamePadButtonStates)}";
+            $"{input.GamePadLeftTrigger},{input.GamePadRightTrigger},{input.LeftThumbstick.X},{input.LeftThumbstick.Y},{input.RightThumbstick.X},{input.RightThumbstick.Y},{buttonsBuilder}";
     }
 
     public static string AsString(InputSnapshot input)
