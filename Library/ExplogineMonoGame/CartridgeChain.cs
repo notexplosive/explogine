@@ -175,7 +175,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void PrepareDebugCartridge(Painter painter)
     {
-        if (DebugCartridge is IEarlyDrawer preDrawDebug)
+        if (DebugCartridge is IEarlyDrawHook preDrawDebug)
         {
             preDrawDebug.EarlyDraw(painter);
         }

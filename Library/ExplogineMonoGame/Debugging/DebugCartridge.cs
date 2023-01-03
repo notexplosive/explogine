@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawer
+public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
 {
     private readonly DemoInterface _demoInterface = new();
     private readonly FrameStep _frameStep = new();

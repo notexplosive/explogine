@@ -4,7 +4,7 @@ using ExplogineMonoGame.Data;
 
 namespace ExplogineMonoGame.Rails;
 
-public class Rail : IUpdateInputHook, IUpdateHook, IDrawHook
+public class Rail : IUpdateInputHook, IUpdateHook, IDrawHook, IEarlyDrawHook
 {
     private readonly List<IHook> _hooks = new();
 
@@ -21,6 +21,17 @@ public class Rail : IUpdateInputHook, IUpdateHook, IDrawHook
             if (hook is IDrawHook drawHook)
             {
                 drawHook.Draw(painter);
+            }
+        }
+    }
+
+    public void EarlyDraw(Painter painter)
+    {
+        foreach (var hook in _hooks)
+        {
+            if (hook is IEarlyDrawHook updateInputHook)
+            {
+                updateInputHook.EarlyDraw(painter);
             }
         }
     }
