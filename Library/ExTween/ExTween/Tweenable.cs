@@ -62,4 +62,13 @@ public abstract class Tweenable<T>
 
         return "Tweenable: (null value)";
     }
+
+    public virtual string ValueAsString()
+    {
+        if (Value == null)
+        {
+            return "null";
+        }
+        return Value.ToString();
+    }
 }

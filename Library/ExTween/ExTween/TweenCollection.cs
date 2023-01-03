@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ExTween;
@@ -64,5 +65,13 @@ public abstract class TweenCollection
     public void SkipToEnd()
     {
         ForEachItem(item => { item.SkipToEnd(); });
+    }
+
+    public IEnumerable<ITween> Children()
+    {
+        foreach (var item in Items)
+        {
+            yield return item;
+        }
     }
 }

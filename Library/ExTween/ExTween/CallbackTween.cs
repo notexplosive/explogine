@@ -44,5 +44,5 @@ public class CallbackTween : ITween
         Update(time);
     }
 
-    public ITweenDuration TotalDuration => new KnownTweenDuration(0);
+    public ITweenDuration TotalDuration => new KnownTweenDuration(0, 0);
 }

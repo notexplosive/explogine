@@ -18,4 +18,9 @@ public class TweenableFloat : Tweenable<float>
     {
         return FloatExtensions.Lerp(startingValue, targetValue, percent);
     }
+
+    public override string ValueAsString()
+    {
+        return $"{Value:F3}";
+    }
 }

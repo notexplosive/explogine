@@ -40,13 +40,8 @@ public class DynamicTween : ITween
         GenerateIfNotAlready().SkipToEnd();
     }
 
-    private ITween GenerateIfNotAlready()
+    public ITween GenerateIfNotAlready()
     {
-        if (_generated == null)
-        {
-            _generated = _generateFunction();
-        }
-
-        return _generated;
+        return _generated ??= _generateFunction();
     }
 }

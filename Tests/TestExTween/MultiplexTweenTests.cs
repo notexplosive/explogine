@@ -78,7 +78,7 @@ public class MultiplexTweenTests
             .AddChannel(new WaitSecondsTween(4))
             .AddChannel(new WaitSecondsTween(5));
 
-        tween.TotalDuration.Get().Should().Be(7);
+        tween.TotalDuration.GetDuration().Should().Be(7);
     }
 
     [Fact]

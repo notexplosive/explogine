@@ -2,12 +2,13 @@
 
 namespace ExTween;
 
-public class Tween<T> : ITween
+public class Tween<T> : ITween, IValueTween
 {
     private readonly Ease.Delegate _ease;
     private readonly T _targetValue;
     private readonly Tweenable<T> _tweenable;
     private T _startingValue;
+    private readonly float _duration;
 
     public Tween(Tweenable<T> tweenable, T targetValue, float duration, Ease.Delegate ease)
     {
@@ -15,13 +16,13 @@ public class Tween<T> : ITween
         _targetValue = targetValue;
         _ease = ease;
         _startingValue = tweenable.Value;
-        TotalDuration = new KnownTweenDuration(duration);
+        _duration = duration;
         CurrentTime = 0;
     }
 
     public float CurrentTime { get; private set; }
 
-    public ITweenDuration TotalDuration { get; }
+    public ITweenDuration TotalDuration => new KnownTweenDuration(_duration, CurrentTime);
 
     public float Update(float dt)
     {
@@ -34,7 +35,7 @@ public class Tween<T> : ITween
 
         CurrentTime += dt;
 
-        var overflow = CurrentTime - TotalDuration.Get();
+        var overflow = CurrentTime - TotalDuration.GetDuration();
 
         if (overflow > 0)
         {
@@ -48,7 +49,7 @@ public class Tween<T> : ITween
 
     public bool IsDone()
     {
-        return CurrentTime >= TotalDuration.Get();
+        return CurrentTime >= TotalDuration.GetDuration();
     }
 
     public void Reset()
@@ -58,19 +59,19 @@ public class Tween<T> : ITween
 
     public void JumpTo(float time)
     {
-        CurrentTime = Math.Clamp(time, 0, TotalDuration.Get());
+        CurrentTime = Math.Clamp(time, 0, TotalDuration.GetDuration());
         ApplyTimeToValue();
     }
 
     public void SkipToEnd()
     {
-        CurrentTime = TotalDuration.Get();
+        CurrentTime = TotalDuration.GetDuration();
         ApplyTimeToValue();
     }
 
     private void ApplyTimeToValue()
     {
-        var percent = CurrentTime / TotalDuration.Get();
+        var percent = CurrentTime / TotalDuration.GetDuration();
 
         _tweenable.Value = _tweenable.Lerp(
             _startingValue,
@@ -83,7 +84,7 @@ public class Tween<T> : ITween
         var result = $"({_startingValue}) -> ({_targetValue}), Progress: ";
         if (TotalDuration is KnownTweenDuration)
         {
-            result += $"{(int) (CurrentTime / TotalDuration.Get() * 100)}%";
+            result += $"{(int) (CurrentTime / TotalDuration.GetDuration() * 100)}%";
         }
         else
         {
@@ -94,42 +95,14 @@ public class Tween<T> : ITween
 
         return result;
     }
-}
 
-public interface ITweenDuration
-{
-    public float Get();
-}
-
-public readonly struct KnownTweenDuration : ITweenDuration
-{
-    public KnownTweenDuration(float duration)
+    public string TweenableValueAsString()
     {
-        Value = duration;
+        return _tweenable.ValueAsString();
     }
 
-    private float Value { get; }
-
-    public float Get()
+    public int TweenableHashCode()
     {
-        return Value;
-    }
-
-    public static implicit operator float(KnownTweenDuration me)
-    {
-        return me.Get();
-    }
-
-    public override string ToString()
-    {
-        return Value.ToString("N4");
-    }
-}
-
-public readonly struct UnknownTweenDuration : ITweenDuration
-{
-    public float Get()
-    {
-        throw new Exception("Value unknown");
+        return _tweenable.GetHashCode();
     }
 }

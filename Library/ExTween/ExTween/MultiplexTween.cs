@@ -8,20 +8,19 @@ public class MultiplexTween : TweenCollection, ITween
     {
         float totalOverflow = 0;
         var hasInitializedOverflow = false;
-        ForEachItem(
-            tween =>
+        foreach (var tween in Items)
+        {
+            var pendingOverflow = tween.Update(dt);
+            if (!hasInitializedOverflow)
             {
-                var pendingOverflow = tween.Update(dt);
-                if (!hasInitializedOverflow)
-                {
-                    hasInitializedOverflow = true;
-                    totalOverflow = pendingOverflow;
-                }
-                else
-                {
-                    totalOverflow = MathF.Min(totalOverflow, pendingOverflow);
-                }
-            });
+                hasInitializedOverflow = true;
+                totalOverflow = pendingOverflow;
+            }
+            else
+            {
+                totalOverflow = MathF.Min(totalOverflow, pendingOverflow);
+            }
+        }
 
         return totalOverflow;
     }
@@ -49,15 +48,17 @@ public class MultiplexTween : TweenCollection, ITween
         get
         {
             var result = 0f;
-            ForEachItem(item =>
+            var currentTimeResult = 0f;
+            foreach (var item in Items)
             {
                 if (item.TotalDuration is KnownTweenDuration itemDuration)
                 {
                     result = Math.Max(result, itemDuration);
+                    currentTimeResult = MathF.Max(currentTimeResult, itemDuration.CurrentTime);
                 }
-            });
+            }
 
-            return new KnownTweenDuration(result);
+            return new KnownTweenDuration(result, currentTimeResult);
         }
     }
 

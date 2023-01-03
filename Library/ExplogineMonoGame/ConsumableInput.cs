@@ -39,9 +39,9 @@ public class ConsumableInput
             return _consumedButtons.Contains(button) ? new ButtonFrameState(false, false) : _raw.GetButton(button);
         }
 
-        public Vector2 Position(Matrix? worldMatrix = null)
+        public Vector2 Position(Matrix? toCanvas = null)
         {
-            return _raw.Position(worldMatrix);
+            return _raw.Position(toCanvas);
         }
 
         public int ScrollDelta(bool shouldConsume = false)

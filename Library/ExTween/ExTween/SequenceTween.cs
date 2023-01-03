@@ -57,15 +57,17 @@ public class SequenceTween : TweenCollection, ITween
         get
         {
             var total = 0f;
-            ForEachItem(item =>
+            var currentTime = 0f;
+            foreach (var item in Items)
             {
                 if (item.TotalDuration is KnownTweenDuration itemDuration)
                 {
-                    total += itemDuration;
+                    total += itemDuration.Duration;
+                    currentTime += itemDuration.CurrentTime;
                 }
-            });
-
-            return new KnownTweenDuration(total);
+            }
+            
+            return new KnownTweenDuration(total, currentTime);
         }
     }
     
