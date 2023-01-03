@@ -1,11 +1,11 @@
-﻿namespace ExplogineMonoGame.Cartridges;
+﻿using ExplogineMonoGame.Rails;
 
-public interface ICartridge : IUpdateInput
+namespace ExplogineMonoGame.Cartridges;
+
+public interface ICartridge : IUpdateInputHook, IDrawHook, IUpdateHook
 {
     CartridgeConfig CartridgeConfig { get; }
     void OnCartridgeStarted();
-    void Update(float dt);
-    void Draw(Painter painter);
     bool ShouldLoadNextCartridge();
     void Unload();
 }

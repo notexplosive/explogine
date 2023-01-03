@@ -6,11 +6,12 @@ using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Debugging;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
 
-internal class CartridgeChain : IUpdateInput
+internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 {
     private readonly LinkedList<ICartridge> _list = new();
     private bool _hasCrashed;

@@ -1,13 +1,18 @@
 ﻿using System;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
-public class Widget : IDisposable
+public class Widget : IDisposable, IDrawHook
 {
+    public Widget(RectangleF rectangle, Depth depth) : this(rectangle.Location, rectangle.Size.ToPoint(), depth)
+    {
+    }
+    
     public Widget(Vector2 position, Point size, Depth depth)
     {
         Position = position;

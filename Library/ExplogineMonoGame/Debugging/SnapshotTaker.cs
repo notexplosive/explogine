@@ -3,11 +3,12 @@ using System.IO;
 using System.Reflection;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-internal class SnapshotTaker : IUpdateInput
+internal class SnapshotTaker : IUpdateInputHook
 {
     private float _timer = 0.1f;
     private float _timerMax = 2f;

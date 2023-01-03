@@ -4,6 +4,7 @@ using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 

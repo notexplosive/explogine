@@ -78,6 +78,11 @@ public static class L
         return L.ComputeNested(outerRectangle, root);
     }
 
+    public static LayoutArrangement Compute(Point outerSize, LayoutElementGroup root)
+    {
+        return L.Compute(new RectangleF(Vector2.Zero, outerSize.ToVector2()), root);
+    }
+
     public static string ToJson(LayoutArrangement arrangement)
     {
         return JsonConvert.SerializeObject(new LayoutSerialization.SerializedGroup(arrangement.RawGroup),
@@ -178,7 +183,7 @@ public static class L
                 }
             }
         }
-        
+
         return new LayoutArrangement(namedRects, usedRectangle, group);
     }
 
@@ -284,7 +289,7 @@ public static class L
     public static LayoutElement[] CreateMany(int size, LayoutElement sourceElement)
     {
         var elements = new LayoutElement[size];
-        for (int i = 0; i < size; i++)
+        for (var i = 0; i < size; i++)
         {
             elements[i] = sourceElement;
         }

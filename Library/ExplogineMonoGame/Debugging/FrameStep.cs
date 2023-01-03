@@ -1,13 +1,14 @@
 ﻿using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 using ExTween;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-public class FrameStep : IUpdateInput
+public class FrameStep : IUpdateInputHook
 {
     private readonly TweenableFloat _lineThickness = new();
     private readonly TweenableFloat _opacity = new();

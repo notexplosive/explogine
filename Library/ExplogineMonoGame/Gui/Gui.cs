@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Gui;
 
-public class Gui : IUpdateInput
+public class Gui : IUpdateInputHook
 {
     private readonly List<IGuiWidget> _widgets = new();
     private bool _isReadyToDraw;

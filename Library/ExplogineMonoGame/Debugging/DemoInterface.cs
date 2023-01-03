@@ -2,12 +2,13 @@
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-internal class DemoInterface
+internal class DemoInterface : IUpdateHook
 {
     private float _totalTime;
 

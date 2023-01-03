@@ -2,11 +2,12 @@
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
 
-public class ScrollableArea : IUpdateInput
+public class ScrollableArea : IUpdateInputHook
 {
     private readonly Scrollbar _horizontalScrollbar;
     private readonly Scrollbar _verticalScrollbar;

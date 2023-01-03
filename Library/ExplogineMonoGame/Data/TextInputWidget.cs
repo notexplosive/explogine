@@ -6,12 +6,13 @@ using System.Text;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Data;
 
-public class TextInputWidget : Widget, IUpdateInput
+public class TextInputWidget : Widget, IUpdateInputHook
 {
     private readonly ClickCounter _clickCounter = new();
     private readonly bool _isSingleLine;

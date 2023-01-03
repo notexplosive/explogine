@@ -2,18 +2,18 @@
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
+using ExplogineMonoGame.Rails;
 using ExTween;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
-public class TweenRenderingWidget : Widget, IUpdateInput
+public class TweenRenderingWidget : Widget, IUpdateInputHook
 {
     private readonly ITween _rootTween;
     private float _pixelsPerSecond;
 
-    public TweenRenderingWidget(ITween rootTween, Vector2 position, Point size, Depth depth) : base(position, size,
-        depth)
+    public TweenRenderingWidget(ITween rootTween, RectangleF rectangle, Depth depth) : base(rectangle, depth)
     {
         _rootTween = rootTween;
         _pixelsPerSecond = 100f;

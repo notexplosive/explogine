@@ -5,12 +5,13 @@ using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Logging;
+using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-internal class LogOverlay : ILogCapture, IUpdateInput
+internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 {
     private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
