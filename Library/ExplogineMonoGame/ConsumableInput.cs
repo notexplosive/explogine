@@ -34,9 +34,16 @@ public class ConsumableInput
             return _raw.CanvasPosition(position);
         }
 
-        public ButtonFrameState GetButton(MouseButton button)
+        public ButtonFrameState GetButton(MouseButton button, bool shouldConsume = false)
         {
-            return _consumedButtons.Contains(button) ? new ButtonFrameState(false, false) : _raw.GetButton(button);
+            var result = _consumedButtons.Contains(button) ? new ButtonFrameState(false, false) : _raw.GetButton(button);
+
+            if (shouldConsume)
+            {
+                Consume(button);
+            }
+            
+            return result;
         }
 
         public Vector2 Position(Matrix? toCanvas = null)
