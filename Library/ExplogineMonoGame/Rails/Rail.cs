@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ExplogineMonoGame.Data;
 
 namespace ExplogineMonoGame.Rails;
@@ -6,6 +7,12 @@ namespace ExplogineMonoGame.Rails;
 public class Rail : IUpdateInputHook, IUpdateHook, IDrawHook
 {
     private readonly List<IHook> _hooks = new();
+
+    public IHook this[Index i]
+    {
+        get => _hooks[i];
+        set => _hooks[i] = value;
+    }
 
     public void Draw(Painter painter)
     {
