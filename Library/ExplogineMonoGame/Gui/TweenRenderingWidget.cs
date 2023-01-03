@@ -18,6 +18,7 @@ public class TweenRenderingWidget : Widget, IUpdateInput
         _rootTween = rootTween;
         _pixelsPerSecond = 100f;
         ViewBoundsLeft = 0f;
+        ZoomToFit();
     }
 
     public float PlayHeadX => _rootTween.TotalDuration.GetCurrentTime() * _pixelsPerSecond;
@@ -53,7 +54,7 @@ public class TweenRenderingWidget : Widget, IUpdateInput
             }
         }
 
-        ViewBoundsLeft = Math.Clamp(ViewBoundsLeft, 0, RootDuration * _pixelsPerSecond);
+        ViewBoundsLeft = Math.Clamp(ViewBoundsLeft, 0, Math.Max(RootDuration * _pixelsPerSecond - ViewBoundsWidth, 0));
     }
 
     public void DrawContent(Painter painter)
@@ -62,11 +63,27 @@ public class TweenRenderingWidget : Widget, IUpdateInput
         painter.BeginSpriteBatch(Matrix.CreateTranslation(new Vector3(-ViewBoundsLeft, 0, 0)));
         painter.Clear(Color.White.WithMultipliedOpacity(0.5f));
 
-        DrawTween(painter, _rootTween, Vector2.Zero, Size.Y);
+        DrawGrid(painter, Depth.Back);
+        DrawTween(painter, _rootTween, new Vector2(0, 10), Size.Y - 10);
         DrawPlayHead(painter);
 
         painter.EndSpriteBatch();
         Client.Graphics.PopCanvas();
+    }
+
+    private void DrawGrid(Painter painter, Depth depth)
+    {
+        var secondBoundary = ViewBoundsLeft - ViewBoundsLeft % _pixelsPerSecond;
+        var secondPosition = secondBoundary;
+
+        while (secondPosition < ViewBoundsRight)
+        {
+            var chooseColor = (int) secondPosition % ((int) _pixelsPerSecond * 2) == 0;
+            var color = chooseColor ? Color.LightBlue : Color.DarkGray;
+            painter.DrawRectangle(new RectangleF(new Vector2(secondPosition, 0), new Vector2(_pixelsPerSecond, Size.Y)),
+                new DrawSettings {Color = color, Depth = depth});
+            secondPosition += _pixelsPerSecond;
+        }
     }
 
     private void DrawPlayHead(Painter painter)
@@ -83,9 +100,7 @@ public class TweenRenderingWidget : Widget, IUpdateInput
         }
 
         var duration = tween.TotalDuration.GetDuration();
-        var originalRectangle =
-            new RectangleF(startingPosition, new Vector2(duration * _pixelsPerSecond, height));
-        var fullRectangle = originalRectangle;
+        var fullRectangle = new RectangleF(startingPosition, new Vector2(duration * _pixelsPerSecond, height));
         var fillColor = Color.Red;
         var unfilledColor = Color.OrangeRed;
         var currentTime = tween.TotalDuration.GetCurrentTime();
@@ -125,6 +140,10 @@ public class TweenRenderingWidget : Widget, IUpdateInput
                 {
                     fillColor = new NoiseBasedRng(valueTween.TweenableHashCode()).NextColor();
                     unfilledColor = new Color(fillColor.B - 10, fillColor.G - 10, fillColor.B - 10);
+                }else if (tween is WaitSecondsTween)
+                {
+                    fillColor = Color.White.WithMultipliedOpacity(0.5f);
+                    unfilledColor = Color.Transparent;
                 }
 
                 painter.DrawLineRectangle(fullRectangle,
@@ -136,16 +155,26 @@ public class TweenRenderingWidget : Widget, IUpdateInput
             }
         }
 
-        return originalRectangle;
+        return new RectangleF(startingPosition, new Vector2(duration * _pixelsPerSecond, height));
+    }
+
+    public void ZoomToFit()
+    {
+        _pixelsPerSecond = Size.X / RootDuration;
     }
 
     public void ZoomIn(ConsumableInput input, HitTestStack hitTestStack)
     {
-        _pixelsPerSecond += 120;
+        _pixelsPerSecond += 60;
     }
 
     public void ZoomOut(ConsumableInput input, HitTestStack hitTestStack)
     {
-        _pixelsPerSecond -= 120;
+        _pixelsPerSecond -= 60;
+
+        if (_pixelsPerSecond < 60)
+        {
+            _pixelsPerSecond = 60;
+        }
     }
 }

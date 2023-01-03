@@ -136,7 +136,7 @@ public static class Client
         // Setup Cartridges
         if (!skipIntro)
         {
-            Client.CartridgeChain.Append(new IntroCartridge());
+            Client.CartridgeChain.Append(new IntroCartridge("NotExplosive.net", Client.Random.Dirty.NextUInt()));
         }
 
         Client.CartridgeChain.AppendGameCartridge(gameCartridge);

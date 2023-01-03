@@ -13,7 +13,7 @@ public class WaitSecondsTween : ITween
         _timer = duration;
     }
 
-    public ITweenDuration TotalDuration => new KnownTweenDuration(_duration, _duration - _timer);
+    public ITweenDuration TotalDuration => new KnownTweenDuration(_duration, Math.Min(_duration - _timer, _duration));
 
     public float Update(float dt)
     {
