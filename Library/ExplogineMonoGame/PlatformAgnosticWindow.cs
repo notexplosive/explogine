@@ -49,7 +49,7 @@ public class PlatformAgnosticWindow
         ? new Point(1600, 900)
         : new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
-    public WindowConfig Config
+    private WindowConfig Config
     {
         get => _currentConfig;
         set
@@ -59,19 +59,19 @@ public class PlatformAgnosticWindow
             // also just generally QoL. Window Resizing should always be legal.
             AllowResizing = true;
 
-            SetSize(Config.WindowSize);
+            SetSize(value.WindowSize);
 
-            if (Config.Fullscreen)
+            if (value.Fullscreen)
             {
                 SetFullscreen(true);
             }
             else
             {
                 SetFullscreen(false);
-                SetSize(Config.WindowSize);
+                SetSize(value.WindowSize);
             }
 
-            Title = Config.Title;
+            Title = value.Title;
 
             Client.Graphics.DeviceManager.ApplyChanges();
             ConfigChanged?.Invoke();
