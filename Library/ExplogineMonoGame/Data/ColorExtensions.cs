@@ -31,6 +31,29 @@ public static class ColorExtensions
         return color.ToRgbaHex().ToString("X");
     }
 
+    public static Color Added(this Color source, Color added)
+    {
+        var alpha = source.A + added.A;
+        var r = source.R + added.R;
+        var g = source.G + added.G;
+        var b = source.B + added.B;
+        return new Color(r, g, b, alpha);
+    }
+
+    public static Color DimmedBy(this Color color, float amount)
+    {
+        return color.BrightenedBy(-amount);
+    }
+    
+    public static Color BrightenedBy(this Color color, float amount)
+    {
+        var alpha = color.A / 255f;
+        var r = color.R / 255f + amount;
+        var g = color.G / 255f + amount;
+        var b = color.B / 255f + amount;
+        return new Color(r, g, b, alpha);
+    }
+
     public static Color Lerp(Color colorA, Color colorB, float percent)
     {
         var maxByteAsFloat = (float) byte.MaxValue;
