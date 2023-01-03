@@ -3,7 +3,7 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public abstract class NoProviderGameCartridge : ICartridge
+public abstract class NoProviderCartridge : ICartridge
 {
     public abstract void OnCartridgeStarted();
     public abstract void Update(float dt);

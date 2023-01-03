@@ -3,7 +3,7 @@ using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public abstract class RailCartridge : BasicGameCartridge
+public abstract class NoProviderRailCartridge : NoProviderCartridge
 {
     protected readonly Rail Rail = new();
 
