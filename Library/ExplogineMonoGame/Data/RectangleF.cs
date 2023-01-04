@@ -550,4 +550,14 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return new RectangleF(position, Size);
     }
+
+    public RectangleF WithHeight(float height)
+    {
+        return new RectangleF(Location, new Vector2(Size.X, height));
+    }
+    
+    public RectangleF WithWidth(float width)
+    {
+        return new RectangleF(Location, new Vector2(width, Size.Y));
+    }
 }
