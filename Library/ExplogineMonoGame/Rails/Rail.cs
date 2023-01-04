@@ -69,7 +69,7 @@ public class Rail : IUpdateInputHook, IUpdateHook, IDrawHook, IEarlyDrawHook
         }
     }
 
-    public void RemoveHook(IHook hook)
+    public void Remove(IHook hook)
     {
         _hooks.Remove(hook);
     }

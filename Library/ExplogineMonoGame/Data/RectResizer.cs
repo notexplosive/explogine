@@ -12,7 +12,8 @@ public class RectResizer
     private RectEdge _edgeHovered;
 
     public bool HasGrabbed => _edgeGrabbed != RectEdge.None;
-    
+    public event Action? Initiated;
+
     public RectangleF GetResizedRect(ConsumableInput input, HitTestStack hitTestStack, RectangleF startingRect,
         Depth depth, int grabHandleThickness = 50)
     {
@@ -39,6 +40,7 @@ public class RectResizer
 
         if (_edgeHovered != RectEdge.None && mousePressed)
         {
+            Initiated?.Invoke();
             _edgeDrag.Start(startingRect);
             _edgeGrabbed = _edgeHovered;
         }

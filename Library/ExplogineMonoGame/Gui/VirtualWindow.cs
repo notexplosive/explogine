@@ -10,9 +10,10 @@ namespace ExplogineMonoGame.Gui;
 
 public class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
 {
+    public delegate void WindowEvent(VirtualWindow window);
+
     private readonly Chrome _chrome;
     private readonly Widget _widget;
-    private readonly HoverState _windowHoverState = new();
 
     public VirtualWindow(RectangleF rectangle, Depth depth)
     {
@@ -42,6 +43,16 @@ public class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
         _widget.Dispose();
     }
 
+    public void Update(float dt)
+    {
+    }
+
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    {
+        _widget.UpdateHovered(hitTestStack);
+        _chrome.UpdateInput(input, hitTestStack);
+    }
+
     public void Draw(Painter painter, IGuiTheme theme)
     {
         Client.Graphics.PushCanvas(Canvas);
@@ -52,25 +63,25 @@ public class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
         _widget.Draw(painter);
     }
 
-    public void Update(float dt)
-    {
-    }
-
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
-    {
-        hitTestStack.AddZone(_widget.Rectangle, StartingDepth, _windowHoverState);
-        _widget.UpdateHovered(hitTestStack);
-        _chrome.UpdateInput(input, hitTestStack);
-    }
-
     private void SetRectangle(RectangleF resizedRect)
     {
         _widget.Rectangle = resizedRect;
     }
 
+    private void RequestFocus()
+    {
+        RequestedFocus?.Invoke(this);
+    }
+
+    public event WindowEvent? RequestedFocus;
+
     public class Chrome : IUpdateInputHook
     {
+        private readonly Clickable _bodyClickable = new();
+        private readonly Clickable _headerClickable = new();
         private readonly HoverState _headerHovered = new();
+        private readonly HoverState _contentHovered = new();
+
         private readonly Point _minimumSize;
         private readonly Drag<Vector2> _movementDrag;
         private readonly VirtualWindow _parentWindow;
@@ -78,13 +89,16 @@ public class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
         private readonly int _titleBarThickness;
         private RectangleF? _pendingResizeRect;
 
-        public Chrome(VirtualWindow parentWindow, int titleBarThickness, Point minimumSize)
+        public Chrome(VirtualWindow parentWindow, int titleBarThickness, Point minimumWidgetSize)
         {
             _parentWindow = parentWindow;
             _titleBarThickness = titleBarThickness;
-            _minimumSize = minimumSize + new Point(0, titleBarThickness);
+            _minimumSize = minimumWidgetSize + new Point(0, titleBarThickness);
             _rectResizer = new RectResizer();
             _movementDrag = new Drag<Vector2>();
+            _headerClickable.ClickInitiated += parentWindow.RequestFocus;
+            _bodyClickable.ClickInitiated += parentWindow.RequestFocus;
+            _rectResizer.Initiated += parentWindow.RequestFocus;
         }
 
         private RectangleF CanvasRectangle => _parentWindow.CanvasRectangle;
@@ -101,17 +115,6 @@ public class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
         }
 
         public RectangleF WholeWindowRectangle => RectangleF.Union(TitleBarRectangle, CanvasRectangle);
-
-        public void Draw(Painter painter, IGuiTheme theme)
-        {
-            theme.DrawWindowChrome(painter, this);
-
-            if (_pendingResizeRect.HasValue)
-            {
-                painter.DrawLineRectangle(_pendingResizeRect.Value,
-                    new LineDrawSettings {Depth = Depth.Front + 100, Color = Color.White});
-            }
-        }
 
         public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
         {
@@ -142,15 +145,31 @@ public class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
             _movementDrag.AddDelta(input.Mouse.Delta(hitTestStack.WorldMatrix));
 
             hitTestStack.AddZone(TitleBarRectangle, Depth, _headerHovered);
+            var contentHitTestLayer = hitTestStack.AddLayer(CanvasRectangle.ScreenToCanvas(CanvasRectangle.Size.ToPoint()), Depth, CanvasRectangle);
+            contentHitTestLayer.AddInfiniteZone(Depth.Back, _contentHovered);
 
             if (_headerHovered && input.Mouse.GetButton(MouseButton.Left).WasPressed)
             {
                 _movementDrag.Start(_parentWindow.Position);
             }
 
+            _headerClickable.Poll(input.Mouse, _headerHovered);
+            _bodyClickable.Poll(input.Mouse, _contentHovered);
+
             if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
             {
                 _movementDrag.End();
+            }
+        }
+
+        public void Draw(Painter painter, IGuiTheme theme)
+        {
+            theme.DrawWindowChrome(painter, this);
+
+            if (_pendingResizeRect.HasValue)
+            {
+                painter.DrawLineRectangle(_pendingResizeRect.Value,
+                    new LineDrawSettings {Depth = Depth.Front + 100, Color = Color.Gray, Thickness = 2});
             }
         }
     }

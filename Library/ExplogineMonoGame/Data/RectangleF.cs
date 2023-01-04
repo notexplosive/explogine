@@ -545,4 +545,9 @@ public struct RectangleF : IEquatable<RectangleF>
 
         return new RectangleF(resultPosition, Size);
     }
+
+    public RectangleF WithPosition(Vector2 position)
+    {
+        return new RectangleF(position, Size);
+    }
 }
