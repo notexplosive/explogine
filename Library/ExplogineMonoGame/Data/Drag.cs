@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
@@ -16,9 +17,16 @@ public class Drag<T> where T : new()
 
     public void End()
     {
+        var wasDragging = IsDragging;
+
         IsDragging = false;
         StartingValue = default;
         TotalDelta = Vector2.Zero;
+        
+        if (wasDragging)
+        {
+            Finished?.Invoke();
+        }
     }
 
     public void AddDelta(Vector2 delta)
@@ -28,4 +36,6 @@ public class Drag<T> where T : new()
             TotalDelta += delta;
         }
     }
+
+    public event Action? Finished;
 }

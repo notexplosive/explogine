@@ -8,12 +8,14 @@ namespace ExplogineMonoGame.Gui;
 public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
 {
     private readonly Rail _rail = new();
+    private readonly RectangleF _desktopBoundingRect;
     private readonly SimpleGuiTheme _uiTheme;
     private readonly DeferredActions _deferredActions = new();
     private readonly int _depthPerWindow = 10;
 
-    public WindowManager(SimpleGuiTheme uiTheme)
+    public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme)
     {
+        _desktopBoundingRect = desktopBoundingRect;
         _uiTheme = uiTheme;
     }
 
@@ -62,12 +64,24 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         {
             // Setup
             window.RequestedFocus += BringWindowToFrontDeferred;
+            window.RequestedConstrainToBounds += ConstrainWindowToBoundsDeferred;
         }
         else
         {
             // Teardown
             window.RequestedFocus -= BringWindowToFrontDeferred;
+            window.RequestedConstrainToBounds -= ConstrainWindowToBoundsDeferred;
         }
+    }
+
+    private void ConstrainWindowToBoundsDeferred(VirtualWindow window)
+    {
+        // This needs to be deferred because we might set the position later that frame
+        _deferredActions.Add(() =>
+        {
+            var constrainedRect = window.TitleBarRectangle.ConstrainedTo(_desktopBoundingRect);
+            window.Position = constrainedRect.Location;
+        });
     }
 
     private void BringWindowToFrontDeferred(VirtualWindow targetWindow)

@@ -29,6 +29,8 @@ partial class VirtualWindow
             _movementDrag = new Drag<Vector2>();
             _headerClickable.ClickInitiated += parentWindow.RequestFocus;
             _rectResizer.Initiated += parentWindow.RequestFocus;
+            _movementDrag.Finished += parentWindow.ValidateBounds;
+            _rectResizer.Finished += parentWindow.ValidateBounds;
         }
 
         private RectangleF CanvasRectangle => _parentWindow.CanvasRectangle;

@@ -12,20 +12,20 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
     public delegate void WindowEvent(VirtualWindow window);
 
     private readonly Chrome _chrome;
-    private readonly Widget _widget;
     private readonly Content _content;
+    private readonly Widget _widget;
 
     public VirtualWindow(RectangleF rectangle, Depth depth)
     {
         _widget = new Widget(rectangle, depth - 1);
         _chrome = new Chrome(this, 32, rectangle.Size.ToPoint());
         _content = new Content(this);
-
     }
 
     public Canvas Canvas => _widget.Canvas;
-
     public RectangleF CanvasRectangle => _widget.Rectangle;
+    public RectangleF WholeRectangle => _chrome.WholeWindowRectangle;
+    public RectangleF TitleBarRectangle => _chrome.TitleBarRectangle;
 
     public Depth StartingDepth
     {
@@ -36,8 +36,8 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
 
     public Vector2 Position
     {
-        get => _widget.Position;
-        set => _widget.Position = value;
+        get => WholeRectangle.Location;
+        set => _widget.Position = value + new Vector2(0, TitleBarRectangle.Height);
     }
 
     public void Dispose()
@@ -55,6 +55,9 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
         _chrome.UpdateInput(input, hitTestStack);
         _content.UpdateInput(input, hitTestStack);
     }
+
+    public event WindowEvent? RequestedFocus;
+    public event WindowEvent? RequestedConstrainToBounds;
 
     public void Draw(Painter painter, IGuiTheme theme)
     {
@@ -76,5 +79,8 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
         RequestedFocus?.Invoke(this);
     }
 
-    public event WindowEvent? RequestedFocus;
+    private void ValidateBounds()
+    {
+        RequestedConstrainToBounds?.Invoke(this);
+    }
 }

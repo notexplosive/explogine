@@ -13,6 +13,7 @@ public class RectResizer
 
     public bool HasGrabbed => _edgeGrabbed != RectEdge.None;
     public event Action? Initiated;
+    public event Action? Finished;
 
     public RectangleF GetResizedRect(ConsumableInput input, HitTestStack hitTestStack, RectangleF startingRect,
         Depth depth, int grabHandleThickness = 50)
@@ -47,8 +48,14 @@ public class RectResizer
 
         if (!mouseDown)
         {
+            var wasDragging = _edgeDrag.IsDragging;
             _edgeDrag.End();
             _edgeGrabbed = RectEdge.None;
+            
+            if (wasDragging)
+            {
+                Finished?.Invoke();
+            }
         }
 
         var delta = input.Mouse.CanvasDelta();
