@@ -66,6 +66,11 @@ public class SimpleGuiTheme : IGuiTheme
         painter.EndSpriteBatch();
     }
 
+    public void DrawWindowChrome(Painter painter, VirtualWindow.Chrome chrome)
+    {
+        painter.DrawRectangle(chrome.WholeWindowRectangle.Inflated(2,2), new DrawSettings{Depth = chrome.Depth, Color = PrimaryColor});
+    }
+
     public void DrawButton(Painter painter, Button button)
     {
         var isPressed = button.IsEngaged && button.IsHovered;

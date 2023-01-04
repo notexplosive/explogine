@@ -1,6 +1,7 @@
 ﻿using System;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Input;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
 
@@ -10,8 +11,10 @@ public class RectResizer
     private RectEdge _edgeGrabbed;
     private RectEdge _edgeHovered;
 
+    public bool HasGrabbed => _edgeGrabbed != RectEdge.None;
+    
     public RectangleF GetResizedRect(ConsumableInput input, HitTestStack hitTestStack, RectangleF startingRect,
-        Depth depth)
+        Depth depth, int grabHandleThickness = 50)
     {
         var leftButton = input.Mouse.GetButton(MouseButton.Left);
         var mouseDown = leftButton.IsDown;
@@ -23,7 +26,7 @@ public class RectResizer
         {
             if (edge != RectEdge.None)
             {
-                hitTestStack.AddZone(startingRect.GetEdgeRect(edge, 50), depth, () =>
+                hitTestStack.AddZone(startingRect.GetEdgeRect(edge, grabHandleThickness), depth, () =>
                 {
                     _edgeHovered = edge;
                     if (!mouseDown)

@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Data;
+﻿using ExplogineCore.Data;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
@@ -13,4 +14,5 @@ public interface IGuiTheme
     Color BackgroundColor { get; }
     IFontGetter Font { get; }
     void DrawTextInput(Painter painter, TextInputWidget textInputWidget);
+    void DrawWindowChrome(Painter painter, VirtualWindow.Chrome chrome);
 }

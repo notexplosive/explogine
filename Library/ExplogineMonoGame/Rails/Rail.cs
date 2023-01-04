@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ExplogineMonoGame.Data;
 
@@ -13,6 +14,8 @@ public class Rail : IUpdateInputHook, IUpdateHook, IDrawHook, IEarlyDrawHook
         get => _hooks[i];
         set => _hooks[i] = value;
     }
+
+    public int Count => _hooks.Count;
 
     public void Draw(Painter painter)
     {
@@ -74,5 +77,16 @@ public class Rail : IUpdateInputHook, IUpdateHook, IDrawHook, IEarlyDrawHook
     public void Clear()
     {
         _hooks.Clear();
+    }
+
+    public IEnumerable<T> GetMatching<T>()
+    {
+        foreach (var item in _hooks)
+        {
+            if (item is T casted)
+            {
+                yield return casted;
+            }
+        }
     }
 }
