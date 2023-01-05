@@ -15,10 +15,10 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
     private readonly Content _content;
     private readonly Widget _widget;
 
-    public VirtualWindow(RectangleF rectangle, Depth depth)
+    public VirtualWindow(RectangleF rectangle, IWindowSizeSettings windowSizeSettings, Depth depth)
     {
         _widget = new Widget(rectangle, depth - 1);
-        _chrome = new Chrome(this, 32, rectangle.Size.ToPoint());
+        _chrome = new Chrome(this, 32, rectangle.Size.ToPoint(), windowSizeSettings);
         _content = new Content(this);
     }
 

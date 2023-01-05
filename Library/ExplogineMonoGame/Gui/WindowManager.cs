@@ -2,6 +2,7 @@
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Rails;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
@@ -53,9 +54,9 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         _rail.UpdateInput(input, hitTestStack);
     }
 
-    public VirtualWindow AddWindow(RectangleF rectangle)
+    public VirtualWindow AddWindow(Vector2 position, IWindowSizeSettings windowSizeSettings)
     {
-        var window = new VirtualWindow(rectangle, TopDepth);
+        var window = new VirtualWindow(new RectangleF(position, windowSizeSettings.StartingSize.ToVector2()), windowSizeSettings, TopDepth);
         _rail.Add(window);
         SetupOrTeardown(window);
         return window;

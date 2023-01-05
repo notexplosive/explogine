@@ -18,12 +18,14 @@ partial class VirtualWindow
         private readonly VirtualWindow _parentWindow;
         private readonly RectResizer _rectResizer;
         private readonly int _titleBarThickness;
+        private readonly IWindowSizeSettings _windowSizeSettings;
         private RectangleF? _pendingResizeRect;
 
-        public Chrome(VirtualWindow parentWindow, int titleBarThickness, Point minimumWidgetSize)
+        public Chrome(VirtualWindow parentWindow, int titleBarThickness, Point minimumWidgetSize, IWindowSizeSettings windowSizeSettings)
         {
             _parentWindow = parentWindow;
             _titleBarThickness = titleBarThickness;
+            _windowSizeSettings = windowSizeSettings;
             _minimumSize = minimumWidgetSize + new Point(0, titleBarThickness);
             _rectResizer = new RectResizer();
             _movementDrag = new Drag<Vector2>();
@@ -50,23 +52,9 @@ partial class VirtualWindow
 
         public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
         {
-            var resizedWholeWindowRect =
-                _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, 10);
-
-            if (_rectResizer.HasGrabbed)
+            if (_windowSizeSettings is ResizableWindowSizeSettings resizableWindowSizeSettings)
             {
-                _pendingResizeRect = resizedWholeWindowRect;
-            }
-            else
-            {
-                if (_pendingResizeRect.HasValue)
-                {
-                    // We need to reduce this back down to just the canvas, any inflation due to chrome needs to be undone
-                    var canvasRect =
-                        _pendingResizeRect.Value.ResizedOnEdge(RectEdge.Top, new Vector2(0, _titleBarThickness));
-                    _parentWindow.SetRectangle(canvasRect);
-                    _pendingResizeRect = null;
-                }
+                HandleResizing(input, hitTestStack);
             }
 
             if (_movementDrag.IsDragging)
@@ -88,6 +76,28 @@ partial class VirtualWindow
             if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
             {
                 _movementDrag.End();
+            }
+        }
+
+        private void HandleResizing(ConsumableInput input, HitTestStack hitTestStack)
+        {
+            var resizedWholeWindowRect =
+                _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, 10);
+
+            if (_rectResizer.HasGrabbed)
+            {
+                _pendingResizeRect = resizedWholeWindowRect;
+            }
+            else
+            {
+                if (_pendingResizeRect.HasValue)
+                {
+                    // We need to reduce this back down to just the canvas, any inflation due to chrome needs to be undone
+                    var canvasRect =
+                        _pendingResizeRect.Value.ResizedOnEdge(RectEdge.Top, new Vector2(0, _titleBarThickness));
+                    _parentWindow.SetRectangle(canvasRect);
+                    _pendingResizeRect = null;
+                }
             }
         }
 
