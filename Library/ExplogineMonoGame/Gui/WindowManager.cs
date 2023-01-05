@@ -19,6 +19,9 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         _uiTheme = uiTheme;
     }
 
+    /// <summary>
+    /// WindowManager manages its own SpriteBatch calls, so its starting depth does not matter
+    /// </summary>
     public Depth BottomDepth => Depth.Middle;
     public Depth TopDepth => BottomDepth - _rail.Count * _depthPerWindow;
 
