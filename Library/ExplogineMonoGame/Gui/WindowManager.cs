@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Rails;
@@ -11,8 +11,8 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     private readonly DeferredActions _deferredActions = new();
     private readonly int _depthPerWindow = 10;
     private readonly RectangleF _desktopBoundingRect;
-    private readonly Rail _rail = new();
     private readonly SimpleGuiTheme _uiTheme;
+    private readonly List<VirtualWindow> _windows = new();
 
     public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme)
     {
@@ -25,19 +25,18 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     /// </summary>
     public Depth BottomDepth => Depth.Middle;
 
-    public Depth TopDepth => BottomDepth - _rail.Count * _depthPerWindow;
+    public Depth TopDepth => BottomDepth - _windows.Count * _depthPerWindow;
 
     public void Draw(Painter painter)
     {
         // Put all the windows at the proper relative depth
-        var windows = _rail.GetMatching<VirtualWindow>().ToArray();
-        for (var i = 0; i < windows.Length; i++)
+        for (var i = 0; i < _windows.Count; i++)
         {
-            windows[i].StartingDepth = BottomDepth - _depthPerWindow * i;
+            _windows[i].StartingDepth = BottomDepth - _depthPerWindow * i;
         }
 
         // Prepare the contents of the windows
-        foreach (var window in windows)
+        foreach (var window in _windows)
         {
             Client.Graphics.PushCanvas(window.Canvas);
             painter.Clear(_uiTheme.BackgroundColor);
@@ -45,30 +44,27 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
             Client.Graphics.PopCanvas();
         }
 
-        
         // Draw the windows to the screen
         painter.BeginSpriteBatch();
-        for (var i = 0; i < windows.Length; i++)
+        for (var i = 0; i < _windows.Count; i++)
         {
-            var window = windows[i];
-            window.Draw(painter, _uiTheme, i == (windows.Length-1));
+            var window = _windows[i];
+            window.Draw(painter, _uiTheme, i == _windows.Count - 1);
         }
+
         painter.EndSpriteBatch();
     }
 
     public void Update(float dt)
     {
-        _rail.Update(dt);
         _deferredActions.RunAllAndClear();
     }
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        var windows = _rail.GetMatching<VirtualWindow>().ToArray();
-
-        for (var i = windows.Length-1; i >= 0; i--)
+        for (var i = _windows.Count - 1; i >= 0; i--)
         {
-            var window = windows[i];
+            var window = _windows[i];
             window.UpdateInput(input, hitTestStack);
         }
     }
@@ -77,7 +73,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     {
         var window = new VirtualWindow(new RectangleF(position, windowSizeSettings.StartingSize.ToVector2()),
             windowSizeSettings, content, TopDepth);
-        _rail.Add(window);
+        _windows.Add(window);
         SetupOrTeardown(window);
         return window;
     }
@@ -112,8 +108,8 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     {
         _deferredActions.Add(() =>
         {
-            _rail.Remove(targetWindow);
-            _rail.Add(targetWindow);
+            _windows.Remove(targetWindow);
+            _windows.Add(targetWindow);
         });
     }
 }
