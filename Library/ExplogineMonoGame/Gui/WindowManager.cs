@@ -69,10 +69,10 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         }
     }
 
-    public VirtualWindow AddWindow(Vector2 position, IWindowSizeSettings windowSizeSettings, IWindowContent content)
+    public VirtualWindow AddWindow(Vector2 position, VirtualWindow.Settings settings, IWindowContent content)
     {
-        var window = new VirtualWindow(new RectangleF(position, windowSizeSettings.StartingSize.ToVector2()),
-            windowSizeSettings, content, TopDepth);
+        var window = new VirtualWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
+            settings, content, TopDepth);
         _windows.Add(window);
         SetupOrTeardown(window);
         return window;

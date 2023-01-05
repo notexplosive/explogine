@@ -78,6 +78,8 @@ public class SimpleGuiTheme : IGuiTheme
             painter.DrawRectangle(chrome.WholeWindowRectangle.Inflated(2, 2),
                 new DrawSettings {Depth = chrome.Depth, Color = SecondaryColor});
         }
+        
+        painter.DrawStringWithinRectangle(Font, "Hello world", chrome.TitleLayout.TitleArea, Alignment.CenterLeft, new DrawSettings{Depth = chrome.Depth - 1});
     }
 
     public void DrawButton(Painter painter, Button button)

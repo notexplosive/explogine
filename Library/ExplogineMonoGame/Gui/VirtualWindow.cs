@@ -7,20 +7,21 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
+
+
 public partial class VirtualWindow : IUpdateInputHook, IDisposable
 {
     public delegate void WindowEvent(VirtualWindow window);
 
     private readonly Body _body;
-
     private readonly Chrome _chrome;
     private readonly Widget _widget;
 
-    public VirtualWindow(RectangleF rectangle, IWindowSizeSettings windowSizeSettings, IWindowContent content,
+    public VirtualWindow(RectangleF rectangle, Settings settings, IWindowContent content,
         Depth depth)
     {
         _widget = new Widget(rectangle, depth - 1);
-        _chrome = new Chrome(this, 32, rectangle.Size.ToPoint(), windowSizeSettings);
+        _chrome = new Chrome(this, 32, rectangle.Size.ToPoint(), settings.SizeSettings);
         _body = new Body(this, content);
     }
 
@@ -56,9 +57,10 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
 
     public event WindowEvent? RequestedFocus;
     public event WindowEvent? RequestedConstrainToBounds;
-
+    
     public void Draw(Painter painter, IGuiTheme theme, bool isInFocus)
     {
+        // SpriteBatch.Begin is already called
         _chrome.Draw(painter, theme, isInFocus);
         _widget.Draw(painter);
     }
@@ -82,4 +84,16 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     {
         RequestedConstrainToBounds?.Invoke(this);
     }
+
+    public record Settings(ISizeSettings SizeSettings);
+
+    public interface ISizeSettings
+    {
+        Point StartingSize { get; }
+    }
+
+    public readonly record struct NonResizableSizeSettings(Point StartingSize) : ISizeSettings;
+
+    public readonly record struct ResizableSizeSettings(Point StartingSize, Point MinimumSize, Point? MaximumSize = default,
+        bool AllowFullScreen = false) : ISizeSettings;
 }

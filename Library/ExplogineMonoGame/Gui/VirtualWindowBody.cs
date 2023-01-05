@@ -6,7 +6,7 @@ namespace ExplogineMonoGame.Gui;
 
 partial class VirtualWindow
 {
-    public class Body : IUpdateInputHook
+    internal class Body : IUpdateInputHook
     {
         private readonly Clickable _bodyClickable = new();
         private readonly HoverState _contentHovered = new();
