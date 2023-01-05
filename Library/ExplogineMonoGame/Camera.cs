@@ -7,17 +7,20 @@ namespace ExplogineMonoGame;
 
 public class Camera
 {
-    public Camera(RectangleF viewBounds)
+    public Camera(RectangleF viewBounds, Point outputResolution)
     {
+        OutputResolution = outputResolution;
         ViewBounds = viewBounds;
         TweenableViewBounds = new TweenableRectangleF(() => ViewBounds, val => ViewBounds = val);
         TweenableCenterPosition = new TweenableVector2(() => CenterPosition, val => CenterPosition = val);
         TweenableAngle = new TweenableFloat(() => Angle, val => Angle = val);
     }
 
-    public Camera(Vector2 viewableSize) : this(new RectangleF(Vector2.Zero, viewableSize))
+    public Camera(Vector2 viewableSize) : this(new RectangleF(Vector2.Zero, viewableSize), viewableSize.ToPoint())
     {
     }
+
+    public Point OutputResolution { get; }
 
     public float Angle { get; set; }
 
@@ -32,13 +35,15 @@ public class Camera
     }
 
     /// <summary>
-    /// Typically used for Drawing
+    ///     Typically used for Drawing
     /// </summary>
-    public Matrix CanvasToScreen => ViewBounds.CanvasToScreen(Client.Window.RenderResolution, Angle);
+    public Matrix CanvasToScreen => ViewBounds.CanvasToScreen(OutputResolution, Angle);
+
     /// <summary>
-    /// Typically used for Mouse Position -> World Position
+    ///     Typically used for Mouse Position -> World Position
     /// </summary>
     public Matrix ScreenToCanvas => Matrix.Invert(CanvasToScreen);
+
     public Vector2 TopLeftPosition { get; set; }
     public Vector2 Size { get; private set; }
 
