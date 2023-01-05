@@ -11,15 +11,17 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
 {
     public delegate void WindowEvent(VirtualWindow window);
 
+    private readonly Body _body;
+
     private readonly Chrome _chrome;
-    private readonly Content _content;
     private readonly Widget _widget;
 
-    public VirtualWindow(RectangleF rectangle, IWindowSizeSettings windowSizeSettings, Depth depth)
+    public VirtualWindow(RectangleF rectangle, IWindowSizeSettings windowSizeSettings, IWindowContent content,
+        Depth depth)
     {
         _widget = new Widget(rectangle, depth - 1);
         _chrome = new Chrome(this, 32, rectangle.Size.ToPoint(), windowSizeSettings);
-        _content = new Content(this);
+        _body = new Body(this, content);
     }
 
     public Canvas Canvas => _widget.Canvas;
@@ -44,12 +46,12 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     {
         _widget.Dispose();
     }
-    
+
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         _widget.UpdateHovered(hitTestStack);
         _chrome.UpdateInput(input, hitTestStack);
-        _content.UpdateInput(input, hitTestStack);
+        _body.UpdateInput(input, hitTestStack);
     }
 
     public event WindowEvent? RequestedFocus;
@@ -59,6 +61,11 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     {
         _chrome.Draw(painter, theme, isInFocus);
         _widget.Draw(painter);
+    }
+    
+    public void DrawContent(Painter painter)
+    {
+        _body.Content.Draw(painter);
     }
 
     private void SetRectangle(RectangleF resizedRect)

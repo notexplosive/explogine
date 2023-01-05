@@ -41,6 +41,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         {
             Client.Graphics.PushCanvas(window.Canvas);
             painter.Clear(_uiTheme.BackgroundColor);
+            window.DrawContent(painter);
             Client.Graphics.PopCanvas();
         }
 
@@ -66,10 +67,10 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         _rail.UpdateInput(input, hitTestStack);
     }
 
-    public VirtualWindow AddWindow(Vector2 position, IWindowSizeSettings windowSizeSettings)
+    public VirtualWindow AddWindow(Vector2 position, IWindowSizeSettings windowSizeSettings, IWindowContent content)
     {
         var window = new VirtualWindow(new RectangleF(position, windowSizeSettings.StartingSize.ToVector2()),
-            windowSizeSettings, TopDepth);
+            windowSizeSettings, content, TopDepth);
         _rail.Add(window);
         SetupOrTeardown(window);
         return window;
