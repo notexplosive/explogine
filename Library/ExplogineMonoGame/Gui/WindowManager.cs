@@ -8,11 +8,11 @@ namespace ExplogineMonoGame.Gui;
 
 public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
 {
-    private readonly Rail _rail = new();
-    private readonly RectangleF _desktopBoundingRect;
-    private readonly SimpleGuiTheme _uiTheme;
     private readonly DeferredActions _deferredActions = new();
     private readonly int _depthPerWindow = 10;
+    private readonly RectangleF _desktopBoundingRect;
+    private readonly Rail _rail = new();
+    private readonly SimpleGuiTheme _uiTheme;
 
     public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme)
     {
@@ -21,26 +21,37 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     }
 
     /// <summary>
-    /// WindowManager manages its own SpriteBatch calls, so its starting depth does not matter
+    ///     WindowManager manages its own SpriteBatch calls, so its starting depth does not matter
     /// </summary>
     public Depth BottomDepth => Depth.Middle;
+
     public Depth TopDepth => BottomDepth - _rail.Count * _depthPerWindow;
 
     public void Draw(Painter painter)
     {
+        // Put all the windows at the proper relative depth
         var windows = _rail.GetMatching<VirtualWindow>().ToArray();
         for (var i = 0; i < windows.Length; i++)
         {
             windows[i].StartingDepth = BottomDepth - _depthPerWindow * i;
         }
 
+        // Prepare the contents of the windows
+        foreach (var window in windows)
+        {
+            Client.Graphics.PushCanvas(window.Canvas);
+            painter.Clear(_uiTheme.BackgroundColor);
+            Client.Graphics.PopCanvas();
+        }
+
+        
+        // Draw the windows to the screen
         painter.BeginSpriteBatch();
         for (var i = 0; i < windows.Length; i++)
         {
             var window = windows[i];
-            window.Draw(painter, _uiTheme, i == 0);
+            window.Draw(painter, _uiTheme, i == (windows.Length-1));
         }
-
         painter.EndSpriteBatch();
     }
 
@@ -57,7 +68,8 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
 
     public VirtualWindow AddWindow(Vector2 position, IWindowSizeSettings windowSizeSettings)
     {
-        var window = new VirtualWindow(new RectangleF(position, windowSizeSettings.StartingSize.ToVector2()), windowSizeSettings, TopDepth);
+        var window = new VirtualWindow(new RectangleF(position, windowSizeSettings.StartingSize.ToVector2()),
+            windowSizeSettings, TopDepth);
         _rail.Add(window);
         SetupOrTeardown(window);
         return window;

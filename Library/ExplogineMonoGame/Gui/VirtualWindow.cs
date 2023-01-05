@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
-public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
+public partial class VirtualWindow : IUpdateInputHook, IDisposable
 {
     public delegate void WindowEvent(VirtualWindow window);
 
@@ -44,11 +44,7 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
     {
         _widget.Dispose();
     }
-
-    public void Update(float dt)
-    {
-    }
-
+    
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         _widget.UpdateHovered(hitTestStack);
@@ -61,10 +57,6 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
 
     public void Draw(Painter painter, IGuiTheme theme, bool isInFocus)
     {
-        Client.Graphics.PushCanvas(Canvas);
-        painter.Clear(theme.BackgroundColor);
-        Client.Graphics.PopCanvas();
-
         _chrome.Draw(painter, theme, isInFocus);
         _widget.Draw(painter);
     }
