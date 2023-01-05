@@ -35,9 +35,10 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         }
 
         painter.BeginSpriteBatch();
-        foreach (var window in windows)
+        for (var i = 0; i < windows.Length; i++)
         {
-            window.Draw(painter, _uiTheme);
+            var window = windows[i];
+            window.Draw(painter, _uiTheme, i == 0);
         }
 
         painter.EndSpriteBatch();

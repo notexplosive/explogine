@@ -66,9 +66,18 @@ public class SimpleGuiTheme : IGuiTheme
         painter.EndSpriteBatch();
     }
 
-    public void DrawWindowChrome(Painter painter, VirtualWindow.Chrome chrome)
+    public void DrawWindowChrome(Painter painter, VirtualWindow.Chrome chrome, bool isInFocus)
     {
-        painter.DrawRectangle(chrome.WholeWindowRectangle.Inflated(2,2), new DrawSettings{Depth = chrome.Depth, Color = PrimaryColor});
+        if (isInFocus)
+        {
+            painter.DrawRectangle(chrome.WholeWindowRectangle.Inflated(2, 2),
+                new DrawSettings {Depth = chrome.Depth, Color = PrimaryColor});
+        }
+        else
+        {
+            painter.DrawRectangle(chrome.WholeWindowRectangle.Inflated(2, 2),
+                new DrawSettings {Depth = chrome.Depth, Color = SecondaryColor});
+        }
     }
 
     public void DrawButton(Painter painter, Button button)

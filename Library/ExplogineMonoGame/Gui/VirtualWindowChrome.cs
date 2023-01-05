@@ -101,9 +101,9 @@ partial class VirtualWindow
             }
         }
 
-        public void Draw(Painter painter, IGuiTheme theme)
+        public void Draw(Painter painter, IGuiTheme theme, bool isInFocus)
         {
-            theme.DrawWindowChrome(painter, this);
+            theme.DrawWindowChrome(painter, this, isInFocus);
 
             if (_pendingResizeRect.HasValue)
             {

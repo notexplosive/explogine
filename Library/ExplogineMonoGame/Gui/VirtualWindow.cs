@@ -59,13 +59,13 @@ public partial class VirtualWindow : IUpdateInputHook, IUpdateHook, IDisposable
     public event WindowEvent? RequestedFocus;
     public event WindowEvent? RequestedConstrainToBounds;
 
-    public void Draw(Painter painter, IGuiTheme theme)
+    public void Draw(Painter painter, IGuiTheme theme, bool isInFocus)
     {
         Client.Graphics.PushCanvas(Canvas);
-        painter.Clear(Color.DarkBlue);
+        painter.Clear(theme.BackgroundColor);
         Client.Graphics.PopCanvas();
 
-        _chrome.Draw(painter, theme);
+        _chrome.Draw(painter, theme, isInFocus);
         _widget.Draw(painter);
     }
 
