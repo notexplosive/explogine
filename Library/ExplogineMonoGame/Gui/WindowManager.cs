@@ -64,7 +64,13 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        _rail.UpdateInput(input, hitTestStack);
+        var windows = _rail.GetMatching<VirtualWindow>().ToArray();
+
+        for (var i = windows.Length-1; i >= 0; i--)
+        {
+            var window = windows[i];
+            window.UpdateInput(input, hitTestStack);
+        }
     }
 
     public VirtualWindow AddWindow(Vector2 position, IWindowSizeSettings windowSizeSettings, IWindowContent content)
