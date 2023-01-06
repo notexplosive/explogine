@@ -82,17 +82,17 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     {
         RequestedClose?.Invoke(this);
     }
-    
+
     private void RequestMinimize()
     {
         RequestedMinimize?.Invoke(this);
     }
-    
+
     private void RequestFullScreen()
     {
         RequestedFullScreen?.Invoke(this);
     }
-    
+
     private void RequestFocus()
     {
         RequestedFocus?.Invoke(this);

@@ -13,6 +13,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     private readonly RectangleF _desktopBoundingRect;
     private readonly SimpleGuiTheme _uiTheme;
     private readonly List<VirtualWindow> _windows = new();
+    private readonly Dictionary<VirtualWindow, WindowState> _windowStates = new();
 
     public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme)
     {
@@ -49,7 +50,11 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         for (var i = 0; i < _windows.Count; i++)
         {
             var window = _windows[i];
-            window.Draw(painter, _uiTheme, i == _windows.Count - 1);
+
+            if (!_windowStates[window].IsMinimized)
+            {
+                window.Draw(painter, _uiTheme, i == _windows.Count - 1);
+            }
         }
 
         painter.EndSpriteBatch();
@@ -65,7 +70,10 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         for (var i = _windows.Count - 1; i >= 0; i--)
         {
             var window = _windows[i];
-            window.UpdateInput(input, hitTestStack);
+            if (!_windowStates[window].IsMinimized)
+            {
+                window.UpdateInput(input, hitTestStack);
+            }
         }
     }
 
@@ -73,6 +81,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     {
         var window = new VirtualWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
             settings, content, TopDepth);
+        _windowStates.Add(window, new WindowState());
         _windows.Add(window);
         SetupOrTeardown(window);
         return window;
@@ -86,6 +95,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
             window.RequestedFocus += BringWindowToFrontDeferred;
             window.RequestedConstrainToBounds += ConstrainWindowToBoundsDeferred;
             window.RequestedClose += CloseWindowDeferred;
+            window.RequestedMinimize += MinimizeWindow;
         }
         else
         {
@@ -93,6 +103,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
             window.RequestedFocus -= BringWindowToFrontDeferred;
             window.RequestedConstrainToBounds -= ConstrainWindowToBoundsDeferred;
             window.RequestedClose -= CloseWindowDeferred;
+            window.RequestedMinimize -= MinimizeWindow;
         }
     }
 
@@ -101,7 +112,13 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         _deferredActions.Add(() =>
         {
             _windows.Remove(window);
+            _windowStates.Remove(window);
         });
+    }
+
+    public void MinimizeWindow(VirtualWindow window)
+    {
+        _windowStates[window].IsMinimized = true;
     }
 
     private void ConstrainWindowToBoundsDeferred(VirtualWindow window)
@@ -121,5 +138,13 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
             _windows.Remove(targetWindow);
             _windows.Add(targetWindow);
         });
+    }
+
+    /// <summary>
+    /// Stores per-window state that doesn't make sense to live on the Window itself because they're only relevant to the Window Manager.
+    /// </summary>
+    private class WindowState
+    {
+        public bool IsMinimized { get; set; }
     }
 }
