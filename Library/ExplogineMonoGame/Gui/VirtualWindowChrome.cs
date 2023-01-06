@@ -43,6 +43,8 @@ partial class VirtualWindow
         private RectangleF CanvasRectangle => _parentWindow.CanvasRectangle;
         public Depth Depth => _parentWindow.StartingDepth;
 
+        public StaticImageAsset? Icon => _parentWindow.Icon;
+
         public RectangleF TitleBarRectangle
         {
             get
@@ -134,8 +136,6 @@ partial class VirtualWindow
                 painter.DrawLineRectangle(_pendingResizeRect.Value,
                     new LineDrawSettings {Depth = Depth.Front + 100, Color = Color.Gray, Thickness = 2});
             }
-            
-            _titleBar.Draw(painter);
         }
     }
 }

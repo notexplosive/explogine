@@ -11,7 +11,7 @@ namespace ExplogineMonoGame.Gui;
 
 partial class VirtualWindow
 {
-    public class TitleBar : IUpdateInputHook, IDrawHook
+    public class TitleBar : IUpdateInputHook
     {
         public enum ControlButtonType
         {
@@ -41,7 +41,6 @@ partial class VirtualWindow
                 _controlButtonClickables[i] = new Clickable();
             }
 
-            
             OnResized();
 
             _controlButtonClickables[(int) ControlButtonType.Close].ClickedFully += parentWindow.RequestClose;
@@ -57,14 +56,6 @@ partial class VirtualWindow
         }
 
         private Depth Depth => _parentWindow.StartingDepth - 1;
-
-        public void Draw(Painter painter)
-        {
-            // Todo: this should go away, the theme should draw all this stuff
-            var currentLayout = GetLayoutStruct();
-
-            painter.DrawRectangle(currentLayout.Icon, new DrawSettings {Color = Color.White, Depth = Depth});
-        }
 
         public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
         {
@@ -119,10 +110,16 @@ partial class VirtualWindow
             var titleBarThickness = _chrome.TitleBarRectangle.Height;
             var margin = 2;
             var usableSize = titleBarThickness - margin * 2;
-
+            var iconSize = 0f;
+            
+            if (_chrome.Icon != null)
+            {
+                iconSize = usableSize;
+            }
+            
             var elements = new List<LayoutElement>
             {
-                L.FixedElement("icon", usableSize, usableSize),
+                L.FixedElement("icon", iconSize, iconSize),
                 L.FillVertical(5),
                 L.FillHorizontal("title", usableSize),
             };

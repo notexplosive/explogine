@@ -4,6 +4,7 @@ using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Gui;
 
@@ -47,6 +48,8 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
         get => WholeRectangle.Location;
         set => _widget.Position = value + new Vector2(0, TitleBarRectangle.Height);
     }
+
+    public StaticImageAsset? Icon => CurrentSettings.Icon;
 
     public void Dispose()
     {
@@ -108,7 +111,7 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
         RequestedConstrainToBounds?.Invoke(this);
     }
 
-    public record Settings(ISizeSettings SizeSettings, bool AllowMinimize = false, bool AllowClose = true);
+    public record Settings(ISizeSettings SizeSettings, StaticImageAsset? Icon = null, bool AllowMinimize = false, bool AllowClose = true);
 
     public interface ISizeSettings
     {

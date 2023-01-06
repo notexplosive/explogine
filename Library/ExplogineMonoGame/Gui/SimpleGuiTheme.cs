@@ -80,7 +80,9 @@ public class SimpleGuiTheme : IGuiTheme
                 new DrawSettings {Depth = chrome.Depth, Color = SecondaryColor});
         }
 
-        foreach (var button in chrome.TitleLayout.Buttons)
+        var titleLayout = chrome.TitleLayout;
+        
+        foreach (var button in titleLayout.Buttons)
         {
             if (button.ButtonType != VirtualWindow.TitleBar.ControlButtonType.Empty)
             {
@@ -96,7 +98,13 @@ public class SimpleGuiTheme : IGuiTheme
             }
         }
 
-        painter.DrawStringWithinRectangle(Font, "Hello world", chrome.TitleLayout.TitleArea, Alignment.CenterLeft,
+        if (chrome.Icon != null)
+        {
+            painter.DrawAsRectangle(chrome.Icon.Texture, titleLayout.Icon,
+                new DrawSettings {Color = Color.White, Depth = chrome.Depth - 1, SourceRectangle = chrome.Icon.SourceRectangle});
+        }
+
+        painter.DrawStringWithinRectangle(Font, "Hello world", titleLayout.TitleArea, Alignment.CenterLeft,
             new DrawSettings {Depth = chrome.Depth - 1});
     }
 
