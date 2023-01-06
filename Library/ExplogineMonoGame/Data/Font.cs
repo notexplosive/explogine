@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Diagnostics.Contracts;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
@@ -22,7 +24,73 @@ public class Font : IFont
         // no-op
         return this;
     }
-    
+
+    /// <summary>
+    /// WARNING: Tremendously inefficient. This does a whole FormattedText layout computation multiple times
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="bounds"></param>
+    /// <returns>Substring of given text, truncated to fit within bounds</returns>
+    [Pure]
+    public string Truncate(string text, Vector2 bounds)
+    {
+        // If bounds height was less than the height of the font, pretend like it wasn't (otherwise nothing would fit)
+        bounds.Y = Math.Max(bounds.Y, Height);
+
+        Vector2 Restrict(string textToRestrict, float width)
+        {
+            return RestrictedStringBuilder
+                .FromFragments(new FormattedText.IFragment[] {new FormattedText.Fragment(this, textToRestrict)}, width)
+                .Size;
+        }
+        
+        (bool, string) Attempt(int length)
+        {
+            var attemptText = text.Substring(0, length);
+            var restrictedBounds = Restrict(attemptText, bounds.X);
+
+            if (restrictedBounds.X <= bounds.X && restrictedBounds.Y <= bounds.Y)
+            {
+                return (true, attemptText);
+            }
+
+            return (false, attemptText);
+        }
+
+        string BinarySearchAttempt(int length)
+        {
+            var beginning = 0;
+            var end = length;
+            var result = text;
+
+            while (beginning < end)
+            {
+                var middle = (beginning + end) / 2;
+                var currentAttempt = Attempt(middle);
+                if (currentAttempt.Item1)
+                {
+                    beginning = middle + 1;
+                    result = currentAttempt.Item2;
+                }
+                else
+                {
+                    end = middle - 1;
+                }
+            }
+
+            return result;
+        }
+
+        var firstAttempt = Attempt(text.Length);
+        if (firstAttempt.Item1)
+        {
+            return firstAttempt.Item2;
+        }
+
+        return BinarySearchAttempt(text.Length);
+    }
+
+    [Pure]
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
         if (!restrictedWidth.HasValue)

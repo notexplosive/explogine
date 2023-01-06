@@ -25,6 +25,12 @@ public class IndirectFont : IFontGetter
     }
 
     [Pure]
+    public string Truncate(string text, Vector2 bounds)
+    {
+        return GetFont().Truncate(text,bounds);
+    }
+
+    [Pure]
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {
         return GetFont().MeasureString(text, restrictedWidth);

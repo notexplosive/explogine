@@ -97,6 +97,12 @@ public class TestFont : IFont
         return this;
     }
 
+    public string Truncate(string text, Vector2 bounds)
+    {
+        // not implemented in test... ugh
+        return text;
+    }
+
     public float ScaleFactor => 1f;
     public float Height => 32;
 

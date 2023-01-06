@@ -104,7 +104,8 @@ public class SimpleGuiTheme : IGuiTheme
                 new DrawSettings {Color = Color.White, Depth = chrome.Depth - 1, SourceRectangle = chrome.Icon.SourceRectangle});
         }
 
-        painter.DrawStringWithinRectangle(Font, chrome.Title, titleLayout.TitleArea, Alignment.CenterLeft,
+        var truncatedTitle = Font.Truncate(chrome.Title, titleLayout.TitleArea.Size);
+        painter.DrawStringWithinRectangle(Font, truncatedTitle, titleLayout.TitleArea, Alignment.CenterLeft,
             new DrawSettings {Depth = chrome.Depth - 1});
     }
 
