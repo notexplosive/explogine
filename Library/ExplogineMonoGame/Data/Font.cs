@@ -37,6 +37,11 @@ public class Font : IFont
         // If bounds height was less than the height of the font, pretend like it wasn't (otherwise nothing would fit)
         bounds.Y = Math.Max(bounds.Y, Height);
 
+        if (bounds.X <= 0)
+        {
+            return string.Empty;
+        }
+
         Vector2 Restrict(string textToRestrict, float width)
         {
             return RestrictedStringBuilder
@@ -63,7 +68,7 @@ public class Font : IFont
             var end = length;
             var result = text;
 
-            while (beginning < end)
+            while (beginning <= end)
             {
                 var middle = (beginning + end) / 2;
                 var currentAttempt = Attempt(middle);
