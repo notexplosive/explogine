@@ -19,10 +19,10 @@ partial class VirtualWindow
         private readonly VirtualWindow _parentWindow;
         private readonly RectResizer _rectResizer;
         private readonly ISizeSettings _sizeSettings;
+        private readonly TitleBar _titleBar;
         private readonly int _titleBarThickness;
         private RectangleF? _pendingResizeRect;
-        private readonly TitleBar _titleBar;
-    
+
         public Chrome(VirtualWindow parentWindow, int titleBarThickness, Point minimumWidgetSize,
             ISizeSettings sizeSettings)
         {
@@ -33,7 +33,7 @@ partial class VirtualWindow
             _rectResizer = new RectResizer();
             _movementDrag = new Drag<Vector2>();
             _titleBar = new TitleBar(_parentWindow, this);
-            
+
             _headerClickable.ClickInitiated += parentWindow.RequestFocus;
             _rectResizer.Initiated += parentWindow.RequestFocus;
             _movementDrag.Finished += parentWindow.ValidateBounds;
@@ -42,7 +42,6 @@ partial class VirtualWindow
 
         private RectangleF CanvasRectangle => _parentWindow.CanvasRectangle;
         public Depth Depth => _parentWindow.StartingDepth;
-
         public StaticImageAsset? Icon => _parentWindow.Icon;
 
         public RectangleF TitleBarRectangle
@@ -98,7 +97,7 @@ partial class VirtualWindow
             {
                 _movementDrag.End();
             }
-            
+
             _titleBar.UpdateInput(input, hitTestStack);
         }
 
