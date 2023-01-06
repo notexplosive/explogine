@@ -17,7 +17,7 @@ public class Painter
         _spriteBatch = new SpriteBatch(graphicsDevice);
     }
 
-    public bool SpriteBatchIsInProgress { get; private set; }
+    public bool IsSpriteBatchInProgress { get; private set; }
 
     public Texture2D PixelAsset => _pixelAsset ??= Client.Assets.GetTexture("white-pixel");
 
@@ -39,13 +39,13 @@ public class Painter
     public void BeginSpriteBatch(Matrix matrix)
     {
         _spriteBatch.Begin(SpriteSortMode.BackToFront, null, SamplerState.LinearWrap, null, null, null, matrix);
-        SpriteBatchIsInProgress = true;
+        IsSpriteBatchInProgress = true;
     }
 
     public void EndSpriteBatch()
     {
         _spriteBatch.End();
-        SpriteBatchIsInProgress = false;
+        IsSpriteBatchInProgress = false;
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public class Painter
     /// </summary>
     internal void ResetToCleanState()
     {
-        if (SpriteBatchIsInProgress)
+        if (IsSpriteBatchInProgress)
         {
             EndSpriteBatch();
         }
