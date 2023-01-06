@@ -1,4 +1,5 @@
-﻿using ExplogineCore.Data;
+﻿using System;
+using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Layout;
 using Microsoft.Xna.Framework;
@@ -78,8 +79,25 @@ public class SimpleGuiTheme : IGuiTheme
             painter.DrawRectangle(chrome.WholeWindowRectangle.Inflated(2, 2),
                 new DrawSettings {Depth = chrome.Depth, Color = SecondaryColor});
         }
-        
-        painter.DrawStringWithinRectangle(Font, "Hello world", chrome.TitleLayout.TitleArea, Alignment.CenterLeft, new DrawSettings{Depth = chrome.Depth - 1});
+
+        foreach (var button in chrome.TitleLayout.Buttons)
+        {
+            if (button.ButtonType != VirtualWindow.TitleBar.ControlButtonType.Empty)
+            {
+                var color = button.ButtonType switch
+                {
+                    VirtualWindow.TitleBar.ControlButtonType.Close => Color.Red,
+                    VirtualWindow.TitleBar.ControlButtonType.Fullscreen => Color.LightCoral,
+                    VirtualWindow.TitleBar.ControlButtonType.Minimize => Color.Orange,
+                    _ => Color.White
+                };
+
+                painter.DrawRectangle(button.Rectangle, new DrawSettings {Color = color, Depth = chrome.Depth - 1});
+            }
+        }
+
+        painter.DrawStringWithinRectangle(Font, "Hello world", chrome.TitleLayout.TitleArea, Alignment.CenterLeft,
+            new DrawSettings {Depth = chrome.Depth - 1});
     }
 
     public void DrawButton(Painter painter, Button button)

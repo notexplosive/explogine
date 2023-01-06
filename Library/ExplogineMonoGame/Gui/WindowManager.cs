@@ -85,13 +85,23 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
             // Setup
             window.RequestedFocus += BringWindowToFrontDeferred;
             window.RequestedConstrainToBounds += ConstrainWindowToBoundsDeferred;
+            window.RequestedClose += CloseWindowDeferred;
         }
         else
         {
             // Teardown
             window.RequestedFocus -= BringWindowToFrontDeferred;
             window.RequestedConstrainToBounds -= ConstrainWindowToBoundsDeferred;
+            window.RequestedClose -= CloseWindowDeferred;
         }
+    }
+
+    private void CloseWindowDeferred(VirtualWindow window)
+    {
+        _deferredActions.Add(() =>
+        {
+            _windows.Remove(window);
+        });
     }
 
     private void ConstrainWindowToBoundsDeferred(VirtualWindow window)
