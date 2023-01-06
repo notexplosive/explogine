@@ -3,9 +3,47 @@ using System.Diagnostics.Contracts;
 
 namespace ExplogineCore.Data;
 
-public class OneToMany<TKey, TValue> :IEnumerable<KeyValuePair<TKey,TValue>>  where TKey : notnull
+public class OneToMany<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull
 {
     private readonly Dictionary<TKey, List<TValue>> _dictionary = new();
+
+    public IEnumerable<TValue> Values
+    {
+        get
+        {
+            foreach (var item in this)
+            {
+                yield return item.Value;
+            }
+        }
+    }
+
+    public IEnumerable<TKey> Keys
+    {
+        get
+        {
+            foreach (var item in this)
+            {
+                yield return item.Key;
+            }
+        }
+    }
+
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+    {
+        foreach (var key in _dictionary.Keys)
+        {
+            foreach (var value in _dictionary[key])
+            {
+                yield return new KeyValuePair<TKey, TValue>(key, value);
+            }
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     public void Add(TKey key, TValue value)
     {
@@ -24,44 +62,6 @@ public class OneToMany<TKey, TValue> :IEnumerable<KeyValuePair<TKey,TValue>>  wh
         {
             _dictionary.Add(key, new List<TValue>());
         }
-    }
-    
-    public IEnumerable<TValue> Values
-    {
-        get
-        {
-            foreach (var item in this)
-            {
-                yield return item.Value;
-            }
-        }
-    }
-    
-    public IEnumerable<TKey> Keys
-    {
-        get
-        {
-            foreach (var item in this)
-            {
-                yield return item.Key;
-            }
-        }
-    }
-
-    public IEnumerator<KeyValuePair<TKey,TValue>> GetEnumerator()
-    {
-        foreach (var key in _dictionary.Keys)
-        {
-            foreach (var value in _dictionary[key])
-            {
-                yield return new KeyValuePair<TKey, TValue>(key, value);
-            }
-        }
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
     }
 
     [Pure]
