@@ -47,8 +47,13 @@ partial class VirtualWindow
             _controlButtonClickables[(int) ControlButtonType.Close].ClickedFully += parentWindow.RequestClose;
             _controlButtonClickables[(int) ControlButtonType.Minimize].ClickedFully += parentWindow.RequestMinimize;
             _controlButtonClickables[(int) ControlButtonType.Fullscreen].ClickedFully += parentWindow.RequestFullScreen;
+            
+            _controlButtonClickables[(int) ControlButtonType.Close].ClickInitiated += parentWindow.RequestFocus;
+            _controlButtonClickables[(int) ControlButtonType.Minimize].ClickInitiated += parentWindow.RequestFocus;
+            _controlButtonClickables[(int) ControlButtonType.Fullscreen].ClickInitiated += parentWindow.RequestFocus;
 
             _chrome.Resized += OnResized;
+            
         }
 
         private Depth Depth => _parentWindow.StartingDepth - 1;
@@ -122,20 +127,19 @@ partial class VirtualWindow
                 L.FillHorizontal("title", usableSize),
             };
 
-            if (_parentWindow.CurrentSettings.SizeSettings.AllowFullScreen)
-            {
-                elements.Add(L.FixedElement("fullscreen-button", usableSize, usableSize));
-            }
-
             if (_parentWindow.CurrentSettings.AllowMinimize)
             {
                 elements.Add(L.FixedElement("minimize-button", usableSize, usableSize));
             }
             
+            if (_parentWindow.CurrentSettings.SizeSettings.AllowFullScreen)
+            {
+                elements.Add(L.FixedElement("fullscreen-button", usableSize, usableSize));
+            }
+            
             if (_parentWindow.CurrentSettings.AllowClose)
             {
                 elements.Add(L.FixedElement("close-button", usableSize, usableSize));
-
             }
             
             _layout = L.Compute(_chrome.TitleBarRectangle.WithPosition(Vector2.Zero), L.Root(

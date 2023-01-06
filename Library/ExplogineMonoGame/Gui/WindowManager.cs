@@ -106,6 +106,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
             window.RequestedConstrainToBounds += ConstrainWindowToBoundsDeferred;
             window.RequestedClose += CloseWindowDeferred;
             window.RequestedMinimize += MinimizeWindow;
+            window.RequestedFullScreen += FullScreenWindow;
         }
         else
         {
@@ -114,7 +115,13 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
             window.RequestedConstrainToBounds -= ConstrainWindowToBoundsDeferred;
             window.RequestedClose -= CloseWindowDeferred;
             window.RequestedMinimize -= MinimizeWindow;
+            window.RequestedFullScreen -= FullScreenWindow;
         }
+    }
+
+    private void FullScreenWindow(VirtualWindow window)
+    {
+        _windowStates[window].ToggleFullScreen(window, _desktopBoundingRect);
     }
 
     private void CloseWindowDeferred(VirtualWindow window)
@@ -164,6 +171,23 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     /// </summary>
     private class WindowState
     {
+        private RectangleF _rectangleBeforeFullScreen;
         public bool IsMinimized { get; set; }
+        public bool IsFullScreen { get; set; }
+
+        public void ToggleFullScreen(VirtualWindow window, RectangleF screenRect)
+        {
+            if (!IsFullScreen)
+            {
+                _rectangleBeforeFullScreen = window.WholeRectangle;
+                window.WholeRectangle = screenRect;
+            }
+            else
+            {
+                window.WholeRectangle = _rectangleBeforeFullScreen;
+            }
+            
+            IsFullScreen = !IsFullScreen;
+        }
     }
 }

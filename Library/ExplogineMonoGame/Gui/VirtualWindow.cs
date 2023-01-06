@@ -27,7 +27,12 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     public Settings CurrentSettings { get; }
     public Canvas Canvas => _widget.Canvas;
     public RectangleF CanvasRectangle => _widget.Rectangle;
-    public RectangleF WholeRectangle => _chrome.WholeWindowRectangle;
+    public RectangleF WholeRectangle
+    {
+        get => _chrome.WholeWindowRectangle;
+        set => _chrome.WholeWindowRectangle = value;
+    }
+
     public RectangleF TitleBarRectangle => _chrome.TitleBarRectangle;
 
     public Depth StartingDepth
@@ -117,6 +122,5 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     }
 
     public readonly record struct ResizableSizeSettings(Point StartingSize, Point MinimumSize,
-        Point? MaximumSize = default,
         bool AllowFullScreen = false) : ISizeSettings;
 }

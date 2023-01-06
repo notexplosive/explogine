@@ -55,7 +55,17 @@ partial class VirtualWindow
 
         public TitleBar.Layout TitleLayout => _titleBar.GetLayoutStruct();
 
-        public RectangleF WholeWindowRectangle => RectangleF.Union(TitleBarRectangle, CanvasRectangle);
+        public RectangleF WholeWindowRectangle
+        {
+            get => RectangleF.Union(TitleBarRectangle, CanvasRectangle);
+            set
+            {
+                _parentWindow.Position = value.Location;
+                var newSize = (value.Size - TitleBarRectangle.Size.JustY()).ToPoint();
+                _parentWindow._widget.Size = newSize;
+                Resized?.Invoke();
+            }
+        }
 
         public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
         {
