@@ -69,6 +69,8 @@ partial class VirtualWindow
             }
         }
 
+        public string Title => _parentWindow.Title;
+
         public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
         {
             if (_sizeSettings is ResizableSizeSettings resizableWindowSizeSettings)

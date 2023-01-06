@@ -23,6 +23,8 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
         _widget = new Widget(rectangle, depth - 1);
         _chrome = new Chrome(this, 32, rectangle.Size.ToPoint(), settings.SizeSettings);
         _body = new Body(this, content);
+        
+        Title = CurrentSettings.Title;
     }
 
     public Settings CurrentSettings { get; }
@@ -50,6 +52,7 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     }
 
     public StaticImageAsset? Icon => CurrentSettings.Icon;
+    public string Title { get; private set; }
 
     public void Dispose()
     {
@@ -111,7 +114,7 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
         RequestedConstrainToBounds?.Invoke(this);
     }
 
-    public record Settings(ISizeSettings SizeSettings, StaticImageAsset? Icon = null, bool AllowMinimize = false, bool AllowClose = true);
+    public record Settings(string Title, ISizeSettings SizeSettings, StaticImageAsset? Icon = null, bool AllowMinimize = false, bool AllowClose = true);
 
     public interface ISizeSettings
     {
