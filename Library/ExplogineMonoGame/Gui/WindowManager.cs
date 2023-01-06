@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
-public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
+public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDrawHook
 {
     private readonly DeferredActions _deferredActions = new();
     private readonly int _depthPerWindow = 10;
@@ -30,6 +30,23 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
 
     public void Draw(Painter painter)
     {
+        // Draw the windows to the screen
+        painter.BeginSpriteBatch();
+        for (var i = 0; i < _windows.Count; i++)
+        {
+            var window = _windows[i];
+
+            if (!_windowStates[window].IsMinimized)
+            {
+                window.Draw(painter, _uiTheme, i == _windows.Count - 1);
+            }
+        }
+
+        painter.EndSpriteBatch();
+    }
+
+    public void EarlyDraw(Painter painter)
+    {
         // Put all the windows at the proper relative depth
         for (var i = 0; i < _windows.Count; i++)
         {
@@ -44,20 +61,6 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
             window.DrawContent(painter);
             Client.Graphics.PopCanvas();
         }
-
-        // Draw the windows to the screen
-        painter.BeginSpriteBatch();
-        for (var i = 0; i < _windows.Count; i++)
-        {
-            var window = _windows[i];
-
-            if (!_windowStates[window].IsMinimized)
-            {
-                window.Draw(painter, _uiTheme, i == _windows.Count - 1);
-            }
-        }
-
-        painter.EndSpriteBatch();
     }
 
     public void Update(float dt)
@@ -77,6 +80,11 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         }
     }
 
+    public event VirtualWindow.WindowEvent? ClosedWindow;
+    public event VirtualWindow.WindowEvent? CreatedWindow;
+    public event VirtualWindow.WindowEvent? MinimizedWindow;
+    public event VirtualWindow.WindowEvent? UnMinimizedWindow;
+
     public VirtualWindow AddWindow(Vector2 position, VirtualWindow.Settings settings, IWindowContent content)
     {
         var window = new VirtualWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
@@ -84,6 +92,8 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         _windowStates.Add(window, new WindowState());
         _windows.Add(window);
         SetupOrTeardown(window);
+
+        CreatedWindow?.Invoke(window);
         return window;
     }
 
@@ -113,12 +123,20 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
         {
             _windows.Remove(window);
             _windowStates.Remove(window);
+            ClosedWindow?.Invoke(window);
         });
     }
 
     public void MinimizeWindow(VirtualWindow window)
     {
         _windowStates[window].IsMinimized = true;
+        MinimizedWindow?.Invoke(window);
+    }
+
+    public void UnMinimizeWindow(VirtualWindow window)
+    {
+        _windowStates[window].IsMinimized = false;
+        UnMinimizedWindow?.Invoke(window);
     }
 
     private void ConstrainWindowToBoundsDeferred(VirtualWindow window)
@@ -141,7 +159,8 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook
     }
 
     /// <summary>
-    /// Stores per-window state that doesn't make sense to live on the Window itself because they're only relevant to the Window Manager.
+    ///     Stores per-window state that doesn't make sense to live on the Window itself because they're only relevant to the
+    ///     Window Manager.
     /// </summary>
     private class WindowState
     {
