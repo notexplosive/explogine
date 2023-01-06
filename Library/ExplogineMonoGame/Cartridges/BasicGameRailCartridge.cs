@@ -14,6 +14,7 @@ public abstract class BasicGameRailCartridge : BasicGameCartridge
 
     public override void Draw(Painter painter)
     {
+        Rail.EarlyDraw(painter);
         Rail.Draw(painter);
     }
 

@@ -14,6 +14,7 @@ public abstract class NoProviderRailCartridge : NoProviderCartridge
 
     public override void Draw(Painter painter)
     {
+        Rail.EarlyDraw(painter);
         Rail.Draw(painter);
     }
 
