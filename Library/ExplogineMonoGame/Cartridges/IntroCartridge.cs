@@ -44,7 +44,7 @@ public class IntroCartridge : ICartridge
             FlyInLettersRandom
         };
 
-        Tween = tweens[_index % tweens.Length]();
+        Tween.Add(tweens[_index % tweens.Length]());
         Tween.Add(new WaitSecondsTween(0.75f));
     }
 

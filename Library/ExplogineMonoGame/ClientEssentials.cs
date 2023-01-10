@@ -50,7 +50,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
 
     public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        yield return new AssetLoadEvent("white-pixel", () =>
+        yield return new AssetLoadEvent("white-pixel", "Engine Tools", () =>
         {
             var canvas = new Canvas(1, 1);
             Client.Graphics.PushCanvas(canvas);

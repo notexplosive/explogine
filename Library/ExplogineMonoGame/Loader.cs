@@ -29,6 +29,7 @@ public class Loader
 
     private int LoadEventCount => _loadEvents.Count;
     public float Percent => (float) _loadEventIndex / LoadEventCount;
+    public string Status { get; private set; } = "Loading";
 
     public T ForceLoad<T>(string key) where T : Asset
     {
@@ -74,14 +75,18 @@ public class Loader
         currentLoadEvent.Execute();
 
         _loadEventIndex++;
-        Client.Debug.Log("Loading: " + MathF.Floor(Percent * 100f) + "%");
+
+        if (_loadEventIndex < _loadEvents.Count - 1)
+        {
+            Status = _loadEvents[_loadEventIndex].Info ?? "Content";
+        }
     }
 
     private IEnumerable<AssetLoadEvent> StaticContentLoadEvents()
     {
         foreach (var key in Loader.GetKeysFromContentDirectory())
         {
-            yield return new AssetLoadEvent(key, () => LoadAsset(key));
+            yield return new AssetLoadEvent(key, key, () => LoadAsset(key));
         }
     }
 

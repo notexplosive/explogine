@@ -106,7 +106,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
 
     public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        yield return new AssetLoadEvent("demo-indicators",
+        yield return new AssetLoadEvent("demo-indicators", "Engine Tools",
             () => new GridBasedSpriteSheet("engine/demo-indicators", new Point(67, 23)));
     }
     

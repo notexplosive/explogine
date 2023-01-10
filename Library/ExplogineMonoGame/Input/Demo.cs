@@ -214,6 +214,6 @@ public class Demo : ILoadEventProvider
 
     public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        yield return new VoidLoadEvent("PrepareDemo",() => Prepare());
+        yield return new VoidLoadEvent("PrepareDemo", "Demo", Prepare);
     }
 }
