@@ -36,6 +36,11 @@ public readonly struct FormattedText
 
     public IEnumerable<FormattedGlyph> GetGlyphs(RectangleF rectangle, Alignment alignment)
     {
+        if (_fragments.Length == 0)
+        {
+            yield break;
+        }
+
         var (lines, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, rectangle.Width);
         var restrictedBounds =
             RectangleF.FromSizeAlignedWithin(rectangle, restrictedSize, alignment.JustVertical());
@@ -59,7 +64,8 @@ public readonly struct FormattedText
                 var letterSize = letterFragment.Size;
                 var position = actualLineBounds.TopLeft + letterPosition + fragmentLine.Size.JustY() -
                                letterSize.JustY();
-                var isWhiteSpace = letterFragment is CharGlyphData fragmentChar && char.IsWhiteSpace(fragmentChar.Text);
+                var isWhiteSpace = letterFragment is CharGlyphData fragmentChar &&
+                                   char.IsWhiteSpace(fragmentChar.Text);
 
                 var glyphData = letterFragment;
                 if (isWhiteSpace)
