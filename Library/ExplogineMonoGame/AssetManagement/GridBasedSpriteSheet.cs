@@ -11,9 +11,7 @@ namespace ExplogineMonoGame.AssetManagement;
 public class GridBasedSpriteSheet : SpriteSheet
 {
     private readonly int _columnCount;
-    private readonly int _frameCount;
     private readonly int _rowCount;
-    private Point _frameSize;
 
     public GridBasedSpriteSheet(string textureName, Point frameSize) : this(new IndirectTexture(textureName).Get(),
         frameSize)
@@ -30,35 +28,40 @@ public class GridBasedSpriteSheet : SpriteSheet
             throw new Exception("Texture does not evenly divide by cell dimensions");
         }
 
-        _frameSize = frameSize;
+        FrameSize = frameSize;
         _columnCount = texture.Width / frameSize.X;
         _rowCount = texture.Height / frameSize.Y;
-        _frameCount = _columnCount * _rowCount;
     }
 
-    public override int FrameCount => _frameCount;
+    public override int FrameCount => _columnCount * _rowCount;
+    public Point FrameSize { get; }
 
     public override Rectangle GetSourceRectForFrame(int index)
     {
         var x = index % _columnCount;
         var y = index / _columnCount;
-        return new Rectangle(new Point(x * _frameSize.X, y * _frameSize.Y), _frameSize);
+        return new Rectangle(new Point(x * FrameSize.X, y * FrameSize.Y), FrameSize);
     }
 
-    public override void DrawFrame(Painter painter, int index, Vector2 position, Scale2D scale,
+    public override void DrawFrameAtPosition(Painter painter, int index, Vector2 position, Scale2D scale,
         DrawSettings drawSettings)
     {
-        var isValid = index >= 0 && index <= _frameCount-1;
+        var isValid = index >= 0 && index <= FrameCount - 1;
         if (!isValid)
         {
             throw new IndexOutOfRangeException();
         }
 
-        var adjustedFrameSize = _frameSize.ToVector2() * scale.Value;
-        var destinationRect = new Rectangle(position.ToPoint(), adjustedFrameSize.ToPoint());
+        var adjustedFrameSize = FrameSize.ToVector2() * scale.Value;
+        var destinationRect = new RectangleF(position, adjustedFrameSize);
 
+        DrawFrameAsRectangle(painter, index, destinationRect, drawSettings);
+    }
+    
+    
+    public override void DrawFrameAsRectangle(Painter painter, int index, RectangleF rectangleF, DrawSettings drawSettings)
+    {
         drawSettings.SourceRectangle ??= GetSourceRectForFrame(index);
-
-        painter.DrawAsRectangle(Texture, destinationRect, drawSettings);
+        painter.DrawAsRectangle(Texture, rectangleF, drawSettings);
     }
 }

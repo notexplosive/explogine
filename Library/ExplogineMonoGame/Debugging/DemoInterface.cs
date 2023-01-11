@@ -42,7 +42,7 @@ internal class DemoInterface : IUpdateHook
                         , spriteSheet.GetSourceRectForFrame(0).Height),
                     new DrawSettings());
 
-                spriteSheet.DrawFrame(
+                spriteSheet.DrawFrameAtPosition(
                     painter,
                     frame,
                     new Vector2(Client.Window.Size.X - spriteSheet.GetSourceRectForFrame(0).Width, 0),

@@ -19,7 +19,10 @@ public abstract class SpriteSheet : Asset
 
     public abstract int FrameCount { get; }
 
-    public abstract void DrawFrame(Painter painter, int index, Vector2 position, Scale2D scale,
+    public abstract void DrawFrameAtPosition(Painter painter, int index, Vector2 position, Scale2D scale,
+        DrawSettings drawSettings);
+    
+    public abstract void DrawFrameAsRectangle(Painter painter, int index, RectangleF rectangleF,
         DrawSettings drawSettings);
 
     public abstract Rectangle GetSourceRectForFrame(int index);
