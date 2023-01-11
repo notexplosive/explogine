@@ -70,4 +70,12 @@ public class Assets
             }
         }
     }
+
+    public IEnumerable<KeyValuePair<string, Asset>> GetAllAssetKeyValuePairs()
+    {
+        foreach (var item in _lookupTable)
+        {
+            yield return item;
+        }
+    }
 }
