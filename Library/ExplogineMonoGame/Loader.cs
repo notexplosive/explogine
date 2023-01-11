@@ -78,7 +78,7 @@ public class Loader
 
         if (_loadEventIndex < _loadEvents.Count - 1)
         {
-            Status = _loadEvents[_loadEventIndex].Info ?? "Content";
+            Status = _loadEvents[_loadEventIndex].Info ?? _loadEvents[_loadEventIndex].Key;
         }
     }
 
