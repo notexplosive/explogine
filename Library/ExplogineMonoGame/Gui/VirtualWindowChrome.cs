@@ -23,13 +23,18 @@ partial class VirtualWindow
         private readonly int _titleBarThickness;
         private RectangleF? _pendingResizeRect;
 
-        public Chrome(VirtualWindow parentWindow, int titleBarThickness, Point minimumWidgetSize,
-            ISizeSettings sizeSettings)
+        public Chrome(VirtualWindow parentWindow, int titleBarThickness, ISizeSettings sizeSettings)
         {
             _parentWindow = parentWindow;
             _titleBarThickness = titleBarThickness;
             _sizeSettings = sizeSettings;
-            _minimumSize = minimumWidgetSize + new Point(0, titleBarThickness);
+            _minimumSize = _parentWindow._widget.Size;
+            if (sizeSettings is ResizableSizeSettings resizableSizeSettings)
+            {
+                _minimumSize = resizableSizeSettings.MinimumSize;
+            }
+            _minimumSize += new Point(0, titleBarThickness);
+
             _rectResizer = new RectResizer();
             _movementDrag = new Drag<Vector2>();
             _titleBar = new TitleBar(_parentWindow, this);
@@ -106,7 +111,7 @@ partial class VirtualWindow
         private void HandleResizing(ConsumableInput input, HitTestStack hitTestStack)
         {
             var resizedWholeWindowRect =
-                _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, 10);
+                _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, 10, _minimumSize);
 
             if (_rectResizer.HasGrabbed)
             {

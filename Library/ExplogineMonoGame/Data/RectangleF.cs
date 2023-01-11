@@ -302,7 +302,10 @@ public struct RectangleF : IEquatable<RectangleF>
         };
     }
 
-    public RectangleF GetEdgeRect(RectEdge edge, float thickness)
+    /// <summary>
+    /// Extrudes a rectangle from the edge of an existing rectangle
+    /// </summary>
+    public RectangleF GetRectangleFromEdge(RectEdge edge, float thickness)
     {
         return edge switch
         {

@@ -20,7 +20,7 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     {
         CurrentSettings = settings;
         _widget = new Widget(rectangle, depth - 1);
-        _chrome = new Chrome(this, 32, rectangle.Size.ToPoint(), settings.SizeSettings);
+        _chrome = new Chrome(this, 32, settings.SizeSettings);
         _body = new Body(this, content);
 
         Title = CurrentSettings.Title;
@@ -129,5 +129,11 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     }
 
     public readonly record struct ResizableSizeSettings(Point StartingSize, Point MinimumSize,
-        bool AllowFullScreen = false) : ISizeSettings;
+        bool AllowFullScreen = false) : ISizeSettings
+    {
+        public static ResizableSizeSettings Create(Point startingSize, Point? minimumSize = null, bool allowFullScreen = true)
+        {
+            return new ResizableSizeSettings(startingSize, minimumSize ?? new Point(200, 200), allowFullScreen);
+        }
+    }
 }

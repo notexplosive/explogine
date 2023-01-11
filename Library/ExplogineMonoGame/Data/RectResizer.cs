@@ -16,7 +16,7 @@ public class RectResizer
     public event Action? Finished;
 
     public RectangleF GetResizedRect(ConsumableInput input, HitTestStack hitTestStack, RectangleF startingRect,
-        Depth depth, int grabHandleThickness = 50)
+        Depth depth, int grabHandleThickness = 50, Point minimumSize = default)
     {
         var leftButton = input.Mouse.GetButton(MouseButton.Left);
         var mouseDown = leftButton.IsDown;
@@ -28,7 +28,7 @@ public class RectResizer
         {
             if (edge != RectEdge.None)
             {
-                hitTestStack.AddZone(startingRect.GetEdgeRect(edge, grabHandleThickness), depth, () =>
+                hitTestStack.AddZone(startingRect.GetRectangleFromEdge(edge, grabHandleThickness), depth, () =>
                 {
                     _edgeHovered = edge;
                     if (!mouseDown)
@@ -51,7 +51,7 @@ public class RectResizer
             var wasDragging = _edgeDrag.IsDragging;
             _edgeDrag.End();
             _edgeGrabbed = RectEdge.None;
-            
+
             if (wasDragging)
             {
                 Finished?.Invoke();
@@ -64,7 +64,19 @@ public class RectResizer
         if (_edgeDrag.IsDragging)
         {
             Client.Window.SetCursor(MouseCursorExtensions.GetCursorForEdge(_edgeGrabbed));
-            var newRect = _edgeDrag.StartingValue.ResizedOnEdge(_edgeGrabbed, _edgeDrag.TotalDelta);
+            var sizeDelta = _edgeDrag.TotalDelta;
+            var overflow = startingRect.Size + sizeDelta - minimumSize.ToVector2();
+            if (overflow.X < 0)
+            {
+                sizeDelta.X -= overflow.X;
+            }
+
+            if (overflow.Y < 0)
+            {
+                sizeDelta.Y -= overflow.Y;
+            }
+
+            var newRect = _edgeDrag.StartingValue.ResizedOnEdge(_edgeGrabbed, sizeDelta);
             return newRect;
         }
 
