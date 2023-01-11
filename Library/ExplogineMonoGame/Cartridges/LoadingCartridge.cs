@@ -17,8 +17,8 @@ public class LoadingCartridge : ICartridge
     private readonly Loader _loader;
     private readonly LinkedList<string> _statusRingBuffer;
     private bool _doneLoading;
-    private float _endingDelay = 0.25f;
-    private float _startingDelay = 0.25f;
+    private int _endingDelayFrames = 10;
+    private int _startingDelayFrames = 10;
 
     public LoadingCartridge(Loader loader)
     {
@@ -39,12 +39,11 @@ public class LoadingCartridge : ICartridge
 
     public void Update(float dt)
     {
-        if (_startingDelay > 0)
+        if (_startingDelayFrames > 0)
         {
-            _startingDelay -= dt;
             return;
         }
-
+        
         var expectedFrameDuration = 1 / 60f;
 
         // If we dedicate the whole frame to loading we'll effectively block on the UI thread.
@@ -72,17 +71,6 @@ public class LoadingCartridge : ICartridge
             {
                 break;
             }
-        }
-
-        if (_loader.IsDone() && itemsLoadedThisCycle == 0)
-        {
-            if (_endingDelay > 0)
-            {
-                _endingDelay -= dt;
-                return;
-            }
-
-            Client.FinishedLoading.BecomeReady();
         }
     }
 
@@ -132,6 +120,26 @@ public class LoadingCartridge : ICartridge
         painter.DrawFormattedStringWithinRectangle(formattedText,
             loadingBarRect.Moved(new Vector2(0, 128)), Alignment.TopCenter, new DrawSettings {Color = Color.White});
         painter.EndSpriteBatch();
+
+        // Wait a few frames before we start so we're certain the window is totally ready and is drawing content
+        if (_startingDelayFrames > 0)
+        {
+            _startingDelayFrames--;
+            return;
+        }
+        
+        // Wait until we've drawn a few frames of the finished loading bar before we move on
+        // This way we make sure we're at a stable framerate before we start the game in earnest.
+        if (_loader.IsDone())
+        {
+            if (_endingDelayFrames > 0)
+            {
+                _endingDelayFrames--;
+                return;
+            }
+
+            Client.FinishedLoading.BecomeReady();
+        }
     }
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
