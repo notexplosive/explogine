@@ -42,7 +42,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
-        Current.UpdateInput(input, hitTestStack.AddLayer(Client.Window.Canvas.ScreenToCanvas, Depth.Middle + 1));
+        Current.UpdateInput(input, hitTestStack.AddLayer(Client.Window.ScreenToCanvas, Depth.Middle + 1));
     }
 
     public void Update(float dt)

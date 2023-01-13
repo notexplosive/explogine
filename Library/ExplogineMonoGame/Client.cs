@@ -26,7 +26,8 @@ public static class Client
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
     internal static readonly CartridgeChain CartridgeChain = new();
-    
+    internal static PlatformAgnosticWindow PlatformWindow => (Client.Window as PlatformAgnosticWindow)!;
+
     public static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
     /// <summary>
@@ -49,12 +50,12 @@ public static class Client
     /// <summary>
     ///     Wrapper for accessing the Filesystem of your platform.
     /// </summary>
-    public static ClientFileSystem FileSystem { get; private set; } = new();
+    public static ClientFileSystem FileSystem => Client.App.FileSystem;
 
     /// <summary>
     ///     Wrapper for accessing the Window of your platform.
     /// </summary>
-    public static PlatformAgnosticWindow Window { get; private set; } = new();
+    public static IWindow Window => Client.App.Window;
 
     /// <summary>
     ///     Args passed via command line
@@ -90,6 +91,8 @@ public static class Client
     /// </summary>
     public static ClientRandom Random { get; } = new();
 
+    public static App App { get; internal set; } = new(new PlatformAgnosticWindow(), new ClientFileSystem());
+
     private static ClientEssentials Essentials { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
@@ -117,13 +120,14 @@ public static class Client
     {
         // Setup Platform
         Client.Headless = false;
-        Client.Window = platform.PlatformAgnosticWindow;
-        Client.FileSystem =
-            new ClientFileSystem(
-                new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),
-                new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name))
-            );
+
+        var window = platform.PlatformAgnosticWindow;
+        var fileSystem = new ClientFileSystem(
+            new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),
+            new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name))
+        );
+        Client.App = new App(window, fileSystem);
         Client.startingConfig = windowConfig;
 
         // Setup Command Line
@@ -162,7 +166,7 @@ public static class Client
     internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, Game game)
     {
         Client.Graphics = new Graphics(graphics, graphicsDevice);
-        Client.Window.Setup(game.Window, Client.startingConfig);
+        Client.PlatformWindow.Setup(game.Window, Client.startingConfig);
 
         Client.InitializedGraphics.BecomeReady();
     }
@@ -200,21 +204,21 @@ public static class Client
             Client.CartridgeChain.UpdateInput(new ConsumableInput(Client.Input), hitTest.BaseStack);
             hitTest.Resolve(Client.Input.Mouse.Position());
             Client.CartridgeChain.Update(dt);
-            Client.Window.TextEnteredBuffer = new TextEnteredBuffer();
-            Client.Window.ResolveSetCursor();
+            Client.PlatformWindow.TextEnteredBuffer = new TextEnteredBuffer();
+            Client.PlatformWindow.ResolveSetCursor();
         }
     }
 
     internal static void Draw()
     {
-        Client.Graphics.PushCanvas(Client.Window.Canvas.Internal);
+        Client.Graphics.PushCanvas(Client.PlatformWindow.ClientCanvas.Internal);
         Client.Graphics.Painter.Clear(Color.Black);
         Client.CartridgeChain.DrawCurrentCartridge(Client.Graphics.Painter);
         Client.Graphics.PopCanvas();
         
         Client.CartridgeChain.PrepareDebugCartridge(Client.Graphics.Painter);
         
-        Client.Window.Canvas.Draw(Client.Graphics.Painter);
+        Client.PlatformWindow.ClientCanvas.Draw(Client.Graphics.Painter);
         Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
     }
 }

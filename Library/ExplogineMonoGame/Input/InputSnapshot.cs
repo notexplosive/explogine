@@ -193,7 +193,7 @@ public readonly struct InputSnapshot
                     mouseState.MiddleButton
                 },
                 mouseState.ScrollWheelValue,
-                Client.Window.TextEnteredBuffer,
+                Client.PlatformWindow.TextEnteredBuffer,
                 new GamePadSnapshot(p1.PressedButtons(), p1.ThumbSticks, p1.Triggers),
                 new GamePadSnapshot(p2.PressedButtons(), p2.ThumbSticks, p2.Triggers),
                 new GamePadSnapshot(p3.PressedButtons(), p3.ThumbSticks, p3.Triggers),

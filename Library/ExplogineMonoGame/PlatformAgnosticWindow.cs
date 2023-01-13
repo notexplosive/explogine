@@ -1,10 +1,12 @@
 ﻿using System;
+using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame;
 
-public class PlatformAgnosticWindow
+public class PlatformAgnosticWindow : IWindow
 {
     private WindowConfig _currentConfig;
     private MouseCursor? _pendingCursor;
@@ -14,14 +16,16 @@ public class PlatformAgnosticWindow
 
     public PlatformAgnosticWindow()
     {
-        Canvas = new ClientCanvas(this);
-        RenderResolutionChanged += Canvas.ResizeCanvas;
+        ClientCanvas = new ClientCanvas(this);
+        RenderResolutionChanged += ClientCanvas.ResizeCanvas;
     }
 
     /// <summary>
     ///     The Canvas that renders the actual game content to the screen.
     /// </summary>
-    public ClientCanvas Canvas { get; }
+    public ClientCanvas ClientCanvas { get; }
+
+    public Canvas Canvas => ClientCanvas.Internal;
 
     public Point RenderResolution => _specifiedRenderResolution ?? Size;
 
@@ -44,6 +48,8 @@ public class PlatformAgnosticWindow
     }
 
     public bool IsFullscreen { get; private set; }
+    public Matrix ScreenToCanvas => ClientCanvas.ScreenToCanvas;
+    public Matrix CanvasToScreen => ClientCanvas.CanvasToScreen;
 
     public Point Size => Client.Headless
         ? new Point(1600, 900)
@@ -78,6 +84,8 @@ public class PlatformAgnosticWindow
         }
     }
 
+    public bool IsInFocus => Client.IsInFocus;
+    
     public TextEnteredBuffer TextEnteredBuffer { get; set; }
 
     public void SetRenderResolution(Point? optionalSize)
@@ -101,7 +109,7 @@ public class PlatformAgnosticWindow
 
     public void Setup(GameWindow window, WindowConfig config)
     {
-        Canvas.Setup();
+        ClientCanvas.Setup();
         Window = window;
         _rememberedBounds = new Rectangle(Position, Size);
         LateSetup(config);
