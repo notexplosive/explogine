@@ -123,11 +123,17 @@ public class Painter
             {
                 if (fragmentChar.Font is Font realFont)
                 {
+                    var finalColor = fragmentChar.Color ?? settings.Color;
+                    if (fragmentChar.Color.HasValue)
+                    {
+                        finalColor = finalColor.WithMultipliedOpacity((float) settings.Color.A / byte.MaxValue);
+                    }
+
                     _spriteBatch.DrawString(
                         realFont.SpriteFont,
                         fragmentChar.Text.ToString(),
                         rectTopLeft,
-                        fragmentChar.Color ?? settings.Color,
+                        finalColor,
                         settings.Angle,
                         letterOrigin,
                         Vector2.One * fragmentChar.Font.ScaleFactor,

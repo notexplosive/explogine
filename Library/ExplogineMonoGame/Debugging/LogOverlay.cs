@@ -30,7 +30,7 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 
     public void CaptureMessage(LogMessage message)
     {
-        var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth));
+        var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth), _font);
 
         float usedHeight = 0;
         foreach (var line in _linesBuffer)
@@ -86,10 +86,9 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
         foreach (var message in _linesBuffer)
         {
             var color = Color.White;
-            var messageColor = LogMessage.GetColorFromType(message.Content.Type).WithMultipliedOpacity(Opacity);
 
             painter.DrawFormattedStringWithinRectangle(
-                new FormattedText(_font, message.Content.Text, messageColor),
+                message.FormattedText,
                 latestLogMessageRect,
                 Alignment.TopLeft,
                 new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
@@ -104,5 +103,17 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
         painter.EndSpriteBatch();
     }
 
-    private readonly record struct RenderedMessage(LogMessage Content, Vector2 Size);
+    private class RenderedMessage
+    {
+        public Vector2 Size { get; }
+
+        public RenderedMessage(LogMessage content, Vector2 size, IFontGetter font)
+        {
+            var messageColor = LogMessage.GetColorFromType(content.Type);
+            Size = size;
+            FormattedText = new FormattedText(font, content.Text, messageColor);
+        }
+        
+        public FormattedText FormattedText { get; }
+    }
 }

@@ -13,6 +13,24 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin engine/bubbles.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:engine/bubbles.ogg
+
+#begin engine/click.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:engine/click.ogg
+
+#begin engine/clink.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:engine/clink.ogg
+
 #begin engine/console-font.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -35,6 +53,18 @@
 #begin engine/FredokaOne.ttf
 /copy:engine/FredokaOne.ttf
 
+#begin engine/jar1.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:engine/jar1.ogg
+
+#begin engine/jar2.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:engine/jar2.ogg
+
 #begin engine/logo-font.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -44,6 +74,12 @@
 
 #begin engine/OFL.txt
 /copy:engine/OFL.txt
+
+#begin engine/ohm.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:engine/ohm.ogg
 
 #begin engine/ouch.ogg
 /importer:OggImporter

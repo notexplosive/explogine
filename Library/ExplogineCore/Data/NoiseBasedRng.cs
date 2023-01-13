@@ -90,4 +90,11 @@ public class NoiseBasedRng
     {
         return $"{_noise}, Position {_position}";
     }
+
+    public float NextFloat(float min, float max)
+    {
+        var range = max - min;
+        var normal = NextFloat();
+        return min + normal * range;
+    }
 }

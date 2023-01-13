@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExTween;
 using ExTweenMonoGame;
@@ -14,16 +15,18 @@ public class IntroCartridge : ICartridge
     private readonly IndirectFont _logoFont = new("engine/logo-font", 72);
     private readonly string _text;
     private bool _cancelEarly;
+    private float _startingDelay;
     private bool _useWholeWord = true;
     private Figure _wholeWord;
 
-    public IntroCartridge(string text, uint index)
+    public IntroCartridge(string text, uint index, float startingDelay = 0f)
     {
         _text = text;
         _index = index;
+        _startingDelay = startingDelay;
     }
 
-    public SequenceTween Tween { get; private set; } = new();
+    public SequenceTween Tween { get; } = new();
 
     public void OnCartridgeStarted()
     {
@@ -36,20 +39,26 @@ public class IntroCartridge : ICartridge
 
         var tweens = new Func<SequenceTween>[]
         {
-            ZoomFade,
-            Tada,
+            HeartBeat,
+            RingRing,
             // Ouch,
-            ZoomAndRotate,
+            Ohm,
             FlyInLetters,
             FlyInLettersRandom
         };
 
         Tween.Add(tweens[_index % tweens.Length]());
-        Tween.Add(new WaitSecondsTween(0.75f));
+        Tween.Add(new WaitSecondsTween(2f));
     }
 
     public void Update(float dt)
     {
+        _startingDelay -= dt;
+        if (_startingDelay > 0)
+        {
+            return;
+        }
+
         try
         {
             Tween.Update(dt);
@@ -73,36 +82,39 @@ public class IntroCartridge : ICartridge
 
         var centerOfScreen = Client.Window.RenderResolution.ToVector2() / 2;
 
-        if (_useWholeWord)
+        if (_startingDelay <= 0)
         {
-            painter.DrawStringAtPosition(_logoFont, _wholeWord.Text,
-                centerOfScreen + _wholeWord.Position.Value,
-                new DrawSettings
-                {
-                    Origin = DrawOrigin.Center, Angle = _wholeWord.Angle,
-                    Color = Color.White.WithMultipliedOpacity(_wholeWord.Opacity)
-                });
-        }
-        else
-        {
-            var runningWidth = 0f;
-            foreach (var letter in _letters)
+            if (_useWholeWord)
             {
-                var myWidth = _logoFont.MeasureString(letter.Text).X;
-                var textWidth = _logoFont.MeasureString(_wholeWord.Text).X;
-                var startOffset = centerOfScreen - new Vector2(textWidth / 2f, 0) +
-                                  new Vector2(runningWidth + myWidth / 2, 0);
-                painter.DrawScaledStringAtPosition(_logoFont,
-                    letter.Text,
-                    startOffset + letter.Position.Value,
-                    new Scale2D(letter.Scale),
+                painter.DrawStringAtPosition(_logoFont, _wholeWord.Text,
+                    centerOfScreen + _wholeWord.Position.Value,
                     new DrawSettings
                     {
-                        Origin = DrawOrigin.Center,
-                        Angle = letter.Angle,
-                        Color = Color.White.WithMultipliedOpacity(letter.Opacity)
+                        Origin = DrawOrigin.Center, Angle = _wholeWord.Angle,
+                        Color = Color.White.WithMultipliedOpacity(_wholeWord.Opacity)
                     });
-                runningWidth += myWidth;
+            }
+            else
+            {
+                var runningWidth = 0f;
+                foreach (var letter in _letters)
+                {
+                    var myWidth = _logoFont.MeasureString(letter.Text).X;
+                    var textWidth = _logoFont.MeasureString(_wholeWord.Text).X;
+                    var startOffset = centerOfScreen - new Vector2(textWidth / 2f, 0) +
+                                      new Vector2(runningWidth + myWidth / 2, 0);
+                    painter.DrawScaledStringAtPosition(_logoFont,
+                        letter.Text,
+                        startOffset + letter.Position.Value,
+                        new Scale2D(letter.Scale),
+                        new DrawSettings
+                        {
+                            Origin = DrawOrigin.Center,
+                            Angle = letter.Angle,
+                            Color = Color.White.WithMultipliedOpacity(letter.Opacity)
+                        });
+                    runningWidth += myWidth;
+                }
             }
         }
 
@@ -134,6 +146,16 @@ public class IntroCartridge : ICartridge
 
         var durationPerLetter = 0.5f;
 
+        var pitch = 0.5f;
+        var pitchIncrement = 1f / _letters.Count / 2f;
+
+        float CurrentPitch()
+        {
+            var result = pitch;
+            pitch += pitchIncrement;
+            return result;
+        }
+
         var result = new SequenceTween();
         result.Add(new CallbackTween(() =>
         {
@@ -142,6 +164,9 @@ public class IntroCartridge : ICartridge
                 letter.Scale.Value = 2f;
                 letter.Opacity.Value = 0f;
             }
+
+            // reset pitch
+            pitch = 0.5f;
         }));
         result.Add(new DynamicTween(() =>
             {
@@ -151,6 +176,8 @@ public class IntroCartridge : ICartridge
                 {
                     multi.AddChannel(new SequenceTween()
                         .Add(new WaitSecondsTween(index * 0.05f))
+                        .Add(new CallbackTween(() =>
+                            Client.SoundPlayer.Play("engine/click", new SoundEffectOptions {Pitch = CurrentPitch()})))
                         .Add(new MultiplexTween()
                             .AddChannel(
                                 new SequenceTween()
@@ -199,6 +226,9 @@ public class IntroCartridge : ICartridge
                                 new SequenceTween()
                                     .Add(new Tween<float>(letter.Scale, 0.95f, durationPerLetter * 3 / 4,
                                         Ease.QuadFastSlow))
+                                    .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/bubbles",
+                                        new SoundEffectOptions
+                                            {Pitch = Client.Random.Dirty.NextFloat(0.5f, 1f), Volume = 1f})))
                                     .Add(new Tween<float>(letter.Scale, 1f, durationPerLetter * 1 / 4,
                                         Ease.QuadSlowFast))
                             )
@@ -214,55 +244,62 @@ public class IntroCartridge : ICartridge
         return result;
     }
 
-    private SequenceTween ZoomAndRotate()
+    private SequenceTween Ohm()
     {
-        var duration = 1.5f;
+        var duration = 1f;
         return
             new SequenceTween()
                 .Add(
                     new CallbackTween(() =>
                     {
-                        _wholeWord.Scale.Value = 10f;
-                        _wholeWord.Angle.Value = MathF.PI / 2f;
+                        // _wholeWord.Scale.Value = 10f;
+                        // _wholeWord.Angle.Value = MathF.PI / 2f;
                         _wholeWord.Opacity.Value = 0f;
                     }))
+                .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/ohm")))
                 .Add(
                     new MultiplexTween()
-                        .AddChannel(new Tween<float>(_wholeWord.Scale, 1f, duration, Ease.QuadFastSlow))
-                        .AddChannel(new Tween<float>(_wholeWord.Angle, 0f, duration, Ease.QuadFastSlow))
-                        .AddChannel(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.QuadFastSlow))
+                        .AddChannel(
+                            new SequenceTween()
+                                .Add(new Tween<float>(_wholeWord.Scale, 1.25f, duration * 3 / 4f, Ease.QuadFastSlow))
+                                .Add(new Tween<float>(_wholeWord.Scale, 1f, duration / 4, Ease.QuadSlowFast))
+                        )
+                        // .AddChannel(new Tween<float>(_wholeWord.Angle, 0f, duration, Ease.QuadFastSlow))
+                        .AddChannel(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.Linear))
                 )
             ;
     }
 
-    private SequenceTween Tada()
+    private SequenceTween RingRing()
     {
         var increment = 0.05f;
 
         return
             new SequenceTween()
+                .Add(new CallbackTween(() =>
+                    Client.SoundPlayer.Play("engine/clink", new SoundEffectOptions {Pitch = -0.5f})))
                 .Add(new Tween<float>(_wholeWord.Scale, 1.3f, 0.25f, Ease.QuadFastSlow))
                 .Add(new Tween<float>(_wholeWord.Scale, 1.25f, 0.25f, Ease.QuadSlowFast))
-                .Add(new MultiplexTween()
-                    .AddChannel(new DynamicTween(() =>
+                .Add(new DynamicTween(() =>
+                    {
+                        var sequence = new SequenceTween();
+                        var flip = 0;
+                        var angleRange = 0.05f;
+                        for (var i = 0f; i < 0.5f; i += increment)
                         {
-                            var sequence = new SequenceTween();
-                            var flip = 0;
-                            var angleRange = 0.05f;
-                            for (var i = 0f; i < 0.5f; i += increment)
-                            {
-                                flip++;
-                                var even = flip % 2 == 0;
-                                sequence.Add(new MultiplexTween()
-                                    .AddChannel(new Tween<float>(_wholeWord.Angle, even ? angleRange : -angleRange,
-                                        increment,
-                                        Ease.Linear))
-                                );
-                            }
+                            flip++;
+                            var even = flip % 2 == 0;
+                            sequence.Add(new MultiplexTween()
+                                .AddChannel(new Tween<float>(_wholeWord.Angle, even ? angleRange : -angleRange,
+                                    increment,
+                                    Ease.Linear))
+                                .AddChannel(new CallbackTween(() =>
+                                    Client.SoundPlayer.Play("engine/clink", new SoundEffectOptions {Pitch = 0.5f})))
+                            );
+                        }
 
-                            return sequence;
-                        })
-                    )
+                        return sequence;
+                    })
                 )
                 .Add(new MultiplexTween()
                     .AddChannel(new Tween<Vector2>(_wholeWord.Position,
@@ -272,25 +309,29 @@ public class IntroCartridge : ICartridge
                 )
                 .Add(new WaitSecondsTween(0.05f))
                 .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.25f, Ease.QuadSlowFast))
+                .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/clink")))
             ;
     }
 
-    private SequenceTween ZoomFade()
+    private SequenceTween HeartBeat()
     {
         var increment = 0.05f;
 
         return
             new SequenceTween()
+                .Add(new CallbackTween(() => { _wholeWord.Opacity.Value = 0f; }))
+                .Add(new WaitSecondsTween(0.25f))
                 .Add(new CallbackTween(() =>
                 {
-                    _wholeWord.Opacity.Value = 0f;
-                    _wholeWord.Scale.Value = 3f;
+                    _wholeWord.Opacity.Value = 1f;
+                    _wholeWord.Scale.Value = 1f;
                 }))
                 .Add(new MultiplexTween()
                     .AddChannel(
                         new SequenceTween()
-                            .Add(new Tween<float>(_wholeWord.Scale, 0.9f, 0.5f, Ease.SineFastSlow))
+                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar1")))
                             .Add(new Tween<float>(_wholeWord.Scale, 1.25f, 0.15f, Ease.SineSlowFast))
+                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar2")))
                             .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.15f, Ease.SineFastSlow))
                     )
                     .AddChannel(
@@ -305,44 +346,6 @@ public class IntroCartridge : ICartridge
                 )
                 .Add(new WaitSecondsTween(0.05f))
                 .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.25f, Ease.QuadSlowFast))
-            ;
-    }
-
-    private SequenceTween Ouch()
-    {
-        var duration = 1f;
-
-        return
-            new SequenceTween()
-                .Add(new CallbackTween(() =>
-                {
-                    _wholeWord.Scale.Value = 1f;
-                    _wholeWord.Opacity.Value = 1f;
-                    _wholeWord.Position.Value = Vector2.Zero;
-                }))
-                .Add(
-                    new MultiplexTween()
-                        .AddChannel(
-                            new Tween<float>(_wholeWord.Scale, 1.1f, duration, Ease.QuadSlowFast)
-                        )
-                        .AddChannel(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.QuadSlowFast))
-                        .AddChannel(
-                            new SequenceTween()
-                                .Add(new Tween<float>(_wholeWord.Angle, 1f, duration / 3, Ease.QuadFastSlow))
-                                .Add(new Tween<float>(_wholeWord.Angle, -MathF.PI, duration / 3, Ease.QuadFastSlow))
-                                .Add(new Tween<float>(_wholeWord.Angle, 0f, duration / 3, Ease.QuadFastSlow))
-                        )
-                        .AddChannel(
-                            new SequenceTween()
-                                .Add(new Tween<Vector2>(_wholeWord.Position, new Vector2(300, 500), duration / 3,
-                                    Ease.QuadFastSlow))
-                                .Add(new Tween<Vector2>(_wholeWord.Position, new Vector2(-300, -200), duration / 3,
-                                    Ease.QuadFastSlow))
-                                .Add(new Tween<Vector2>(_wholeWord.Position, Vector2.Zero, duration / 3,
-                                    Ease.QuadSlowFast))
-                        )
-                )
-                .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.1f, Ease.QuadSlowFast))
             ;
     }
 
