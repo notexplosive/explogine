@@ -12,7 +12,7 @@ public class IntroCartridge : ICartridge
 {
     private readonly uint _index;
     private readonly List<Figure> _letters = new();
-    private readonly IndirectFont _logoFont = new("engine/logo-font", 72);
+    private readonly IndirectFont _logoFont = new("engine/logo-font", 128);
     private readonly string _text;
     private bool _cancelEarly;
     private float _startingDelay;
@@ -246,9 +246,10 @@ public class IntroCartridge : ICartridge
 
     private SequenceTween Ohm()
     {
-        var duration = 1f;
+        var duration = 1.25f;
         return
             new SequenceTween()
+                
                 .Add(
                     new CallbackTween(() =>
                     {
@@ -257,12 +258,14 @@ public class IntroCartridge : ICartridge
                         _wholeWord.Opacity.Value = 0f;
                     }))
                 .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/ohm")))
+                .Add(new WaitSecondsTween(0.25f))
                 .Add(
                     new MultiplexTween()
                         .AddChannel(
                             new SequenceTween()
-                                .Add(new Tween<float>(_wholeWord.Scale, 1.25f, duration * 3 / 4f, Ease.QuadFastSlow))
-                                .Add(new Tween<float>(_wholeWord.Scale, 1f, duration / 4, Ease.QuadSlowFast))
+                                .Add(new Tween<float>(_wholeWord.Scale, 1.1f, duration * 1 / 4f, Ease.QuadFastSlow))
+                                .Add(new Tween<float>(_wholeWord.Scale, 1.4f, duration * 1 / 4f, Ease.QuadFastSlow))
+                                .Add(new Tween<float>(_wholeWord.Scale, 1f, duration / 2, Ease.QuadSlowFast))
                         )
                         // .AddChannel(new Tween<float>(_wholeWord.Angle, 0f, duration, Ease.QuadFastSlow))
                         .AddChannel(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.Linear))
