@@ -10,11 +10,17 @@ namespace ExplogineMonoGame.Debugging;
 
 internal class SnapshotTaker : IUpdateInputHook
 {
+    private readonly App _app;
     private float _timer = 0.1f;
     private float _timerMax = 2f;
     private bool _timerReady;
     private DateTime _timeLastFrame;
 
+    public SnapshotTaker(App app)
+    {
+        _app = app;
+    }
+    
     public void StartTimer()
     {
         _timerReady = true;
@@ -51,7 +57,7 @@ internal class SnapshotTaker : IUpdateInputHook
         Directory.CreateDirectory(directory);
         var screenshotFilePath = Path.Join(directory, $"{currentTime.ToFileTimeUtc()}.png");
         using var stream = File.Create(screenshotFilePath);
-        var texture = Client.Window.Canvas.Texture;
+        var texture = _app.Window.Canvas.Texture;
         texture.SaveAsPng(stream, texture.Width, texture.Height);
         Client.Debug.Log("Snapshot:", screenshotFilePath);
     }

@@ -5,9 +5,9 @@ namespace ExplogineMonoGame.Debugging;
 
 public class ClientDebug
 {
-    public ClientDebug()
+    public ClientDebug(App app)
     {
-        LogFile = new FileLogCapture();
+        LogFile = new FileLogCapture(app);
         Output.AddParallel(LogFile);
         Output.PushToStack(new ConsoleLogCapture());
     }

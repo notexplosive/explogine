@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework.Audio;
@@ -14,12 +13,14 @@ public delegate Asset LoadEventFunction();
 
 public class Loader
 {
+    private readonly App _app;
     private readonly ContentManager _content;
     private readonly List<ILoadEvent> _loadEvents = new();
     private int _loadEventIndex;
 
-    public Loader(ContentManager content)
+    public Loader(App app, ContentManager content)
     {
+        _app = app;
         _content = content;
         foreach (var loadEvent in StaticContentLoadEvents())
         {
@@ -84,7 +85,7 @@ public class Loader
 
     private IEnumerable<AssetLoadEvent> StaticContentLoadEvents()
     {
-        foreach (var key in Loader.GetKeysFromContentDirectory())
+        foreach (var key in GetKeysFromContentDirectory())
         {
             yield return new AssetLoadEvent(key, key, () => LoadAsset(key));
         }
@@ -131,9 +132,9 @@ public class Loader
         }
     }
 
-    private static string[] GetKeysFromContentDirectory()
+    private string[] GetKeysFromContentDirectory()
     {
-        var fileNames = Client.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
+        var fileNames = _app.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
         var keys = new List<string>();
 
         foreach (var fileName in fileNames)

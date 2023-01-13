@@ -15,11 +15,18 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 {
     private readonly LinkedList<ICartridge> _list = new();
     private bool _hasCrashed;
+    private readonly App _app;
     private bool HasCurrent => _list.First != null;
     private ICartridge Current => _list.First!.Value;
-    private ICartridge DebugCartridge { get; set; } = new DebugCartridge();
+    private ICartridge _debugCartridge;
     public bool IsFrozen { get; set; }
 
+    public CartridgeChain(App app)
+    {
+        _app = app;
+        _debugCartridge = new DebugCartridge(app);
+    }
+    
     /// <summary>
     /// The "Game Cartridge" is the last cartridge in the chain. This is what the user provided wrapped in a MetaCartridge.
     /// </summary>
@@ -41,13 +48,13 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        DebugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
-        Current.UpdateInput(input, hitTestStack.AddLayer(Client.Window.ScreenToCanvas, Depth.Middle + 1));
+        _debugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
+        Current.UpdateInput(input, hitTestStack.AddLayer(_app.Window.ScreenToCanvas, Depth.Middle + 1));
     }
 
     public void Update(float dt)
     {
-        DebugCartridge.Update(dt);
+        _debugCartridge.Update(dt);
         if (!IsFrozen)
         {
             UpdateCurrentCartridge(dt);
@@ -72,7 +79,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
     {
         if (Client.FinishedLoading.IsReady)
         {
-            DebugCartridge.Draw(painter);
+            _debugCartridge.Draw(painter);
         }
     }
 
@@ -87,13 +94,13 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
         if (HasCurrent)
         {
-            CartridgeChain.StartCartridgeAndSetRenderResolution(Current);
+            StartCartridgeAndSetRenderResolution(Current);
         }
     }
 
-    private static void StartCartridgeAndSetRenderResolution(ICartridge cartridge)
+    private void StartCartridgeAndSetRenderResolution(ICartridge cartridge)
     {
-        Client.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
+        _app.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
         cartridge.OnCartridgeStarted();
     }
 
@@ -126,7 +133,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
             yield return cartridge;
         }
 
-        yield return DebugCartridge;
+        yield return _debugCartridge;
     }
 
     public void ValidateParameters(CommandLineParametersWriter writer)
@@ -140,9 +147,9 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
     public void SetupLoadingCartridge(Loader loader)
     {
         var loadingCartridge = new LoadingCartridge(loader);
-        CartridgeChain.StartCartridgeAndSetRenderResolution(loadingCartridge);
+        StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);
-        Client.FinishedLoading.Add(DebugCartridge.OnCartridgeStarted);
+        Client.FinishedLoading.Add(_debugCartridge.OnCartridgeStarted);
     }
 
     public void Crash(Exception exception)
@@ -158,8 +165,8 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         var crashCartridge = new CrashCartridge(exception);
         _list.Clear();
         _list.AddFirst(crashCartridge);
-        CartridgeChain.StartCartridgeAndSetRenderResolution(crashCartridge);
-        DebugCartridge = new BlankCartridge();
+        StartCartridgeAndSetRenderResolution(crashCartridge);
+        _debugCartridge = new BlankCartridge();
     }
 
     public IEnumerable<T> GetAllCartridgesDerivedFrom<T>()
@@ -175,7 +182,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void PrepareDebugCartridge(Painter painter)
     {
-        if (DebugCartridge is IEarlyDrawHook preDrawDebug)
+        if (_debugCartridge is IEarlyDrawHook preDrawDebug)
         {
             preDrawDebug.EarlyDraw(painter);
         }

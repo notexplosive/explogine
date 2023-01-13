@@ -4,8 +4,8 @@ namespace ExplogineMonoGame;
 
 public class App
 {
-    public IWindow Window { get; }
-    public ClientFileSystem FileSystem { get; }
+    public IWindow Window { get; internal set; }
+    public ClientFileSystem FileSystem { get; internal set; }
 
     public App(IWindow window, ClientFileSystem fileSystem)
     {

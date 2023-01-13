@@ -25,10 +25,10 @@ public static class Client
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
-    internal static readonly CartridgeChain CartridgeChain = new();
-    internal static PlatformAgnosticWindow PlatformWindow => (Client.Window as PlatformAgnosticWindow)!;
-
-    public static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
+    private static readonly App app = new(new PlatformAgnosticWindow(), new ClientFileSystem());
+    internal static readonly CartridgeChain CartridgeChain = new(Client.app);
+    internal static PlatformAgnosticWindow PlatformWindow => (Client.app.Window as PlatformAgnosticWindow)!;
+    internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
     /// <summary>
     ///     Wrapper around the MonoGame Graphics objects (Device & DeviceManager)
@@ -50,12 +50,14 @@ public static class Client
     /// <summary>
     ///     Wrapper for accessing the Filesystem of your platform.
     /// </summary>
-    public static ClientFileSystem FileSystem => Client.App.FileSystem;
+    [Obsolete("Use App.FileSystem")]
+    public static ClientFileSystem FileSystem => Client.app.FileSystem;
 
     /// <summary>
     ///     Wrapper for accessing the Window of your platform.
     /// </summary>
-    public static IWindow Window => Client.App.Window;
+    [Obsolete("Use App.Window")]
+    public static IWindow Window => Client.app.Window;
 
     /// <summary>
     ///     Args passed via command line
@@ -75,12 +77,12 @@ public static class Client
     /// <summary>
     ///     Demo Recorder/Playback.
     /// </summary>
-    public static Demo Demo { get; } = new();
+    public static Demo Demo { get; } = new(Client.app);
 
     /// <summary>
     ///     Debug tools.
     /// </summary>
-    public static ClientDebug Debug { get; } = new();
+    public static ClientDebug Debug { get; } = new(Client.app);
 
     /// <summary>
     ///     Gives access to Clean and Dirty random and noise.
@@ -90,10 +92,8 @@ public static class Client
     ///     use Dirty Random.
     /// </summary>
     public static ClientRandom Random { get; } = new();
-
-    public static App App { get; internal set; } = new(new PlatformAgnosticWindow(), new ClientFileSystem());
-
-    private static ClientEssentials Essentials { get; } = new();
+    
+    private static ClientEssentials Essentials { get; } = new(Client.app);
 
     public static string ContentBaseDirectory => "Content";
 
@@ -127,7 +127,8 @@ public static class Client
             new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name))
         );
-        Client.App = new App(window, fileSystem);
+        Client.app.Window = window;
+        Client.app.FileSystem = fileSystem;
         Client.startingConfig = windowConfig;
 
         // Setup Command Line
@@ -173,7 +174,7 @@ public static class Client
 
     internal static void LoadContent(ContentManager contentManager)
     {
-        Client.loader = new Loader(contentManager);
+        Client.loader = new Loader(Client.app, contentManager);
         Client.loader.AddLoadEvents(Client.Demo);
         Client.loader.AddLoadEvents(Client.Essentials);
         Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());

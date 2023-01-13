@@ -84,6 +84,9 @@ public class PlatformAgnosticWindow : IWindow
         }
     }
 
+    /// <summary>
+    /// Passthrough to the OS
+    /// </summary>
     public bool IsInFocus => Client.IsInFocus;
     
     public TextEnteredBuffer TextEnteredBuffer { get; set; }

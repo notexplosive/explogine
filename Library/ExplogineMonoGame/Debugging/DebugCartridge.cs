@@ -12,12 +12,20 @@ namespace ExplogineMonoGame.Debugging;
 
 public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
 {
-    private readonly DemoInterface _demoInterface = new();
-    private readonly FrameStep _frameStep = new();
-    private readonly LogOverlay _logOverlay = new();
-    private readonly SnapshotTaker _snapshotTaker = new();
+    private readonly DemoInterface _demoInterface;
+    private readonly FrameStep _frameStep;
+    private readonly LogOverlay _logOverlay;
+    private readonly SnapshotTaker _snapshotTaker;
     private bool _useSnapshotTimer;
 
+    public DebugCartridge(App app)
+    {
+        _demoInterface = new(app);
+        _frameStep = new(app);
+        _logOverlay = new(app);
+        _snapshotTaker = new(app);
+    }
+    
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
     private Depth ConsoleOverlayDepth { get; } = Depth.Front + 5;
     private Depth FrameStepDepth { get; } = Depth.Front + 20;

@@ -7,10 +7,12 @@ namespace ExplogineMonoGame.Logging;
 
 public class FileLogCapture : ILogCapture
 {
+    private readonly App _app;
     private readonly List<LogMessage> _buffer = new();
 
-    public FileLogCapture()
+    public FileLogCapture(App app)
     {
+        _app = app;
         Client.Exited.Add(DumpBufferWithTimestamp);
     }
 
@@ -30,7 +32,7 @@ public class FileLogCapture : ILogCapture
     public void WriteBufferAsFilename(string fileName)
     {
         Client.Debug.Log($"Creating file {fileName}");
-        Client.FileSystem.Local.WriteToFile(fileName, GetLines().ToArray());
+        _app.FileSystem.Local.WriteToFile(fileName, GetLines().ToArray());
     }
 
     private IEnumerable<string> GetLines()

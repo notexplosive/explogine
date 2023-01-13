@@ -7,13 +7,15 @@ namespace ExplogineMonoGame.Input;
 
 public class Demo : ILoadEventProvider
 {
+    private readonly App _app;
     private readonly List<InputSnapshot> _records = new();
 
     private DemoState _demoState = DemoState.Stopped;
     private int _playHeadIndex;
 
-    internal Demo()
+    internal Demo(App app)
     {
+        _app = app;
     }
 
     public bool IsRecording => _demoState == DemoState.Recording;
@@ -78,12 +80,12 @@ public class Demo : ILoadEventProvider
             mostRecent = serial;
         }
 
-        Client.FileSystem.Local.WriteToFile(fileName, stringBuilder.ToString());
+        _app.FileSystem.Local.WriteToFile(fileName, stringBuilder.ToString());
     }
 
     public void LoadFile(string path)
     {
-        var file = Client.FileSystem.Local.ReadFile(path);
+        var file = _app.FileSystem.Local.ReadFile(path);
         LoadText(file);
     }
 

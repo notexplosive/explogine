@@ -13,20 +13,22 @@ namespace ExplogineMonoGame.Debugging;
 
 internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 {
+    private readonly App _app;
     private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
     private readonly float _maxTimer = 5;
     private readonly SimpleGuiTheme _theme;
     private float _timer;
 
-    public LogOverlay()
+    public LogOverlay(App app)
     {
+        _app = app;
         _theme = new SimpleGuiTheme(Color.White, Color.White, Color.Transparent, _font);
     }
 
     private float Opacity => Math.Clamp(_timer, 0f, 1f);
-    private int TotalWidth => Client.Window.Size.X;
-    private int MaxHeight => Client.Window.Size.Y;
+    private int TotalWidth => _app.Window.Size.X;
+    private int MaxHeight => _app.Window.Size.Y;
 
     public void CaptureMessage(LogMessage message)
     {
