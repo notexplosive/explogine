@@ -117,7 +117,7 @@ public class MultiCartridge : BasicGameCartridge
 
     private void StartCurrentCartridge()
     {
-        Client.Window.SetRenderResolution(CurrentCartridge.CartridgeConfig.RenderResolution);
+        App.Window.SetRenderResolution(CurrentCartridge.CartridgeConfig.RenderResolution);
 
         if (!_startedCartridges.Contains(CurrentCartridgeIndex))
         {

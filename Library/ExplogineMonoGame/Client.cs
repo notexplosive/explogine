@@ -49,18 +49,6 @@ public static class Client
     public static InputFrameState HumanInput { get; private set; }
 
     /// <summary>
-    ///     Wrapper for accessing the Filesystem of your platform.
-    /// </summary>
-    [Obsolete("Use App.FileSystem", false)]
-    public static ClientFileSystem FileSystem => Client.app.FileSystem;
-
-    /// <summary>
-    ///     Wrapper for accessing the Window of your platform.
-    /// </summary>
-    [Obsolete("Use App.Window", false)]
-    public static IWindow Window => Client.app.Window;
-
-    /// <summary>
     ///     Args passed via command line
     /// </summary>
     public static CommandLineArguments Args => Client.commandLineParameters.Args;
@@ -94,6 +82,12 @@ public static class Client
     /// </summary>
     public static ClientRandom Random { get; } = new();
 
+    /// <summary>
+    ///     Controls the state of the hardware cursor (particularly: the graphic used to display the cursor itself)
+    ///     If you want to get the Position of the cursor, use Client.Input instead.
+    /// </summary>
+    public static HardwareCursor Cursor { get; } = new();
+
     private static ClientEssentials Essentials { get; } = new(Client.app);
 
     public static string ContentBaseDirectory => "Content";
@@ -108,8 +102,6 @@ public static class Client
     ///     In Headless mode, we have no Window, no Assets, and no Graphics.
     /// </summary>
     public static bool Headless { get; private set; } = true;
-
-    public static HardwareCursor Cursor { get; } = new();
 
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)

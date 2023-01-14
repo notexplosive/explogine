@@ -74,13 +74,13 @@ public class IntroCartridge : Cartridge
     public override void Draw(Painter painter)
     {
         painter.BeginSpriteBatch(
-            Matrix.CreateTranslation(new Vector3(-Client.Window.RenderResolution.ToVector2() / 2, 0))
+            Matrix.CreateTranslation(new Vector3(-App.Window.RenderResolution.ToVector2() / 2, 0))
             * Matrix.CreateScale(new Vector3(new Vector2(_wholeWord.Scale), 1))
-            * Matrix.CreateTranslation(new Vector3(Client.Window.RenderResolution.ToVector2() / 2, 0))
+            * Matrix.CreateTranslation(new Vector3(App.Window.RenderResolution.ToVector2() / 2, 0))
         );
         painter.Clear(Color.Navy);
 
-        var centerOfScreen = Client.Window.RenderResolution.ToVector2() / 2;
+        var centerOfScreen = App.Window.RenderResolution.ToVector2() / 2;
 
         if (_startingDelay <= 0)
         {

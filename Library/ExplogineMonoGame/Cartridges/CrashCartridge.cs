@@ -19,7 +19,7 @@ public class CrashCartridge : Cartridge
         ThrownException = exception;
 
         var fileName = "explogine-crash.log";
-        var fileInfo = new FileInfo(Path.Join(Client.FileSystem.Local.GetCurrentDirectory(), fileName));
+        var fileInfo = new FileInfo(Path.Join(app.FileSystem.Local.GetCurrentDirectory(), fileName));
         _reportText =
             $"The program has crashed!\n\nWe're very sorry this happened.\nA copy of this report, and a full log can be found at:\n{fileInfo.FullName}\n\nCrash report:\n{ThrownException.Message}\n\nStacktrace:\n{ThrownException.StackTrace}";
         Client.Debug.LogError(_reportText);
@@ -47,7 +47,7 @@ public class CrashCartridge : Cartridge
 
         painter.Clear(Color.DarkBlue);
 
-        var rect = new Rectangle(new Point(0, 0), Client.Window.Size);
+        var rect = new Rectangle(new Point(0, 0), App.Window.Size);
         rect.Inflate(-10, -10);
 
         painter.DrawStringWithinRectangle(_titleFont, "heck! :(", rect, Alignment.TopLeft, new DrawSettings());

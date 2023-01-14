@@ -79,12 +79,12 @@ public class LoadingCartridge : Cartridge
         // main canvas draw
         var loadingBarRect =
             RectangleF.FromSizeAlignedWithin(
-                Client.Window.RenderResolution.ToRectangleF(),
+                App.Window.RenderResolution.ToRectangleF(),
                 new Vector2(LoadingCartridge.ProgressBarWidth, LoadingCartridge.ProgressBarHeight), Alignment.Center);
 
         var loadingBarFillRect =
             RectangleF.FromSizeAlignedWithin(
-                Client.Window.RenderResolution.ToRectangleF(),
+                App.Window.RenderResolution.ToRectangleF(),
                 new Vector2(LoadingCartridge.ProgressBarWidth, LoadingCartridge.ProgressBarHeight), Alignment.Center);
 
         loadingBarFillRect.Size = new Vector2(loadingBarFillRect.Size.X * _loader.Percent, loadingBarFillRect.Size.Y);
