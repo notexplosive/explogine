@@ -53,10 +53,7 @@ public class MultiCartridge : BasicGameCartridge
         _cartridges[i].Unload();
 
         var targetType = CurrentCartridge.GetType();
-        var newCart = (Cartridge?) Activator.CreateInstance(targetType, Runtime);
-        _cartridges[i] = newCart ??
-                         throw new Exception(
-                             $"Failed to create a new {targetType.Name}, maybe it doesn't have a parameterless constructor?");
+        _cartridges[i] = Cartridge.CreateInstance(targetType, Runtime);
 
         if (i == CurrentCartridgeIndex)
         {

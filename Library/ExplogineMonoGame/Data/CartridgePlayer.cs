@@ -5,7 +5,7 @@ using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Data;
 
-public interface ICartridgePlayer : IUpdateHook, IUpdateInputHook, IDrawHook, ILoadEventProvider
+public interface ICartridgePlayer : IUpdateHook, IUpdateInputHook, IDrawHook
 {
 }
 
@@ -15,11 +15,8 @@ public class CartridgePlayer<TCartridge> : ICartridgePlayer where TCartridge : C
 
     public CartridgePlayer(IWindow window)
     {
-        var constructedCartridge =
-            (TCartridge?) Activator.CreateInstance(typeof(TCartridge), new Runtime(window, new ClientFileSystem()));
-
-        _cartridge = constructedCartridge ??
-                     throw new Exception($"Activator could not create instance of {typeof(TCartridge).Name}");
+        var runtime = new Runtime(window, new ClientFileSystem());
+        _cartridge = Cartridge.CreateInstance<TCartridge>(runtime);
 
         // Assumes LoadEvents were already run before CartridgePlayer was created
         _cartridge.OnCartridgeStarted();
@@ -40,14 +37,5 @@ public class CartridgePlayer<TCartridge> : ICartridgePlayer where TCartridge : C
         _cartridge.UpdateInput(input, hitTestStack);
     }
 
-    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
-    {
-        if (_cartridge is ILoadEventProvider provider)
-        {
-            foreach (var loadEvent in provider.LoadEvents(painter))
-            {
-                yield return loadEvent;
-            }
-        }
-    }
+    
 }
