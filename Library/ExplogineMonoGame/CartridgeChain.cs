@@ -18,7 +18,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public CartridgeChain()
     {
-        _debugCartridge = new DebugCartridge(Client.App);
+        _debugCartridge = new DebugCartridge(Client.Runtime);
     }
 
     private bool HasCurrent => _list.First != null;
@@ -54,7 +54,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         _debugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
-        Current.UpdateInput(input, hitTestStack.AddLayer(Client.App.Window.ScreenToCanvas, Depth.Middle + 1));
+        Current.UpdateInput(input, hitTestStack.AddLayer(Client.Runtime.Window.ScreenToCanvas, Depth.Middle + 1));
     }
 
     public event Action? AboutToLoadLastCartridge;
@@ -98,7 +98,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     private void StartCartridgeAndSetRenderResolution(Cartridge cartridge)
     {
-        Client.App.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
+        Client.Runtime.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
         cartridge.OnCartridgeStarted();
     }
 
@@ -110,7 +110,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
         else
         {
-            Append(new MultiCartridge(Client.App, cartridge));
+            Append(new MultiCartridge(Client.Runtime, cartridge));
         }
     }
 
@@ -144,7 +144,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void SetupLoadingCartridge(Loader loader)
     {
-        var loadingCartridge = new LoadingCartridge(Client.App, loader);
+        var loadingCartridge = new LoadingCartridge(Client.Runtime, loader);
         StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(_debugCartridge.OnCartridgeStarted);
@@ -160,11 +160,11 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
 
         _hasCrashed = true;
-        var crashCartridge = new CrashCartridge(Client.App, exception);
+        var crashCartridge = new CrashCartridge(Client.Runtime, exception);
         _list.Clear();
         _list.AddFirst(crashCartridge);
         StartCartridgeAndSetRenderResolution(crashCartridge);
-        _debugCartridge = new BlankCartridge(Client.App);
+        _debugCartridge = new BlankCartridge(Client.Runtime);
     }
 
     public IEnumerable<T> GetAllCartridgesDerivedFrom<T>()

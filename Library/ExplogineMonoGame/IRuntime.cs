@@ -2,7 +2,7 @@
 
 namespace ExplogineMonoGame;
 
-public interface IApp
+public interface IRuntime
 {
     /// <summary>
     ///     Wrapper for accessing the Window of your platform.

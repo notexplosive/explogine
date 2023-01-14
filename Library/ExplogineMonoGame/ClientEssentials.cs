@@ -34,7 +34,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
 
         if (args.GetValue<bool>("fullscreen"))
         {
-            Client.InitializedGraphics.Add(() => Client.App.Window.SetFullscreen(true));
+            Client.InitializedGraphics.Add(() => Client.Runtime.Window.SetFullscreen(true));
         }
 
         if (args.GetValue<bool>("help"))

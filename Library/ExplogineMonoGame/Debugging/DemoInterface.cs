@@ -10,12 +10,12 @@ namespace ExplogineMonoGame.Debugging;
 
 internal class DemoInterface : IUpdateHook
 {
-    private readonly IApp _app;
+    private readonly IRuntime _runtime;
     private float _totalTime;
 
-    public DemoInterface(IApp app)
+    public DemoInterface(IRuntime runtime)
     {
-        _app = app;
+        _runtime = runtime;
     }
 
     public void Draw(Painter painter, Depth depth)
@@ -43,7 +43,7 @@ internal class DemoInterface : IUpdateHook
 
                 painter.DrawStringAtPosition(consoleFont, text,
                     new Vector2(
-                        _app.Window.Size.X
+                        _runtime.Window.Size.X
                         - (int) consoleFont.MeasureString(text).X
                         , spriteSheet.GetSourceRectForFrame(0).Height),
                     new DrawSettings());
@@ -51,7 +51,7 @@ internal class DemoInterface : IUpdateHook
                 spriteSheet.DrawFrameAtPosition(
                     painter,
                     frame,
-                    new Vector2(_app.Window.Size.X - spriteSheet.GetSourceRectForFrame(0).Width, 0),
+                    new Vector2(_runtime.Window.Size.X - spriteSheet.GetSourceRectForFrame(0).Width, 0),
                     Scale2D.One,
                     new DrawSettings {Depth = depth});
             }

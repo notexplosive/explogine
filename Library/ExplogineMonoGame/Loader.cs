@@ -13,14 +13,14 @@ public delegate Asset LoadEventFunction();
 
 public class Loader
 {
-    private readonly IApp _app;
+    private readonly IRuntime _runtime;
     private readonly ContentManager _content;
     private readonly List<ILoadEvent> _loadEvents = new();
     private int _loadEventIndex;
 
-    public Loader(IApp app, ContentManager content)
+    public Loader(IRuntime runtime, ContentManager content)
     {
-        _app = app;
+        _runtime = runtime;
         _content = content;
         foreach (var loadEvent in StaticContentLoadEvents())
         {
@@ -134,7 +134,7 @@ public class Loader
 
     private string[] GetKeysFromContentDirectory()
     {
-        var fileNames = _app.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
+        var fileNames = _runtime.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
         var keys = new List<string>();
 
         foreach (var fileName in fileNames)

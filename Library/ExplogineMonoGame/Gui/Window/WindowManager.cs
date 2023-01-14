@@ -13,15 +13,15 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     private readonly int _depthPerWindow = 10;
     private readonly RectangleF _desktopBoundingRect;
     private readonly SimpleGuiTheme _uiTheme;
-    private readonly IApp _app;
+    private readonly IRuntime _runtime;
     private readonly List<VirtualWindow> _windows = new();
     private readonly Dictionary<VirtualWindow, WindowState> _windowStates = new();
 
-    public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme, IApp app)
+    public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme, IRuntime runtime)
     {
         _desktopBoundingRect = desktopBoundingRect;
         _uiTheme = uiTheme;
-        _app = app;
+        _runtime = runtime;
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     public VirtualWindow AddWindow(Vector2 position, VirtualWindow.Settings settings, IWindowContent content)
     {
         var window = new VirtualWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
-            settings, content, TopDepth, _app);
+            settings, content, TopDepth, _runtime);
         _windowStates.Add(window, new WindowState());
         _windows.Add(window);
         SetupOrTeardown(window);

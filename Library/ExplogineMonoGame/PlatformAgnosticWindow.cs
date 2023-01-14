@@ -1,8 +1,6 @@
 ﻿using System;
 using ExplogineMonoGame.AssetManagement;
-using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame;
 
@@ -24,10 +22,6 @@ public class PlatformAgnosticWindow : IWindow
     /// </summary>
     public ClientCanvas ClientCanvas { get; }
 
-    public Canvas Canvas => ClientCanvas.Internal;
-
-    public Point RenderResolution => _specifiedRenderResolution ?? Size;
-
     public string Title
     {
         get => Window.Title;
@@ -45,14 +39,6 @@ public class PlatformAgnosticWindow : IWindow
         get => Window.AllowUserResizing;
         set => Window.AllowUserResizing = value;
     }
-
-    public bool IsFullscreen { get; private set; }
-    public Matrix ScreenToCanvas => ClientCanvas.ScreenToCanvas;
-    public Matrix CanvasToScreen => ClientCanvas.CanvasToScreen;
-
-    public Point Size => Client.Headless
-        ? new Point(1600, 900)
-        : new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
     private WindowConfig Config
     {
@@ -83,12 +69,24 @@ public class PlatformAgnosticWindow : IWindow
         }
     }
 
+    public TextEnteredBuffer TextEnteredBuffer { get; set; }
+
+    public Canvas Canvas => ClientCanvas.Internal;
+
+    public Point RenderResolution => _specifiedRenderResolution ?? Size;
+
+    public bool IsFullscreen { get; private set; }
+    public Matrix ScreenToCanvas => ClientCanvas.ScreenToCanvas;
+    public Matrix CanvasToScreen => ClientCanvas.CanvasToScreen;
+
+    public Point Size => Client.Headless
+        ? new Point(1600, 900)
+        : new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
+
     /// <summary>
-    /// Passthrough to the OS
+    ///     Passthrough to the OS
     /// </summary>
     public bool IsInFocus => Client.IsInFocus;
-    
-    public TextEnteredBuffer TextEnteredBuffer { get; set; }
 
     public void SetRenderResolution(Point? optionalSize)
     {
@@ -102,25 +100,6 @@ public class PlatformAgnosticWindow : IWindow
             _specifiedRenderResolution = null;
             RenderResolutionChanged?.Invoke(Size);
         }
-    }
-
-    public event Action<Point>? Resized;
-    public event Action<Point>? RenderResolutionChanged;
-    public event Action<string>? FileDropped;
-    public event Action? ConfigChanged;
-
-    public void Setup(GameWindow window, WindowConfig config)
-    {
-        ClientCanvas.Setup();
-        Window = window;
-        _rememberedBounds = new Rectangle(Position, Size);
-        LateSetup(config);
-
-        Config = config;
-    }
-
-    protected virtual void LateSetup(WindowConfig config)
-    {
     }
 
     public void SetFullscreen(bool state)
@@ -146,6 +125,26 @@ public class PlatformAgnosticWindow : IWindow
 
         Client.Graphics.DeviceManager.ApplyChanges();
         IsFullscreen = state;
+    }
+
+    public event Action<Point>? Resized;
+    public event Action<Point>? RenderResolutionChanged;
+    public event Action<string>? FileDropped;
+    public event Action? ConfigChanged;
+
+    public void Setup(GameWindow window, WindowConfig config)
+    {
+        ClientCanvas.Setup();
+        Window = window;
+        _rememberedBounds = new Rectangle(Position, Size);
+        LateSetup(config);
+
+        Config = config;
+    }
+
+    protected virtual void LateSetup(WindowConfig config)
+    {
+        // Intentionally left blank, would be abstract except we want to be able to instantiate this type
     }
 
     public void SetSize(Point windowSize)

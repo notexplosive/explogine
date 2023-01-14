@@ -4,7 +4,7 @@ namespace ExplogineMonoGame.Cartridges;
 
 public class BlankCartridge : Cartridge
 {
-    public BlankCartridge(IApp app) : base(app)
+    public BlankCartridge(IRuntime runtime) : base(runtime)
     {
     }
 

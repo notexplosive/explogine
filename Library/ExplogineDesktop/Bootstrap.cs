@@ -5,7 +5,7 @@ namespace ExplogineDesktop;
 
 public static class Bootstrap
 {
-    public static void Run(string[] args, WindowConfig config, Func<IApp, Cartridge> cartridgeCreator, params string[] extraArgs)
+    public static void Run(string[] args, WindowConfig config, Func<IRuntime, Cartridge> cartridgeCreator, params string[] extraArgs)
     {
         var combinedArgs = new List<string>();
         // extraArgs come first so args can overwrite them

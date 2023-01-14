@@ -16,14 +16,14 @@ public class VirtualWindow : IUpdateInputHook, IDisposable
     public WindowWidget Widget { get; }
 
     public VirtualWindow(RectangleF rectangle, Settings settings, IWindowContent content,
-        Depth depth, IApp parentApp)
+        Depth depth, IRuntime parentRuntime)
     {
         CurrentSettings = settings;
         Widget = new WindowWidget(rectangle, depth - 1);
         _chrome = new VirtualWindowChrome(this, 32, settings.SizeSettings);
         _body = new VirtualWindowBody(this, content);
 
-        ParentApp = parentApp;
+        ParentRuntime = parentRuntime;
         Title = CurrentSettings.Title;
     }
 
@@ -54,7 +54,7 @@ public class VirtualWindow : IUpdateInputHook, IDisposable
 
     public StaticImageAsset? Icon => CurrentSettings.Icon;
     public string Title { get; }
-    public IApp ParentApp { get; }
+    public IRuntime ParentRuntime { get; }
 
     public void Dispose()
     {

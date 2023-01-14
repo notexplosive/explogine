@@ -16,12 +16,12 @@ public class CartridgePlayer<TCartridge> : ICartridgePlayer where TCartridge : C
     public CartridgePlayer(IWindow window)
     {
         var constructedCartridge =
-            (TCartridge?) Activator.CreateInstance(typeof(TCartridge), new App(window, new ClientFileSystem()));
+            (TCartridge?) Activator.CreateInstance(typeof(TCartridge), new Runtime(window, new ClientFileSystem()));
 
         _cartridge = constructedCartridge ??
                      throw new Exception($"Activator could not create instance of {typeof(TCartridge).Name}");
 
-        // assumes load events were already called
+        // Assumes LoadEvents were already run before CartridgePlayer was created
         _cartridge.OnCartridgeStarted();
     }
 

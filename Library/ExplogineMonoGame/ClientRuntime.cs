@@ -1,12 +1,12 @@
 ﻿namespace ExplogineMonoGame;
 
-internal class ClientApp : IApp
+internal class ClientRuntime : IRuntime
 {
     private ClientFileSystem _fileSystem;
     private bool _isInitialized;
     private PlatformAgnosticWindow _window;
 
-    public ClientApp()
+    public ClientRuntime()
     {
         _window = new PlatformAgnosticWindow();
         _fileSystem = new ClientFileSystem();
@@ -18,7 +18,7 @@ internal class ClientApp : IApp
         {
             if (!_isInitialized)
             {
-                Client.Debug.LogError("Attempted to access Window before ClientApp was initialized");
+                Client.Debug.LogError("Attempted to access Window before ClientRuntime was initialized");
             }
 
             return _window;
@@ -31,7 +31,7 @@ internal class ClientApp : IApp
         {
             if (!_isInitialized)
             {
-                Client.Debug.LogError("Attempted to access FileSystem before ClientApp was initialized");
+                Client.Debug.LogError("Attempted to access FileSystem before ClientRuntime was initialized");
             }
 
             return _fileSystem;

@@ -19,7 +19,7 @@ public class IntroCartridge : Cartridge
     private bool _useWholeWord = true;
     private Figure _wholeWord;
 
-    public IntroCartridge(IApp app, string text, uint index, float startingDelay = 0f) : base(app)
+    public IntroCartridge(IRuntime runtime, string text, uint index, float startingDelay = 0f) : base(runtime)
     {
         _text = text;
         _index = index;
@@ -74,13 +74,13 @@ public class IntroCartridge : Cartridge
     public override void Draw(Painter painter)
     {
         painter.BeginSpriteBatch(
-            Matrix.CreateTranslation(new Vector3(-App.Window.RenderResolution.ToVector2() / 2, 0))
+            Matrix.CreateTranslation(new Vector3(-Runtime.Window.RenderResolution.ToVector2() / 2, 0))
             * Matrix.CreateScale(new Vector3(new Vector2(_wholeWord.Scale), 1))
-            * Matrix.CreateTranslation(new Vector3(App.Window.RenderResolution.ToVector2() / 2, 0))
+            * Matrix.CreateTranslation(new Vector3(Runtime.Window.RenderResolution.ToVector2() / 2, 0))
         );
         painter.Clear(Color.Navy);
 
-        var centerOfScreen = App.Window.RenderResolution.ToVector2() / 2;
+        var centerOfScreen = Runtime.Window.RenderResolution.ToVector2() / 2;
 
         if (_startingDelay <= 0)
         {

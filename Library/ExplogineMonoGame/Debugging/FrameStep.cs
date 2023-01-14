@@ -10,16 +10,16 @@ namespace ExplogineMonoGame.Debugging;
 
 public class FrameStep : IUpdateInputHook
 {
-    private readonly IApp _app;
+    private readonly IRuntime _runtime;
     private readonly TweenableFloat _lineThickness = new();
     private readonly TweenableFloat _opacity = new();
     private readonly TweenableFloat _shrinkAmount = new();
     private readonly SequenceTween _tween = new();
     private bool _shouldDisplay;
 
-    public FrameStep(IApp app)
+    public FrameStep(IRuntime runtime)
     {
-        _app = app;
+        _runtime = runtime;
     }
     
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
@@ -96,7 +96,7 @@ public class FrameStep : IUpdateInputHook
     {
         if (_shouldDisplay)
         {
-            var rect = new RectangleF(Vector2.Zero, _app.Window.Size.ToVector2());
+            var rect = new RectangleF(Vector2.Zero, _runtime.Window.Size.ToVector2());
             var inset = _shrinkAmount + 5;
             painter.DrawLineRectangle(rect.Inflated(-inset, -inset),
                 new LineDrawSettings

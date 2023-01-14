@@ -78,12 +78,12 @@ public class Demo : ILoadEventProvider
             mostRecent = serial;
         }
 
-        Client.App.FileSystem.Local.WriteToFile(fileName, stringBuilder.ToString());
+        Client.Runtime.FileSystem.Local.WriteToFile(fileName, stringBuilder.ToString());
     }
 
     public void LoadFile(string path)
     {
-        var file = Client.App.FileSystem.Local.ReadFile(path);
+        var file = Client.Runtime.FileSystem.Local.ReadFile(path);
         LoadText(file);
     }
 

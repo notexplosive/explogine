@@ -20,7 +20,7 @@ public class LoadingCartridge : Cartridge
     private int _endingDelayFrames = 10;
     private int _startingDelayFrames = 10;
 
-    public LoadingCartridge(IApp app, Loader loader) : base(app)
+    public LoadingCartridge(IRuntime runtime, Loader loader) : base(runtime)
     {
         _loader = loader;
 
@@ -79,12 +79,12 @@ public class LoadingCartridge : Cartridge
         // main canvas draw
         var loadingBarRect =
             RectangleF.FromSizeAlignedWithin(
-                App.Window.RenderResolution.ToRectangleF(),
+                Runtime.Window.RenderResolution.ToRectangleF(),
                 new Vector2(LoadingCartridge.ProgressBarWidth, LoadingCartridge.ProgressBarHeight), Alignment.Center);
 
         var loadingBarFillRect =
             RectangleF.FromSizeAlignedWithin(
-                App.Window.RenderResolution.ToRectangleF(),
+                Runtime.Window.RenderResolution.ToRectangleF(),
                 new Vector2(LoadingCartridge.ProgressBarWidth, LoadingCartridge.ProgressBarHeight), Alignment.Center);
 
         loadingBarFillRect.Size = new Vector2(loadingBarFillRect.Size.X * _loader.Percent, loadingBarFillRect.Size.Y);

@@ -25,9 +25,9 @@ public static class Client
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
-    internal static readonly ClientApp App = new();
+    internal static readonly ClientRuntime Runtime = new();
     internal static readonly CartridgeChain CartridgeChain = new();
-    internal static PlatformAgnosticWindow PlatformWindow => (Client.App.Window as PlatformAgnosticWindow)!;
+    internal static PlatformAgnosticWindow PlatformWindow => (Client.Runtime.Window as PlatformAgnosticWindow)!;
     internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
     /// <summary>
@@ -109,7 +109,7 @@ public static class Client
     /// <param name="windowConfig">Config object for client startup</param>
     /// <param name="gameCartridgeCreator">A method that will return the cartridge for your game</param>
     /// <param name="platform">Platform plugin for your platform</param>
-    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<IApp, Cartridge> gameCartridgeCreator,
+    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<IRuntime, Cartridge> gameCartridgeCreator,
         IPlatformInterface platform)
     {
         // Setup Platform
@@ -121,7 +121,7 @@ public static class Client
             new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name))
         );
-        Client.App.Setup(window, fileSystem);
+        Client.Runtime.Setup(window, fileSystem);
         Client.startingConfig = windowConfig;
 
         // Setup Command Line
@@ -134,11 +134,11 @@ public static class Client
         // Setup Cartridges
         if (!skipIntro)
         {
-            Client.CartridgeChain.Append(new IntroCartridge(Client.App, "NotExplosive.net",
+            Client.CartridgeChain.Append(new IntroCartridge(Client.Runtime, "NotExplosive.net",
                 Client.Random.Dirty.NextUInt(), 0.25f));
         }
 
-        Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.App));
+        Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.Runtime));
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game
@@ -168,7 +168,7 @@ public static class Client
 
     internal static void LoadContent(ContentManager contentManager)
     {
-        Client.loader = new Loader(Client.App, contentManager);
+        Client.loader = new Loader(Client.Runtime, contentManager);
         Client.loader.AddLoadEvents(Client.Demo);
         Client.loader.AddLoadEvents(Client.Essentials);
         Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());

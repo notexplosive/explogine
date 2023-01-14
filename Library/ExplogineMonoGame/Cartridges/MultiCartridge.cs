@@ -17,7 +17,7 @@ public class MultiCartridge : BasicGameCartridge
     private readonly HashSet<int> _startedCartridges = new();
     private int _currentCartridgeIndexImpl;
 
-    public MultiCartridge(IApp app, Cartridge primaryCartridge, params Cartridge[] extraCartridges) : base(app)
+    public MultiCartridge(IRuntime runtime, Cartridge primaryCartridge, params Cartridge[] extraCartridges) : base(runtime)
     {
         _cartridges.Add(primaryCartridge);
         _cartridges.AddRange(extraCartridges);
@@ -53,7 +53,7 @@ public class MultiCartridge : BasicGameCartridge
         _cartridges[i].Unload();
 
         var targetType = CurrentCartridge.GetType();
-        var newCart = (Cartridge?) Activator.CreateInstance(targetType, App);
+        var newCart = (Cartridge?) Activator.CreateInstance(targetType, Runtime);
         _cartridges[i] = newCart ??
                          throw new Exception(
                              $"Failed to create a new {targetType.Name}, maybe it doesn't have a parameterless constructor?");
@@ -117,7 +117,7 @@ public class MultiCartridge : BasicGameCartridge
 
     private void StartCurrentCartridge()
     {
-        App.Window.SetRenderResolution(CurrentCartridge.CartridgeConfig.RenderResolution);
+        Runtime.Window.SetRenderResolution(CurrentCartridge.CartridgeConfig.RenderResolution);
 
         if (!_startedCartridges.Contains(CurrentCartridgeIndex))
         {

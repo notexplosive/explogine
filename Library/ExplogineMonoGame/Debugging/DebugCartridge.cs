@@ -18,12 +18,12 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
     private readonly SnapshotTaker _snapshotTaker;
     private bool _useSnapshotTimer;
 
-    public DebugCartridge(IApp app) : base(app)
+    public DebugCartridge(IRuntime runtime) : base(runtime)
     {
-        _demoInterface = new(app);
-        _frameStep = new(app);
-        _logOverlay = new(app);
-        _snapshotTaker = new(app);
+        _demoInterface = new(runtime);
+        _frameStep = new(runtime);
+        _logOverlay = new(runtime);
+        _snapshotTaker = new(runtime);
     }
     
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
