@@ -30,12 +30,6 @@ public readonly struct MouseFrameState
                Vector2.Transform(Previous.MousePosition, transform);
     }
 
-    public Vector2 CanvasPosition(Matrix? toCanvasTransform = null)
-    {
-        var transform = toCanvasTransform ?? Matrix.Identity;
-        return Position(Client.Window.ScreenToCanvas * transform);
-    }
-
     public ButtonFrameState GetButton(MouseButton mouseButton)
     {
         var isDown = InputUtil.CheckIsDown(Current.MouseButtonStates, mouseButton);
