@@ -36,6 +36,7 @@ public class FrameStep : IUpdateInputHook
 
             if (input.Keyboard.GetButton(Keys.Space).WasPressed && input.Keyboard.Modifiers.Control)
             {
+                input.Keyboard.Consume(Keys.Space);
                 Toggle();
             }
         }
