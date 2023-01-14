@@ -27,7 +27,7 @@ public static class Client
     private static CommandLineParameters commandLineParameters = new();
     internal static readonly ClientRuntime Runtime = new();
     internal static readonly CartridgeChain CartridgeChain = new();
-    internal static PlatformAgnosticWindow PlatformWindow => (Client.Runtime.Window as PlatformAgnosticWindow)!;
+    internal static RealWindow PlatformWindow => (Client.Runtime.Window as RealWindow)!;
     internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
     /// <summary>

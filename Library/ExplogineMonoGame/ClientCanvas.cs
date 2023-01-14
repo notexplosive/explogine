@@ -13,7 +13,7 @@ public class ClientCanvas
 {
     public Canvas Internal { get; private set; } = null!;
 
-    public ClientCanvas(PlatformAgnosticWindow window)
+    public ClientCanvas(RealWindow window)
     {
         Window = window;
     }
@@ -27,7 +27,7 @@ public class ClientCanvas
     public Texture2D Texture => Internal.Texture;
     public Point Size => Internal.Size;
 
-    public PlatformAgnosticWindow Window { get; }
+    public RealWindow Window { get; }
 
     public void ResizeCanvas(Point newRenderResolution)
     {

@@ -4,11 +4,11 @@ internal class ClientRuntime : IRuntime
 {
     private ClientFileSystem _fileSystem;
     private bool _isInitialized;
-    private PlatformAgnosticWindow _window;
+    private RealWindow _window;
 
     public ClientRuntime()
     {
-        _window = new PlatformAgnosticWindow();
+        _window = new RealWindow();
         _fileSystem = new ClientFileSystem();
     }
 
@@ -38,7 +38,7 @@ internal class ClientRuntime : IRuntime
         }
     }
 
-    public void Setup(PlatformAgnosticWindow window, ClientFileSystem fileSystem)
+    public void Setup(RealWindow window, ClientFileSystem fileSystem)
     {
         _isInitialized = true;
         _window = window;

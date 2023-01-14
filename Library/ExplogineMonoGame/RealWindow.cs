@@ -4,14 +4,14 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
 
-public class PlatformAgnosticWindow : IWindow
+public class RealWindow : IWindow
 {
     private WindowConfig _currentConfig;
     private Rectangle _rememberedBounds;
     private Point? _specifiedRenderResolution;
     protected GameWindow Window = null!;
 
-    public PlatformAgnosticWindow()
+    public RealWindow()
     {
         ClientCanvas = new ClientCanvas(this);
         RenderResolutionChanged += ClientCanvas.ResizeCanvas;

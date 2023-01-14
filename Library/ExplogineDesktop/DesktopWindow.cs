@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineDesktop;
 
-public class DesktopWindow : PlatformAgnosticWindow
+public class DesktopWindow : RealWindow
 {
     protected override void LateSetup(WindowConfig config)
     {
