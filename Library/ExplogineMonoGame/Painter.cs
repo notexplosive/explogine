@@ -207,16 +207,20 @@ public class Painter
 
     public void DrawAsRectangle(Texture2D texture, RectangleF destinationRectangle, DrawSettings settings)
     {
-        // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
-        // and is then rotated around the origin
-        destinationRectangle.Offset(settings.Origin.Value(destinationRectangle.Size));
+        if (Client.Debug.IsActive)
+        {
+            DrawRectangle(destinationRectangle, new DrawSettings
+            {
+                Depth = settings.Depth + 1,
+                Angle = settings.Angle,
+                Origin = settings.Origin,
+                Color = Color.White.WithMultipliedOpacity(0.25f)
+            });
+        }
         settings.SourceRectangle ??= texture.Bounds;
 
-        // scale is how much we need to multiply the source rect size to get the destination rect
-        var scale = destinationRectangle.Size.StraightDivide(settings.SourceRectangle.Value.Size);
-
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
-        var origin = settings.Origin.Value(destinationRectangle.Size).StraightDivide(scale);
+        var origin = settings.Origin.Value(settings.SourceRectangle.Value.Size);// .StraightDivide(scale);
 
         // destination is downcast to a Rectangle
         _spriteBatch.Draw(texture, destinationRectangle.ToRectangle(), settings.SourceRectangle, settings.Color,
