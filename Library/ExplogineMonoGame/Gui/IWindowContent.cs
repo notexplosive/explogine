@@ -22,5 +22,5 @@ public interface IWindowContent
     /// <param name="painter"></param>
     void DrawWindowContent(Painter painter);
 
-    void Initialize(VirtualWindow parentWindow);
+    void Initialize(InternalWindow parentWindow);
 }

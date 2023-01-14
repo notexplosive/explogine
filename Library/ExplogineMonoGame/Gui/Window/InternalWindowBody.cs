@@ -4,13 +4,13 @@ using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Gui.Window;
 
-internal class VirtualWindowBody : IUpdateInputHook
+internal class InternalWindowBody : IUpdateInputHook
 {
     private readonly Clickable _bodyClickable = new();
     private readonly HoverState _contentHovered = new();
-    private readonly VirtualWindow _parentWindow;
+    private readonly InternalWindow _parentWindow;
 
-    public VirtualWindowBody(VirtualWindow parentWindow, IWindowContent content)
+    public InternalWindowBody(InternalWindow parentWindow, IWindowContent content)
     {
         Content = content;
         _parentWindow = parentWindow;

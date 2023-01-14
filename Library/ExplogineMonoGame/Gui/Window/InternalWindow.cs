@@ -7,21 +7,21 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui.Window;
 
-public class VirtualWindow : IUpdateInputHook, IDisposable
+public class InternalWindow : IUpdateInputHook, IDisposable
 {
-    public delegate void WindowEvent(VirtualWindow window);
+    public delegate void WindowEvent(InternalWindow window);
 
-    private readonly VirtualWindowBody _body;
-    private readonly VirtualWindowChrome _chrome;
+    private readonly InternalWindowBody _body;
+    private readonly InternalWindowChrome _chrome;
     public WindowWidget Widget { get; }
 
-    public VirtualWindow(RectangleF rectangle, Settings settings, IWindowContent content,
+    public InternalWindow(RectangleF rectangle, Settings settings, IWindowContent content,
         Depth depth, IRuntime parentRuntime)
     {
         CurrentSettings = settings;
         Widget = new WindowWidget(rectangle, depth - 1);
-        _chrome = new VirtualWindowChrome(this, 32, settings.SizeSettings);
-        _body = new VirtualWindowBody(this, content);
+        _chrome = new InternalWindowChrome(this, 32, settings.SizeSettings);
+        _body = new InternalWindowBody(this, content);
 
         ParentRuntime = parentRuntime;
         Title = CurrentSettings.Title;

@@ -14,8 +14,8 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     private readonly RectangleF _desktopBoundingRect;
     private readonly SimpleGuiTheme _uiTheme;
     private readonly IRuntime _runtime;
-    private readonly List<VirtualWindow> _windows = new();
-    private readonly Dictionary<VirtualWindow, WindowState> _windowStates = new();
+    private readonly List<InternalWindow> _windows = new();
+    private readonly Dictionary<InternalWindow, WindowState> _windowStates = new();
 
     public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme, IRuntime runtime)
     {
@@ -94,14 +94,14 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         }
     }
 
-    public event VirtualWindow.WindowEvent? ClosedWindow;
-    public event VirtualWindow.WindowEvent? CreatedWindow;
-    public event VirtualWindow.WindowEvent? MinimizedWindow;
-    public event VirtualWindow.WindowEvent? UnMinimizedWindow;
+    public event InternalWindow.WindowEvent? ClosedWindow;
+    public event InternalWindow.WindowEvent? CreatedWindow;
+    public event InternalWindow.WindowEvent? MinimizedWindow;
+    public event InternalWindow.WindowEvent? UnMinimizedWindow;
 
-    public VirtualWindow AddWindow(Vector2 position, VirtualWindow.Settings settings, IWindowContent content)
+    public InternalWindow AddWindow(Vector2 position, InternalWindow.Settings settings, IWindowContent content)
     {
-        var window = new VirtualWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
+        var window = new InternalWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
             settings, content, TopDepth, _runtime);
         _windowStates.Add(window, new WindowState());
         _windows.Add(window);
@@ -111,7 +111,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         return window;
     }
 
-    private void SetupOrTeardown(VirtualWindow window, bool isSetup = true)
+    private void SetupOrTeardown(InternalWindow window, bool isSetup = true)
     {
         if (isSetup)
         {
@@ -133,12 +133,12 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         }
     }
 
-    private void FullScreenWindow(VirtualWindow window)
+    private void FullScreenWindow(InternalWindow window)
     {
         _windowStates[window].ToggleFullScreen(window, _desktopBoundingRect);
     }
 
-    private void CloseWindowDeferred(VirtualWindow window)
+    private void CloseWindowDeferred(InternalWindow window)
     {
         _deferredActions.Add(() =>
         {
@@ -148,19 +148,19 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         });
     }
 
-    public void MinimizeWindow(VirtualWindow window)
+    public void MinimizeWindow(InternalWindow window)
     {
         _windowStates[window].IsMinimized = true;
         MinimizedWindow?.Invoke(window);
     }
 
-    public void UnMinimizeWindow(VirtualWindow window)
+    public void UnMinimizeWindow(InternalWindow window)
     {
         _windowStates[window].IsMinimized = false;
         UnMinimizedWindow?.Invoke(window);
     }
 
-    private void ConstrainWindowToBoundsDeferred(VirtualWindow window)
+    private void ConstrainWindowToBoundsDeferred(InternalWindow window)
     {
         // This needs to be deferred because we might set the position later that frame
         _deferredActions.Add(() =>
@@ -170,7 +170,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         });
     }
 
-    private void BringWindowToFrontDeferred(VirtualWindow targetWindow)
+    private void BringWindowToFrontDeferred(InternalWindow targetWindow)
     {
         _deferredActions.Add(() =>
         {
@@ -189,7 +189,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         public bool IsMinimized { get; set; }
         public bool IsFullScreen { get; set; }
 
-        public void ToggleFullScreen(VirtualWindow window, RectangleF screenRect)
+        public void ToggleFullScreen(InternalWindow window, RectangleF screenRect)
         {
             if (!IsFullScreen)
             {

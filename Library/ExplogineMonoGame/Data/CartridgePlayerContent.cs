@@ -9,7 +9,7 @@ public class CartridgePlayerContent<T> : IWindowContent, IUpdateHook where T : C
 {
     private ICartridgePlayer? _cartridgePlayer;
 
-    public void Initialize(VirtualWindow parentWindow)
+    public void Initialize(InternalWindow parentWindow)
     {
         _cartridgePlayer = new CartridgePlayer<T>(parentWindow.Widget);
     }

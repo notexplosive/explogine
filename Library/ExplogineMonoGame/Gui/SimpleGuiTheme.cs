@@ -68,7 +68,7 @@ public class SimpleGuiTheme : IGuiTheme
         painter.EndSpriteBatch();
     }
 
-    public void DrawWindowChrome(Painter painter, VirtualWindowChrome chrome, bool isInFocus)
+    public void DrawWindowChrome(Painter painter, InternalWindowChrome chrome, bool isInFocus)
     {
         if (isInFocus)
         {
@@ -85,13 +85,13 @@ public class SimpleGuiTheme : IGuiTheme
         
         foreach (var button in titleLayout.Buttons)
         {
-            if (button.ButtonType != VirtualWindowTitleBar.ControlButtonType.Empty)
+            if (button.ButtonType != InternalWindowTitleBar.ControlButtonType.Empty)
             {
                 var color = button.ButtonType switch
                 {
-                    VirtualWindowTitleBar.ControlButtonType.Close => Color.Red,
-                    VirtualWindowTitleBar.ControlButtonType.Fullscreen => Color.LightCoral,
-                    VirtualWindowTitleBar.ControlButtonType.Minimize => Color.Orange,
+                    InternalWindowTitleBar.ControlButtonType.Close => Color.Red,
+                    InternalWindowTitleBar.ControlButtonType.Fullscreen => Color.LightCoral,
+                    InternalWindowTitleBar.ControlButtonType.Minimize => Color.Orange,
                     _ => Color.White
                 };
 

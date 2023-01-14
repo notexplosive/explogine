@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui.Window;
 
-public class VirtualWindowTitleBar : IUpdateInputHook
+public class InternalWindowTitleBar : IUpdateInputHook
 {
     public enum ControlButtonType
     {
@@ -19,13 +19,13 @@ public class VirtualWindowTitleBar : IUpdateInputHook
         Minimize
     }
 
-    private readonly VirtualWindowChrome _chrome;
-    private readonly VirtualWindow _parentWindow;
+    private readonly InternalWindowChrome _chrome;
+    private readonly InternalWindow _parentWindow;
     private LayoutArrangement _layout = null!;
     private readonly HoverState[] _controlButtonHoverStates;
     private readonly Clickable[] _controlButtonClickables;
 
-    public VirtualWindowTitleBar(VirtualWindow parentWindow, VirtualWindowChrome chrome)
+    public InternalWindowTitleBar(InternalWindow parentWindow, InternalWindowChrome chrome)
     {
         _parentWindow = parentWindow;
         _chrome = chrome;

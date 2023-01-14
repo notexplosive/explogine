@@ -7,27 +7,27 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui.Window;
 
-public class VirtualWindowChrome : IUpdateInputHook
+public class InternalWindowChrome : IUpdateInputHook
 {
     private readonly Clickable _headerClickable = new();
     private readonly HoverState _headerHovered = new();
 
     private readonly Point _minimumSize;
     private readonly Drag<Vector2> _movementDrag;
-    private readonly VirtualWindow _parentWindow;
+    private readonly InternalWindow _parentWindow;
     private readonly RectResizer _rectResizer;
-    private readonly VirtualWindow.ISizeSettings _sizeSettings;
-    private readonly VirtualWindowTitleBar _titleBar;
+    private readonly InternalWindow.ISizeSettings _sizeSettings;
+    private readonly InternalWindowTitleBar _titleBar;
     private readonly int _titleBarThickness;
     private RectangleF? _pendingResizeRect;
 
-    public VirtualWindowChrome(VirtualWindow parentWindow, int titleBarThickness, VirtualWindow.ISizeSettings sizeSettings)
+    public InternalWindowChrome(InternalWindow parentWindow, int titleBarThickness, InternalWindow.ISizeSettings sizeSettings)
     {
         _parentWindow = parentWindow;
         _titleBarThickness = titleBarThickness;
         _sizeSettings = sizeSettings;
         _minimumSize = _parentWindow.Widget.Size;
-        if (sizeSettings is VirtualWindow.ResizableSizeSettings resizableSizeSettings)
+        if (sizeSettings is InternalWindow.ResizableSizeSettings resizableSizeSettings)
         {
             _minimumSize = resizableSizeSettings.MinimumSize;
         }
@@ -35,7 +35,7 @@ public class VirtualWindowChrome : IUpdateInputHook
 
         _rectResizer = new RectResizer();
         _movementDrag = new Drag<Vector2>();
-        _titleBar = new VirtualWindowTitleBar(_parentWindow, this);
+        _titleBar = new InternalWindowTitleBar(_parentWindow, this);
 
         _headerClickable.ClickInitiated += parentWindow.RequestFocus;
         _rectResizer.Initiated += parentWindow.RequestFocus;
@@ -57,7 +57,7 @@ public class VirtualWindowChrome : IUpdateInputHook
         }
     }
 
-    public VirtualWindowTitleBar.Layout TitleLayout => _titleBar.GetLayoutStruct();
+    public InternalWindowTitleBar.Layout TitleLayout => _titleBar.GetLayoutStruct();
 
     public RectangleF WholeWindowRectangle
     {
@@ -75,7 +75,7 @@ public class VirtualWindowChrome : IUpdateInputHook
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        if (_sizeSettings is VirtualWindow.ResizableSizeSettings resizableWindowSizeSettings)
+        if (_sizeSettings is InternalWindow.ResizableSizeSettings resizableWindowSizeSettings)
         {
             HandleResizing(input, hitTestStack);
         }
