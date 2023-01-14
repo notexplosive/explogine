@@ -7,6 +7,10 @@ public abstract class NoProviderRailCartridge : NoProviderCartridge
 {
     protected readonly Rail Rail = new();
 
+    protected NoProviderRailCartridge(App app) : base(app)
+    {
+    }
+
     public override void Update(float dt)
     {
         Rail.Update(dt);

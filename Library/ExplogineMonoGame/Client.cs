@@ -114,9 +114,9 @@ public static class Client
     /// </summary>
     /// <param name="argsArray">Args passed via command line</param>
     /// <param name="windowConfig">Config object for client startup</param>
-    /// <param name="gameCartridge">Cartridge for your game</param>
+    /// <param name="gameCartridgeCreator">A method that will return the cartridge for your game</param>
     /// <param name="platform">Platform plugin for your platform</param>
-    public static void Start(string[] argsArray, WindowConfig windowConfig, Cartridge gameCartridge,
+    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<App,Cartridge> gameCartridgeCreator,
         IPlatformInterface platform)
     {
         // Setup Platform
@@ -141,10 +141,10 @@ public static class Client
         // Setup Cartridges
         if (!skipIntro)
         {
-            Client.CartridgeChain.Append(new IntroCartridge("NotExplosive.net", Client.Random.Dirty.NextUInt(), 0.25f));
+            Client.CartridgeChain.Append(new IntroCartridge(Client.app, "NotExplosive.net", Client.Random.Dirty.NextUInt(), 0.25f));
         }
 
-        Client.CartridgeChain.AppendGameCartridge(gameCartridge);
+        Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.app));
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game

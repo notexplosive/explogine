@@ -12,7 +12,7 @@ public class CrashCartridge : Cartridge
     private readonly string _reportText;
     private readonly IndirectFont _titleFont = new("engine/console-font", 100);
 
-    public CrashCartridge(Exception exception)
+    public CrashCartridge(App app, Exception exception) : base(app)
     {
         Client.Graphics.Painter.ResetToCleanState();
 

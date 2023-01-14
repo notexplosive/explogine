@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
 using ExplogineCore;
-using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
 public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
+    protected BasicGameCartridge(App app) : base(app)
+    {
+    }
+
+    public abstract void AddCommandLineParameters(CommandLineParametersWriter parameters);
+    public abstract IEnumerable<ILoadEvent?> LoadEvents(Painter painter);
+
     public override void Unload()
     {
     }
@@ -15,7 +20,4 @@ public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, IComma
     {
         return false;
     }
-
-    public abstract void AddCommandLineParameters(CommandLineParametersWriter parameters);
-    public abstract IEnumerable<ILoadEvent?> LoadEvents(Painter painter);
 }

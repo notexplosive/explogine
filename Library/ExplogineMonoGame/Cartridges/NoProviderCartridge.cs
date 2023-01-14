@@ -1,10 +1,11 @@
-﻿using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
-
-namespace ExplogineMonoGame.Cartridges;
+﻿namespace ExplogineMonoGame.Cartridges;
 
 public abstract class NoProviderCartridge : Cartridge
 {
+    protected NoProviderCartridge(App app) : base(app)
+    {
+    }
+
     public override void Unload()
     {
     }

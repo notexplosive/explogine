@@ -5,7 +5,6 @@ using ExplogineCore.Data;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Debugging;
-using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
@@ -13,22 +12,23 @@ namespace ExplogineMonoGame;
 
 internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 {
-    private readonly LinkedList<Cartridge> _list = new();
-    private bool _hasCrashed;
     private readonly App _app;
-    private bool HasCurrent => _list.First != null;
-    private Cartridge Current => _list.First!.Value;
+    private readonly LinkedList<Cartridge> _list = new();
     private Cartridge _debugCartridge;
-    public bool IsFrozen { get; set; }
+    private bool _hasCrashed;
 
     public CartridgeChain(App app)
     {
         _app = app;
         _debugCartridge = new DebugCartridge(app);
     }
-    
+
+    private bool HasCurrent => _list.First != null;
+    private Cartridge Current => _list.First!.Value;
+    public bool IsFrozen { get; set; }
+
     /// <summary>
-    /// The "Game Cartridge" is the last cartridge in the chain. This is what the user provided wrapped in a MetaCartridge.
+    ///     The "Game Cartridge" is the last cartridge in the chain. This is what the user provided wrapped in a MetaCartridge.
     /// </summary>
     /// <exception cref="Exception"></exception>
     public MultiCartridge GameCartridge
@@ -44,14 +44,6 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
     }
 
-    public event Action? AboutToLoadLastCartridge;
-
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
-    {
-        _debugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
-        Current.UpdateInput(input, hitTestStack.AddLayer(_app.Window.ScreenToCanvas, Depth.Middle + 1));
-    }
-
     public void Update(float dt)
     {
         _debugCartridge.Update(dt);
@@ -60,6 +52,14 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
             UpdateCurrentCartridge(dt);
         }
     }
+
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    {
+        _debugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
+        Current.UpdateInput(input, hitTestStack.AddLayer(_app.Window.ScreenToCanvas, Depth.Middle + 1));
+    }
+
+    public event Action? AboutToLoadLastCartridge;
 
     public void UpdateCurrentCartridge(float dt)
     {
@@ -112,7 +112,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
         else
         {
-            Append(new MultiCartridge(cartridge));
+            Append(new MultiCartridge(_app, cartridge));
         }
     }
 
@@ -146,7 +146,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void SetupLoadingCartridge(Loader loader)
     {
-        var loadingCartridge = new LoadingCartridge(loader);
+        var loadingCartridge = new LoadingCartridge(_app, loader);
         StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(_debugCartridge.OnCartridgeStarted);
@@ -162,11 +162,11 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
 
         _hasCrashed = true;
-        var crashCartridge = new CrashCartridge(exception);
+        var crashCartridge = new CrashCartridge(_app, exception);
         _list.Clear();
         _list.AddFirst(crashCartridge);
         StartCartridgeAndSetRenderResolution(crashCartridge);
-        _debugCartridge = new BlankCartridge();
+        _debugCartridge = new BlankCartridge(_app);
     }
 
     public IEnumerable<T> GetAllCartridgesDerivedFrom<T>()

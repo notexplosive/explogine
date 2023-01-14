@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ExplogineCore;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -18,7 +17,7 @@ public class MultiCartridge : BasicGameCartridge
     private readonly HashSet<int> _startedCartridges = new();
     private int _currentCartridgeIndexImpl;
 
-    public MultiCartridge(Cartridge primaryCartridge, params Cartridge[] extraCartridges)
+    public MultiCartridge(App app, Cartridge primaryCartridge, params Cartridge[] extraCartridges) : base(app)
     {
         _cartridges.Add(primaryCartridge);
         _cartridges.AddRange(extraCartridges);
@@ -55,14 +54,16 @@ public class MultiCartridge : BasicGameCartridge
 
         var targetType = CurrentCartridge.GetType();
         var newCart = (Cartridge?) Activator.CreateInstance(targetType);
-        _cartridges[i] = newCart ?? throw new Exception($"Failed to create a new {targetType.Name}, maybe it doesn't have a parameterless constructor?");
+        _cartridges[i] = newCart ??
+                         throw new Exception(
+                             $"Failed to create a new {targetType.Name}, maybe it doesn't have a parameterless constructor?");
 
         if (i == CurrentCartridgeIndex)
         {
             StartCurrentCartridge();
         }
     }
-    
+
     public void RegenerateCurrentCartridge()
     {
         RegenerateCartridge(CurrentCartridgeIndex);
@@ -110,20 +111,19 @@ public class MultiCartridge : BasicGameCartridge
         {
             index = 0;
         }
-        
+
         SwapTo(index);
     }
-    
+
     private void StartCurrentCartridge()
     {
         Client.Window.SetRenderResolution(CurrentCartridge.CartridgeConfig.RenderResolution);
-        
+
         if (!_startedCartridges.Contains(CurrentCartridgeIndex))
         {
             CurrentCartridge.OnCartridgeStarted();
             _startedCartridges.Add(CurrentCartridgeIndex);
         }
-
     }
 
     public override void OnCartridgeStarted()
@@ -150,7 +150,7 @@ public class MultiCartridge : BasicGameCartridge
         CurrentCartridge.UpdateInput(input, hitTestStack);
         AfterUpdateInput(input, hitTestStack);
     }
-    
+
     protected virtual IEnumerable<ILoadEvent?> MetaLoadEvents()
     {
         yield return null;
@@ -171,7 +171,7 @@ public class MultiCartridge : BasicGameCartridge
     protected virtual void BeforeUpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
-    
+
     protected virtual void AfterUpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
@@ -201,7 +201,7 @@ public class MultiCartridge : BasicGameCartridge
         {
             yield return loadEvent;
         }
-        
+
         foreach (var cartridge in _cartridges)
         {
             if (cartridge is ILoadEventProvider provider)

@@ -1,10 +1,15 @@
 ﻿using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
 public class BlankCartridge : Cartridge
 {
+    public BlankCartridge(App app) : base(app)
+    {
+    }
+
+    public override CartridgeConfig CartridgeConfig { get; } = new();
+
     public override void OnCartridgeStarted()
     {
     }
@@ -29,6 +34,4 @@ public class BlankCartridge : Cartridge
     public override void Unload()
     {
     }
-
-    public override CartridgeConfig CartridgeConfig { get; } = new();
 }
