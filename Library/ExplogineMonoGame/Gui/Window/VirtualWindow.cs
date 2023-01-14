@@ -128,6 +128,11 @@ public class VirtualWindow : IUpdateInputHook, IDisposable
     public readonly record struct NonResizableSizeSettings(Point StartingSize) : ISizeSettings
     {
         public bool AllowFullScreen => false;
+
+        public static NonResizableSizeSettings Create(Point startingSize)
+        {
+            return new NonResizableSizeSettings(startingSize);
+        }
     }
 
     public readonly record struct ResizableSizeSettings(Point StartingSize, Point MinimumSize,
