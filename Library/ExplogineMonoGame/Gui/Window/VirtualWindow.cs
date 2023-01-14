@@ -13,13 +13,13 @@ public class VirtualWindow : IUpdateInputHook, IDisposable
 
     private readonly VirtualWindowBody _body;
     private readonly VirtualWindowChrome _chrome;
-    public Widget Widget { get; }
+    public WindowWidget Widget { get; }
 
     public VirtualWindow(RectangleF rectangle, Settings settings, IWindowContent content,
         Depth depth, IApp parentApp)
     {
         CurrentSettings = settings;
-        Widget = new Widget(rectangle, depth - 1);
+        Widget = new WindowWidget(rectangle, depth - 1);
         _chrome = new VirtualWindowChrome(this, 32, settings.SizeSettings);
         _body = new VirtualWindowBody(this, content);
 

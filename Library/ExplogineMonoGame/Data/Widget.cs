@@ -75,3 +75,27 @@ public class Widget : IDisposable, IDrawHook
 
     public event Action? Resized;
 }
+
+public class WindowWidget : Widget, IWindow
+{
+    public WindowWidget(RectangleF rectangle, Depth depth) : base(rectangle, depth)
+    {
+    }
+
+    public WindowWidget(Vector2 position, Point size, Depth depth) : base(position, size, depth)
+    {
+    }
+
+    public Point RenderResolution => Size;
+    public bool IsInFocus => true;
+    public bool IsFullscreen => false;
+    public void SetRenderResolution(Point? optionalSize)
+    {
+        Client.Debug.LogWarning("SetRenderResolution is not supported on Widgets");
+    }
+
+    public void SetFullscreen(bool toggle)
+    {
+        Client.Debug.LogWarning("SetFullscreen is not supported on Widgets");
+    }
+}
