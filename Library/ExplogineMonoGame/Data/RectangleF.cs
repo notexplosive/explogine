@@ -563,4 +563,10 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return new RectangleF(Location, new Vector2(width, Size.Y));
     }
+
+    [Pure]
+    public RectangleF MovedByOrigin(DrawOrigin origin)
+    {
+        return Moved(origin.Value(Size));
+    }
 }
