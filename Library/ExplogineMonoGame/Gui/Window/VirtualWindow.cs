@@ -7,29 +7,29 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui.Window;
 
-public partial class VirtualWindow : IUpdateInputHook, IDisposable
+public class VirtualWindow : IUpdateInputHook, IDisposable
 {
     public delegate void WindowEvent(VirtualWindow window);
 
-    private readonly Body _body;
-    private readonly Chrome _chrome;
-    private readonly Widget _widget;
+    private readonly VirtualWindowBody _body;
+    private readonly VirtualWindowChrome _chrome;
+    public Widget Widget { get; }
 
     public VirtualWindow(RectangleF rectangle, Settings settings, IWindowContent content,
         Depth depth, IApp parentApp)
     {
         CurrentSettings = settings;
-        _widget = new Widget(rectangle, depth - 1);
-        _chrome = new Chrome(this, 32, settings.SizeSettings);
-        _body = new Body(this, content);
+        Widget = new Widget(rectangle, depth - 1);
+        _chrome = new VirtualWindowChrome(this, 32, settings.SizeSettings);
+        _body = new VirtualWindowBody(this, content);
 
         ParentApp = parentApp;
         Title = CurrentSettings.Title;
     }
 
     public Settings CurrentSettings { get; }
-    public Canvas Canvas => _widget.Canvas;
-    public RectangleF CanvasRectangle => _widget.Rectangle;
+    public Canvas Canvas => Widget.Canvas;
+    public RectangleF CanvasRectangle => Widget.Rectangle;
 
     public RectangleF WholeRectangle
     {
@@ -42,14 +42,14 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     public Depth StartingDepth
     {
         // off-by-one because we want the widget to be the source of truth, but we also want to draw chrome below the widget
-        get => _widget.Depth + 1;
-        set => _widget.Depth = value - 1;
+        get => Widget.Depth + 1;
+        set => Widget.Depth = value - 1;
     }
 
     public Vector2 Position
     {
         get => WholeRectangle.Location;
-        set => _widget.Position = value + new Vector2(0, TitleBarRectangle.Height);
+        set => Widget.Position = value + new Vector2(0, TitleBarRectangle.Height);
     }
 
     public StaticImageAsset? Icon => CurrentSettings.Icon;
@@ -58,12 +58,12 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
 
     public void Dispose()
     {
-        _widget.Dispose();
+        Widget.Dispose();
     }
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        _widget.UpdateHovered(hitTestStack);
+        Widget.UpdateHovered(hitTestStack);
         _chrome.UpdateInput(input, hitTestStack);
         _body.UpdateInput(input, hitTestStack);
     }
@@ -78,7 +78,7 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     {
         // SpriteBatch.Begin is already called
         _chrome.Draw(painter, theme, isInFocus);
-        _widget.Draw(painter);
+        Widget.Draw(painter);
     }
 
     public void DrawContent(Painter painter)
@@ -86,32 +86,32 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
         _body.Content.Draw(painter);
     }
 
-    private void SetRectangle(RectangleF resizedRect)
+    public void SetRectangle(RectangleF resizedRect)
     {
-        _widget.Rectangle = resizedRect;
+        Widget.Rectangle = resizedRect;
     }
 
-    private void RequestClose()
+    public void RequestClose()
     {
         RequestedClose?.Invoke(this);
     }
 
-    private void RequestMinimize()
+    public void RequestMinimize()
     {
         RequestedMinimize?.Invoke(this);
     }
 
-    private void RequestFullScreen()
+    public void RequestFullScreen()
     {
         RequestedFullScreen?.Invoke(this);
     }
 
-    private void RequestFocus()
+    public void RequestFocus()
     {
         RequestedFocus?.Invoke(this);
     }
 
-    private void ValidateBounds()
+    public void ValidateBounds()
     {
         RequestedConstrainToBounds?.Invoke(this);
     }

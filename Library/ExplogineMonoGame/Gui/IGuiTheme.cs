@@ -15,5 +15,5 @@ public interface IGuiTheme
     Color BackgroundColor { get; }
     IFontGetter Font { get; }
     void DrawTextInput(Painter painter, TextInputWidget textInputWidget);
-    void DrawWindowChrome(Painter painter, VirtualWindow.Chrome chrome, bool isInFocus);
+    void DrawWindowChrome(Painter painter, VirtualWindowChrome chrome, bool isInFocus);
 }
