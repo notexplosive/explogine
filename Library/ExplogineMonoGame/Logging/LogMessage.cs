@@ -13,9 +13,9 @@ public record LogMessage(LogMessageType Type, string Text)
     {
         switch (contentType)
         {
-            case LogMessageType.Warn:
+            case LogMessageType.Warning:
                 return Color.Yellow;
-            case LogMessageType.Fail:
+            case LogMessageType.Error:
                 return Color.Orange;
             default:
                 return Color.White;

@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ExplogineCore;
 
 namespace ExplogineMonoGame.Logging;
 
 public class FileLogCapture : ILogCapture
 {
-    private readonly IApp _app;
     private readonly List<LogMessage> _buffer = new();
+    private readonly RealFileSystem _fileSystem;
 
-    public FileLogCapture(IApp app)
+    public FileLogCapture()
     {
-        _app = app;
+        // This doesn't use Client.App.FileSystem because it might not be ready in time
+        _fileSystem = new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory);
         Client.Exited.Add(DumpBufferWithTimestamp);
     }
 
@@ -32,7 +34,7 @@ public class FileLogCapture : ILogCapture
     public void WriteBufferAsFilename(string fileName)
     {
         Client.Debug.Log($"Creating file {fileName}");
-        _app.FileSystem.Local.WriteToFile(fileName, GetLines().ToArray());
+        _fileSystem.WriteToFile(fileName, GetLines().ToArray());
     }
 
     private IEnumerable<string> GetLines()

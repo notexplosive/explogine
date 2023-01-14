@@ -5,9 +5,9 @@ namespace ExplogineMonoGame.Debugging;
 
 public class ClientDebug
 {
-    public ClientDebug(IApp app)
+    public ClientDebug()
     {
-        LogFile = new FileLogCapture(app);
+        LogFile = new FileLogCapture();
         Output.AddParallel(LogFile);
         Output.PushToStack(new ConsoleLogCapture());
     }
@@ -60,13 +60,13 @@ public class ClientDebug
     public void LogError(object? message, params object?[] paramsObjects)
     {
         var output = CreateOutputString(message, paramsObjects);
-        Output.Emit(new LogMessage(LogMessageType.Fail, output));
+        Output.Emit(new LogMessage(LogMessageType.Error, output));
     }
     
     public void LogWarning(object? message, params object?[] paramsObjects)
     {
         var output = CreateOutputString(message, paramsObjects);
-        Output.Emit(new LogMessage(LogMessageType.Warn, output));
+        Output.Emit(new LogMessage(LogMessageType.Warning, output));
     }
 
     private string CreateOutputString(object? message, params object?[] paramsObjects)

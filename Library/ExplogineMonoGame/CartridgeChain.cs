@@ -12,15 +12,13 @@ namespace ExplogineMonoGame;
 
 internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 {
-    private readonly IApp _app;
     private readonly LinkedList<Cartridge> _list = new();
     private Cartridge _debugCartridge;
     private bool _hasCrashed;
 
-    public CartridgeChain(IApp app)
+    public CartridgeChain()
     {
-        _app = app;
-        _debugCartridge = new DebugCartridge(app);
+        _debugCartridge = new DebugCartridge(Client.App);
     }
 
     private bool HasCurrent => _list.First != null;
@@ -56,7 +54,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         _debugCartridge.UpdateInput(input, hitTestStack.AddLayer(Matrix.Identity, Depth.Middle));
-        Current.UpdateInput(input, hitTestStack.AddLayer(_app.Window.ScreenToCanvas, Depth.Middle + 1));
+        Current.UpdateInput(input, hitTestStack.AddLayer(Client.App.Window.ScreenToCanvas, Depth.Middle + 1));
     }
 
     public event Action? AboutToLoadLastCartridge;
@@ -100,7 +98,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     private void StartCartridgeAndSetRenderResolution(Cartridge cartridge)
     {
-        _app.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
+        Client.App.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
         cartridge.OnCartridgeStarted();
     }
 
@@ -112,7 +110,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
         else
         {
-            Append(new MultiCartridge(_app, cartridge));
+            Append(new MultiCartridge(Client.App, cartridge));
         }
     }
 
@@ -146,7 +144,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void SetupLoadingCartridge(Loader loader)
     {
-        var loadingCartridge = new LoadingCartridge(_app, loader);
+        var loadingCartridge = new LoadingCartridge(Client.App, loader);
         StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(_debugCartridge.OnCartridgeStarted);
@@ -162,11 +160,11 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
 
         _hasCrashed = true;
-        var crashCartridge = new CrashCartridge(_app, exception);
+        var crashCartridge = new CrashCartridge(Client.App, exception);
         _list.Clear();
         _list.AddFirst(crashCartridge);
         StartCartridgeAndSetRenderResolution(crashCartridge);
-        _debugCartridge = new BlankCartridge(_app);
+        _debugCartridge = new BlankCartridge(Client.App);
     }
 
     public IEnumerable<T> GetAllCartridgesDerivedFrom<T>()

@@ -9,13 +9,6 @@ namespace ExplogineMonoGame;
 
 internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvider
 {
-    private readonly IApp _app;
-
-    public ClientEssentials(IApp app)
-    {
-        _app = app;
-    }
-    
     public void AddCommandLineParameters(CommandLineParametersWriter parameters)
     {
         parameters.RegisterParameter<int>("randomSeed");
@@ -41,7 +34,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
 
         if (args.GetValue<bool>("fullscreen"))
         {
-            Client.InitializedGraphics.Add(() => _app.Window.SetFullscreen(true));
+            Client.InitializedGraphics.Add(() => Client.App.Window.SetFullscreen(true));
         }
 
         if (args.GetValue<bool>("help"))

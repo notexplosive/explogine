@@ -3,6 +3,6 @@
 public enum LogMessageType
 {
     Info,
-    Warn,
-    Fail
+    Warning,
+    Error
 }

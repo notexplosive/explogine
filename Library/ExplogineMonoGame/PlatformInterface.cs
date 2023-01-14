@@ -4,6 +4,6 @@ namespace ExplogineMonoGame;
 
 public interface IPlatformInterface
 {
-    PlatformAgnosticWindow PlatformAgnosticWindow { get; }
+    PlatformAgnosticWindow PlatformWindow { get; }
     IFileSystem ContentFileSystem { get; }
 }

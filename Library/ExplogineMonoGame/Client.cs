@@ -18,7 +18,6 @@ public static class Client
     // The `OnceReady` initialization needs to happen at the top, other static initializers depend on these
     public static readonly OnceReady FinishedLoading = new();
     public static readonly OnceReady InitializedGraphics = new();
-
     public static readonly OnceReady Exited = new();
     //
 
@@ -26,8 +25,8 @@ public static class Client
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
-    private static readonly ClientApp App = new();
-    internal static readonly CartridgeChain CartridgeChain = new(Client.App);
+    internal static readonly ClientApp App = new();
+    internal static readonly CartridgeChain CartridgeChain = new();
     internal static PlatformAgnosticWindow PlatformWindow => (Client.App.Window as PlatformAgnosticWindow)!;
     internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
@@ -66,12 +65,12 @@ public static class Client
     /// <summary>
     ///     Demo Recorder/Playback.
     /// </summary>
-    public static Demo Demo { get; } = new(Client.App);
+    public static Demo Demo { get; } = new();
 
     /// <summary>
     ///     Debug tools.
     /// </summary>
-    public static ClientDebug Debug { get; } = new(Client.App);
+    public static ClientDebug Debug { get; } = new();
 
     /// <summary>
     ///     Gives access to Clean and Dirty random and noise.
@@ -88,7 +87,7 @@ public static class Client
     /// </summary>
     public static HardwareCursor Cursor { get; } = new();
 
-    private static ClientEssentials Essentials { get; } = new(Client.App);
+    private static ClientEssentials Essentials { get; } = new();
 
     public static string ContentBaseDirectory => "Content";
 
@@ -116,7 +115,7 @@ public static class Client
         // Setup Platform
         Client.Headless = false;
 
-        var window = platform.PlatformAgnosticWindow;
+        var window = platform.PlatformWindow;
         var fileSystem = new ClientFileSystem(
             new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),
             new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
