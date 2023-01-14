@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace ExplogineMonoGame;
+﻿namespace ExplogineMonoGame;
 
 internal class ClientApp : IApp
 {
-    private bool _isInitialized;
     private ClientFileSystem _fileSystem;
+    private bool _isInitialized;
     private PlatformAgnosticWindow _window;
 
     public ClientApp()
@@ -18,12 +16,12 @@ internal class ClientApp : IApp
     {
         get
         {
-            if (_isInitialized)
+            if (!_isInitialized)
             {
-                return _window;
+                Client.Debug.LogError("Attempted to access Window before ClientApp was initialized");
             }
 
-            throw new Exception("Attempted to access Window before ClientApp was initialized");
+            return _window;
         }
     }
 
@@ -31,12 +29,12 @@ internal class ClientApp : IApp
     {
         get
         {
-            if (_isInitialized)
+            if (!_isInitialized)
             {
-                return _fileSystem;
+                Client.Debug.LogError("Attempted to access FileSystem before ClientApp was initialized");
             }
 
-            throw new Exception("Attempted to access FileSystem before ClientApp was initialized");
+            return _fileSystem;
         }
     }
 
