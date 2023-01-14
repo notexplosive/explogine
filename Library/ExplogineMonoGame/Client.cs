@@ -109,6 +109,8 @@ public static class Client
     /// </summary>
     public static bool Headless { get; private set; } = true;
 
+    public static HardwareCursor Cursor { get; } = new();
+
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop)
     /// </summary>
@@ -116,7 +118,7 @@ public static class Client
     /// <param name="windowConfig">Config object for client startup</param>
     /// <param name="gameCartridgeCreator">A method that will return the cartridge for your game</param>
     /// <param name="platform">Platform plugin for your platform</param>
-    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<App,Cartridge> gameCartridgeCreator,
+    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<App, Cartridge> gameCartridgeCreator,
         IPlatformInterface platform)
     {
         // Setup Platform
@@ -141,7 +143,8 @@ public static class Client
         // Setup Cartridges
         if (!skipIntro)
         {
-            Client.CartridgeChain.Append(new IntroCartridge(Client.app, "NotExplosive.net", Client.Random.Dirty.NextUInt(), 0.25f));
+            Client.CartridgeChain.Append(new IntroCartridge(Client.app, "NotExplosive.net",
+                Client.Random.Dirty.NextUInt(), 0.25f));
         }
 
         Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.app));
@@ -206,7 +209,7 @@ public static class Client
             hitTest.Resolve(Client.Input.Mouse.Position());
             Client.CartridgeChain.Update(dt);
             Client.PlatformWindow.TextEnteredBuffer = new TextEnteredBuffer();
-            Client.PlatformWindow.ResolveSetCursor();
+            Client.Cursor.Resolve();
         }
     }
 

@@ -33,7 +33,7 @@ public class RectResizer
                     _edgeHovered = edge;
                     if (!mouseDown)
                     {
-                        Client.Window.SetCursor(MouseCursorExtensions.GetCursorForEdge(edge));
+                        Client.Cursor.Set(MouseCursorExtensions.GetCursorForEdge(edge));
                     }
                 });
             }
@@ -63,7 +63,7 @@ public class RectResizer
 
         if (_edgeDrag.IsDragging)
         {
-            Client.Window.SetCursor(MouseCursorExtensions.GetCursorForEdge(_edgeGrabbed));
+            Client.Cursor.Set(MouseCursorExtensions.GetCursorForEdge(_edgeGrabbed));
             var sizeDelta = _edgeDrag.TotalDelta;
             var overflow = startingRect.Size + sizeDelta - minimumSize.ToVector2();
             if (overflow.X < 0)

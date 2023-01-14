@@ -67,7 +67,7 @@ public class Slider : IGuiWidget
 
         if (ThumbHovered)
         {
-            Client.Window.SetCursor(MouseCursor.Hand);
+            Client.Cursor.Set(MouseCursor.Hand);
         }
 
         if (input.Mouse.GetButton(MouseButton.Left).WasPressed)

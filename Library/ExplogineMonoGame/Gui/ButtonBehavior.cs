@@ -29,7 +29,7 @@ public class ButtonBehavior
             {
                 IsEngaged = true;
             }
-            Client.Window.SetCursor(MouseCursor.Hand);
+            Client.Cursor.Set(MouseCursor.Hand);
         }
 
         if (wasMouseReleased)

@@ -16,7 +16,6 @@ public interface IWindow
     Matrix ScreenToCanvas { get; }
     Matrix CanvasToScreen { get; }
     Canvas Canvas { get; }
-    void SetCursor(MouseCursor cursor);
     void SetRenderResolution(Point? optionalSize);
     void SetFullscreen(bool toggle);
 }

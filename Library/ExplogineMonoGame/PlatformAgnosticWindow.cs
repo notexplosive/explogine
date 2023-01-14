@@ -9,7 +9,6 @@ namespace ExplogineMonoGame;
 public class PlatformAgnosticWindow : IWindow
 {
     private WindowConfig _currentConfig;
-    private MouseCursor? _pendingCursor;
     private Rectangle _rememberedBounds;
     private Point? _specifiedRenderResolution;
     protected GameWindow Window = null!;
@@ -179,23 +178,5 @@ public class PlatformAgnosticWindow : IWindow
         }
 
         Resized?.Invoke(windowSize);
-    }
-
-    public void SetCursor(MouseCursor cursor)
-    {
-        _pendingCursor = cursor;
-    }
-
-    /// <summary>
-    ///     Run at the end of frame so we're only setting the cursor once per frame
-    /// </summary>
-    public void ResolveSetCursor()
-    {
-        if (_pendingCursor != null)
-        {
-            Mouse.SetCursor(_pendingCursor);
-        }
-
-        _pendingCursor = MouseCursor.Arrow;
     }
 }

@@ -304,7 +304,7 @@ public class TextInputWidget : Widget, IUpdateInputHook
         {
             if (_hoveredLetterIndex != null)
             {
-                Client.Window.SetCursor(MouseCursor.IBeam);
+                Client.Cursor.Set(MouseCursor.IBeam);
             }
 
             var leaveAnchor = input.Keyboard.Modifiers.ShiftInclusive;
