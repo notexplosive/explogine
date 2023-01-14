@@ -220,7 +220,7 @@ public class Painter
         settings.SourceRectangle ??= texture.Bounds;
 
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
-        var origin = settings.Origin.Value(settings.SourceRectangle.Value.Size);// .StraightDivide(scale);
+        var origin = settings.Origin.Value(settings.SourceRectangle.Value.Size);
 
         // destination is downcast to a Rectangle
         _spriteBatch.Draw(texture, destinationRectangle.ToRectangle(), settings.SourceRectangle, settings.Color,
