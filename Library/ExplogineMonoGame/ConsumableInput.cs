@@ -59,10 +59,10 @@ public class ConsumableInput
             }
             return _raw.ScrollDelta();
         }
-
-        public Vector2 Delta(Matrix? matrix = null)
+        
+        public Vector2 Delta(Matrix? toCanvas = null)
         {
-            return _raw.Delta(matrix);
+            return _raw.Delta(toCanvas);
         }
 
         public IEnumerable<(ButtonFrameState, MouseButton)> EachButton()
