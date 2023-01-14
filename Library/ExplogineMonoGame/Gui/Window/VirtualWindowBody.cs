@@ -31,6 +31,6 @@ internal class VirtualWindowBody : IUpdateInputHook
         });
         _bodyClickable.Poll(input.Mouse, _contentHovered);
 
-        Content.UpdateInput(input, contentHitTestLayer);
+        Content.UpdateInputInWindow(input, contentHitTestLayer);
     }
 }

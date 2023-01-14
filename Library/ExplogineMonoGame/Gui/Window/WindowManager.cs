@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
@@ -72,12 +73,23 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
+        var inputWithoutKeyboard = input.WithoutKeyboard();
         for (var i = _windows.Count - 1; i >= 0; i--)
         {
+            var isTopWindow = i == _windows.Count - 1;
             var window = _windows[i];
+
             if (!_windowStates[window].IsMinimized)
             {
-                window.UpdateInput(input, hitTestStack);
+                if (isTopWindow)
+                {
+                    window.UpdateInput(input, hitTestStack);
+                }
+                else
+                {
+                    window.UpdateInput(inputWithoutKeyboard, hitTestStack);
+                }
+
             }
         }
     }

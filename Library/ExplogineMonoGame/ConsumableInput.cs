@@ -7,16 +7,25 @@ namespace ExplogineMonoGame;
 
 public class ConsumableInput
 {
-    public ConsumableInput(InputFrameState raw)
+    public ConsumableInput(ConsumableKeyboard keyboard, ConsumableMouse mouse)
     {
-        Raw = raw;
-        Keyboard = new ConsumableKeyboard(Raw.Keyboard);
-        Mouse = new ConsumableMouse(Raw.Mouse);
+        Keyboard = keyboard;
+        Mouse = mouse;
     }
 
-    public InputFrameState Raw { get; }
+    public ConsumableInput(InputFrameState raw) : this(new ConsumableKeyboard(raw.Keyboard),
+        new ConsumableMouse(raw.Mouse))
+    {
+    }
+
     public ConsumableKeyboard Keyboard { get; }
     public ConsumableMouse Mouse { get; }
+
+    public ConsumableInput WithoutKeyboard()
+    {
+        var emptyKeyboard = new KeyboardFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
+        return new ConsumableInput(new ConsumableKeyboard(emptyKeyboard), Mouse);
+    }
 
     public class ConsumableMouse
     {
@@ -31,13 +40,15 @@ public class ConsumableInput
 
         public ButtonFrameState GetButton(MouseButton button, bool shouldConsume = false)
         {
-            var result = _consumedButtons.Contains(button) ? new ButtonFrameState(false, false) : _raw.GetButton(button);
+            var result = _consumedButtons.Contains(button)
+                ? new ButtonFrameState(false, false)
+                : _raw.GetButton(button);
 
             if (shouldConsume)
             {
                 Consume(button);
             }
-            
+
             return result;
         }
 
@@ -52,14 +63,15 @@ public class ConsumableInput
             {
                 return 0;
             }
-            
+
             if (shouldConsume)
             {
                 _scrollDeltaIsConsumed = true;
             }
+
             return _raw.ScrollDelta();
         }
-        
+
         public Vector2 Delta(Matrix? toCanvas = null)
         {
             return _raw.Delta(toCanvas);
@@ -111,6 +123,7 @@ public class ConsumableInput
             {
                 Consume(keys);
             }
+
             return result;
         }
 
@@ -118,7 +131,7 @@ public class ConsumableInput
         {
             var result = new List<char>();
 
-            foreach(var character in _raw.GetEnteredCharacters())
+            foreach (var character in _raw.GetEnteredCharacters())
             {
                 if (!_consumedTextInput.Contains(character))
                 {
@@ -157,7 +170,7 @@ public class ConsumableInput
         public void ConsumeTextInput(char c)
         {
             _consumedTextInput.Add(c);
-            
+
             var keys = InputUtil.CharToKeys(c);
             if (keys.HasValue && !_consumedKeys.Contains(keys.Value))
             {

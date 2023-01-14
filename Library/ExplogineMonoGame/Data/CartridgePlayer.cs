@@ -1,21 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Data;
 
-public interface ICartridgePlayer : IUpdateHook, IUpdateInputHook, IDrawHook
+public interface ICartridgePlayer : IUpdateHook, IUpdateInputHook, IDrawHook, ILoadEventProvider
 {
 }
 
 public class CartridgePlayer<TCartridge> : ICartridgePlayer where TCartridge : Cartridge
 {
     private readonly TCartridge _cartridge;
-    private readonly IWindow _window;
 
     public CartridgePlayer(IWindow window)
     {
-        _window = window;
         var constructedCartridge =
             (TCartridge?) Activator.CreateInstance(typeof(TCartridge), new App(window, new ClientFileSystem()));
 
@@ -39,5 +38,16 @@ public class CartridgePlayer<TCartridge> : ICartridgePlayer where TCartridge : C
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         _cartridge.UpdateInput(input, hitTestStack);
+    }
+
+    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
+    {
+        if (_cartridge is ILoadEventProvider provider)
+        {
+            foreach (var loadEvent in provider.LoadEvents(painter))
+            {
+                yield return loadEvent;
+            }
+        }
     }
 }

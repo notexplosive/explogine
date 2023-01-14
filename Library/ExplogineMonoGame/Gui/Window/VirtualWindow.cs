@@ -83,7 +83,7 @@ public class VirtualWindow : IUpdateInputHook, IDisposable
 
     public void DrawContent(Painter painter)
     {
-        _body.Content.Draw(painter);
+        _body.Content.DrawWindowContent(painter);
     }
 
     public void SetRectangle(RectangleF resizedRect)
