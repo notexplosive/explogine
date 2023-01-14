@@ -1,4 +1,5 @@
 ﻿using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Gui.Window;
 using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Gui;
@@ -20,4 +21,6 @@ public interface IWindowContent
     /// </summary>
     /// <param name="painter"></param>
     void DrawWindowContent(Painter painter);
+
+    void Initialize(VirtualWindow parentWindow);
 }

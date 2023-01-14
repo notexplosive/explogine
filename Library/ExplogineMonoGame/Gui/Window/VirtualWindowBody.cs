@@ -15,6 +15,8 @@ internal class VirtualWindowBody : IUpdateInputHook
         Content = content;
         _parentWindow = parentWindow;
         _bodyClickable.ClickInitiated += parentWindow.RequestFocus;
+
+        Content.Initialize(parentWindow);
     }
 
     public IWindowContent Content { get; }
