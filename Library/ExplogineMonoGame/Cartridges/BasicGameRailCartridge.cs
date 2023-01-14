@@ -7,7 +7,7 @@ public abstract class BasicGameRailCartridge : BasicGameCartridge
 {
     protected readonly Rail Rail = new();
 
-    protected BasicGameRailCartridge(App app) : base(app)
+    protected BasicGameRailCartridge(IApp app) : base(app)
     {
     }
 

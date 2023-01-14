@@ -20,7 +20,7 @@ public class LoadingCartridge : Cartridge
     private int _endingDelayFrames = 10;
     private int _startingDelayFrames = 10;
 
-    public LoadingCartridge(App app, Loader loader) : base(app)
+    public LoadingCartridge(IApp app, Loader loader) : base(app)
     {
         _loader = loader;
 

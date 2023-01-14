@@ -7,13 +7,13 @@ namespace ExplogineMonoGame.Input;
 
 public class Demo : ILoadEventProvider
 {
-    private readonly App _app;
+    private readonly IApp _app;
     private readonly List<InputSnapshot> _records = new();
 
     private DemoState _demoState = DemoState.Stopped;
     private int _playHeadIndex;
 
-    internal Demo(App app)
+    internal Demo(IApp app)
     {
         _app = app;
     }

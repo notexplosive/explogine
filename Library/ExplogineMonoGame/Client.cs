@@ -110,7 +110,7 @@ public static class Client
     /// <param name="windowConfig">Config object for client startup</param>
     /// <param name="gameCartridgeCreator">A method that will return the cartridge for your game</param>
     /// <param name="platform">Platform plugin for your platform</param>
-    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<App, Cartridge> gameCartridgeCreator,
+    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<IApp, Cartridge> gameCartridgeCreator,
         IPlatformInterface platform)
     {
         // Setup Platform

@@ -10,14 +10,14 @@ namespace ExplogineMonoGame.Debugging;
 
 public class FrameStep : IUpdateInputHook
 {
-    private readonly App _app;
+    private readonly IApp _app;
     private readonly TweenableFloat _lineThickness = new();
     private readonly TweenableFloat _opacity = new();
     private readonly TweenableFloat _shrinkAmount = new();
     private readonly SequenceTween _tween = new();
     private bool _shouldDisplay;
 
-    public FrameStep(App app)
+    public FrameStep(IApp app)
     {
         _app = app;
     }

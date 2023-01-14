@@ -16,7 +16,7 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
     private readonly Widget _widget;
 
     public VirtualWindow(RectangleF rectangle, Settings settings, IWindowContent content,
-        Depth depth, App parentApp)
+        Depth depth, IApp parentApp)
     {
         CurrentSettings = settings;
         _widget = new Widget(rectangle, depth - 1);
@@ -54,7 +54,7 @@ public partial class VirtualWindow : IUpdateInputHook, IDisposable
 
     public StaticImageAsset? Icon => CurrentSettings.Icon;
     public string Title { get; }
-    public App ParentApp { get; }
+    public IApp ParentApp { get; }
 
     public void Dispose()
     {

@@ -10,10 +10,10 @@ namespace ExplogineMonoGame.Debugging;
 
 internal class DemoInterface : IUpdateHook
 {
-    private readonly App _app;
+    private readonly IApp _app;
     private float _totalTime;
 
-    public DemoInterface(App app)
+    public DemoInterface(IApp app)
     {
         _app = app;
     }

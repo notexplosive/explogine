@@ -7,7 +7,7 @@ public abstract class NoProviderRailCartridge : NoProviderCartridge
 {
     protected readonly Rail Rail = new();
 
-    protected NoProviderRailCartridge(App app) : base(app)
+    protected NoProviderRailCartridge(IApp app) : base(app)
     {
     }
 

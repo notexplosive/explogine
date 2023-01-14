@@ -10,13 +10,13 @@ namespace ExplogineMonoGame.Debugging;
 
 internal class SnapshotTaker : IUpdateInputHook
 {
-    private readonly App _app;
+    private readonly IApp _app;
     private float _timer = 0.1f;
     private float _timerMax = 2f;
     private bool _timerReady;
     private DateTime _timeLastFrame;
 
-    public SnapshotTaker(App app)
+    public SnapshotTaker(IApp app)
     {
         _app = app;
     }

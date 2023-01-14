@@ -5,7 +5,7 @@ namespace ExplogineMonoGame.Cartridges;
 
 public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, ICommandLineParameterProvider
 {
-    protected BasicGameCartridge(App app) : base(app)
+    protected BasicGameCartridge(IApp app) : base(app)
     {
     }
 

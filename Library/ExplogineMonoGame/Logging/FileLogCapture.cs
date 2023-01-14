@@ -7,10 +7,10 @@ namespace ExplogineMonoGame.Logging;
 
 public class FileLogCapture : ILogCapture
 {
-    private readonly App _app;
+    private readonly IApp _app;
     private readonly List<LogMessage> _buffer = new();
 
-    public FileLogCapture(App app)
+    public FileLogCapture(IApp app)
     {
         _app = app;
         Client.Exited.Add(DumpBufferWithTimestamp);

@@ -2,7 +2,7 @@
 
 public abstract class NoProviderCartridge : Cartridge
 {
-    protected NoProviderCartridge(App app) : base(app)
+    protected NoProviderCartridge(IApp app) : base(app)
     {
     }
 

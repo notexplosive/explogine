@@ -18,7 +18,7 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
     private readonly SnapshotTaker _snapshotTaker;
     private bool _useSnapshotTimer;
 
-    public DebugCartridge(App app) : base(app)
+    public DebugCartridge(IApp app) : base(app)
     {
         _demoInterface = new(app);
         _frameStep = new(app);

@@ -17,7 +17,7 @@ public class MultiCartridge : BasicGameCartridge
     private readonly HashSet<int> _startedCartridges = new();
     private int _currentCartridgeIndexImpl;
 
-    public MultiCartridge(App app, Cartridge primaryCartridge, params Cartridge[] extraCartridges) : base(app)
+    public MultiCartridge(IApp app, Cartridge primaryCartridge, params Cartridge[] extraCartridges) : base(app)
     {
         _cartridges.Add(primaryCartridge);
         _cartridges.AddRange(extraCartridges);

@@ -19,7 +19,7 @@ public class IntroCartridge : Cartridge
     private bool _useWholeWord = true;
     private Figure _wholeWord;
 
-    public IntroCartridge(App app, string text, uint index, float startingDelay = 0f) : base(app)
+    public IntroCartridge(IApp app, string text, uint index, float startingDelay = 0f) : base(app)
     {
         _text = text;
         _index = index;

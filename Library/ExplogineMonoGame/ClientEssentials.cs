@@ -9,9 +9,9 @@ namespace ExplogineMonoGame;
 
 internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvider
 {
-    private readonly App _app;
+    private readonly IApp _app;
 
-    public ClientEssentials(App app)
+    public ClientEssentials(IApp app)
     {
         _app = app;
     }

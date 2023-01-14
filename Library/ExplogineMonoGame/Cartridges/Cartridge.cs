@@ -5,12 +5,12 @@ namespace ExplogineMonoGame.Cartridges;
 
 public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
 {
-    protected Cartridge(App app)
+    protected Cartridge(IApp app)
     {
         App = app;
     }
 
-    public App App { get; }
+    public IApp App { get; }
     public abstract CartridgeConfig CartridgeConfig { get; }
     public abstract void Draw(Painter painter);
     public abstract void Update(float dt);

@@ -13,12 +13,12 @@ public delegate Asset LoadEventFunction();
 
 public class Loader
 {
-    private readonly App _app;
+    private readonly IApp _app;
     private readonly ContentManager _content;
     private readonly List<ILoadEvent> _loadEvents = new();
     private int _loadEventIndex;
 
-    public Loader(App app, ContentManager content)
+    public Loader(IApp app, ContentManager content)
     {
         _app = app;
         _content = content;

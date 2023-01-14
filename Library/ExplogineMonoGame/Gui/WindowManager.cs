@@ -12,11 +12,11 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     private readonly int _depthPerWindow = 10;
     private readonly RectangleF _desktopBoundingRect;
     private readonly SimpleGuiTheme _uiTheme;
-    private readonly App _app;
+    private readonly IApp _app;
     private readonly List<VirtualWindow> _windows = new();
     private readonly Dictionary<VirtualWindow, WindowState> _windowStates = new();
 
-    public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme, App app)
+    public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme, IApp app)
     {
         _desktopBoundingRect = desktopBoundingRect;
         _uiTheme = uiTheme;

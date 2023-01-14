@@ -12,12 +12,12 @@ namespace ExplogineMonoGame;
 
 internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 {
-    private readonly App _app;
+    private readonly IApp _app;
     private readonly LinkedList<Cartridge> _list = new();
     private Cartridge _debugCartridge;
     private bool _hasCrashed;
 
-    public CartridgeChain(App app)
+    public CartridgeChain(IApp app)
     {
         _app = app;
         _debugCartridge = new DebugCartridge(app);
