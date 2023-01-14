@@ -4,7 +4,7 @@ using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
-namespace ExplogineMonoGame.Gui;
+namespace ExplogineMonoGame.Gui.Window;
 
 public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDrawHook
 {

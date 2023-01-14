@@ -7,7 +7,7 @@ using ExplogineMonoGame.Layout;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
-namespace ExplogineMonoGame.Gui;
+namespace ExplogineMonoGame.Gui.Window;
 
 partial class VirtualWindow
 {

@@ -1,6 +1,7 @@
 ﻿using System;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Gui.Window;
 using ExplogineMonoGame.Layout;
 using Microsoft.Xna.Framework;
 

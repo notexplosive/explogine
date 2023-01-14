@@ -1,5 +1,6 @@
 ﻿using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
+using ExplogineMonoGame.Gui.Window;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;

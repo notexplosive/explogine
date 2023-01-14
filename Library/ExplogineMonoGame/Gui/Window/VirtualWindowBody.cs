@@ -2,7 +2,7 @@
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Rails;
 
-namespace ExplogineMonoGame.Gui;
+namespace ExplogineMonoGame.Gui.Window;
 
 partial class VirtualWindow
 {
