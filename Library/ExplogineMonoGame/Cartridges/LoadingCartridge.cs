@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public class LoadingCartridge : ICartridge
+public class LoadingCartridge : Cartridge
 {
     private const int ProgressBarHeight = 40;
     private const int ProgressBarWidth = 400;
@@ -30,14 +30,14 @@ public class LoadingCartridge : ICartridge
         _statusRingBuffer = new LinkedList<string>();
     }
 
-    public CartridgeConfig CartridgeConfig { get; } = new();
+    public override CartridgeConfig CartridgeConfig { get; } = new();
 
-    public void OnCartridgeStarted()
+    public override void OnCartridgeStarted()
     {
         Client.FinishedLoading.Add(() => _doneLoading = true);
     }
 
-    public void Update(float dt)
+    public override void Update(float dt)
     {
         if (_startingDelayFrames > 0)
         {
@@ -74,7 +74,7 @@ public class LoadingCartridge : ICartridge
         }
     }
 
-    public void Draw(Painter painter)
+    public override void Draw(Painter painter)
     {
         // main canvas draw
         var loadingBarRect =
@@ -142,16 +142,16 @@ public class LoadingCartridge : ICartridge
         }
     }
 
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
 
-    public bool ShouldLoadNextCartridge()
+    public override bool ShouldLoadNextCartridge()
     {
         return _doneLoading;
     }
 
-    public void Unload()
+    public override void Unload()
     {
     }
 }

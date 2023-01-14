@@ -3,20 +3,14 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public abstract class NoProviderCartridge : ICartridge
+public abstract class NoProviderCartridge : Cartridge
 {
-    public abstract void OnCartridgeStarted();
-    public abstract void Update(float dt);
-    public abstract void Draw(Painter painter);
-    public abstract void UpdateInput(ConsumableInput input, HitTestStack hitTestStack);
-    public virtual void Unload()
+    public override void Unload()
     {
     }
 
-    public bool ShouldLoadNextCartridge()
+    public override bool ShouldLoadNextCartridge()
     {
         return false;
     }
-
-    public abstract CartridgeConfig CartridgeConfig { get; }
 }

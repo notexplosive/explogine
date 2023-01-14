@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public class IntroCartridge : ICartridge
+public class IntroCartridge : Cartridge
 {
     private readonly uint _index;
     private readonly List<Figure> _letters = new();
@@ -28,7 +28,7 @@ public class IntroCartridge : ICartridge
 
     public SequenceTween Tween { get; } = new();
 
-    public void OnCartridgeStarted()
+    public override void OnCartridgeStarted()
     {
         _wholeWord = new Figure(_text);
 
@@ -51,7 +51,7 @@ public class IntroCartridge : ICartridge
         Tween.Add(new WaitSecondsTween(2f));
     }
 
-    public void Update(float dt)
+    public override void Update(float dt)
     {
         _startingDelay -= dt;
         if (_startingDelay > 0)
@@ -71,7 +71,7 @@ public class IntroCartridge : ICartridge
         }
     }
 
-    public void Draw(Painter painter)
+    public override void Draw(Painter painter)
     {
         painter.BeginSpriteBatch(
             Matrix.CreateTranslation(new Vector3(-Client.Window.RenderResolution.ToVector2() / 2, 0))
@@ -121,7 +121,7 @@ public class IntroCartridge : ICartridge
         painter.EndSpriteBatch();
     }
 
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (input.Keyboard.IsAnyKeyDown() || input.Mouse.WasAnyButtonPressedOrReleased())
         {
@@ -129,16 +129,16 @@ public class IntroCartridge : ICartridge
         }
     }
 
-    public bool ShouldLoadNextCartridge()
+    public override bool ShouldLoadNextCartridge()
     {
         return Tween.IsDone() || _cancelEarly;
     }
 
-    public void Unload()
+    public override void Unload()
     {
     }
 
-    public CartridgeConfig CartridgeConfig { get; } = new();
+    public override CartridgeConfig CartridgeConfig { get; } = new();
 
     private SequenceTween FlyInLetters()
     {

@@ -14,11 +14,11 @@ namespace ExplogineMonoGame.Cartridges;
 /// </summary>
 public class MultiCartridge : BasicGameCartridge
 {
-    private readonly List<ICartridge> _cartridges = new();
+    private readonly List<Cartridge> _cartridges = new();
     private readonly HashSet<int> _startedCartridges = new();
     private int _currentCartridgeIndexImpl;
 
-    public MultiCartridge(ICartridge primaryCartridge, params ICartridge[] extraCartridges)
+    public MultiCartridge(Cartridge primaryCartridge, params Cartridge[] extraCartridges)
     {
         _cartridges.Add(primaryCartridge);
         _cartridges.AddRange(extraCartridges);
@@ -34,10 +34,10 @@ public class MultiCartridge : BasicGameCartridge
         }
     }
 
-    private ICartridge CurrentCartridge => _cartridges[CurrentCartridgeIndex];
+    private Cartridge CurrentCartridge => _cartridges[CurrentCartridgeIndex];
     public override CartridgeConfig CartridgeConfig => CurrentCartridge.CartridgeConfig;
 
-    public void RegenerateCartridge<T>() where T : ICartridge, new()
+    public void RegenerateCartridge<T>() where T : Cartridge, new()
     {
         for (var i = 0; i < _cartridges.Count; i++)
         {
@@ -54,7 +54,7 @@ public class MultiCartridge : BasicGameCartridge
         _cartridges[i].Unload();
 
         var targetType = CurrentCartridge.GetType();
-        var newCart = (ICartridge?) Activator.CreateInstance(targetType);
+        var newCart = (Cartridge?) Activator.CreateInstance(targetType);
         _cartridges[i] = newCart ?? throw new Exception($"Failed to create a new {targetType.Name}, maybe it doesn't have a parameterless constructor?");
 
         if (i == CurrentCartridgeIndex)
@@ -68,7 +68,7 @@ public class MultiCartridge : BasicGameCartridge
         RegenerateCartridge(CurrentCartridgeIndex);
     }
 
-    public void SwapTo<T>() where T : ICartridge
+    public void SwapTo<T>() where T : Cartridge
     {
         for (var i = 0; i < _cartridges.Count; i++)
         {

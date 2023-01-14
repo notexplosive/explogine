@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
-public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
+public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
 {
     private readonly DemoInterface _demoInterface;
     private readonly FrameStep _frameStep;
@@ -30,7 +30,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
     private Depth ConsoleOverlayDepth { get; } = Depth.Front + 5;
     private Depth FrameStepDepth { get; } = Depth.Front + 20;
 
-    public void OnCartridgeStarted()
+    public override void OnCartridgeStarted()
     {
         Client.Debug.Output.PushToStack(_logOverlay);
 
@@ -50,7 +50,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
         
     }
 
-    public void Update(float dt)
+    public override void Update(float dt)
     {
         _demoInterface.Update(dt);
         _logOverlay.Update(dt);
@@ -62,7 +62,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
         // We no longer do anything here, but we might someday
     }
 
-    public void Draw(Painter painter)
+    public override void Draw(Painter painter)
     { 
         if (Client.Debug.IsPassiveOrActive)
         {
@@ -84,7 +84,7 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
 
     }
 
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (input.Keyboard.Modifiers.ControlShift && input.Keyboard.GetButton(Keys.OemTilde).WasPressed)
         {
@@ -103,12 +103,12 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
         }
     }
 
-    public bool ShouldLoadNextCartridge()
+    public override bool ShouldLoadNextCartridge()
     {
         return false;
     }
 
-    public void Unload()
+    public override void Unload()
     {
     }
 
@@ -118,5 +118,5 @@ public class DebugCartridge : ICartridge, ILoadEventProvider, IEarlyDrawHook
             () => new GridBasedSpriteSheet("engine/demo-indicators", new Point(67, 23)));
     }
     
-    public CartridgeConfig CartridgeConfig { get; } = new();
+    public override CartridgeConfig CartridgeConfig { get; } = new();
 }

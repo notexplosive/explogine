@@ -5,7 +5,7 @@ namespace ExplogineDesktop;
 
 public static class Bootstrap
 {
-    public static void Run(string[] args, WindowConfig config, ICartridge gameCartridge, params string[] extraArgs)
+    public static void Run(string[] args, WindowConfig config, Cartridge gameCartridge, params string[] extraArgs)
     {
         var combinedArgs = new List<string>();
         // extraArgs come first so args can overwrite them

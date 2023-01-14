@@ -3,32 +3,32 @@ using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public class BlankCartridge : ICartridge
+public class BlankCartridge : Cartridge
 {
-    public void OnCartridgeStarted()
+    public override void OnCartridgeStarted()
     {
     }
 
-    public void Update(float dt)
+    public override void Update(float dt)
     {
     }
 
-    public void Draw(Painter painter)
+    public override void Draw(Painter painter)
     {
     }
 
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
 
-    public bool ShouldLoadNextCartridge()
+    public override bool ShouldLoadNextCartridge()
     {
         return false;
     }
 
-    public void Unload()
+    public override void Unload()
     {
     }
 
-    public CartridgeConfig CartridgeConfig { get; } = new();
+    public override CartridgeConfig CartridgeConfig { get; } = new();
 }

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public class CrashCartridge : ICartridge
+public class CrashCartridge : Cartridge
 {
     private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly string _reportText;
@@ -29,19 +29,19 @@ public class CrashCartridge : ICartridge
 
     public Exception ThrownException { get; }
 
-    public void OnCartridgeStarted()
+    public override void OnCartridgeStarted()
     {
     }
 
-    public void Update(float dt)
+    public override void Update(float dt)
     {
     }
     
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
 
-    public void Draw(Painter painter)
+    public override void Draw(Painter painter)
     {
         painter.BeginSpriteBatch(Matrix.Identity);
 
@@ -60,14 +60,14 @@ public class CrashCartridge : ICartridge
         painter.EndSpriteBatch();
     }
 
-    public bool ShouldLoadNextCartridge()
+    public override bool ShouldLoadNextCartridge()
     {
         return false;
     }
 
-    public void Unload()
+    public override void Unload()
     {
     }
 
-    public CartridgeConfig CartridgeConfig { get; } = new();
+    public override CartridgeConfig CartridgeConfig { get; } = new();
 }

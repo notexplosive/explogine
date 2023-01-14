@@ -13,12 +13,12 @@ namespace ExplogineMonoGame;
 
 internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 {
-    private readonly LinkedList<ICartridge> _list = new();
+    private readonly LinkedList<Cartridge> _list = new();
     private bool _hasCrashed;
     private readonly App _app;
     private bool HasCurrent => _list.First != null;
-    private ICartridge Current => _list.First!.Value;
-    private ICartridge _debugCartridge;
+    private Cartridge Current => _list.First!.Value;
+    private Cartridge _debugCartridge;
     public bool IsFrozen { get; set; }
 
     public CartridgeChain(App app)
@@ -98,13 +98,13 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
     }
 
-    private void StartCartridgeAndSetRenderResolution(ICartridge cartridge)
+    private void StartCartridgeAndSetRenderResolution(Cartridge cartridge)
     {
         _app.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
         cartridge.OnCartridgeStarted();
     }
 
-    public void AppendGameCartridge(ICartridge cartridge)
+    public void AppendGameCartridge(Cartridge cartridge)
     {
         if (cartridge is MultiCartridge meta)
         {
@@ -116,17 +116,17 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
     }
 
-    public void Append(ICartridge cartridge)
+    public void Append(Cartridge cartridge)
     {
         _list.AddLast(cartridge);
     }
 
-    private void Prepend(ICartridge cartridge)
+    private void Prepend(Cartridge cartridge)
     {
         _list.AddFirst(cartridge);
     }
 
-    private IEnumerable<ICartridge> GetAllCartridges()
+    private IEnumerable<Cartridge> GetAllCartridges()
     {
         foreach (var cartridge in _list)
         {

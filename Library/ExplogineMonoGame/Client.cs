@@ -116,7 +116,7 @@ public static class Client
     /// <param name="windowConfig">Config object for client startup</param>
     /// <param name="gameCartridge">Cartridge for your game</param>
     /// <param name="platform">Platform plugin for your platform</param>
-    public static void Start(string[] argsArray, WindowConfig windowConfig, ICartridge gameCartridge,
+    public static void Start(string[] argsArray, WindowConfig windowConfig, Cartridge gameCartridge,
         IPlatformInterface platform)
     {
         // Setup Platform
