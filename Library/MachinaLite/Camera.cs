@@ -5,6 +5,13 @@ namespace MachinaLite;
 
 public class Camera
 {
+    private readonly IRuntime _runtime;
+
+    public Camera(IRuntime runtime)
+    {
+        _runtime = runtime;
+    }
+
     public Matrix ScreenToWorldMatrix =>
         Matrix.CreateTranslation(new Vector3(Position, 0)) *
         Matrix.CreateScale(new Vector3(new Vector2(Scale, Scale), 1));
@@ -13,24 +20,24 @@ public class Camera
     public Vector2 Position { get; set; }
     public float Scale { get; set; } = 1f;
 
-    public Vector2 ScreenToWorld(Vector2 screenPosition)
-    {
-        return Vector2.Transform(screenPosition, ScreenToWorldMatrix);
-    }
-    
-    public Vector2 WorldToScreen(Vector2 worldPosition)
-    {
-        return Vector2.Transform(worldPosition, Matrix.Invert(ScreenToWorldMatrix));
-    }
-
     public Rectangle ViewRectInWorldSpace
     {
         get
         {
             var position = ScreenToWorld(Vector2.Zero);
-            var size = Client.Window.RenderResolution.ToVector2() * Scale;
+            var size = _runtime.Window.RenderResolution.ToVector2() * Scale;
 
             return new Rectangle(position.ToPoint(), size.ToPoint());
         }
+    }
+
+    public Vector2 ScreenToWorld(Vector2 screenPosition)
+    {
+        return Vector2.Transform(screenPosition, ScreenToWorldMatrix);
+    }
+
+    public Vector2 WorldToScreen(Vector2 worldPosition)
+    {
+        return Vector2.Transform(worldPosition, Matrix.Invert(ScreenToWorldMatrix));
     }
 }

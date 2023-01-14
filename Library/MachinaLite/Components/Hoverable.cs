@@ -1,4 +1,4 @@
-﻿using ExplogineMonoGame.HitTesting;
+﻿using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace MachinaLite.Components;
@@ -22,7 +22,7 @@ public class Hoverable : BaseComponent
         IsHovered = false;
         if (Actor.Visible)
         {
-            hitTestStack.Add(_box.Rectangle, Transform.Depth, OnHovered);
+            hitTestStack.AddZone(_box.Rectangle, Transform.Depth, OnHovered);
         }
     }
 

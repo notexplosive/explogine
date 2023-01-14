@@ -1,7 +1,7 @@
 ﻿using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame;
-using ExplogineMonoGame.HitTesting;
+using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,13 +12,18 @@ namespace MachinaLite;
 public class Scene : Crane<Actor>
 {
     private readonly List<CoroutineWrapper> _coroutines = new();
-    public readonly Camera Camera = new();
+    public readonly Camera Camera;
     private readonly List<Action> _deferredActions = new();
 
     public bool IsFrozen { get; private set; }
 
     public float TimeScale { get; set; } = 1f;
 
+    public Scene(IRuntime runtime)
+    {
+        Camera = new Camera(runtime);
+    }
+    
     public Actor AddActor(string name, Vector2 position = new(), float angle = 0f,
         int depthAsInt = Depth.MaxAsInt / 2)
     {
@@ -141,7 +146,7 @@ public class Scene : Crane<Actor>
 
     public override void Draw(Painter painter)
     {
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, Camera.WorldToScreenMatrix);
+        painter.BeginSpriteBatch(Camera.WorldToScreenMatrix);
 
         base.Draw(painter);
 
@@ -150,7 +155,7 @@ public class Scene : Crane<Actor>
 
     public override void DebugDraw(Painter painter)
     {
-        painter.BeginSpriteBatch(SamplerState.LinearWrap, Camera.WorldToScreenMatrix);
+        painter.BeginSpriteBatch(Camera.WorldToScreenMatrix);
 
         base.DebugDraw(painter);
 

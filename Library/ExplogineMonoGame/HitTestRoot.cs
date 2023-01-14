@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
 
-internal class HitTestRoot
+public class HitTestRoot
 {
     public HitTestStack BaseStack { get; } = new(Matrix.Identity);
 
