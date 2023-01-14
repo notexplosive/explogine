@@ -111,7 +111,7 @@ partial class VirtualWindow
         private void HandleResizing(ConsumableInput input, HitTestStack hitTestStack)
         {
             var resizedWholeWindowRect =
-                _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, 10, _minimumSize);
+                _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, _parentWindow.ParentApp.Window.ScreenToCanvas, 10, _minimumSize);
 
             if (_rectResizer.HasGrabbed)
             {

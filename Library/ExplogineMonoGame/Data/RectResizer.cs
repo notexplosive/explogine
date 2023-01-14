@@ -16,7 +16,7 @@ public class RectResizer
     public event Action? Finished;
 
     public RectangleF GetResizedRect(ConsumableInput input, HitTestStack hitTestStack, RectangleF startingRect,
-        Depth depth, int grabHandleThickness = 50, Point minimumSize = default)
+        Depth depth, Matrix screenToCanvas, int grabHandleThickness = 50, Point minimumSize = default)
     {
         var leftButton = input.Mouse.GetButton(MouseButton.Left);
         var mouseDown = leftButton.IsDown;
@@ -58,7 +58,7 @@ public class RectResizer
             }
         }
 
-        var delta = input.Mouse.CanvasDelta();
+        var delta = input.Mouse.Delta(screenToCanvas);
         _edgeDrag.AddDelta(delta);
 
         if (_edgeDrag.IsDragging)

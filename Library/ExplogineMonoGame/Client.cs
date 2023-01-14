@@ -51,13 +51,13 @@ public static class Client
     /// <summary>
     ///     Wrapper for accessing the Filesystem of your platform.
     /// </summary>
-    [Obsolete("Use App.FileSystem")]
+    [Obsolete("Use App.FileSystem", false)]
     public static ClientFileSystem FileSystem => Client.app.FileSystem;
 
     /// <summary>
     ///     Wrapper for accessing the Window of your platform.
     /// </summary>
-    [Obsolete("Use App.Window")]
+    [Obsolete("Use App.Window", false)]
     public static IWindow Window => Client.app.Window;
 
     /// <summary>

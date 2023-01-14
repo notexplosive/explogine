@@ -70,11 +70,6 @@ public class ConsumableInput
             return _raw.Delta(matrix);
         }
 
-        public Vector2 CanvasDelta(Matrix? matrix = null)
-        {
-            return _raw.CanvasDelta(matrix);
-        }
-
         public IEnumerable<(ButtonFrameState, MouseButton)> EachButton()
         {
             foreach (var key in _raw.EachButton())
