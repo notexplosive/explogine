@@ -18,6 +18,7 @@ public static class Client
     // The `OnceReady` initialization needs to happen at the top, other static initializers depend on these
     public static readonly OnceReady FinishedLoading = new();
     public static readonly OnceReady InitializedGraphics = new();
+
     public static readonly OnceReady Exited = new();
     //
 
@@ -25,7 +26,7 @@ public static class Client
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
-    private static readonly App app = new(new PlatformAgnosticWindow(), new ClientFileSystem());
+    private static readonly ClientApp app = new();
     internal static readonly CartridgeChain CartridgeChain = new(Client.app);
     internal static PlatformAgnosticWindow PlatformWindow => (Client.app.Window as PlatformAgnosticWindow)!;
     internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
@@ -92,7 +93,7 @@ public static class Client
     ///     use Dirty Random.
     /// </summary>
     public static ClientRandom Random { get; } = new();
-    
+
     private static ClientEssentials Essentials { get; } = new(Client.app);
 
     public static string ContentBaseDirectory => "Content";
@@ -127,8 +128,7 @@ public static class Client
             new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name))
         );
-        Client.app.Window = window;
-        Client.app.FileSystem = fileSystem;
+        Client.app.Setup(window, fileSystem);
         Client.startingConfig = windowConfig;
 
         // Setup Command Line
@@ -216,9 +216,9 @@ public static class Client
         Client.Graphics.Painter.Clear(Color.Black);
         Client.CartridgeChain.DrawCurrentCartridge(Client.Graphics.Painter);
         Client.Graphics.PopCanvas();
-        
+
         Client.CartridgeChain.PrepareDebugCartridge(Client.Graphics.Painter);
-        
+
         Client.PlatformWindow.ClientCanvas.Draw(Client.Graphics.Painter);
         Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
     }
