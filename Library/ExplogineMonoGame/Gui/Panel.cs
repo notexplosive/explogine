@@ -13,10 +13,11 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
     {
         Rectangle = rectangle;
         Depth = depth;
-        Canvas = new Canvas(Rectangle.Size.ToPoint());
+        Widget = new Widget(rectangle, depth);
     }
 
-    public Canvas Canvas { get; }
+    public Widget Widget { get; }
+
     public Gui InnerGui { get; } = new();
 
     public RectangleF Rectangle { get; }
@@ -24,7 +25,7 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
 
     public void Dispose()
     {
-        Canvas.Dispose();
+        Widget.Dispose();
     }
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
@@ -35,7 +36,7 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
 
     public void PreDraw(Painter painter, IGuiTheme uiTheme)
     {
-        Client.Graphics.PushCanvas(Canvas);
+        Client.Graphics.PushCanvas(Widget.Canvas);
         InnerGui.PrepareCanvases(painter, uiTheme);        
         painter.BeginSpriteBatch(Matrix.Identity);
         InnerGui.Draw(painter, uiTheme);
@@ -46,6 +47,6 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
     public void Draw(Painter painter, IGuiTheme uiTheme)
     {
         painter.DrawRectangle(Rectangle, new DrawSettings {Depth = Depth, Color = uiTheme.BackgroundColor});
-        painter.DrawAsRectangle(Canvas.Texture, Rectangle, new DrawSettings {Depth = Depth - 1});
+        Widget.Draw(painter);
     }
 }
