@@ -46,7 +46,7 @@ public class Slider : IGuiWidget
     public RectangleF ThumbRectangle =>
         new(
             EntireRectangle.TopLeft
-            + new Vector2(ThumbTravelDistance * State.Value / _totalNotches).JustAxis(AlongAxis),
+            + new Vector2(ThumbTravelDistance * CalculatePercent(State.Value, _totalNotches)).JustAxis(AlongAxis),
             ThumbSize);
 
     public Vector2 ThumbSize =>
@@ -55,8 +55,7 @@ public class Slider : IGuiWidget
     public Wrapped<int> State { get; }
     public Depth Depth { get; }
 
-    public float ThumbTravelDistance =>
-        BodyRectangle.Size.GetAxis(AlongAxis) - ThumbSize.GetAxis(AlongAxis);
+    public float ThumbTravelDistance => BodyRectangle.Size.GetAxis(AlongAxis) - ThumbSize.GetAxis(AlongAxis);
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
@@ -65,7 +64,7 @@ public class Slider : IGuiWidget
 
         var position = input.Mouse.Position(hitTestStack.WorldMatrix);
 
-        if (ThumbHovered)
+        if (ThumbHovered || IsDragging)
         {
             Client.Cursor.Set(MouseCursor.Hand);
         }
@@ -102,11 +101,23 @@ public class Slider : IGuiWidget
 
         // subtract half the thumbs size so we're centered
         relativePosition -= new Vector2(ThumbSize.GetAxis(AlongAxis) / 2f).JustAxis(AlongAxis);
-        var totalSize = ThumbTravelDistance;
-        var percent = relativePosition.GetAxis(AlongAxis) / totalSize;
-        var result = MathF.Round(percent * _totalNotches, MidpointRounding.ToEven);
+
+        var result = MathF.Round(CalculatePercent(relativePosition.GetAxis(AlongAxis), ThumbTravelDistance) * _totalNotches,
+            MidpointRounding.ToEven);
 
         return Math.Clamp((int) result, 0, _totalNotches);
+    }
+
+    private float CalculatePercent(float relativeAlongValue, float total)
+    {
+        var percent = relativeAlongValue / total;
+        if (AlongAxis == Axis.Y)
+        {
+            // flip the value around if we're vertical so 100% is at the top instead of the bottom
+            percent = 1 - percent;
+        }
+
+        return percent;
     }
 
     private void SetThumbHovered()
