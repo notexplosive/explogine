@@ -138,7 +138,8 @@ public static class Client
                 Client.Random.Dirty.NextUInt(), 0.25f));
         }
 
-        Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.Runtime));
+        // Don't plug in the game cartridge until we're initialized
+        Client.InitializedGraphics.Add(()=> Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.Runtime)));
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game
