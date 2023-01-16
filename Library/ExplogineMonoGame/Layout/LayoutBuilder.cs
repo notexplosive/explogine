@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using ExplogineMonoGame.Data;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Layout;
 
@@ -72,5 +74,15 @@ public class LayoutBuilder
         {
             return new LayoutElement(_name, _x, _y, _children?.ToLayoutGroup());
         }
+    }
+
+    public LayoutArrangement Bake(Point outerSize)
+    {
+        return L.Compute(outerSize, ToLayoutGroup());
+    }
+
+    public LayoutArrangement Bake(RectangleF rectangle)
+    {
+        return L.Compute(rectangle, ToLayoutGroup());
     }
 }
