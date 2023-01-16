@@ -37,7 +37,7 @@ public class MultiCartridge : BasicGameCartridge
         _cartridges.Add(cartridge);
     }
 
-    private Cartridge CurrentCartridge => _cartridges[CurrentCartridgeIndex];
+    protected Cartridge CurrentCartridge => _cartridges[CurrentCartridgeIndex];
     public override CartridgeConfig CartridgeConfig => CurrentCartridge.CartridgeConfig;
 
     public void RegenerateCartridge<T>() where T : Cartridge, new()
@@ -156,7 +156,7 @@ public class MultiCartridge : BasicGameCartridge
         AfterUpdateInput(input, hitTestStack);
     }
 
-    protected virtual IEnumerable<ILoadEvent?> MetaLoadEvents()
+    protected virtual IEnumerable<ILoadEvent?> ExtraLoadEvents()
     {
         yield return null;
     }
@@ -202,7 +202,7 @@ public class MultiCartridge : BasicGameCartridge
 
     public override IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        foreach (var loadEvent in MetaLoadEvents())
+        foreach (var loadEvent in ExtraLoadEvents())
         {
             yield return loadEvent;
         }
