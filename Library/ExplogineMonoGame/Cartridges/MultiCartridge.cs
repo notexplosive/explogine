@@ -69,12 +69,15 @@ public class MultiCartridge : BasicGameCartridge
         _startedCartridges.Remove(i);
         _cartridges[i].Unload();
 
-        var targetType = CurrentCartridge.GetType();
-        _cartridges[i] = Cartridge.CreateInstance(targetType, Runtime);
-
-        if (i == CurrentCartridgeIndex)
+        if (CurrentCartridge != null)
         {
-            StartCurrentCartridge();
+            var targetType = CurrentCartridge.GetType();
+            _cartridges[i] = Cartridge.CreateInstance(targetType, Runtime);
+
+            if (i == CurrentCartridgeIndex)
+            {
+                StartCurrentCartridge();
+            }
         }
     }
 
@@ -131,11 +134,11 @@ public class MultiCartridge : BasicGameCartridge
 
     private void StartCurrentCartridge()
     {
-        Runtime.Window.SetRenderResolution(CurrentCartridge.CartridgeConfig.RenderResolution);
+        Runtime.Window.SetRenderResolution(CurrentCartridge?.CartridgeConfig.RenderResolution);
 
         if (!_startedCartridges.Contains(CurrentCartridgeIndex))
         {
-            CurrentCartridge.OnCartridgeStarted();
+            CurrentCartridge?.OnCartridgeStarted();
             _startedCartridges.Add(CurrentCartridgeIndex);
         }
     }
@@ -154,19 +157,19 @@ public class MultiCartridge : BasicGameCartridge
     public override void Update(float dt)
     {
         BeforeUpdate(dt);
-        CurrentCartridge.Update(dt);
+        CurrentCartridge?.Update(dt);
     }
 
     public override void Draw(Painter painter)
     {
-        CurrentCartridge.Draw(painter);
+        CurrentCartridge?.Draw(painter);
         AfterDraw(painter);
     }
 
     public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         BeforeUpdateInput(input, hitTestStack);
-        CurrentCartridge.UpdateInput(input, hitTestStack);
+        CurrentCartridge?.UpdateInput(input, hitTestStack);
         AfterUpdateInput(input, hitTestStack);
     }
 
