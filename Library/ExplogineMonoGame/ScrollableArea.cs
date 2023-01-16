@@ -18,8 +18,8 @@ public class ScrollableArea : IUpdateInputHook
         CanvasSize = canvasSize;
         InnerWorldBoundaries = innerWorldBoundaries;
 
-        _verticalScrollbar = new Scrollbar(this, Orientation.Vertical, scrollbarHitTestDepth);
-        _horizontalScrollbar = new Scrollbar(this, Orientation.Horizontal, scrollbarHitTestDepth);
+        _verticalScrollbar = new Scrollbar(this, Orientation.Vertical, scrollbarHitTestDepth, ScrollBarWidth);
+        _horizontalScrollbar = new Scrollbar(this, Orientation.Horizontal, scrollbarHitTestDepth, ScrollBarWidth);
     }
 
     public XyBool EnableInput { get; set; } = XyBool.True;

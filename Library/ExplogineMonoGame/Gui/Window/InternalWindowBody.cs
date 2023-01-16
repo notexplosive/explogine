@@ -24,8 +24,8 @@ internal class InternalWindowBody : IUpdateInputHook
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         var contentHitTestLayer = hitTestStack.AddLayer(
-            _parentWindow.CanvasRectangle.CanvasToScreen(_parentWindow.CanvasRectangle.Size.ToPoint()),
-            _parentWindow.StartingDepth, _parentWindow.CanvasRectangle);
+            _parentWindow.Widget.ScreenToCanvas,
+            _parentWindow.StartingDepth, _parentWindow.CanvasOutputRectangle);
         contentHitTestLayer.AddInfiniteZone(Depth.Front, _contentHovered, true);
         contentHitTestLayer.AddInfiniteZone(Depth.Back, () =>
         {

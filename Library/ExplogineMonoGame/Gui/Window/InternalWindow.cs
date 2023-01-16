@@ -29,7 +29,7 @@ public class InternalWindow : IUpdateInputHook, IDisposable
 
     public Settings CurrentSettings { get; }
     public Canvas Canvas => Widget.Canvas;
-    public RectangleF CanvasRectangle => Widget.Rectangle;
+    public RectangleF CanvasOutputRectangle => Widget.OutputRectangle;
 
     public RectangleF WholeRectangle
     {
@@ -88,7 +88,7 @@ public class InternalWindow : IUpdateInputHook, IDisposable
 
     public void SetRectangle(RectangleF resizedRect)
     {
-        Widget.Rectangle = resizedRect;
+        Widget.OutputRectangle = resizedRect;
     }
 
     public void RequestClose()

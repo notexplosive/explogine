@@ -218,8 +218,14 @@ public class SimpleGuiTheme : IGuiTheme
 
     public void DrawScrollbar(Painter painter, Scrollbar scrollBar)
     {
+        var thumbColor = PrimaryColor;
+        if (Math.Abs(scrollBar.ThumbScalar - 1f) < float.Epsilon)
+        {
+            thumbColor = SecondaryColor;
+        }
+        
         painter.DrawRectangle(scrollBar.BodyRectangle,
-            new DrawSettings {Color = PrimaryColor, Depth = scrollBar.Depth});
+            new DrawSettings {Color = thumbColor, Depth = scrollBar.Depth});
 
         var thumbRect = scrollBar.ThumbRectangle;
 

@@ -43,7 +43,7 @@ public class InternalWindowChrome : IUpdateInputHook
         _rectResizer.Finished += parentWindow.ValidateBounds;
     }
 
-    private RectangleF CanvasRectangle => _parentWindow.CanvasRectangle;
+    private RectangleF CanvasRectangle => _parentWindow.CanvasOutputRectangle;
     public Depth Depth => _parentWindow.StartingDepth;
     public ImageAsset? Icon => _parentWindow.Icon;
 

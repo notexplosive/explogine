@@ -32,13 +32,26 @@ public class MultiCartridge : BasicGameCartridge
         }
     }
 
+    protected Cartridge? CurrentCartridge =>
+        _cartridges.IsWithinRange(CurrentCartridgeIndex) ? _cartridges[CurrentCartridgeIndex] : null;
+
+    public override CartridgeConfig CartridgeConfig
+    {
+        get
+        {
+            if (CurrentCartridge == null)
+            {
+                return new CartridgeConfig();
+            }
+
+            return CurrentCartridge.CartridgeConfig;
+        }
+    }
+
     public void Add(Cartridge cartridge)
     {
         _cartridges.Add(cartridge);
     }
-
-    protected Cartridge CurrentCartridge => _cartridges[CurrentCartridgeIndex];
-    public override CartridgeConfig CartridgeConfig => CurrentCartridge.CartridgeConfig;
 
     public void RegenerateCartridge<T>() where T : Cartridge, new()
     {
@@ -134,6 +147,7 @@ public class MultiCartridge : BasicGameCartridge
         {
             throw new Exception("No cartridge to run!");
         }
+
         StartCurrentCartridge();
     }
 

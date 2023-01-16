@@ -208,7 +208,7 @@ public class TextInputWidget : Widget, IUpdateInputHook
             KeyBind(keyboard, Keys.Escape, SelectionAgnostic, ModifierAgnostic, UnselectWidget);
         }
 
-        var wrapperHitTestStack = hitTestStack.AddLayer(Matrix.Identity, Depth, Rectangle);
+        var wrapperHitTestStack = hitTestStack.AddLayer(Matrix.Identity, Depth, OutputRectangle);
         var unscrolledHitTestStack = wrapperHitTestStack.AddLayer(ScreenToCanvas, Depth.Middle);
         var scrollingHitTestStack =
             wrapperHitTestStack.AddLayer(ScrollableArea.ScreenToCanvas * ScreenToCanvas, Depth.Middle + 1);

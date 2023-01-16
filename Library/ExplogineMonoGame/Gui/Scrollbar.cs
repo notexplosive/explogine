@@ -14,13 +14,15 @@ public class Scrollbar
 {
     private readonly Drag<float> _thumbDrag = new();
 
-    public Scrollbar(ScrollableArea scrollableScrollableArea, Orientation orientation, Depth depth)
+    public Scrollbar(ScrollableArea scrollableScrollableArea, Orientation orientation, Depth depth, float thickness)
     {
         ScrollableArea = scrollableScrollableArea;
         Depth = depth;
         AlongAxis = Axis.FromOrientation(orientation);
+        Thickness = thickness;
     }
 
+    public float Thickness { get; }
     public bool BodyHovered { get; private set; }
     public bool ThumbHovered { get; private set; }
     public Axis AlongAxis { get; }
@@ -61,9 +63,7 @@ public class Scrollbar
 
     public float ThumbScalar =>
         ScrollableArea.ViewBounds.Size.GetAxis(AlongAxis) / ScrollableArea.InnerWorldBoundaries.Size.GetAxis(AlongAxis);
-
-    public float Thickness { get; set; } = 32;
-
+    
     public RectangleF ThumbRectangle
     {
         get
