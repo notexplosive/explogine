@@ -25,23 +25,6 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
     private Cartridge Current => _list.First!.Value;
     public bool IsFrozen { get; set; }
 
-    /// <summary>
-    ///     The "Game Cartridge" is the last cartridge in the chain. This is what the user provided wrapped in a MetaCartridge.
-    /// </summary>
-    /// <exception cref="Exception"></exception>
-    public MultiCartridge GameCartridge
-    {
-        get
-        {
-            if (_list.Last?.Value is MultiCartridge multiCartridge)
-            {
-                return multiCartridge;
-            }
-
-            throw new Exception($"Attempted to get {nameof(CartridgeChain.GameCartridge)} before it was available.");
-        }
-    }
-
     public void Update(float dt)
     {
         _debugCartridge.Update(dt);
@@ -104,14 +87,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void AppendGameCartridge(Cartridge cartridge)
     {
-        if (cartridge is MultiCartridge meta)
-        {
-            Append(meta);
-        }
-        else
-        {
-            Append(new MultiCartridge(Client.Runtime, cartridge));
-        }
+        Append(cartridge);
     }
 
     public void Append(Cartridge cartridge)

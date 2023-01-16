@@ -103,7 +103,7 @@ public static class Client
     public static bool Headless { get; private set; } = true;
 
     /// <summary>
-    ///     Entrypoint for Platform (ie: Desktop)
+    ///     Entrypoint for Platform (ie: Desktop), this is called automatically and should not be called in your code
     /// </summary>
     /// <param name="argsArray">Args passed via command line</param>
     /// <param name="windowConfig">Config object for client startup</param>

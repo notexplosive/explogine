@@ -17,10 +17,9 @@ public class MultiCartridge : BasicGameCartridge
     private readonly HashSet<int> _startedCartridges = new();
     private int _currentCartridgeIndexImpl;
 
-    public MultiCartridge(IRuntime runtime, Cartridge primaryCartridge, params Cartridge[] extraCartridges) : base(runtime)
+    public MultiCartridge(IRuntime runtime, params Cartridge[] startingCartridges) : base(runtime)
     {
-        _cartridges.Add(primaryCartridge);
-        _cartridges.AddRange(extraCartridges);
+        _cartridges.AddRange(startingCartridges);
     }
 
     private int CurrentCartridgeIndex
@@ -31,6 +30,11 @@ public class MultiCartridge : BasicGameCartridge
             _currentCartridgeIndexImpl = value;
             StartCurrentCartridge();
         }
+    }
+
+    public void Add(Cartridge cartridge)
+    {
+        _cartridges.Add(cartridge);
     }
 
     private Cartridge CurrentCartridge => _cartridges[CurrentCartridgeIndex];
@@ -126,6 +130,10 @@ public class MultiCartridge : BasicGameCartridge
     public override void OnCartridgeStarted()
     {
         BeforeStart();
+        if (_cartridges.Count == 0)
+        {
+            throw new Exception("No cartridge to run!");
+        }
         StartCurrentCartridge();
     }
 
