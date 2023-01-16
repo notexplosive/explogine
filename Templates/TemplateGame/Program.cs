@@ -8,4 +8,4 @@ var config = new WindowConfigWritable
     WindowSize = new Point(1600, 900),
     Title = "NotExplosive.net"
 };
-Bootstrap.Run(args, new WindowConfig(config), new BlankCartridge());
+Bootstrap.Run(args, new WindowConfig(config), (runtime) => new BlankCartridge(runtime));
