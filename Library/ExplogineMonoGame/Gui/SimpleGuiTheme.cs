@@ -184,7 +184,7 @@ public class SimpleGuiTheme : IGuiTheme
             new DrawSettings {Depth = slider.Depth - 2, Color = SecondaryColor}
         );
 
-        if (slider.BodyHovered || slider.ThumbHovered)
+        if (slider.BodyHovered || slider.ThumbHovered || slider.IsDragging)
         {
             painter.DrawLineRectangle(slider.BodyRectangle.Inflated(-2, -2),
                 new LineDrawSettings
