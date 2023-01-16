@@ -220,11 +220,13 @@ public struct RectangleF : IEquatable<RectangleF>
         Offset(new Vector2(x, y));
     }
 
+    [Pure]
     public RectangleF Inflated(Vector2 amount)
     {
         return Inflated(amount.X, amount.Y);
     }
 
+    [Pure]
     public RectangleF Inflated(float horizontalAmount, float verticalAmount)
     {
         var copy = this;
@@ -372,6 +374,7 @@ public struct RectangleF : IEquatable<RectangleF>
         }
     }
 
+    [Pure]
     public RectangleF ConstrainSizeTo(RectangleF outerRect)
     {
         var result = this;
@@ -404,6 +407,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return result;
     }
 
+    [Pure]
     public RectangleF InflatedMaintainAspectRatio(float longSideAmount)
     {
         var horizontalAmount = longSideAmount;
@@ -423,6 +427,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return Inflated(horizontalAmount, verticalAmount);
     }
 
+    [Pure]
     public Polygon ToPolygon()
     {
         return new Polygon(
@@ -527,6 +532,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return new RectangleF(Vector2.Zero, innerSize).AlignedWithin(outer, alignment);
     } 
 
+    [Pure]
     public RectangleF AlignedWithin(RectangleF outer, Alignment alignment)
     {
         var resultPosition = Location;
@@ -549,16 +555,19 @@ public struct RectangleF : IEquatable<RectangleF>
         return new RectangleF(resultPosition, Size);
     }
 
+    [Pure]
     public RectangleF WithPosition(Vector2 position)
     {
         return new RectangleF(position, Size);
     }
 
+    [Pure]
     public RectangleF WithHeight(float height)
     {
         return new RectangleF(Location, new Vector2(Size.X, height));
     }
     
+    [Pure]
     public RectangleF WithWidth(float width)
     {
         return new RectangleF(Location, new Vector2(width, Size.Y));
@@ -570,6 +579,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return Moved(origin.Value(Size));
     }
 
+    [Pure]
     public RectangleF MovedToZero()
     {
         return new RectangleF(Vector2.Zero, Size);
