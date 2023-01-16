@@ -16,4 +16,5 @@ public interface IGuiTheme
     IFontGetter Font { get; }
     void DrawTextInput(Painter painter, TextInputWidget textInputWidget);
     void DrawWindowChrome(Painter painter, InternalWindowChrome chrome, bool isInFocus);
+    void DrawLabel(Painter painter, Label label);
 }

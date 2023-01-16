@@ -110,6 +110,11 @@ public class SimpleGuiTheme : IGuiTheme
             new DrawSettings {Depth = chrome.Depth - 1});
     }
 
+    public void DrawLabel(Painter painter, Label label)
+    {
+        painter.DrawStringWithinRectangle(Font, label.Text, label.Rectangle, label.Alignment, new DrawSettings{Depth = label.Depth});
+    }
+
     public void DrawButton(Painter painter, Button button)
     {
         var isPressed = button.IsEngaged && button.IsHovered;

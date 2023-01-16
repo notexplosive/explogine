@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Gui;
@@ -40,6 +39,12 @@ public class Gui : IUpdateInputHook
         Wrapped<int> state)
     {
         _widgets.Add(new Slider(rectangle, orientation, numberOfNotches, depth, state));
+    }
+
+    public void Label(RectangleF rectangle, Depth depth, string text, Alignment? alignment = null)
+    {
+        alignment ??= Alignment.TopLeft;
+        _widgets.Add(new Label(rectangle, depth, text, alignment.Value));
     }
 
     public void DynamicLabel(RectangleF rectangle, Depth depth, Action<Painter, IGuiTheme, RectangleF, Depth> action)
@@ -114,6 +119,9 @@ public class Gui : IUpdateInputHook
                     break;
                 case SubGuiWidget page:
                     page.Draw(painter, theme);
+                    break;
+                case Label label:
+                    theme.DrawLabel(painter, label);
                     break;
                 case DynamicLabel dynamicLabel:
                     dynamicLabel.Draw(painter, theme);
