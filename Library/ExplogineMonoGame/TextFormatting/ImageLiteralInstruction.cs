@@ -7,7 +7,7 @@ namespace ExplogineMonoGame.TextFormatting;
 
 public class ImageLiteralInstruction : Instruction, ILiteralInstruction
 {
-    internal ImageLiteralInstruction(IndirectAsset<StaticImageAsset> image, float scaleFactor = 1f)
+    internal ImageLiteralInstruction(IndirectAsset<ImageAsset> image, float scaleFactor = 1f)
     {
         Image = image;
         ScaleFactor = scaleFactor;
@@ -19,7 +19,7 @@ public class ImageLiteralInstruction : Instruction, ILiteralInstruction
     {
     }
 
-    public IndirectAsset<StaticImageAsset> Image { get; }
+    public IndirectAsset<ImageAsset> Image { get; }
     public float ScaleFactor { get; }
 
     public FormattedText.IFragment GetFragment(IFontGetter font, Color color)

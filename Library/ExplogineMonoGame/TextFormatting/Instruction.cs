@@ -11,7 +11,7 @@ public abstract class Instruction
         return new StringLiteralInstruction(str);
     }
 
-    public static implicit operator Instruction(IndirectAsset<StaticImageAsset> indirectAsset)
+    public static implicit operator Instruction(IndirectAsset<ImageAsset> indirectAsset)
     {
         return new ImageLiteralInstruction(indirectAsset);
     }

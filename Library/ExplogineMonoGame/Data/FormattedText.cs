@@ -36,7 +36,7 @@ public readonly struct FormattedText
 
     public IEnumerable<FormattedGlyph> GetGlyphs(RectangleF rectangle, Alignment alignment)
     {
-        if (_fragments.Length == 0)
+        if (_fragments == null || _fragments.Length == 0)
         {
             yield break;
         }
@@ -168,7 +168,7 @@ public readonly struct FormattedText
         }
     }
 
-    public readonly record struct ImageGlyphData(IndirectAsset<StaticImageAsset> Image,
+    public readonly record struct ImageGlyphData(IndirectAsset<ImageAsset> Image,
         float ScaleFactor = 1f, Color? Color = null) : IGlyphData
     {
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
@@ -185,11 +185,11 @@ public readonly struct FormattedText
         }
     }
 
-    public readonly record struct FragmentImage(IndirectAsset<StaticImageAsset> Image, float ScaleFactor = 1f,
+    public readonly record struct FragmentImage(IndirectAsset<ImageAsset> Image, float ScaleFactor = 1f,
         Color? Color = null) : IFragment
     {
         public FragmentImage(Texture2D texture, float scaleFactor = 1f, Color? color = null) : this(
-            new StaticImageAsset(texture, texture.Bounds), scaleFactor, color)
+            new ImageAsset(texture, texture.Bounds), scaleFactor, color)
         {
         }
 

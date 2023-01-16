@@ -52,7 +52,7 @@ public class InternalWindow : IUpdateInputHook, IDisposable
         set => Widget.Position = value + new Vector2(0, TitleBarRectangle.Height);
     }
 
-    public StaticImageAsset? Icon => CurrentSettings.Icon;
+    public ImageAsset? Icon => CurrentSettings.Icon;
     public string Title { get; }
     public IRuntime ParentRuntime { get; }
 
@@ -116,7 +116,7 @@ public class InternalWindow : IUpdateInputHook, IDisposable
         RequestedConstrainToBounds?.Invoke(this);
     }
 
-    public record Settings(string Title, ISizeSettings SizeSettings, StaticImageAsset? Icon = null,
+    public record Settings(string Title, ISizeSettings SizeSettings, ImageAsset? Icon = null,
         bool AllowMinimize = false, bool AllowClose = true);
 
     public interface ISizeSettings

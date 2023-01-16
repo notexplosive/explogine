@@ -45,7 +45,7 @@ public class InternalWindowChrome : IUpdateInputHook
 
     private RectangleF CanvasRectangle => _parentWindow.CanvasRectangle;
     public Depth Depth => _parentWindow.StartingDepth;
-    public StaticImageAsset? Icon => _parentWindow.Icon;
+    public ImageAsset? Icon => _parentWindow.Icon;
 
     public RectangleF TitleBarRectangle
     {
