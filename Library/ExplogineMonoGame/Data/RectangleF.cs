@@ -569,4 +569,9 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return Moved(origin.Value(Size));
     }
+
+    public RectangleF MovedToZero()
+    {
+        return new RectangleF(Vector2.Zero, Size);
+    }
 }
