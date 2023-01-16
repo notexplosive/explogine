@@ -12,9 +12,12 @@ public class CrashCartridge : Cartridge
     private readonly string _reportText;
     private readonly IndirectFont _titleFont = new("engine/console-font", 100);
 
-    public CrashCartridge(IRuntime runtime, Exception exception) : base(runtime)
+    public CrashCartridge(IRuntime runtime, Exception exception, bool dumpCrashLog = true, bool resetGraphics = true) : base(runtime)
     {
-        Client.Graphics.Painter.ResetToCleanState();
+        if (resetGraphics)
+        {
+            Client.Graphics.Painter.ResetToCleanState();
+        }
 
         ThrownException = exception;
 
@@ -22,9 +25,12 @@ public class CrashCartridge : Cartridge
         var fileInfo = new FileInfo(Path.Join(runtime.FileSystem.Local.GetCurrentDirectory(), fileName));
         _reportText =
             $"The program has crashed!\n\nWe're very sorry this happened.\nA copy of this report, and a full log can be found at:\n{fileInfo.FullName}\n\nCrash report:\n{ThrownException.Message}\n\nStacktrace:\n{ThrownException.StackTrace}";
-        Client.Debug.LogError(_reportText);
-
-        Client.Debug.LogFile.WriteBufferAsFilename(fileName);
+        
+        if (dumpCrashLog)
+        {
+            Client.Debug.LogError(_reportText);
+            Client.Debug.LogFile.WriteBufferAsFilename(fileName);
+        }
     }
 
     public Exception ThrownException { get; }
