@@ -45,6 +45,12 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
         return new List<BakedLayoutElement>();
     }
 
+    public bool HasElement(string name)
+    {
+        var matchingElements = FindElements(name);
+        return matchingElements.Count != 0;
+    }
+    
     public BakedLayoutElement FindElement(string name)
     {
         var matchingElements = FindElements(name);
