@@ -85,6 +85,19 @@ public class Gui : IUpdateInputHook
         return page.InnerGui;
     }
 
+    public void Clear()
+    {
+        foreach (var widget in _widgets)
+        {
+            if (widget is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+        
+        _widgets.Clear();
+    }
+
     public void Draw(Painter painter, IGuiTheme theme)
     {
         if (!Enabled)
