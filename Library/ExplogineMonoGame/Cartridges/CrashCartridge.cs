@@ -30,6 +30,11 @@ public class CrashCartridge : Cartridge
         {
             Client.Debug.LogError(_reportText);
             Client.Debug.LogFile.WriteBufferAsFilename(fileName);
+
+            if (Client.Demo.IsRecording)
+            {
+                Client.Demo.DumpRecording();
+            }
         }
     }
 
