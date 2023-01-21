@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using ExplogineMonoGame.TextFormatting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -20,6 +21,75 @@ public readonly struct FormattedText
     public FormattedText(params IFragment[] fragments)
     {
         _fragments = fragments;
+    }
+
+    public FormattedText(IFontGetter startingFont, Color startingColor,
+        Instruction[] instructions)
+    {
+        var fragments = new List<IFragment>();
+        var fonts = new Stack<IFontGetter>();
+        fonts.Push(startingFont);
+
+        var colors = new Stack<Color>();
+        colors.Push(startingColor);
+
+        foreach (var instruction in instructions)
+        {
+            if (instruction is ILiteralInstruction literalInstruction)
+            {
+                fragments.Add(literalInstruction.GetFragment(fonts.Peek(), colors.Peek()));
+            }
+
+            if (instruction is IStackInstruction<Color> colorInstruction)
+            {
+                colorInstruction.Do(colors);
+            }
+
+            if (instruction is IStackInstruction<IFontGetter> fontInstruction)
+            {
+                fontInstruction.Do(fonts);
+            }
+        }
+
+        if (colors.Count != 1)
+        {
+            Client.Debug.LogWarning($"Colors stack was {colors.Count} when it should be 1");
+        }
+
+        if (fonts.Count != 1)
+        {
+            Client.Debug.LogWarning($"Fonts stack was {fonts.Count} when it should be 1");
+        }
+
+        _fragments = fragments.ToArray();
+    }
+
+    private FormattedText(IFontGetter startingFont, Color startingColor, string formatString) : this(startingFont, startingColor,  Format.StringToInstructions(formatString))
+    {
+    }
+
+    public int Length
+    {
+        get
+        {
+            if (_fragments == null || _fragments.Length == 0)
+            {
+                return 0;
+            }
+
+            var charCount = 0;
+            foreach (var fragment in _fragments)
+            {
+                charCount += fragment.CharCount;
+            }
+
+            return charCount;
+        }
+    }
+
+    public static FormattedText FromFormatString(IFontGetter startingFont, Color startingColor, string formatString)
+    {
+        return new FormattedText(startingFont, startingColor, formatString);
     }
 
     /// <summary>
@@ -100,6 +170,7 @@ public readonly struct FormattedText
     {
         Vector2 Size { get; }
         IGlyphData ToGlyphData();
+        int CharCount { get; }
     }
 
     /// <summary>
@@ -121,7 +192,7 @@ public readonly struct FormattedText
     public readonly record struct Fragment(IFontGetter FontGetter, string Text, Color? Color = null) : IFragment
     {
         public IFont Font => FontGetter.GetFont();
-        public int NumberOfChars => Text.Length;
+        public int CharCount => Text.Length;
         public Vector2 Size => Font.MeasureString(Text);
 
         public IGlyphData ToGlyphData()
@@ -199,6 +270,11 @@ public readonly struct FormattedText
         {
             return new ImageGlyphData(Image, ScaleFactor, Color);
         }
+
+        /// <summary>
+        /// An image is always just one character
+        /// </summary>
+        public int CharCount => 1;
 
         public override string ToString()
         {

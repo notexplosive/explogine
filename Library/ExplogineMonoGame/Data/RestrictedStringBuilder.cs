@@ -52,7 +52,7 @@ public static class RestrictedStringBuilder
                 lettersAsFragments[i] =
                     new FormattedText.CharGlyphData(fragment.Font, combinedText[i], fragment.Color);
                 charIndexWithinCurrentFragment++;
-                if (charIndexWithinCurrentFragment > fragment.NumberOfChars - 1)
+                if (charIndexWithinCurrentFragment > fragment.CharCount - 1)
                 {
                     currentFragmentIndex++;
                     charIndexWithinCurrentFragment = 0;
