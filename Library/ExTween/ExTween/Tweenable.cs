@@ -34,7 +34,7 @@ public abstract class Tweenable<T>
         return tweenable.Value;
     }
 
-    public ITween SetTo(T destination)
+    public ITween CallbackSetTo(T destination)
     {
         return new CallbackTween(() => Value = destination);
     }
