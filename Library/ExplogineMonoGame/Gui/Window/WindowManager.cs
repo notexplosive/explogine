@@ -145,6 +145,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
             _windows.Remove(window);
             _windowStates.Remove(window);
             ClosedWindow?.Invoke(window);
+            window.Dispose();
         });
     }
 
