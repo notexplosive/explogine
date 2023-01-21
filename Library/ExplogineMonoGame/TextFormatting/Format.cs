@@ -43,42 +43,7 @@ public static class Format
     public static FormattedText FromInstructions(IFontGetter startingFont, Color startingColor,
         Instruction[] instructions)
     {
-        var fragments = new List<FormattedText.IFragment>();
-        var fonts = new Stack<IFontGetter>();
-        fonts.Push(startingFont);
-
-        var colors = new Stack<Color>();
-        colors.Push(startingColor);
-
-        foreach (var instruction in instructions)
-        {
-            if (instruction is ILiteralInstruction literalInstruction)
-            {
-                fragments.Add(literalInstruction.GetFragment(fonts.Peek(), colors.Peek()));
-            }
-
-            if (instruction is IStackInstruction<Color> colorInstruction)
-            {
-                colorInstruction.Do(colors);
-            }
-
-            if (instruction is IStackInstruction<IFontGetter> fontInstruction)
-            {
-                fontInstruction.Do(fonts);
-            }
-        }
-
-        if (colors.Count != 1)
-        {
-            Client.Debug.LogWarning($"Colors stack was {colors.Count} when it should be 1");
-        }
-
-        if (fonts.Count != 1)
-        {
-            Client.Debug.LogWarning($"Fonts stack was {fonts.Count} when it should be 1");
-        }
-
-        return new FormattedText(fragments.ToArray());
+        return new FormattedText(startingFont, startingColor, instructions);
     }
 
     public static Instruction[] StringToInstructions(string text)
