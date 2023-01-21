@@ -46,6 +46,11 @@ public class TextInputWidget : Widget, IUpdateInputHook
         Content.CacheUpdated += () => OnCursorMoved(CursorIndex);
     }
 
+    public TextInputWidget(RectangleF rectangle, IFontGetter font, Settings settings) : this(rectangle.Location,
+        rectangle.Size.ToPoint(), font, settings)
+    {
+    }
+
     public Selectable Selectable { get; }
 
     public Alignment Alignment { get; } = Alignment.TopLeft;
