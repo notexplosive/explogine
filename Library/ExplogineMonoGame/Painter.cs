@@ -107,6 +107,62 @@ public class Painter
         DrawFormattedStringWithinRectangle(formattedText, movedRectangle, alignment, settings);
     }
 
+    /// <summary>
+    /// Draws a Glyph (which already knows what position it wants to draw at)
+    /// This method is a little weird, it ignores settings.Origin and instead uses the origin vector parameter
+    /// </summary>
+    /// <param name="glyph"></param>
+    /// <param name="origin"></param>
+    /// <param name="offset"></param>
+    /// <param name="settings"></param>
+    /// <exception cref="Exception"></exception>
+    public void DrawGlyph(FormattedText.FormattedGlyph glyph, Vector2 origin, Vector2 offset, DrawSettings settings)
+    {
+        var letterOrigin = (origin - glyph.Position) / glyph.Data.ScaleFactor;
+        var position = origin + offset;
+
+        if (glyph.Data is FormattedText.CharGlyphData fragmentChar)
+        {
+            if (fragmentChar.Font is Font realFont)
+            {
+                var finalColor = fragmentChar.Color ?? settings.Color;
+                if (fragmentChar.Color.HasValue)
+                {
+                    finalColor = finalColor.WithMultipliedOpacity((float) settings.Color.A / byte.MaxValue);
+                }
+
+                _spriteBatch.DrawString(
+                    realFont.SpriteFont,
+                    fragmentChar.Text.ToString(),
+                    position,
+                    finalColor,
+                    settings.Angle,
+                    letterOrigin,
+                    Vector2.One * fragmentChar.Font.ScaleFactor,
+                    settings.FlipEffect,
+                    settings.Depth);
+            }
+            else
+            {
+                throw new Exception("Attempted to draw string with Font that has no SpriteFont");
+            }
+        }
+
+        if (glyph.Data is FormattedText.ImageGlyphData fragmentImage)
+        {
+            DrawAtPosition(
+                fragmentImage.Image.Get().Texture,
+                position,
+                new Scale2D(new Vector2(fragmentImage.ScaleFactor)),
+                settings with
+                {
+                    SourceRectangle = fragmentImage.Image.Get().SourceRectangle,
+                    Color = fragmentImage.Color ?? Color.White,
+                    Origin = new DrawOrigin(letterOrigin)
+                });
+        }
+    }
+    
     public void DrawFormattedStringWithinRectangle(FormattedText formattedText, RectangleF rectangle,
         Alignment alignment, DrawSettings settings)
     {
@@ -115,55 +171,9 @@ public class Painter
         var movedRectangle = rectangle.Moved(settings.Origin.Value(rectangle.Size));
         var rectTopLeft = movedRectangle.Location;
 
-        void DrawLetter(FormattedText.FormattedGlyph glyph)
-        {
-            var letterOrigin = (rectTopLeft - glyph.Position) / glyph.Data.ScaleFactor;
-
-            if (glyph.Data is FormattedText.CharGlyphData fragmentChar)
-            {
-                if (fragmentChar.Font is Font realFont)
-                {
-                    var finalColor = fragmentChar.Color ?? settings.Color;
-                    if (fragmentChar.Color.HasValue)
-                    {
-                        finalColor = finalColor.WithMultipliedOpacity((float) settings.Color.A / byte.MaxValue);
-                    }
-
-                    _spriteBatch.DrawString(
-                        realFont.SpriteFont,
-                        fragmentChar.Text.ToString(),
-                        rectTopLeft,
-                        finalColor,
-                        settings.Angle,
-                        letterOrigin,
-                        Vector2.One * fragmentChar.Font.ScaleFactor,
-                        settings.FlipEffect,
-                        settings.Depth);
-                }
-                else
-                {
-                    throw new Exception("Attempted to draw string with Font that has no SpriteFont");
-                }
-            }
-
-            if (glyph.Data is FormattedText.ImageGlyphData fragmentImage)
-            {
-                DrawAtPosition(
-                    fragmentImage.Image.Get().Texture,
-                    rectTopLeft,
-                    new Scale2D(new Vector2(fragmentImage.ScaleFactor)),
-                    settings with
-                    {
-                        SourceRectangle = fragmentImage.Image.Get().SourceRectangle,
-                        Color = fragmentImage.Color ?? Color.White,
-                        Origin = new DrawOrigin(letterOrigin)
-                    });
-            }
-        }
-
         foreach (var letterPosition in formattedText.GetGlyphs(rectangle, alignment))
         {
-            DrawLetter(letterPosition);
+            DrawGlyph(letterPosition, rectTopLeft, Vector2.Zero, settings);
         }
     }
 
