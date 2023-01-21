@@ -72,6 +72,11 @@ public class ConsumableInput
             return _raw.ScrollDelta();
         }
 
+        public void ConsumeScrollDelta()
+        {
+            _scrollDeltaIsConsumed = true;
+        }
+
         public Vector2 Delta(Matrix? toCanvas = null)
         {
             return _raw.Delta(toCanvas);
