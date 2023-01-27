@@ -58,8 +58,8 @@ public class LoadingCartridge : Cartridge
         while (!_loader.IsDone())
         {
             _loader.LoadNext();
-
-            _statusRingBuffer.AddFirst(_loader.Status);
+            
+            _statusRingBuffer.AddFirst(_loader.NextStatus);
             while (_statusRingBuffer.Count > LoadingCartridge.RingBufferSize)
             {
                 _statusRingBuffer.RemoveLast();

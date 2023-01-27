@@ -30,7 +30,7 @@ public class Loader
 
     private int LoadEventCount => _loadEvents.Count;
     public float Percent => (float) _loadEventIndex / LoadEventCount;
-    public string Status { get; private set; } = "Loading";
+    public string NextStatus { get; private set; } = "Loading";
 
     public T ForceLoad<T>(string key) where T : Asset
     {
@@ -77,9 +77,13 @@ public class Loader
 
         _loadEventIndex++;
 
-        if (_loadEventIndex < _loadEvents.Count - 1)
+        if (_loadEventIndex < _loadEvents.Count)
         {
-            Status = _loadEvents[_loadEventIndex].Info ?? _loadEvents[_loadEventIndex].Key;
+            NextStatus = _loadEvents[_loadEventIndex].Info ?? _loadEvents[_loadEventIndex].Key;
+        }
+        else
+        {
+            NextStatus = "Done!";
         }
     }
 
