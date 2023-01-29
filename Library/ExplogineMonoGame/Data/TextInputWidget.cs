@@ -305,6 +305,11 @@ public class TextInputWidget : Widget, IUpdateInputHook
 
         var shouldSelect = false;
 
+        if (!Selected && IsHovered)
+        {
+            Client.Cursor.Set(MouseCursor.IBeam);
+        }
+
         if (_isTextAreaHovered || _isDragging)
         {
             if (_hoveredLetterIndex != null)
