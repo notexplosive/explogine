@@ -9,6 +9,8 @@ namespace ExplogineMonoGame.Gui;
 /// </summary>
 public interface IWindowContent
 {
+    void Initialize(InternalWindow parentWindow);
+    
     /// <summary>
     /// Behaves like UpdateInput(), although if the window is not in focus it will be given an empty Keyboard component
     /// </summary>
@@ -22,5 +24,4 @@ public interface IWindowContent
     /// <param name="painter"></param>
     void DrawWindowContent(Painter painter);
 
-    void Initialize(InternalWindow parentWindow);
 }
