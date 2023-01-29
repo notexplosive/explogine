@@ -12,16 +12,16 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     private readonly DeferredActions _deferredActions = new();
     private readonly int _depthPerWindow = 10;
     private readonly RectangleF _desktopBoundingRect;
-    private readonly SimpleGuiTheme _uiTheme;
-    private readonly IRuntime _runtime;
+    private readonly IGuiTheme _uiTheme;
+    private readonly IRuntime _parentRuntime;
     private readonly List<InternalWindow> _windows = new();
     private readonly Dictionary<InternalWindow, WindowState> _windowStates = new();
 
-    public WindowManager(RectangleF desktopBoundingRect, SimpleGuiTheme uiTheme, IRuntime runtime)
+    public WindowManager(RectangleF desktopBoundingRect, IGuiTheme uiTheme, IRuntime parentRuntime)
     {
         _desktopBoundingRect = desktopBoundingRect;
         _uiTheme = uiTheme;
-        _runtime = runtime;
+        _parentRuntime = parentRuntime;
     }
 
     /// <summary>
@@ -33,8 +33,10 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
 
     public void Draw(Painter painter)
     {
-        // Draw the windows to the screen
-        painter.BeginSpriteBatch();
+        // !!!
+        // NOTE!! This used to call BeginSpriteBatch but doesn't anymore, this is now the caller's responsability
+        // !!!
+        
         for (var i = 0; i < _windows.Count; i++)
         {
             var window = _windows[i];
@@ -44,8 +46,6 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
                 window.Draw(painter, _uiTheme, i == _windows.Count - 1);
             }
         }
-
-        painter.EndSpriteBatch();
     }
 
     public void EarlyDraw(Painter painter)
@@ -102,7 +102,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     public InternalWindow AddWindow(Vector2 position, InternalWindow.Settings settings, IWindowContent content)
     {
         var window = new InternalWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
-            settings, content, TopDepth, _runtime);
+            settings, content, TopDepth, _parentRuntime);
         _windowStates.Add(window, new WindowState());
         _windows.Add(window);
         SetupOrTeardown(window);
