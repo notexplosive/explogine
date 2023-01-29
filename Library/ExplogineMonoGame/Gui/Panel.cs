@@ -34,7 +34,7 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
         InnerGui.UpdateInput(input, hitTestStack.AddLayer(translation, Depth));
     }
 
-    public void PreDraw(Painter painter, IGuiTheme uiTheme)
+    public void PrepareDraw(Painter painter, IGuiTheme uiTheme)
     {
         Client.Graphics.PushCanvas(Widget.Canvas);
         InnerGui.PrepareCanvases(painter, uiTheme);        

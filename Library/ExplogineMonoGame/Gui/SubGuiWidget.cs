@@ -17,7 +17,7 @@ public class SubGuiWidget : IGuiWidget, IPreDrawWidget
         InnerGui.UpdateInput(input, hitTestStack);
     }
 
-    public void PreDraw(Painter painter, IGuiTheme uiTheme)
+    public void PrepareDraw(Painter painter, IGuiTheme uiTheme)
     {
         InnerGui.PrepareCanvases(painter, uiTheme);
     }

@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Data;
 
-public class TextInputWidget : Widget, IUpdateInputHook
+public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
 {
     private readonly ClickCounter _clickCounter = new();
     private readonly bool _isSingleLine;

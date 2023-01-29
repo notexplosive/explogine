@@ -51,13 +51,15 @@ public class Gui : IUpdateInputHook
     {
         _widgets.Add(new DynamicLabel(rectangle, depth, action));
     }
-
-    /// <summary>
-    ///     You can call this or Radial.Add, they do the same thing
-    /// </summary>
+    
     public void RadialCheckbox(RectangleF rectangle, string label, Depth depth, int targetState, Wrapped<int> state)
     {
         _widgets.Add(new RadialCheckbox(state, targetState, rectangle, label, depth));
+    }
+    
+    public void TextInputWidget(RectangleF rectangle, IFontGetter themeFont, TextInputWidget.Settings settings)
+    {
+        _widgets.Add(new TextInputWidget(rectangle, themeFont, settings));
     }
 
     public Gui Panel(RectangleF rectangle, Depth depth)
@@ -134,6 +136,9 @@ public class Gui : IUpdateInputHook
                 case DynamicLabel dynamicLabel:
                     dynamicLabel.Draw(painter, theme);
                     break;
+                case TextInputWidget textInputWidget:
+                    textInputWidget.Draw(painter);
+                    break;
                 default:
                     throw new Exception($"Unknown UI Widget type: {widget}");
             }
@@ -153,7 +158,7 @@ public class Gui : IUpdateInputHook
         {
             if (widget is IPreDrawWidget iWidgetThatDoesPreDraw)
             {
-                iWidgetThatDoesPreDraw.PreDraw(painter, uiTheme);
+                iWidgetThatDoesPreDraw.PrepareDraw(painter, uiTheme);
             }
         }
 
