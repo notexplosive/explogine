@@ -12,7 +12,9 @@ public class SimpleGuiTheme : IGuiTheme
     public static LayoutElementGroup CheckboxLayoutTemplate = L.Root(
         new Style
             {PaddingBetweenElements = 5, Margin = new Vector2(0, 5), Alignment = Alignment.CenterLeft},
+        L.FixedElement(8, 8),
         L.FixedElement("checkbox", 32, 32),
+        L.FixedElement(8, 8),
         L.FillBoth("label"));
 
     public SimpleGuiTheme(Color primaryColor, Color secondaryColor, Color backgroundColor, IFontGetter fontGetter)
