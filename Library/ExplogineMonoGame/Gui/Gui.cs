@@ -55,14 +55,9 @@ public class Gui : IUpdateInputHook
     /// <summary>
     ///     You can call this or Radial.Add, they do the same thing
     /// </summary>
-    public void RadialCheckbox(Radial radial, int targetState, RectangleF rectangle, string label, Depth depth)
+    public void RadialCheckbox(RectangleF rectangle, string label, Depth depth, int targetState, Wrapped<int> state)
     {
-        _widgets.Add(new RadialCheckbox(radial, targetState, rectangle, label, depth));
-    }
-
-    public Radial RadialState(Wrapped<int> state)
-    {
-        return new Radial(this, state);
+        _widgets.Add(new RadialCheckbox(state, targetState, rectangle, label, depth));
     }
 
     public Gui Panel(RectangleF rectangle, Depth depth)
