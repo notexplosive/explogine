@@ -39,6 +39,11 @@ public class NinepatchSheet : Asset
         }
     }
 
+    public NinepatchSheet(Texture2D sourceTexture, Rectangle innerRectangle) :
+        this(sourceTexture, sourceTexture.Bounds, innerRectangle)
+    {
+    }
+
     public override void Dispose()
     {
         foreach (var texture in _textures)
@@ -103,8 +108,7 @@ public class NinepatchSheet : Asset
         {
             var dest = destinationRects.Raw[i];
             var source =
-                new Rectangle(0, 0, dest.Width,
-                    dest.Height); // Source is the size of the destination rect so we tile
+                new Rectangle(0, 0, dest.Width, dest.Height); // Source is the size of the destination rect so we tile
 
             painter.DrawAtPosition(_textures[i], dest.Location.ToVector2(), Scale2D.One,
                 new DrawSettings
