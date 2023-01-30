@@ -22,7 +22,7 @@ public class ScrollableArea : IUpdateInputHook
         _horizontalScrollbar = new Scrollbar(this, Orientation.Horizontal, scrollbarHitTestDepth, ScrollBarWidth);
     }
 
-    public XyBool EnableInput { get; set; } = XyBool.True;
+    public XyBool EnabledAxes { get; set; } = XyBool.True;
     public Point CanvasSize { get; set; }
     public RectangleF InnerWorldBoundaries { get; set; }
     public RectangleF ViewBounds => new(_viewPosition, CanvasSize.ToVector2());
@@ -32,12 +32,12 @@ public class ScrollableArea : IUpdateInputHook
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        if (EnableInput.X)
+        if (EnabledAxes.X)
         {
             _horizontalScrollbar.UpdateInput(input, hitTestStack);
         }
         
-        if (EnableInput.Y)
+        if (EnabledAxes.Y)
         {
             _verticalScrollbar.UpdateInput(input, hitTestStack);
         }
@@ -56,12 +56,12 @@ public class ScrollableArea : IUpdateInputHook
 
     public void DrawScrollbars(Painter painter, IGuiTheme theme)
     {
-        if (EnableInput.X)
+        if (EnabledAxes.X)
         {
             theme.DrawScrollbar(painter, _horizontalScrollbar);
         }
 
-        if (EnableInput.Y)
+        if (EnabledAxes.Y)
         {
             theme.DrawScrollbar(painter, _verticalScrollbar);
         }

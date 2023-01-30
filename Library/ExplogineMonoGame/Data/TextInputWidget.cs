@@ -405,7 +405,7 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         var shouldScrollY = ScrollableAxis == Axis.Y;
         return new ScrollableArea(InnerRectangle.Size.ToPoint(), InnerRectangle, Depth.Front)
         {
-            EnableInput = new XyBool(!shouldScrollY, shouldScrollY)
+            EnabledAxes = new XyBool(!shouldScrollY, shouldScrollY)
         };
     }
 
