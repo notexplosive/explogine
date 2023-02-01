@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame;
+﻿using ExplogineCore.Data;
+using ExplogineMonoGame;
 using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
@@ -36,16 +37,14 @@ public abstract class MachinaCartridge : BasicGameCartridge
     {
     }
 
-    public override void Update(float dt)
+    public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        BeforeUpdate(dt);
-        var hitTestRoot = new HitTestRoot();
-
         for (var i = Scenes.Count - 1; i >= 0; i--)
         {
             var scene = Scenes[i];
+            var worldHitTestStack = hitTestStack.AddLayer(scene.Camera.ScreenToWorldMatrix, Depth.Middle);    
             // Mouse
-            var mouse = Client.Input.Mouse;
+            var mouse = input.Mouse;
             var rawMousePosition = mouse.Position(Runtime.Window.ScreenToCanvas);
             if (mouse.WasAnyButtonPressedOrReleased())
             {
@@ -54,22 +53,20 @@ public abstract class MachinaCartridge : BasicGameCartridge
                     if (mouse.GetButton(button).WasPressed || mouse.GetButton(button).WasReleased)
                     {
                         scene.OnMouseButton(button, rawMousePosition,
-                            state.WasPressed ? ButtonState.Pressed : ButtonState.Released, hitTestRoot.BaseStack);
+                            state.WasPressed ? ButtonState.Pressed : ButtonState.Released, worldHitTestStack);
                     }
                 }
             }
 
             scene.OnMouseUpdate(rawMousePosition,
                 _previousMouseWorldPosition - scene.Camera.ScreenToWorld(rawMousePosition),
-                mouse.Delta(Matrix.Identity), hitTestRoot.BaseStack);
+                mouse.Delta(Matrix.Identity), worldHitTestStack);
             _previousMouseWorldPosition = mouse.Position(scene.Camera.ScreenToWorldMatrix);
-
-            hitTestRoot.Resolve(scene.Camera.ScreenToWorld(rawMousePosition));
         }
 
         foreach (var scene in Scenes)
         {
-            var keyboard = Client.Input.Keyboard;
+            var keyboard = input.Keyboard;
             // Keyboard
             foreach (var (buttonFrameState, key) in keyboard.EachKey())
             {
@@ -83,7 +80,14 @@ public abstract class MachinaCartridge : BasicGameCartridge
                     scene.OnKey(key, ButtonState.Released, keyboard.Modifiers);
                 }
             }
+        }
+    }
 
+    public override void Update(float dt)
+    {
+        BeforeUpdate(dt);
+        foreach (var scene in Scenes)
+        {
             // World Update
             scene.Update(dt);
 

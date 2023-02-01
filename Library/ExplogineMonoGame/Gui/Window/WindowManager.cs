@@ -34,7 +34,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     public void Draw(Painter painter)
     {
         // !!!
-        // NOTE!! This used to call BeginSpriteBatch but doesn't anymore, this is now the caller's responsability
+        // NOTE!! This used to call BeginSpriteBatch but doesn't anymore, this is now the caller's responsibility
         // !!!
         
         for (var i = 0; i < _windows.Count; i++)

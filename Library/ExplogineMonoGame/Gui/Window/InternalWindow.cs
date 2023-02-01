@@ -76,7 +76,6 @@ public class InternalWindow : IUpdateInputHook, IDisposable
 
     public void Draw(Painter painter, IGuiTheme theme, bool isInFocus)
     {
-        // SpriteBatch.Begin is already called
         _chrome.Draw(painter, theme, isInFocus);
         Widget.Draw(painter);
     }
