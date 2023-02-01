@@ -26,4 +26,9 @@ public abstract class SpriteSheet : Asset
         DrawSettings drawSettings);
 
     public abstract Rectangle GetSourceRectForFrame(int index);
+
+    public ImageAsset GetImageAtFrame(int index)
+    {
+        return new ImageAsset(SourceTexture, GetSourceRectForFrame(index));
+    }
 }
