@@ -13,7 +13,6 @@ public class InternalWindow : IUpdateInputHook, IDisposable
 
     private readonly InternalWindowBody _body;
     private readonly InternalWindowChrome _chrome;
-    public WindowWidget Widget { get; }
 
     public InternalWindow(RectangleF rectangle, Settings settings, IWindowContent content,
         Depth depth, IRuntime parentRuntime)
@@ -26,6 +25,8 @@ public class InternalWindow : IUpdateInputHook, IDisposable
         ParentRuntime = parentRuntime;
         Title = CurrentSettings.Title;
     }
+
+    public WindowWidget Widget { get; }
 
     public Settings CurrentSettings { get; }
     public Canvas Canvas => Widget.Canvas;
@@ -137,7 +138,8 @@ public class InternalWindow : IUpdateInputHook, IDisposable
     public readonly record struct ResizableSizeSettings(Point StartingSize, Point MinimumSize,
         bool AllowFullScreen = false) : ISizeSettings
     {
-        public static ResizableSizeSettings Create(Point startingSize, Point? minimumSize = null, bool allowFullScreen = true)
+        public static ResizableSizeSettings Create(Point startingSize, Point? minimumSize = null,
+            bool allowFullScreen = true)
         {
             return new ResizableSizeSettings(startingSize, minimumSize ?? new Point(200, 200), allowFullScreen);
         }
