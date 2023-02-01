@@ -55,6 +55,7 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
         _demoInterface.Update(dt);
         _logOverlay.Update(dt);
         _frameStep.UpdateGraphic(dt);
+        _snapshotTaker.Update(dt);
     }
     
     public void EarlyDraw(Painter painter)
