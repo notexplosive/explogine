@@ -179,4 +179,30 @@ public static class Vector2Extensions
 
         throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
     }
+
+    public static Vector2 Polar(float radius, float theta)
+    {
+        return new Vector2(MathF.Cos(theta), MathF.Sin(theta)) * radius;
+    }
+
+    public static float GetAngleFromUnitX(Vector2 vector)
+    {
+        var unitX = Vector2.UnitX;
+
+        
+        var dot = Vector2.Dot(unitX.Normalized(), vector.Normalized());
+
+        if (float.IsNaN(dot))
+        {
+            return 0;
+        }
+
+        var angle = MathF.Acos((unitX.X * vector.X + unitX.Y * vector.Y) / (vector.Length() * unitX.Length()));
+
+        if (vector.Y < 0)
+        {
+            angle = -angle;
+        }
+        return angle;
+    }
 }
