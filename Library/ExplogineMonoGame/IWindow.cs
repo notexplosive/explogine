@@ -1,5 +1,7 @@
 ﻿using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame;
 
@@ -15,6 +17,6 @@ public interface IWindow
     Matrix ScreenToCanvas { get; }
     Matrix CanvasToScreen { get; }
     Canvas Canvas { get; }
-    void SetRenderResolution(Point? optionalSize);
+    void SetRenderResolution(CartridgeConfig config);
     void SetFullscreen(bool toggle);
 }

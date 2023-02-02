@@ -1,4 +1,5 @@
 ﻿using ExplogineCore.Data;
+using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
@@ -15,9 +16,10 @@ public class WindowWidget : Widget, IWindow
 
     public bool IsInFocus => true;
     public bool IsFullscreen => false;
-    public void SetRenderResolution(Point? optionalSize)
+    public void SetRenderResolution(CartridgeConfig cartridgeConfig)
     {
-        RenderResolution = optionalSize ?? Size;
+        RenderResolution = cartridgeConfig.RenderResolution ?? Size;
+        // This does not set SamplerState, because it would change it for everybody
     }
 
     public void SetFullscreen(bool toggle)

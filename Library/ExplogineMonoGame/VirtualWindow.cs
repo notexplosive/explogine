@@ -1,4 +1,5 @@
 ﻿using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
@@ -17,9 +18,11 @@ public class VirtualWindow : IWindow
     /// </summary>
     public Canvas Canvas => null!;
 
-    public void SetRenderResolution(Point? optionalSize)
+    public void SetRenderResolution(CartridgeConfig config)
     {
-        RenderResolution = optionalSize ?? new Point(1920, 1080);
+        var renderResolution = config.RenderResolution;
+        RenderResolution = renderResolution ?? new Point(1920, 1080);
+        // this does not set SamplerState.
     }
 
     public void SetFullscreen(bool toggle)

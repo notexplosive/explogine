@@ -81,7 +81,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     private void StartCartridgeAndSetRenderResolution(Cartridge cartridge)
     {
-        Client.Runtime.Window.SetRenderResolution(cartridge.CartridgeConfig.RenderResolution);
+        Client.Runtime.Window.SetRenderResolution(cartridge.CartridgeConfig);
         cartridge.OnCartridgeStarted();
     }
 

@@ -21,7 +21,7 @@ public class Graphics
     }
 
     public GraphicsDeviceManager DeviceManager { get; }
-
+    public SamplerState SamplerState { get; set; } = SamplerState.LinearWrap;
     public GraphicsDevice Device { get; }
     public Painter Painter { get; }
 

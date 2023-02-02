@@ -1,5 +1,6 @@
 ﻿using System;
 using ExplogineMonoGame.AssetManagement;
+using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
@@ -88,12 +89,14 @@ public class RealWindow : IWindow
     /// </summary>
     public bool IsInFocus => Client.IsInFocus;
 
-    public void SetRenderResolution(Point? optionalSize)
+    public void SetRenderResolution(CartridgeConfig config)
     {
-        if (optionalSize.HasValue)
+        var renderResolution = config.RenderResolution;
+        Client.Graphics.SamplerState = config.SamplerState ?? Client.Graphics.SamplerState;
+        if (renderResolution.HasValue)
         {
-            _specifiedRenderResolution = optionalSize.Value;
-            RenderResolutionChanged?.Invoke(optionalSize.Value);
+            _specifiedRenderResolution = renderResolution.Value;
+            RenderResolutionChanged?.Invoke(renderResolution.Value);
         }
         else
         {

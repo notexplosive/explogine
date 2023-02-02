@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,7 +38,7 @@ public class Painter
 
     public void BeginSpriteBatch(Matrix matrix)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, SamplerState.LinearWrap, null, null, null, matrix);
+        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, null, matrix);
         IsSpriteBatchInProgress = true;
     }
 

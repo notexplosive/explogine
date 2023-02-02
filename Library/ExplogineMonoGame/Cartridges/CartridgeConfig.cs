@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Cartridges;
 
@@ -12,8 +13,11 @@ public readonly struct CartridgeConfig
     /// </summary>
     public Point? RenderResolution { get; }
 
-    public CartridgeConfig(Point? renderResolution)
+    public CartridgeConfig(Point? renderResolution, SamplerState? samplerState = null)
     {
         RenderResolution = renderResolution;
+        SamplerState = samplerState;
     }
+
+    public SamplerState? SamplerState { get; }
 }
