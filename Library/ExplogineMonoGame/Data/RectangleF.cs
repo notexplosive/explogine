@@ -576,7 +576,7 @@ public struct RectangleF : IEquatable<RectangleF>
     [Pure]
     public RectangleF MovedByOrigin(DrawOrigin origin)
     {
-        return Moved(origin.Value(Size));
+        return Moved(origin.Calculate(Size));
     }
 
     [Pure]

@@ -9,13 +9,13 @@ public readonly record struct DrawOrigin
     private readonly Style _style = Style.None;
 
     [Pure]
-    public Vector2 Value(Point size)
+    public Vector2 Calculate(Point size)
     {
-        return Value(size.ToVector2());
+        return Calculate(size.ToVector2());
     }
     
     [Pure]
-    public Vector2 Value(Vector2 size)
+    public Vector2 Calculate(Vector2 size)
     {
         if (_style == Style.Constant)
         {

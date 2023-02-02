@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -78,7 +78,7 @@ public class Painter
                 position,
                 settings.Color,
                 settings.Angle,
-                settings.Origin.Value(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
+                settings.Origin.Calculate(font.MeasureString(text).ToPoint()) / font.ScaleFactor,
                 scale.Value * font.ScaleFactor,
                 settings.FlipEffect,
                 settings.Depth);
@@ -103,7 +103,7 @@ public class Painter
         DrawSettings settings)
     {
         var rectangle = new RectangleF(position, formattedText.OneLineSize()).ToRectangle();
-        var movedRectangle = rectangle.Moved(-settings.Origin.Value(rectangle.Size));
+        var movedRectangle = rectangle.Moved(-settings.Origin.Calculate(rectangle.Size));
         DrawFormattedStringWithinRectangle(formattedText, movedRectangle, alignment, settings);
     }
 
@@ -168,7 +168,7 @@ public class Painter
     {
         // First we move the rect by the offset so the resulting rect is always in the location you asked for it,
         // and is then rotated around the origin
-        var movedRectangle = rectangle.Moved(settings.Origin.Value(rectangle.Size));
+        var movedRectangle = rectangle.Moved(settings.Origin.Calculate(rectangle.Size));
         var rectTopLeft = movedRectangle.Location;
 
         foreach (var letterPosition in formattedText.GetGlyphs(rectangle, alignment))
@@ -197,7 +197,7 @@ public class Painter
     {
         settings.SourceRectangle ??= texture.Bounds;
         _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
-            settings.Origin.Value(settings.SourceRectangle.Value.Size), scale2D.Value, settings.FlipEffect,
+            settings.Origin.Calculate(settings.SourceRectangle.Value.Size), scale2D.Value, settings.FlipEffect,
             settings.Depth);
     }
 
@@ -230,7 +230,7 @@ public class Painter
         settings.SourceRectangle ??= texture.Bounds;
 
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
-        var origin = settings.Origin.Value(settings.SourceRectangle.Value.Size);
+        var origin = settings.Origin.Calculate(settings.SourceRectangle.Value.Size);
 
         // destination is downcast to a Rectangle
         _spriteBatch.Draw(texture, destinationRectangle.ToRectangle(), settings.SourceRectangle, settings.Color,
