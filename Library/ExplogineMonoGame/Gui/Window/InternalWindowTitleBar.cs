@@ -107,6 +107,7 @@ public class InternalWindowTitleBar : IUpdateInputHook
     {
         var titleBarThickness = _chrome.TitleBarRectangle.Height;
         var margin = 2;
+        var controlButtonSize = titleBarThickness;
         var usableSize = titleBarThickness - margin * 2;
         var iconSize = 0f;
             
@@ -124,17 +125,17 @@ public class InternalWindowTitleBar : IUpdateInputHook
 
         if (_parentWindow.CurrentSettings.AllowMinimize)
         {
-            elements.Add(L.FixedElement("minimize-button", usableSize, usableSize));
+            elements.Add(L.FixedElement("minimize-button", controlButtonSize, controlButtonSize));
         }
             
         if (_parentWindow.CurrentSettings.SizeSettings.AllowFullScreen)
         {
-            elements.Add(L.FixedElement("fullscreen-button", usableSize, usableSize));
+            elements.Add(L.FixedElement("fullscreen-button", controlButtonSize, controlButtonSize));
         }
             
         if (_parentWindow.CurrentSettings.AllowClose)
         {
-            elements.Add(L.FixedElement("close-button", usableSize, usableSize));
+            elements.Add(L.FixedElement("close-button", controlButtonSize, controlButtonSize));
         }
             
         _layout = L.Compute(_chrome.TitleBarRectangle.WithPosition(Vector2.Zero), L.Root(
