@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
@@ -12,8 +11,8 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     private readonly DeferredActions _deferredActions = new();
     private readonly int _depthPerWindow = 10;
     private readonly RectangleF _desktopBoundingRect;
-    private readonly IGuiTheme _uiTheme;
     private readonly IRuntime _parentRuntime;
+    private readonly IGuiTheme _uiTheme;
     private readonly List<InternalWindow> _windows = new();
     private readonly Dictionary<InternalWindow, WindowState> _windowStates = new();
 
@@ -36,7 +35,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         // !!!
         // NOTE!! This used to call BeginSpriteBatch but doesn't anymore, this is now the caller's responsibility
         // !!!
-        
+
         for (var i = 0; i < _windows.Count; i++)
         {
             var window = _windows[i];
@@ -89,7 +88,6 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
                 {
                     window.UpdateInput(inputWithoutKeyboard, hitTestStack);
                 }
-
             }
         }
     }
@@ -180,6 +178,14 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
         });
     }
 
+    public IEnumerable<InternalWindow> AllWindows()
+    {
+        foreach (var window in _windows)
+        {
+            yield return window;
+        }
+    }
+
     /// <summary>
     ///     Stores per-window state that doesn't make sense to live on the Window itself because they're only relevant to the
     ///     Window Manager.
@@ -201,7 +207,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
             {
                 window.WholeRectangle = _rectangleBeforeFullScreen;
             }
-            
+
             IsFullScreen = !IsFullScreen;
         }
     }

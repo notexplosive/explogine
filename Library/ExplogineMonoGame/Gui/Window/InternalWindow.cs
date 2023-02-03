@@ -22,12 +22,13 @@ public class InternalWindow : IUpdateInputHook, IDisposable
         _chrome = new InternalWindowChrome(this, 32, settings.SizeSettings);
         _body = new InternalWindowBody(this, content);
 
+        Content = content;
         ParentRuntime = parentRuntime;
         Title = CurrentSettings.Title;
     }
 
+    public IWindowContent Content { get; }
     public WindowWidget Widget { get; }
-
     public Settings CurrentSettings { get; }
     public Canvas Canvas => Widget.Canvas;
     public RectangleF CanvasOutputRectangle => Widget.OutputRectangle;
