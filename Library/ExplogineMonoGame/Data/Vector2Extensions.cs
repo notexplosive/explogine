@@ -205,4 +205,18 @@ public static class Vector2Extensions
         }
         return angle;
     }
+
+    public static Vector2 Floored(this Vector2 vector2)
+    {
+        var copy = vector2;
+        copy.Floor();
+        return copy;
+    }
+    
+    public static Vector2 Ceilinged(this Vector2 vector2)
+    {
+        var copy = vector2;
+        copy.Ceiling();
+        return copy;
+    }
 }
