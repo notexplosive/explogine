@@ -153,12 +153,12 @@ public struct RectangleF : IEquatable<RectangleF>
         var a = new Vector2(aX, aY);
         var b = new Vector2(bX, bY);
 
-        var location = Vector2.Min(a, b);
-        var bottomRight = Vector2.Max(a, b);
+        var location = a;
+        var bottomRight = b;
 
         var size = bottomRight - location;
 
-        if (size.X == 0 || size.Y == 0)
+        if (size.X <= 0 || size.Y <= 0)
         {
             return RectangleF.Empty;
         }
@@ -177,19 +177,9 @@ public struct RectangleF : IEquatable<RectangleF>
 
     public bool Intersects(RectangleF other)
     {
-        var otherTopLeft = other.Location;
-        var otherBottomRight = other.BottomRight;
-        var otherTopRight = other.Location + new Vector2(Width, 0);
-        var otherBottomLeft = other.Location + new Vector2(0, Height);
-
-        var topLeft = Location;
-        var bottomRight = BottomRight;
-        var topRight = Location + new Vector2(Width, 0);
-        var bottomLeft = Location + new Vector2(0, Height);
-
-        return other.Contains(topLeft) || other.Contains(bottomRight) || other.Contains(topRight) ||
-               other.Contains(bottomLeft) || Contains(otherTopLeft) || Contains(otherBottomRight) ||
-               Contains(otherTopRight) || Contains(otherBottomLeft);
+        return other.Contains(TopLeft) || other.Contains(BottomRight) || other.Contains(TopRight) ||
+               other.Contains(BottomLeft) || Contains(other.TopLeft) || Contains(other.BottomRight) ||
+               Contains(other.TopRight) || Contains(other.BottomLeft);
     }
 
     [Pure]
@@ -199,7 +189,7 @@ public struct RectangleF : IEquatable<RectangleF>
         rectangle.Offset(offsetAmount);
         return rectangle;
     }
-    
+
     public void Offset(Point point)
     {
         Offset(point.ToVector2());
@@ -305,7 +295,7 @@ public struct RectangleF : IEquatable<RectangleF>
     }
 
     /// <summary>
-    /// Extrudes a rectangle from the edge of an existing rectangle
+    ///     Extrudes a rectangle from the edge of an existing rectangle
     /// </summary>
     public RectangleF GetRectangleFromEdge(RectEdge edge, float thickness)
     {
@@ -530,7 +520,7 @@ public struct RectangleF : IEquatable<RectangleF>
     public static RectangleF FromSizeAlignedWithin(RectangleF outer, Vector2 innerSize, Alignment alignment)
     {
         return new RectangleF(Vector2.Zero, innerSize).AlignedWithin(outer, alignment);
-    } 
+    }
 
     [Pure]
     public RectangleF AlignedWithin(RectangleF outer, Alignment alignment)
@@ -566,7 +556,7 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return new RectangleF(Location, new Vector2(Size.X, height));
     }
-    
+
     [Pure]
     public RectangleF WithWidth(float width)
     {

@@ -183,6 +183,7 @@ public class TestRectangleF
         var exactOverlap = new Rectangle(100, 100, 200, 200);
         var envelop = new Rectangle(0, 0, 400, 400);
         var disjoint = new Rectangle(400, 400, 10, 10);
+        var disjointToTheLeft = new Rectangle(-100, 100, 10, 10);
 
         rectangleF.Intersects(slightOverlap.ToRectangleF()).Should().Be(rectangleI.Intersects(slightOverlap)).And
             .BeTrue();
@@ -190,6 +191,7 @@ public class TestRectangleF
             .BeTrue();
         rectangleF.Intersects(envelop.ToRectangleF()).Should().Be(rectangleI.Intersects(envelop)).And.BeTrue();
         rectangleF.Intersects(disjoint.ToRectangleF()).Should().Be(rectangleI.Intersects(disjoint)).And.BeFalse();
+        rectangleF.Intersects(disjointToTheLeft.ToRectangleF()).Should().Be(rectangleI.Intersects(disjointToTheLeft)).And.BeFalse();
     }
 
     [Fact]
@@ -202,6 +204,7 @@ public class TestRectangleF
         var sharedEdge = new RectangleF(new Vector2(150, 90), new Vector2(20, 20));
         var sharedCorner = new RectangleF(new Vector2(275, 75), new Vector2(50, 50));
         var enveloped = new RectangleF(new Vector2(150, 150), new Vector2(20, 20));
+        var disjointToTheLeft = new RectangleF(-100, 100, 10, 10);
 
         RectangleF.Intersect(subject, disjoint)
             .Should().Be(RectangleF.Empty)
@@ -222,6 +225,10 @@ public class TestRectangleF
         RectangleF.Intersect(subject, enveloped)
             .Should().Be(new Rectangle(150, 150, 20, 20))
             .And.Be(Rectangle.Intersect(subject.ToRectangle(), enveloped.ToRectangle()));
+        
+        RectangleF.Intersect(subject, disjointToTheLeft)
+            .Should().Be(Rectangle.Empty)
+            .And.Be(Rectangle.Intersect(subject.ToRectangle(), disjointToTheLeft.ToRectangle()));
     }
 
     [Fact]

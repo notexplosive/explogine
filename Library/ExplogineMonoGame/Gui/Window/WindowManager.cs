@@ -185,6 +185,17 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
             yield return window;
         }
     }
+    
+    public IEnumerable<InternalWindow> AllVisibleWindows()
+    {
+        foreach (var window in _windows)
+        {
+            if (!_windowStates[window].IsMinimized)
+            {
+                yield return window;
+            }
+        }
+    }
 
     /// <summary>
     ///     Stores per-window state that doesn't make sense to live on the Window itself because they're only relevant to the
