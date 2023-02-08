@@ -13,7 +13,12 @@ public class CartridgePlayerContent<T> : IWindowContent, IUpdateHook where T : C
     {
         _cartridgePlayer = new CartridgePlayer<T>(parentWindow.Widget);
     }
-    
+
+    public void TearDown()
+    {
+        // Nothing to Dispose
+    }
+
     public void DrawWindowContent(Painter painter)
     {
         _cartridgePlayer?.Draw(painter);

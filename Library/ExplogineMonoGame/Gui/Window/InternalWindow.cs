@@ -61,6 +61,7 @@ public class InternalWindow : IUpdateInputHook, IDisposable
     public void Dispose()
     {
         Widget.Dispose();
+        _body.Content.TearDown();
     }
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
