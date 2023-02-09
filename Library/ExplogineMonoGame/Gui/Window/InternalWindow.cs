@@ -25,8 +25,11 @@ public class InternalWindow : IUpdateInputHook, IDisposable
         Content = content;
         ParentRuntime = parentRuntime;
         Title = CurrentSettings.Title;
+        MovementDrag = _chrome.MovementDrag;
     }
 
+    
+    public Drag<Vector2> MovementDrag { get; }
     public IWindowContent Content { get; }
     public WindowWidget Widget { get; }
     public Settings CurrentSettings { get; }

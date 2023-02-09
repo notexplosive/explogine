@@ -13,7 +13,6 @@ public class InternalWindowChrome : IUpdateInputHook
     private readonly HoverState _headerHovered = new();
 
     private readonly Point _minimumSize;
-    private readonly Drag<Vector2> _movementDrag;
     private readonly InternalWindow _parentWindow;
     private readonly RectResizer _rectResizer;
     private readonly InternalWindow.ISizeSettings _sizeSettings;
@@ -21,7 +20,8 @@ public class InternalWindowChrome : IUpdateInputHook
     private readonly int _titleBarThickness;
     private RectangleF? _pendingResizeRect;
 
-    public InternalWindowChrome(InternalWindow parentWindow, int titleBarThickness, InternalWindow.ISizeSettings sizeSettings)
+    public InternalWindowChrome(InternalWindow parentWindow, int titleBarThickness,
+        InternalWindow.ISizeSettings sizeSettings)
     {
         _parentWindow = parentWindow;
         _titleBarThickness = titleBarThickness;
@@ -31,17 +31,20 @@ public class InternalWindowChrome : IUpdateInputHook
         {
             _minimumSize = resizableSizeSettings.MinimumSize;
         }
+
         _minimumSize += new Point(0, titleBarThickness);
 
         _rectResizer = new RectResizer();
-        _movementDrag = new Drag<Vector2>();
+        MovementDrag = new Drag<Vector2>();
         _titleBar = new InternalWindowTitleBar(_parentWindow, this);
 
         _headerClickable.ClickInitiated += parentWindow.RequestFocus;
         _rectResizer.Initiated += parentWindow.RequestFocus;
-        _movementDrag.Finished += parentWindow.ValidateBounds;
+        MovementDrag.Finished += parentWindow.ValidateBounds;
         _rectResizer.Finished += parentWindow.ValidateBounds;
     }
+
+    public Drag<Vector2> MovementDrag { get; }
 
     public RectangleF CanvasRectangle => _parentWindow.CanvasOutputRectangle;
     public Depth Depth => _parentWindow.StartingDepth;
@@ -80,25 +83,25 @@ public class InternalWindowChrome : IUpdateInputHook
             HandleResizing(input, hitTestStack);
         }
 
-        if (_movementDrag.IsDragging)
+        if (MovementDrag.IsDragging)
         {
-            _parentWindow.Position = _movementDrag.StartingValue + _movementDrag.TotalDelta;
+            _parentWindow.Position = MovementDrag.StartingValue + MovementDrag.TotalDelta;
         }
 
-        _movementDrag.AddDelta(input.Mouse.Delta(hitTestStack.WorldMatrix));
+        MovementDrag.AddDelta(input.Mouse.Delta(hitTestStack.WorldMatrix));
 
         hitTestStack.AddZone(TitleBarRectangle, Depth, _headerHovered);
 
         if (_headerHovered && input.Mouse.GetButton(MouseButton.Left).WasPressed)
         {
-            _movementDrag.Start(_parentWindow.Position);
+            MovementDrag.Start(_parentWindow.Position);
         }
 
         _headerClickable.Poll(input.Mouse, _headerHovered);
 
         if (input.Mouse.GetButton(MouseButton.Left).WasReleased)
         {
-            _movementDrag.End();
+            MovementDrag.End();
         }
 
         _titleBar.UpdateInput(input, hitTestStack);
@@ -109,7 +112,8 @@ public class InternalWindowChrome : IUpdateInputHook
     private void HandleResizing(ConsumableInput input, HitTestStack hitTestStack)
     {
         var resizedWholeWindowRect =
-            _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, _parentWindow.ParentRuntime.Window.ScreenToCanvas, 10, _minimumSize);
+            _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth,
+                _parentWindow.ParentRuntime.Window.ScreenToCanvas, 10, _minimumSize);
 
         if (_rectResizer.HasGrabbed)
         {

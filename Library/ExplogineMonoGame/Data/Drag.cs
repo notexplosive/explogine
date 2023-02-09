@@ -13,6 +13,8 @@ public class Drag<T> where T : new()
     {
         IsDragging = true;
         StartingValue = startingValue;
+        
+        Started?.Invoke();
     }
 
     public void End()
@@ -38,4 +40,5 @@ public class Drag<T> where T : new()
     }
 
     public event Action? Finished;
+    public event Action? Started;
 }
