@@ -574,4 +574,10 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return new RectangleF(Vector2.Zero, Size);
     }
+
+    public bool Envelopes(RectangleF smallerRect)
+    {
+        var overlap = RectangleF.Intersect(this, smallerRect);
+        return overlap.Area >= smallerRect.Area;
+    }
 }
