@@ -58,6 +58,7 @@ public class InternalWindow : IUpdateInputHook, IDisposable
     public ImageAsset? Icon => CurrentSettings.Icon;
     public string Title { get; }
     public IRuntime ParentRuntime { get; }
+    public bool IsAlwaysOnTop { get; set; }
 
     public void Dispose()
     {

@@ -24,18 +24,14 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     }
 
     /// <summary>
-    ///     WindowManager manages its own SpriteBatch calls, so its starting depth does not matter
+    ///     WindowManagers are usually rendered in their own SpriteBatch. So the relative depth doesn't matter
     /// </summary>
-    public Depth BottomDepth => Depth.Middle;
+    public Depth BackDepth => Depth.Middle;
 
-    public Depth TopDepth => BottomDepth - _windows.Count * _depthPerWindow;
+    public Depth FrontDepth => BackDepth - _windows.Count * _depthPerWindow;
 
     public void Draw(Painter painter)
     {
-        // !!!
-        // NOTE!! This used to call BeginSpriteBatch but doesn't anymore, this is now the caller's responsibility
-        // !!!
-
         for (var i = 0; i < _windows.Count; i++)
         {
             var window = _windows[i];
@@ -50,9 +46,26 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     public void EarlyDraw(Painter painter)
     {
         // Put all the windows at the proper relative depth
+        var numberOfOrganizedWindows = 0;
+
+        // First we sort all the normal windows
         for (var i = 0; i < _windows.Count; i++)
         {
-            _windows[i].StartingDepth = BottomDepth - _depthPerWindow * i;
+            if (!_windows[i].IsAlwaysOnTop)
+            {
+                _windows[i].StartingDepth = BackDepth - _depthPerWindow * numberOfOrganizedWindows;
+                numberOfOrganizedWindows++;
+            }
+        }
+        
+        // Then we sort the Always-On-Top windows
+        for (var i = 0; i < _windows.Count; i++)
+        {
+            if (_windows[i].IsAlwaysOnTop)
+            {
+                _windows[i].StartingDepth = BackDepth - _depthPerWindow * numberOfOrganizedWindows;
+                numberOfOrganizedWindows++;
+            }
         }
 
         // Prepare the contents of the windows
@@ -100,7 +113,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
     public InternalWindow AddWindow(Vector2 position, InternalWindow.Settings settings, IWindowContent content)
     {
         var window = new InternalWindow(new RectangleF(position, settings.SizeSettings.StartingSize.ToVector2()),
-            settings, content, TopDepth, _parentRuntime);
+            settings, content, FrontDepth, _parentRuntime);
         _windowStates.Add(window, new WindowState());
         _windows.Add(window);
         SetupOrTeardown(window);
