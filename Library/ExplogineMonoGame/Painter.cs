@@ -31,14 +31,14 @@ public class Painter
         BeginSpriteBatch(Matrix.Identity);
     }
 
-    public void BeginSpriteBatch(RectangleF viewBounds, Point outputDimensions, float angle = 0)
+    public void BeginSpriteBatch(RectangleF viewBounds, Point outputDimensions, float angle = 0, Effect? effect = null)
     {
         BeginSpriteBatch(viewBounds.CanvasToScreen(outputDimensions, angle));
     }
 
-    public void BeginSpriteBatch(Matrix matrix)
+    public void BeginSpriteBatch(Matrix matrix, Effect? effect = null)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, null, matrix);
+        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, effect, matrix);
         IsSpriteBatchInProgress = true;
     }
 
