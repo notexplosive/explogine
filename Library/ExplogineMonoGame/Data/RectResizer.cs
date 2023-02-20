@@ -58,6 +58,7 @@ public class RectResizer
             }
         }
 
+        // I think we can just use hitTestStack.WorldMatrix here??
         var delta = input.Mouse.Delta(screenToCanvas);
         _edgeDrag.AddDelta(delta);
 
