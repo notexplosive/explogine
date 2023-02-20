@@ -210,6 +210,7 @@ public class Painter
         DrawAtPosition(PixelAsset, rectangle.Location, new Scale2D(rectangle.Size), drawSettings);
     }
 
+    [Obsolete("Please specify a DrawSettings")]
     public void DrawAsRectangle(Texture2D texture, RectangleF destinationRectangle)
     {
         DrawAsRectangle(texture, destinationRectangle, new DrawSettings());
