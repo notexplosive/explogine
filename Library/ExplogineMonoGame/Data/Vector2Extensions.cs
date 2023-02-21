@@ -185,7 +185,7 @@ public static class Vector2Extensions
         return new Vector2(MathF.Cos(theta), MathF.Sin(theta)) * radius;
     }
 
-    public static float GetAngleFromUnitX(Vector2 vector)
+    public static float GetAngleFromUnitX(this Vector2 vector)
     {
         var unitX = Vector2.UnitX;
 
