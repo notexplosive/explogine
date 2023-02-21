@@ -175,6 +175,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return new RectangleF(location, size);
     }
 
+    [Pure]
     public bool Intersects(RectangleF other)
     {
         return other.Contains(TopLeft) || other.Contains(BottomRight) || other.Contains(TopRight) ||
