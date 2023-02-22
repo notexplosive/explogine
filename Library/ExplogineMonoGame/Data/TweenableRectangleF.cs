@@ -12,7 +12,7 @@ public class TweenableRectangleF : Tweenable<RectangleF>
     {
     }
 
-    public override RectangleF Lerp(RectangleF startingValue, RectangleF targetValue, float percent)
+    public static RectangleF LerpRectangleF(RectangleF startingValue, RectangleF targetValue, float percent)
     {
         var x = FloatLerp(startingValue.Location.X, targetValue.Location.X, percent);
         var y = FloatLerp(startingValue.Location.Y, targetValue.Location.Y, percent);
@@ -21,8 +21,13 @@ public class TweenableRectangleF : Tweenable<RectangleF>
 
         return new RectangleF(x, y, width, height);
     }
+    
+    public override RectangleF Lerp(RectangleF startingValue, RectangleF targetValue, float percent)
+    {
+        return LerpRectangleF(startingValue, targetValue, percent);
+    }
 
-    private float FloatLerp(float startingValue, float targetValue, float percent)
+    private static float FloatLerp(float startingValue, float targetValue, float percent)
     {
         return startingValue + (targetValue - startingValue) * percent;
     }
