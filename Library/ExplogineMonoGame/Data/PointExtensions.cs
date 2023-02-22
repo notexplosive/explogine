@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 
@@ -80,6 +81,7 @@ public static class PointExtensions
         return enclosingSize.AspectRatio() > sizeToEnclose.AspectRatio();
     }
 
+    [Pure]
     public static RectangleF ToRectangleF(this Point point)
     {
         return new RectangleF(Vector2.Zero, point.ToVector2());
