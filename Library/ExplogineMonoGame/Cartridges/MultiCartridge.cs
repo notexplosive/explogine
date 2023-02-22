@@ -53,7 +53,7 @@ public class MultiCartridge : BasicGameCartridge
         _cartridges.Add(cartridge);
     }
 
-    public void RegenerateCartridge<T>() where T : Cartridge, new()
+    public void RegenerateCartridge<T>() where T : Cartridge
     {
         for (var i = 0; i < _cartridges.Count; i++)
         {
@@ -67,11 +67,14 @@ public class MultiCartridge : BasicGameCartridge
     public void RegenerateCartridge(int i)
     {
         _startedCartridges.Remove(i);
-        _cartridges[i].Unload();
+        
+        // Commented this out because we never "reload" the cartridge... I think we'll just suffer the possible memory leak
+        // _cartridges[i].Unload();
+
 
         if (CurrentCartridge != null)
         {
-            var targetType = CurrentCartridge.GetType();
+            var targetType = _cartridges[i].GetType();
             _cartridges[i] = Cartridge.CreateInstance(targetType, Runtime);
 
             if (i == CurrentCartridgeIndex)
@@ -86,21 +89,21 @@ public class MultiCartridge : BasicGameCartridge
         RegenerateCartridge(CurrentCartridgeIndex);
     }
 
-    public void SwapTo<T>() where T : Cartridge
+    public T SwapTo<T>() where T : Cartridge
     {
         for (var i = 0; i < _cartridges.Count; i++)
         {
             if (_cartridges[i] is T)
             {
                 CurrentCartridgeIndex = i;
-                return;
+                return (CurrentCartridge as T)!;
             }
         }
 
         throw new Exception($"Tried to swap to a Cartridge of type {typeof(T).Name}, but none was found");
     }
 
-    public void SwapTo(int index)
+    public Cartridge SwapTo(int index)
     {
         CurrentCartridgeIndex = index;
 
@@ -108,6 +111,8 @@ public class MultiCartridge : BasicGameCartridge
         {
             throw new Exception($"Tried to access Cartridge {index} with {_cartridges.Count} cartridges");
         }
+
+        return CurrentCartridge!;
     }
 
     public void SwapToPrevious()
