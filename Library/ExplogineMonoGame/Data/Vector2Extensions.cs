@@ -91,6 +91,11 @@ public static class Vector2Extensions
     {
         return MathF.Max(vec.X, vec.Y);
     }
+    
+    public static float MinXy(this Vector2 vec)
+    {
+        return MathF.Min(vec.X, vec.Y);
+    }
 
     public static Vector2 JustX(this Vector2 vec)
     {
