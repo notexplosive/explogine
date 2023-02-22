@@ -404,7 +404,7 @@ public struct RectangleF : IEquatable<RectangleF>
         var horizontalAmount = longSideAmount;
         var verticalAmount = longSideAmount;
 
-        if (Width > Height)
+        if (Width < Height)
         {
             var aspectRatio = Height / Width;
             verticalAmount = longSideAmount * aspectRatio;
