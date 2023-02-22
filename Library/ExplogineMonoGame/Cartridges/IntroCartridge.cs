@@ -177,7 +177,7 @@ public class IntroCartridge : Cartridge
                     multi.AddChannel(new SequenceTween()
                         .Add(new WaitSecondsTween(index * 0.05f))
                         .Add(new CallbackTween(() =>
-                            Client.SoundPlayer.Play("engine/click", new SoundEffectOptions {Pitch = CurrentPitch()})))
+                            Client.SoundPlayer.Play("engine/click", new SoundEffectSettings {Pitch = CurrentPitch()})))
                         .Add(new MultiplexTween()
                             .AddChannel(
                                 new SequenceTween()
@@ -227,7 +227,7 @@ public class IntroCartridge : Cartridge
                                     .Add(new Tween<float>(letter.Scale, 0.95f, durationPerLetter * 3 / 4,
                                         Ease.QuadFastSlow))
                                     .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/bubbles",
-                                        new SoundEffectOptions
+                                        new SoundEffectSettings
                                             {Pitch = Client.Random.Dirty.NextFloat(0.5f, 1f), Volume = 1f})))
                                     .Add(new Tween<float>(letter.Scale, 1f, durationPerLetter * 1 / 4,
                                         Ease.QuadSlowFast))
@@ -280,7 +280,7 @@ public class IntroCartridge : Cartridge
         return
             new SequenceTween()
                 .Add(new CallbackTween(() =>
-                    Client.SoundPlayer.Play("engine/clink", new SoundEffectOptions {Pitch = -0.5f})))
+                    Client.SoundPlayer.Play("engine/clink", new SoundEffectSettings {Pitch = -0.5f})))
                 .Add(new Tween<float>(_wholeWord.Scale, 1.3f, 0.25f, Ease.QuadFastSlow))
                 .Add(new Tween<float>(_wholeWord.Scale, 1.25f, 0.25f, Ease.QuadSlowFast))
                 .Add(new DynamicTween(() =>
@@ -297,7 +297,7 @@ public class IntroCartridge : Cartridge
                                     increment,
                                     Ease.Linear))
                                 .AddChannel(new CallbackTween(() =>
-                                    Client.SoundPlayer.Play("engine/clink", new SoundEffectOptions {Pitch = 0.5f})))
+                                    Client.SoundPlayer.Play("engine/clink", new SoundEffectSettings {Pitch = 0.5f})))
                             );
                         }
 

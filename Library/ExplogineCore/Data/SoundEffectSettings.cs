@@ -1,6 +1,6 @@
 ﻿namespace ExplogineCore.Data;
 
-public struct SoundEffectOptions
+public struct SoundEffectSettings
 {
     public bool Cached { get; set; }
     public bool Loop { get; set; }
@@ -8,7 +8,7 @@ public struct SoundEffectOptions
     public float Pan { get; set; }
     public float Pitch { get; set; }
 
-    public SoundEffectOptions()
+    public SoundEffectSettings()
     {
         Cached = true;
         Loop = false;
@@ -16,4 +16,10 @@ public struct SoundEffectOptions
         Pan = 0f;
         Pitch = 0f;
     }
+}
+
+[Obsolete("SoundEffectOptions was renamed to SoundEffectSettings", true)]
+public struct SoundEffectOptions
+{
+    
 }

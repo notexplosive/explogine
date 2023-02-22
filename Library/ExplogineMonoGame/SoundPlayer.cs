@@ -10,14 +10,14 @@ public class SoundPlayer
     {
     }
 
-    public SoundEffectInstance Play(string name, SoundEffectOptions? options = null)
+    public SoundEffectInstance Play(string name, SoundEffectSettings? options = null)
     {
         if (Client.Headless)
         {
             return null!;
         }
         
-        var usedOptions = new SoundEffectOptions();
+        var usedOptions = new SoundEffectSettings();
         if (options.HasValue)
         {
             usedOptions = options.Value;
