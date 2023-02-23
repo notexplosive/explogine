@@ -8,6 +8,8 @@ public class Wrapped<T> where T : struct
     {
     }
 
+    public event Action<T>? ValueChanged;
+
     public Wrapped(T value)
     {
         _value = value;
@@ -16,7 +18,11 @@ public class Wrapped<T> where T : struct
     public T Value
     {
         get => _value;
-        set => _value = value;
+        set
+        {
+            _value = value;
+            ValueChanged?.Invoke(_value);
+        }
     }
 
     public static implicit operator T(Wrapped<T> wrapped)
