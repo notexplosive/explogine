@@ -77,4 +77,13 @@ public class ScrollableArea : IUpdateInputHook
         return ViewBounds.Size.GetAxis(scrollableAxis) <
             InnerWorldBoundaries.Size.GetAxis(scrollableAxis);
     }
+
+    public void DoScrollWithMouseWheel(ConsumableInput input, float increment = 25)
+    {
+        var delta = -input.Mouse.ScrollDelta() / 120f * increment;
+        if (delta != 0)
+        {
+            SetPosition(_viewPosition += new Vector2(0,delta));
+        }
+    }
 }
