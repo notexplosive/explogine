@@ -85,27 +85,32 @@ public struct RectangleF : IEquatable<RectangleF>
         return Size.Length() <= 0;
     }
 
+    [Pure]
     public Rectangle ToRectangle()
     {
         return new Rectangle(Location.ToPoint(), Size.ToPoint());
     }
 
+    [Pure]
     public bool Contains(Point point)
     {
         return Contains(point.ToVector2());
     }
 
+    [Pure]
     public bool Contains(Rectangle containedRect)
     {
         return Contains(containedRect.ToRectangleF());
     }
 
+    [Pure]
     public bool Contains(RectangleF containedRect)
     {
         return Contains(containedRect.Location) &&
                Contains(containedRect.Location + containedRect.Size - new Vector2(1));
     }
 
+    [Pure]
     public bool Contains(Vector2 vector)
     {
         var normalizedPoint = vector - Location;
@@ -113,11 +118,13 @@ public struct RectangleF : IEquatable<RectangleF>
                normalizedPoint.Y >= 0;
     }
 
+    [Pure]
     public bool Contains(int x, int y)
     {
         return Contains(new Point(x, y));
     }
 
+    [Pure]
     public bool Contains(float x, float y)
     {
         return Contains(new Vector2(x, y));
@@ -137,6 +144,7 @@ public struct RectangleF : IEquatable<RectangleF>
         Size += new Vector2(horizontalAmount * 2, verticalAmount * 2);
     }
 
+    [Pure]
     public static RectangleF Intersect(RectangleF rectA, RectangleF rectB)
     {
         if (!rectA.Intersects(rectB))
@@ -283,6 +291,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return new RectangleF(x, y, width, height);
     }
 
+    [Pure]
     public float GetEdge(RectEdge edge)
     {
         return edge switch
@@ -298,6 +307,7 @@ public struct RectangleF : IEquatable<RectangleF>
     /// <summary>
     ///     Extrudes a rectangle from the edge of an existing rectangle
     /// </summary>
+    [Pure]
     public RectangleF GetRectangleFromEdge(RectEdge edge, float thickness)
     {
         return edge switch
@@ -314,6 +324,7 @@ public struct RectangleF : IEquatable<RectangleF>
         };
     }
 
+    [Pure]
     public RectangleF ConstrainedTo(RectangleF outer)
     {
         if (outer.Contains(TopLeft) && outer.Contains(TopRight) && outer.Contains(BottomRight) &&
@@ -347,6 +358,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return result;
     }
 
+    [Pure]
     public float EdgeDisplacement(RectEdge edge, RectangleF outer)
     {
         var innerEdge = GetEdge(edge);
@@ -576,6 +588,7 @@ public struct RectangleF : IEquatable<RectangleF>
         return new RectangleF(Vector2.Zero, Size);
     }
 
+    [Pure]
     public bool Envelopes(RectangleF smallerRect)
     {
         var overlap = RectangleF.Intersect(this, smallerRect);
