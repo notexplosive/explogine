@@ -73,12 +73,12 @@ public class ClientDebug
     {
         var output = new StringBuilder();
 
-        output.Append(message);
+        output.Append(message ?? "null");
 
         foreach (var param in paramsObjects)
         {
             output.Append("  ");
-            output.Append(param);
+            output.Append(param ?? "null");
         }
 
         return output.ToString();
