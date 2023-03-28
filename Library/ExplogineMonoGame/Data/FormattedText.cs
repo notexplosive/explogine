@@ -96,7 +96,7 @@ public readonly struct FormattedText
     ///     The size of the whole text if it had infinite width
     /// </summary>
     /// <returns></returns>
-    public Vector2 OneLineSize()
+    public Vector2 MaxNeededWidth()
     {
         var (_, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, float.MaxValue);
 

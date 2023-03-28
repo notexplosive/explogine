@@ -67,17 +67,26 @@ public static class RestrictedStringBuilder
         }
 
         // Append Terminator
-        var finalFragment = fragments[^1];
-        if (finalFragment is FormattedText.Fragment finalFragmentAsFragment)
+        FormattedText.IFragment? finalFragment = null;
+        if (fragments.Length > 0)
         {
-            var finalLetterFragment =
-                new FormattedText.CharGlyphData(finalFragmentAsFragment.Font, ' ');
-            
-            lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(finalLetterFragment.Size, finalLetterFragment.ScaleFactor, WhiteSpaceType.NullTerminator);
+            finalFragment = fragments[^1];
         }
-        else
+
+        if (finalFragment != null)
         {
-            lettersAsFragments[^1] = finalFragment.ToGlyphData();
+            if (finalFragment is FormattedText.Fragment finalFragmentAsFragment)
+            {
+                var finalLetterFragment =
+                    new FormattedText.CharGlyphData(finalFragmentAsFragment.Font, ' ');
+
+                lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(finalLetterFragment.Size,
+                    finalLetterFragment.ScaleFactor, WhiteSpaceType.NullTerminator);
+            }
+            else
+            {
+                lettersAsFragments[^1] = finalFragment.ToGlyphData();
+            }
         }
 
         return lettersAsFragments;
