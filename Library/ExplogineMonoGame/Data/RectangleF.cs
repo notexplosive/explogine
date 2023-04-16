@@ -594,4 +594,10 @@ public struct RectangleF : IEquatable<RectangleF>
         var overlap = RectangleF.Intersect(this, smallerRect);
         return overlap.Area >= smallerRect.Area;
     }
+
+    [Pure]
+    public static RectangleF InflateFrom(Vector2 headPosition, int width, int height)
+    {
+        return new RectangleF(headPosition, Vector2.Zero).Inflated(width, height);
+    }
 }
