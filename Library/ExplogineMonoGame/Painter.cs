@@ -229,14 +229,22 @@ public class Painter
             });
         }
         settings.SourceRectangle ??= texture.Bounds;
-
+        
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
         var origin = settings.Origin.Calculate(settings.SourceRectangle.Value.Size);
 
+        var scale = new Scale2D(settings.SourceRectangle.Value.Size.ToVector2().StraightDivide(destinationRectangle.Size));
+        
+        settings = settings with {Origin = new DrawOrigin(origin)};
+
+        DrawAtPosition(texture, destinationRectangle.Location, scale, settings);
+
+        /*
         // destination is downcast to a Rectangle
         _spriteBatch.Draw(texture, destinationRectangle.ToRectangle(), settings.SourceRectangle, settings.Color,
             settings.Angle,
             origin, settings.FlipEffect, settings.Depth);
+            */
     }
 
     #endregion
