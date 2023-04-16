@@ -596,7 +596,7 @@ public struct RectangleF : IEquatable<RectangleF>
     }
 
     [Pure]
-    public static RectangleF InflateFrom(Vector2 headPosition, int width, int height)
+    public static RectangleF InflateFrom(Vector2 headPosition, float width, float height)
     {
         return new RectangleF(headPosition, Vector2.Zero).Inflated(width, height);
     }
