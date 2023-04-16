@@ -35,7 +35,7 @@ internal class SnapshotTaker : IUpdateInputHook, IUpdateHook
             TakeSnapshot();
         }
 
-        if (_timerReady)
+        if (_timerReady && Client.Runtime.Window.IsInFocus)
         {
             _timer -= (float) (now - _timeLastFrame).TotalSeconds;
             if (_timer < 0)
