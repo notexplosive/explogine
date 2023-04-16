@@ -15,9 +15,9 @@ public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
     public IRuntime Runtime { get; }
     public abstract CartridgeConfig CartridgeConfig { get; }
     public abstract void OnCartridgeStarted();
-    public abstract void Draw(Painter painter);
-    public abstract void Update(float dt);
     public abstract void UpdateInput(ConsumableInput input, HitTestStack hitTestStack);
+    public abstract void Update(float dt);
+    public abstract void Draw(Painter painter);
     public abstract bool ShouldLoadNextCartridge();
     public abstract void Unload();
 
