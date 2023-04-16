@@ -7,6 +7,7 @@ namespace ExplogineMonoGame.Data;
 
 public static class Vector2Extensions
 {
+    [Pure]
     public static Vector2 Normalized(this Vector2 vec)
     {
         var copy = vec;
@@ -14,31 +15,43 @@ public static class Vector2Extensions
         return copy;
     }
 
+    [Pure]
     public static Vector2 StraightMultiply(this Vector2 vec, Vector2 other)
     {
         return new Vector2(vec.X * other.X, vec.Y * other.Y);
     }
 
+    [Pure]
     public static Vector2 StraightMultiply(this Vector2 vec, float otherX, float otherY)
     {
         return new Vector2(vec.X * otherX, vec.Y * otherY);
     }
 
+    [Pure]
     public static Vector2 StraightMultiply(this Vector2 vec, Point other)
     {
         return vec.StraightMultiply(other.ToVector2());
     }
+    
+    [Pure]
+    public static RectangleF ToRectangleF(this Vector2 vec)
+    {
+        return new RectangleF(Vector2.Zero, vec);
+    }
 
+    [Pure]
     public static Vector2 StraightDivide(this Vector2 vec, Vector2 other)
     {
         return new Vector2(vec.X / other.X, vec.Y / other.Y);
     }
-
+    
+    [Pure]
     public static Vector2 StraightDivide(this Vector2 vec, float otherX, float otherY)
     {
         return new Vector2(vec.X / otherX, vec.Y / otherY);
     }
 
+    [Pure]
     public static Vector2 StraightDivide(this Vector2 vec, Point other)
     {
         return vec.StraightMultiply(other.ToVector2());
@@ -51,6 +64,7 @@ public static class Vector2Extensions
     /// <param name="radians"></param>
     /// <param name="origin"></param>
     /// <returns></returns>
+    [Pure]
     public static Vector2 Rotated(this Vector2 vec, float radians, Vector2 origin)
     {
         return Vector2.Transform(vec,
@@ -58,6 +72,7 @@ public static class Vector2Extensions
             Matrix.CreateTranslation(new Vector3(origin, 0)));
     }
 
+    [Pure]
     public static float CalculateScalarDifference(Vector2 outerSize, Vector2 innerSize)
     {
         var enclosingSizeIsTooWide = Vector2Extensions.IsEnclosingSizeTooWide(outerSize, innerSize);
@@ -70,6 +85,7 @@ public static class Vector2Extensions
         return outerSize.X / innerSize.X;
     }
 
+    [Pure]
     public static bool IsEnclosingSizeTooWide(Vector2 enclosingSize, Vector2 sizeToEnclose)
     {
         return enclosingSize.AspectRatio() > sizeToEnclose.AspectRatio();
@@ -87,31 +103,37 @@ public static class Vector2Extensions
         return FromAspectRatio(vec.AspectRatio());
     }
 
+    [Pure]
     public static float MaxXy(this Vector2 vec)
     {
         return MathF.Max(vec.X, vec.Y);
     }
     
+    [Pure]
     public static float MinXy(this Vector2 vec)
     {
         return MathF.Min(vec.X, vec.Y);
     }
 
+    [Pure]
     public static Vector2 JustX(this Vector2 vec)
     {
         return new Vector2(vec.X, 0);
     }
     
+    [Pure]
     public static Vector2 JustY(this Vector2 vec)
     {
         return new Vector2(0, vec.Y);
     }
 
+    [Pure]
     public static Vector2 FromAspectRatio(float aspectRatio)
     {
         return new Vector2(aspectRatio, 1);
     }
 
+    [Pure]
     public static Vector2 Truncate(this Vector2 vector)
     {
         return new Vector2((int)vector.X, (int)vector.Y);
@@ -133,6 +155,7 @@ public static class Vector2Extensions
         }
     }
 
+    [Pure]
     public static float GetAxis(this Vector2 vec, Axis axis)
     {
         if (axis == Axis.X)
@@ -155,6 +178,7 @@ public static class Vector2Extensions
     /// <param name="axis"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
+    [Pure]
     public static Vector2 JustAxis(this Vector2 vec, Axis axis)
     {
         if (axis == Axis.X)
@@ -170,6 +194,7 @@ public static class Vector2Extensions
         throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
     }
 
+    [Pure]
     public static Vector2 FromAxisFirst(Axis axis, float first, float second)
     {
         if (axis == Axis.X)
@@ -185,11 +210,13 @@ public static class Vector2Extensions
         throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
     }
 
+    [Pure]
     public static Vector2 Polar(float radius, float theta)
     {
         return new Vector2(MathF.Cos(theta), MathF.Sin(theta)) * radius;
     }
 
+    [Pure]
     public static float GetAngleFromUnitX(this Vector2 vector)
     {
         var unitX = Vector2.UnitX;
@@ -211,6 +238,7 @@ public static class Vector2Extensions
         return angle;
     }
 
+    [Pure]
     public static Vector2 Floored(this Vector2 vector2)
     {
         var copy = vector2;
@@ -218,6 +246,7 @@ public static class Vector2Extensions
         return copy;
     }
     
+    [Pure]
     public static Vector2 Ceilinged(this Vector2 vector2)
     {
         var copy = vector2;
