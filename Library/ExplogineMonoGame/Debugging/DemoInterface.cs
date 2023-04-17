@@ -63,7 +63,7 @@ internal class DemoInterface : IUpdateHook
         _totalTime += dt;
         if (Client.Input.Keyboard.Modifiers.Control)
         {
-            if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && !Client.Demo.IsPlaying)
+            if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && Client.Demo.IsRecording)
             {
                 Client.Demo.DumpRecording();
             }
