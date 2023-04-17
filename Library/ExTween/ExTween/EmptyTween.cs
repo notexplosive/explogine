@@ -1,6 +1,6 @@
 ﻿namespace ExTween;
 
-public class EmptyTween : ITween
+public readonly struct EmptyTween : ITween
 {
     public ITweenDuration TotalDuration => new KnownTweenDuration(0, 0);
     public float Update(float dt)
