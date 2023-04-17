@@ -16,6 +16,7 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
     private readonly FrameStep _frameStep;
     private readonly LogOverlay _logOverlay;
     private readonly SnapshotTaker _snapshotTaker;
+    private readonly FramerateCounter _framerateCounter;
     private bool _useSnapshotTimer;
 
     public DebugCartridge(IRuntime runtime) : base(runtime)
@@ -24,6 +25,7 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
         _frameStep = new(runtime);
         _logOverlay = new(runtime);
         _snapshotTaker = new(runtime);
+        _framerateCounter = new();
     }
     
     private Depth DemoStatusDepth { get; } = Depth.Front + 15;
@@ -56,6 +58,7 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
         _logOverlay.Update(dt);
         _frameStep.UpdateGraphic(dt);
         _snapshotTaker.Update(dt);
+        _framerateCounter.Update(dt);
     }
     
     public void EarlyDraw(Painter painter)
@@ -67,6 +70,7 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
     { 
         if (Client.Debug.IsPassiveOrActive)
         {
+            _framerateCounter.Draw(painter);
             _logOverlay.Draw(painter, ConsoleOverlayDepth);
         }
         
