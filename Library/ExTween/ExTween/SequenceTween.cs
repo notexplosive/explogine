@@ -114,6 +114,12 @@ public class SequenceTween : TweenCollection, ITween
     {
         return _currentItemIndex >= Items.Count || Items.Count == 0;
     }
+    
+    public void SkipToEnd()
+    {
+        ForEachItem(item => { item.SkipToEnd(); });
+        _currentItemIndex = Items.Count;
+    }
 
     public SequenceTween Add(ITween tween)
     {

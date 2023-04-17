@@ -67,4 +67,9 @@ public class MultiplexTween : TweenCollection, ITween
         Items.Add(tween);
         return this;
     }
+    
+    public void SkipToEnd()
+    {
+        ForEachItem(item => { item.SkipToEnd(); });
+    }
 }
