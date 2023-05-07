@@ -20,7 +20,7 @@ public class Camera
     {
     }
 
-    public Point OutputResolution { get; }
+    public Point OutputResolution { get; set; }
 
     public float Angle { get; set; }
 
@@ -45,7 +45,7 @@ public class Camera
     public Matrix ScreenToCanvas => Matrix.Invert(CanvasToScreen);
 
     public Vector2 TopLeftPosition { get; set; }
-    public Vector2 Size { get; private set; }
+    public Vector2 Size { get; set; }
 
     public Vector2 CenterPosition
     {
