@@ -1,4 +1,6 @@
-﻿namespace ExplogineCore;
+﻿using System.Diagnostics.Contracts;
+
+namespace ExplogineCore;
 
 public class RealFileSystem : IFileSystem
 {
@@ -56,6 +58,7 @@ public class RealFileSystem : IFileSystem
         return File.ReadAllText(ToWorkingPath(relativePathToFile));
     }
 
+    [Pure]
     public List<string> GetFilesAt(string targetRelativePath, string extension = "*", bool recursive = true)
     {
         var fullPaths = GetFilesAtFullPath(ToWorkingPath(targetRelativePath), extension, recursive);
@@ -64,7 +67,7 @@ public class RealFileSystem : IFileSystem
         var root = RootPath;
         foreach (var path in fullPaths)
         {
-            var revisedPath = path.Replace(root, string.Empty).Replace(Path.DirectorySeparatorChar.ToString(), "/");
+            var revisedPath = path.Replace(Path.DirectorySeparatorChar, '/').Replace(FullNormalizedRootPath, string.Empty);
             if (revisedPath.StartsWith('/'))
             {
                 revisedPath = revisedPath.Substring(1);
@@ -74,6 +77,19 @@ public class RealFileSystem : IFileSystem
         }
 
         return result;
+    }
+
+    public string FullNormalizedRootPath
+    {
+        get
+        {
+            var fullPath = new FileInfo(RootPath).FullName;
+            if (fullPath.StartsWith('/'))
+            {
+                fullPath = fullPath.Substring(1);
+            }
+            return fullPath.Replace(Path.DirectorySeparatorChar, '/');
+        }
     }
 
     public void WriteToFile(string relativePathToFile, params string[] lines)
