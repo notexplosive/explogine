@@ -216,6 +216,8 @@ public class MultiCartridge : BasicGameCartridge
 
     public override void AddCommandLineParameters(CommandLineParametersWriter parameters)
     {
+        AddExtraCommandLineParameters(parameters);
+        
         foreach (var cartridge in _cartridges)
         {
             if (cartridge is ICommandLineParameterProvider provider)
@@ -223,6 +225,10 @@ public class MultiCartridge : BasicGameCartridge
                 provider.AddCommandLineParameters(parameters);
             }
         }
+    }
+
+    protected virtual void AddExtraCommandLineParameters(CommandLineParametersWriter parameters)
+    {
     }
 
     public override IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
