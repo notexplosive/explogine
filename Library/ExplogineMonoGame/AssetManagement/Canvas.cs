@@ -21,7 +21,19 @@ public sealed class Canvas : IDisposable
 
     internal RenderTarget2D RenderTarget => _renderTarget ??= CreateRenderTarget();
     public Texture2D Texture => RenderTarget;
-    public Point Size { get; }
+
+    public Point Size
+    {
+        get => _size;
+        set
+        {
+            _renderTarget?.Dispose();
+            _renderTarget = null;
+            _size = value;
+        }
+    }
+
+    private Point _size;
 
     public void Dispose()
     {
