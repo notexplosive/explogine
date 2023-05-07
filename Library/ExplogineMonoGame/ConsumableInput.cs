@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -52,6 +53,7 @@ public class ConsumableInput
             return result;
         }
 
+        [Pure]
         public Vector2 Position(Matrix? toCanvas = null)
         {
             return _raw.Position(toCanvas);
