@@ -27,6 +27,11 @@ public sealed class Canvas : IDisposable
         get => _size;
         set
         {
+            if (_size == value)
+            {
+                return;
+            }
+
             _renderTarget?.Dispose();
             _renderTarget = null;
             _size = value;
