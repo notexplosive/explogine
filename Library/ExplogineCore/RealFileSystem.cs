@@ -7,17 +7,12 @@ public class RealFileSystem : IFileSystem
         RootPath = rootPath;
         Directory.CreateDirectory(RootPath);
     }
-    
+
     public string RootPath { get; }
 
     public bool HasFile(string relativePathToFile)
     {
         return FileInfoAt(relativePathToFile).Exists;
-    }
-
-    public FileInfo FileInfoAt(string relativePathToFile)
-    {
-        return new FileInfo(ToWorkingPath(relativePathToFile));
     }
 
     public void CreateFile(string relativePathToFile)
@@ -42,6 +37,7 @@ public class RealFileSystem : IFileSystem
         {
             info.Delete();
         }
+
         CreateFile(relativePathToFile);
     }
 
@@ -56,7 +52,7 @@ public class RealFileSystem : IFileSystem
         {
             return string.Empty;
         }
-        
+
         return File.ReadAllText(ToWorkingPath(relativePathToFile));
     }
 
@@ -73,12 +69,29 @@ public class RealFileSystem : IFileSystem
             {
                 revisedPath = revisedPath.Substring(1);
             }
+
             result.Add(revisedPath);
         }
 
         return result;
     }
-    
+
+    public void WriteToFile(string relativePathToFile, params string[] lines)
+    {
+        CreateOrOverwriteFile(relativePathToFile);
+        AppendToFile(relativePathToFile, lines);
+    }
+
+    public string GetCurrentDirectory()
+    {
+        return RootPath;
+    }
+
+    public FileInfo FileInfoAt(string relativePathToFile)
+    {
+        return new FileInfo(ToWorkingPath(relativePathToFile));
+    }
+
     private List<string> GetFilesAtFullPath(string targetFullPath, string extension = "*", bool recursive = true)
     {
         var result = new List<string>();
@@ -112,23 +125,18 @@ public class RealFileSystem : IFileSystem
         return result;
     }
 
-    public void WriteToFile(string relativePathToFile, params string[] lines)
-    {
-        CreateOrOverwriteFile(relativePathToFile);
-        AppendToFile(relativePathToFile, lines);
-    }
-
     private string ToWorkingPath(string relativePath)
     {
         if (relativePath == ".")
         {
             return RootPath;
         }
+
         return Path.Join(RootPath, relativePath);
     }
 
-    public string GetCurrentDirectory()
+    public RealFileSystem GetDirectory(string subDirectory)
     {
-        return RootPath;
+        return new RealFileSystem($"{RootPath}/{subDirectory}");
     }
 }
