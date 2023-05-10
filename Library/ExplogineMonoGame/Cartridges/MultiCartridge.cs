@@ -57,17 +57,16 @@ public class MultiCartridge : BasicGameCartridge
     {
         for (var i = 0; i < _cartridges.Count; i++)
         {
-            if (_cartridges[i] is T cartridge)
+            if (_cartridges[i] is T)
             {
-                RegenerateCartridge(i);
-                return cartridge;
+                return (RegenerateCartridge(i) as T)!;
             }
         }
 
         return null!;
     }
 
-    public void RegenerateCartridge(int i)
+    public Cartridge RegenerateCartridge(int i)
     {
         _startedCartridges.Remove(i);
         
@@ -85,6 +84,8 @@ public class MultiCartridge : BasicGameCartridge
                 StartCurrentCartridge();
             }
         }
+
+        return _cartridges[i];
     }
 
     public void RegenerateCurrentCartridge()
@@ -96,10 +97,10 @@ public class MultiCartridge : BasicGameCartridge
     {
         for (var i = 0; i < _cartridges.Count; i++)
         {
-            if (_cartridges[i] is T)
+            if (_cartridges[i] is T cartridge)
             {
                 CurrentCartridgeIndex = i;
-                return (CurrentCartridge as T)!;
+                return cartridge;
             }
         }
 
