@@ -53,13 +53,14 @@ public class MultiCartridge : BasicGameCartridge
         _cartridges.Add(cartridge);
     }
 
-    public void RegenerateCartridge<T>() where T : Cartridge
+    public T RegenerateCartridge<T>() where T : Cartridge
     {
         for (var i = 0; i < _cartridges.Count; i++)
         {
-            if (_cartridges[i] is T)
+            if (_cartridges[i] is T cartridge)
             {
                 RegenerateCartridge(i);
+                return cartridge;
             }
         }
     }
