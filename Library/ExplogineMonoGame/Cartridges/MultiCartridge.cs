@@ -63,6 +63,8 @@ public class MultiCartridge : BasicGameCartridge
                 return cartridge;
             }
         }
+
+        return null!;
     }
 
     public void RegenerateCartridge(int i)
