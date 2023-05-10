@@ -8,24 +8,29 @@ namespace ExplogineMonoGame;
 
 public class ConsumableInput
 {
-    public ConsumableInput(ConsumableKeyboard keyboard, ConsumableMouse mouse)
+    private ConsumableInput(ConsumableKeyboard keyboard, ConsumableMouse mouse, GamePadFrameState gamePad)
     {
         Keyboard = keyboard;
         Mouse = mouse;
+        GamePad = gamePad;
     }
 
     public ConsumableInput(InputFrameState raw) : this(new ConsumableKeyboard(raw.Keyboard),
-        new ConsumableMouse(raw.Mouse))
+        new ConsumableMouse(raw.Mouse), raw.GamePad)
     {
     }
-
+    
     public ConsumableKeyboard Keyboard { get; }
     public ConsumableMouse Mouse { get; }
+    /// <summary>
+    /// GamePad is not consumable, we just forward the raw frame state
+    /// </summary>
+    public GamePadFrameState GamePad { get; }
 
-    public ConsumableInput WithoutKeyboard()
+    public ConsumableInput MouseOnly()
     {
         var emptyKeyboard = new KeyboardFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
-        return new ConsumableInput(new ConsumableKeyboard(emptyKeyboard), Mouse);
+        return new ConsumableInput(new ConsumableKeyboard(emptyKeyboard), Mouse, new GamePadFrameState(InputSnapshot.Empty, InputSnapshot.Empty));
     }
 
     public class ConsumableMouse

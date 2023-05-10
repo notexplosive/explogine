@@ -85,7 +85,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        var inputWithoutKeyboard = input.WithoutKeyboard();
+        var inputWithoutKeyboard = input.MouseOnly();
         for (var i = _windows.Count - 1; i >= 0; i--)
         {
             var isTopWindow = i == _windows.Count - 1;

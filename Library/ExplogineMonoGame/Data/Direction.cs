@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Data;
 
@@ -181,6 +183,81 @@ public class Direction
 
         return 0;
     }
+    
+    public Keys ToArrowKey()
+    {
+        if (this == Direction.Up)
+        {
+            return Keys.Up;
+        }
+
+        if (this == Direction.Down)
+        {
+            return Keys.Down;
+        }
+
+        if (this == Direction.Left)
+        {
+            return Keys.Left;
+        }
+
+        if (this == Direction.Right)
+        {
+            return Keys.Right;
+        }
+
+        throw new Exception($"Cannot get key from direction {this}");
+    }
+    
+    public Keys ToWasd()
+    {
+        if (this == Direction.Up)
+        {
+            return Keys.W;
+        }
+
+        if (this == Direction.Down)
+        {
+            return Keys.S;
+        }
+
+        if (this == Direction.Left)
+        {
+            return Keys.A;
+        }
+
+        if (this == Direction.Right)
+        {
+            return Keys.D;
+        }
+
+        throw new Exception($"Cannot get key from direction {this}");
+    }
+    
+    public Buttons ToDPadButton()
+    {
+        if (this == Direction.Up)
+        {
+            return Buttons.DPadUp;
+        }
+
+        if (this == Direction.Down)
+        {
+            return Buttons.DPadDown;
+        }
+
+        if (this == Direction.Left)
+        {
+            return Buttons.DPadLeft;
+        }
+
+        if (this == Direction.Right)
+        {
+            return Buttons.DPadRight;
+        }
+
+        throw new Exception($"Cannot get key from direction {this}");
+    }
 
     public override bool Equals(object? obj)
     {
@@ -201,5 +278,17 @@ public class Direction
     public static bool operator !=(Direction lhs, Direction rhs)
     {
         return !(lhs == rhs);
+    }
+
+    /// <summary>
+    ///     All of the "real" directions (excluding "None")
+    /// </summary>
+    /// <returns></returns>
+    public static IEnumerable<Direction> EachCardinal()
+    {
+        yield return Direction.Right;
+        yield return Direction.Down;
+        yield return Direction.Left;
+        yield return Direction.Up;
     }
 }
