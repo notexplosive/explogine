@@ -30,6 +30,11 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 
     public void CaptureMessage(LogMessage message)
     {
+        if (message.Type == LogMessageType.Verbose)
+        {
+            return;
+        }
+        
         var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth), _font);
 
         float usedHeight = 0;

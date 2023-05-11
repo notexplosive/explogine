@@ -51,6 +51,12 @@ public class ClientDebug
 #endif
     }
 
+    public void LogVerbose(object? message, params object?[] paramsObjects)
+    {
+        var output = CreateOutputString(message, paramsObjects);
+        Output.Emit(new LogMessage(LogMessageType.Verbose, output));
+    }
+    
     public void Log(object? message, params object?[] paramsObjects)
     {
         var output = CreateOutputString(message, paramsObjects);
