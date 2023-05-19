@@ -270,12 +270,17 @@ public class Direction
         return HashCode.Combine(_internalPoint);
     }
 
-    public static bool operator ==(Direction lhs, Direction rhs)
+    public static bool operator ==(Direction? lhs, Direction? rhs)
     {
-        return lhs._internalPoint == rhs._internalPoint;
+        if (lhs is not null && rhs is not null)
+        {
+            return lhs._internalPoint == rhs._internalPoint;
+        }
+
+        return lhs is null && rhs is null;
     }
 
-    public static bool operator !=(Direction lhs, Direction rhs)
+    public static bool operator !=(Direction? lhs, Direction? rhs)
     {
         return !(lhs == rhs);
     }
