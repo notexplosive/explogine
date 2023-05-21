@@ -2,5 +2,8 @@
   "files.exclude": {
     "**/.git": true,
     "**/obj": true
+  },
+  "files.associations": {
+    "*.json": "jsonc"
   }
 }
