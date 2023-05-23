@@ -307,6 +307,6 @@ public class Direction
             }
         }
 
-        throw new Exception($"Unknown direction {name}");
+        return Direction.None;
     }
 }
