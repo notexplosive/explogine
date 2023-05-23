@@ -8,11 +8,11 @@ namespace ExplogineMonoGame.Data;
 public class Direction
 {
     private readonly Point _internalPoint;
-    private readonly string _name;
+    public string Name { get; }
 
     private Direction(string name, Point givenPoint)
     {
-        _name = name;
+        Name = name;
         _internalPoint = givenPoint;
     }
 
@@ -113,7 +113,7 @@ public class Direction
 
     public override string ToString()
     {
-        return _name;
+        return Name;
     }
 
     public Point ToPoint()
@@ -295,5 +295,18 @@ public class Direction
         yield return Direction.Down;
         yield return Direction.Left;
         yield return Direction.Up;
+    }
+
+    public static Direction FromName(string name)
+    {
+        foreach (var direction in Direction.EachCardinal())
+        {
+            if (direction.Name == name)
+            {
+                return direction;
+            }
+        }
+
+        throw new Exception($"Unknown direction {name}");
     }
 }
