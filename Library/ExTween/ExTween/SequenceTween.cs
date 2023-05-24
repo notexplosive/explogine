@@ -1,6 +1,6 @@
 ﻿namespace ExTween;
 
-public class SequenceTween : TweenCollection, ITween
+public class SequenceTween : TweenCollection
 {
     private int _currentItemIndex;
 
@@ -11,7 +11,7 @@ public class SequenceTween : TweenCollection, ITween
 
     public bool IsLooping { get; set; }
 
-    public float Update(float dt)
+    public override float Update(float dt)
     {
         if (Items.Count == 0)
         {
@@ -41,7 +41,7 @@ public class SequenceTween : TweenCollection, ITween
         return overflow;
     }
 
-    public bool IsDone()
+    public override bool IsDone()
     {
         return IsAtEnd() && !IsLooping;
     }
@@ -52,7 +52,7 @@ public class SequenceTween : TweenCollection, ITween
         _currentItemIndex = 0;
     }
 
-    public ITweenDuration TotalDuration
+    public override ITweenDuration TotalDuration
     {
         get
         {
@@ -71,7 +71,7 @@ public class SequenceTween : TweenCollection, ITween
         }
     }
     
-    public void JumpTo(float targetTime)
+    public override void JumpTo(float targetTime)
     {
         Reset();
 
@@ -115,7 +115,7 @@ public class SequenceTween : TweenCollection, ITween
         return _currentItemIndex >= Items.Count || Items.Count == 0;
     }
     
-    public void SkipToEnd()
+    public override void SkipToEnd()
     {
         ForEachItem(item => { item.SkipToEnd(); });
         _currentItemIndex = Items.Count;

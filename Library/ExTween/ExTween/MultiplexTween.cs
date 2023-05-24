@@ -2,9 +2,9 @@
 
 namespace ExTween;
 
-public class MultiplexTween : TweenCollection, ITween
+public class MultiplexTween : TweenCollection
 {
-    public float Update(float dt)
+    public override float Update(float dt)
     {
         float totalOverflow = 0;
         var hasInitializedOverflow = false;
@@ -25,7 +25,7 @@ public class MultiplexTween : TweenCollection, ITween
         return totalOverflow;
     }
 
-    public bool IsDone()
+    public override bool IsDone()
     {
         var result = true;
         ForEachItem(item => result = result && item.IsDone());
@@ -37,13 +37,13 @@ public class MultiplexTween : TweenCollection, ITween
         ResetAllItems();
     }
 
-    public void JumpTo(float time)
+    public override void JumpTo(float time)
     {
         Reset();
         ForEachItem(item => { item.JumpTo(time); });
     }
 
-    public ITweenDuration TotalDuration
+    public override ITweenDuration TotalDuration
     {
         get
         {
@@ -68,7 +68,7 @@ public class MultiplexTween : TweenCollection, ITween
         return this;
     }
     
-    public void SkipToEnd()
+    public override void SkipToEnd()
     {
         ForEachItem(item => { item.SkipToEnd(); });
     }

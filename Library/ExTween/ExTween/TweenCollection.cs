@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ExTween;
 
-public abstract class TweenCollection
+public abstract class TweenCollection : ITween
 {
     protected readonly List<ITween> Items = new();
 
@@ -55,7 +55,12 @@ public abstract class TweenCollection
         Items.Clear();
     }
 
+    public abstract ITweenDuration TotalDuration { get; }
+    public abstract float Update(float dt);
+    public abstract bool IsDone();
     public abstract void Reset();
+    public abstract void JumpTo(float time);
+    public abstract void SkipToEnd();
 
     public override string ToString()
     {
