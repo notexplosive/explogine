@@ -8,3 +8,10 @@ public static class FloatExtensions
     }
 }
 
+public static class DoubleExtensions
+{
+    public static double LerpAlongFloatPercent(double startingValue, double targetValue, float percent)
+    {
+        return startingValue + (targetValue - startingValue) * percent;
+    }
+}
