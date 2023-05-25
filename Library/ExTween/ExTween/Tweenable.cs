@@ -37,7 +37,11 @@ public abstract class Tweenable<T> : ITweenable
     public T Value
     {
         get => _getter();
-        set => _setter(value);
+        set
+        {
+            _setter(value);
+            OnValueChanged?.Invoke(value);
+        }
     }
 
     public ITween TweenTo(object? destination, float duration, Ease.Delegate ease)
@@ -46,10 +50,12 @@ public abstract class Tweenable<T> : ITweenable
         {
             throw new Exception("Destination was null");
         }
-        
+
         var realDestination = (T) destination;
         return new Tween<T>(this, realDestination, duration, ease);
     }
+
+    public event Action<T>? OnValueChanged;
 
     public static implicit operator T(Tweenable<T> tweenable)
     {
