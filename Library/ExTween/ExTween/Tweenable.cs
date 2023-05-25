@@ -1,6 +1,17 @@
-﻿namespace ExTween;
+﻿using System;
 
-public abstract class Tweenable<T>
+namespace ExTween;
+
+public interface ITweenable
+{
+    /// <summary>
+    ///     This overload is used for lua bindings and other use cases that don't support generics, prefer the generic
+    ///     equivalent
+    /// </summary>
+    public ITween TweenTo(object? destination, float duration, Ease.Delegate ease);
+}
+
+public abstract class Tweenable<T> : ITweenable
 {
     public delegate T Getter();
 
@@ -27,6 +38,17 @@ public abstract class Tweenable<T>
     {
         get => _getter();
         set => _setter(value);
+    }
+
+    public ITween TweenTo(object? destination, float duration, Ease.Delegate ease)
+    {
+        if (destination == null)
+        {
+            throw new Exception("Destination was null");
+        }
+        
+        var realDestination = (T) destination;
+        return new Tween<T>(this, realDestination, duration, ease);
     }
 
     public static implicit operator T(Tweenable<T> tweenable)
@@ -69,6 +91,7 @@ public abstract class Tweenable<T>
         {
             return "null";
         }
+
         return Value.ToString();
     }
 }
