@@ -96,6 +96,17 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
             Client.Debug.CycleDebugMode();
         }
         
+        if (input.Keyboard.Modifiers.ControlShift && input.Keyboard.GetButton(Keys.F12, true).WasPressed)
+        {
+            _useSnapshotTimer = !_useSnapshotTimer;
+            Client.Debug.Log($"Snapshots timer is now {(_useSnapshotTimer ? "Enabled" : "Disabled")}");
+
+            if (!_useSnapshotTimer)
+            {
+                _snapshotTaker.StopTimer();
+            }
+        }
+        
         if (Client.FinishedLoading.IsReady)
         {
             _snapshotTaker.UpdateInput(input, hitTestStack);

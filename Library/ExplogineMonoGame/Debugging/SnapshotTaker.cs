@@ -59,6 +59,11 @@ internal class SnapshotTaker : IUpdateInputHook, IUpdateHook
         _timeLastFrame = DateTime.Now;
     }
 
+    public void StopTimer()
+    {
+        _timerReady = false;
+    }
+
     private void TakeSnapshot()
     {
         var currentTime = DateTime.Now;
