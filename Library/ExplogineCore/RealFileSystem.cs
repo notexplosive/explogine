@@ -12,6 +12,20 @@ public class RealFileSystem : IFileSystem
 
     public string RootPath { get; }
 
+    public string FullNormalizedRootPath
+    {
+        get
+        {
+            var fullPath = new FileInfo(RootPath).FullName;
+            if (fullPath.StartsWith('/'))
+            {
+                fullPath = fullPath.Substring(1);
+            }
+
+            return fullPath.Replace(Path.DirectorySeparatorChar, '/');
+        }
+    }
+
     public bool HasFile(string relativePathToFile)
     {
         return FileInfoAt(relativePathToFile).Exists;
@@ -67,7 +81,8 @@ public class RealFileSystem : IFileSystem
         var root = RootPath;
         foreach (var path in fullPaths)
         {
-            var revisedPath = path.Replace(Path.DirectorySeparatorChar, '/').Replace(FullNormalizedRootPath, string.Empty);
+            var revisedPath = path.Replace(Path.DirectorySeparatorChar, '/')
+                .Replace(FullNormalizedRootPath, string.Empty);
             if (revisedPath.StartsWith('/'))
             {
                 revisedPath = revisedPath.Substring(1);
@@ -77,19 +92,6 @@ public class RealFileSystem : IFileSystem
         }
 
         return result;
-    }
-
-    public string FullNormalizedRootPath
-    {
-        get
-        {
-            var fullPath = new FileInfo(RootPath).FullName;
-            if (fullPath.StartsWith('/'))
-            {
-                fullPath = fullPath.Substring(1);
-            }
-            return fullPath.Replace(Path.DirectorySeparatorChar, '/');
-        }
     }
 
     public void WriteToFile(string relativePathToFile, params string[] lines)
