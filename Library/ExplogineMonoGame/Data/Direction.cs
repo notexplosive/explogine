@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -8,13 +9,14 @@ namespace ExplogineMonoGame.Data;
 public class Direction
 {
     private readonly Point _internalPoint;
-    public string Name { get; }
 
     private Direction(string name, Point givenPoint)
     {
         Name = name;
         _internalPoint = givenPoint;
     }
+
+    public string Name { get; }
 
     public static Direction Up { get; } = new("Up", new Point(0, -1));
     public static Direction Right { get; } = new("Right", new Point(1, 0));
@@ -183,7 +185,7 @@ public class Direction
 
         return 0;
     }
-    
+
     public Keys ToArrowKey()
     {
         if (this == Direction.Up)
@@ -208,7 +210,7 @@ public class Direction
 
         throw new Exception($"Cannot get key from direction {this}");
     }
-    
+
     public Keys ToWasd()
     {
         if (this == Direction.Up)
@@ -233,7 +235,7 @@ public class Direction
 
         throw new Exception($"Cannot get key from direction {this}");
     }
-    
+
     public Buttons ToDPadButton()
     {
         if (this == Direction.Up)
@@ -308,5 +310,20 @@ public class Direction
         }
 
         return Direction.None;
+    }
+
+    public Axis GetAxis()
+    {
+        if (this == Direction.Left || this == Direction.Right)
+        {
+            return Axis.X;
+        }
+        
+        if (this == Direction.Up || this == Direction.Down)
+        {
+            return Axis.Y;
+        }
+
+        throw new Exception($"Direction {Name} does not have an axis");
     }
 }
