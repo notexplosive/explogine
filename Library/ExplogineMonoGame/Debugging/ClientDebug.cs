@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ExplogineCore;
 using ExplogineMonoGame.Logging;
 
 namespace ExplogineMonoGame.Debugging;
@@ -18,6 +19,7 @@ public class ClientDebug
     public bool IsPassiveOrActive => Level == DebugLevel.Passive || IsActive;
     public FileLogCapture LogFile { get; }
     public int GameSpeed { get; set; } = 1;
+    public IFileSystem RepoFileSystem { get; internal set; } = new VirtualFileSystem();
 
     public void CycleDebugMode()
     {

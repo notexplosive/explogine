@@ -18,6 +18,7 @@ public static class Client
     // The `OnceReady` initialization needs to happen at the top, other static initializers depend on these
     public static readonly OnceReady FinishedLoading = new();
     public static readonly OnceReady InitializedGraphics = new();
+
     public static readonly OnceReady Exited = new();
     //
 
@@ -27,6 +28,7 @@ public static class Client
     private static CommandLineParameters commandLineParameters = new();
     internal static readonly ClientRuntime Runtime = new();
     internal static readonly CartridgeChain CartridgeChain = new();
+
     internal static RealWindow PlatformWindow => (Client.Runtime.Window as RealWindow)!;
     internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
@@ -109,7 +111,8 @@ public static class Client
     /// <param name="windowConfig">Config object for client startup</param>
     /// <param name="gameCartridgeCreator">A method that will return the cartridge for your game</param>
     /// <param name="platform">Platform plugin for your platform</param>
-    public static void Start(string[] argsArray, WindowConfig windowConfig, Func<IRuntime, Cartridge> gameCartridgeCreator,
+    public static void Start(string[] argsArray, WindowConfig windowConfig,
+        Func<IRuntime, Cartridge> gameCartridgeCreator,
         IPlatformInterface platform)
     {
         // Setup Platform
@@ -139,7 +142,8 @@ public static class Client
         }
 
         // Don't plug in the game cartridge until we're initialized
-        Client.InitializedGraphics.Add(()=> Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.Runtime)));
+        Client.InitializedGraphics.Add(() =>
+            Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.Runtime)));
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game

@@ -19,6 +19,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         parameters.RegisterParameter<bool>("skipIntro");
         parameters.RegisterParameter<bool>("debug");
         parameters.RegisterParameter<bool>("skipSnapshot");
+        parameters.RegisterParameter<string>("repoPath");
     }
 
     public void ExecuteCommandLineArgs(CommandLineArguments args)
