@@ -34,6 +34,24 @@ public static class Vector2Extensions
     }
     
     [Pure]
+    public static Vector2 StraightModulo(this Vector2 vec, Vector2 other)
+    {
+        return new Vector2(vec.X % other.X, vec.Y % other.Y);
+    }
+
+    [Pure]
+    public static Vector2 StraightModulo(this Vector2 vec, float otherX, float otherY)
+    {
+        return new Vector2(vec.X % otherX, vec.Y % otherY);
+    }
+
+    [Pure]
+    public static Vector2 StraightModulo(this Vector2 vec, Point other)
+    {
+        return vec.StraightModulo(other.ToVector2());
+    }
+    
+    [Pure]
     public static RectangleF ToRectangleF(this Vector2 vec)
     {
         return new RectangleF(Vector2.Zero, vec);
