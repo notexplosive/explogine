@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using ExTween;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
@@ -599,5 +600,16 @@ public struct RectangleF : IEquatable<RectangleF>
     public static RectangleF InflateFrom(Vector2 headPosition, float width, float height)
     {
         return new RectangleF(headPosition, Vector2.Zero).Inflated(width, height);
+    }
+    
+    [Pure]
+    public static RectangleF Lerp(RectangleF startingValue, RectangleF targetValue, float percent)
+    {
+        var x = FloatExtensions.Lerp(startingValue.Location.X, targetValue.Location.X, percent);
+        var y = FloatExtensions.Lerp(startingValue.Location.Y, targetValue.Location.Y, percent);
+        var width = FloatExtensions.Lerp(startingValue.Size.X, targetValue.Size.X, percent);
+        var height = FloatExtensions.Lerp(startingValue.Size.Y, targetValue.Size.Y, percent);
+
+        return new RectangleF(x, y, width, height);
     }
 }
