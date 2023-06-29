@@ -11,4 +11,9 @@ internal readonly record struct ElementName(string Text) : IElementName
     {
         return name.Text;
     }
+
+    public bool IsReal()
+    {
+        return true;
+    }
 }

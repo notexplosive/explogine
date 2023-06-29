@@ -2,4 +2,5 @@
 
 public interface IElementName
 {
+    public bool IsReal();
 }
