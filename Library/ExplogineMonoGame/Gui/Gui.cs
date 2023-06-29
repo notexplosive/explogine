@@ -51,15 +51,18 @@ public class Gui : IUpdateInputHook
     {
         _widgets.Add(new DynamicLabel(rectangle, depth, action));
     }
-    
+
     public void RadialCheckbox(RectangleF rectangle, string label, Depth depth, int targetState, Wrapped<int> state)
     {
         _widgets.Add(new RadialCheckbox(state, targetState, rectangle, label, depth));
     }
-    
-    public void TextInputWidget(RectangleF rectangle, IFontGetter themeFont, TextInputWidget.Settings settings)
+
+    public TextInputWidget TextInputWidget(RectangleF rectangle, IFontGetter themeFont,
+        TextInputWidget.Settings settings)
     {
-        _widgets.Add(new TextInputWidget(rectangle, themeFont, settings));
+        var textInput = new TextInputWidget(rectangle, themeFont, settings);
+        _widgets.Add(textInput);
+        return textInput;
     }
 
     public Gui Panel(RectangleF rectangle, Depth depth)
@@ -91,7 +94,7 @@ public class Gui : IUpdateInputHook
                 disposable.Dispose();
             }
         }
-        
+
         _widgets.Clear();
     }
 

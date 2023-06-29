@@ -17,14 +17,21 @@ public class SimpleGuiTheme : IGuiTheme
         L.FixedElement(8, 8),
         L.FillBoth("label"));
 
-    public SimpleGuiTheme(Color primaryColor, Color secondaryColor, Color backgroundColor, IFontGetter fontGetter)
+    public SimpleGuiTheme(Color primaryColor, Color secondaryColor, Color backgroundColor, IFontGetter fontGetter,
+        Color? textInputForegroundColor = null, Color? textInputBackgroundColor = null, Color? selectionColor = null)
     {
         PrimaryColor = primaryColor;
         SecondaryColor = secondaryColor;
         BackgroundColor = backgroundColor;
         Font = fontGetter;
+        TextInputBackgroundColor = textInputBackgroundColor ?? BackgroundColor;
+        TextInputForegroundColor = textInputForegroundColor ?? PrimaryColor;
+        SelectionColor = selectionColor ?? SecondaryColor;
     }
 
+    public Color TextInputBackgroundColor { get; }
+    public Color TextInputForegroundColor { get; }
+    public Color SelectionColor { get; }
     public Color PrimaryColor { get; }
     public Color SecondaryColor { get; }
     public Color BackgroundColor { get; }
@@ -36,15 +43,15 @@ public class SimpleGuiTheme : IGuiTheme
         painter.BeginSpriteBatch(textInputWidget.ScrollableArea.CanvasToScreen);
         var depth = Depth.Middle;
 
-        painter.Clear(BackgroundColor);
+        painter.Clear(TextInputBackgroundColor);
 
         if (textInputWidget.Selected)
         {
             painter.DrawRectangle(textInputWidget.CursorRectangle,
-                new DrawSettings {Depth = depth - 1, Color = PrimaryColor});
+                new DrawSettings {Depth = depth - 1, Color = TextInputForegroundColor});
 
             var random = new NoiseBasedRng(123);
-            var selectionColor = SecondaryColor;
+            var selectionColor = SelectionColor;
 
             foreach (var selectionRect in textInputWidget.GetSelectionRectangles())
             {
@@ -60,7 +67,7 @@ public class SimpleGuiTheme : IGuiTheme
 
         painter.DrawStringWithinRectangle(textInputWidget.Font, textInputWidget.Text,
             textInputWidget.ContainerRectangle, textInputWidget.Alignment,
-            new DrawSettings {Color = PrimaryColor, Depth = depth});
+            new DrawSettings {Color = TextInputForegroundColor, Depth = depth});
 
         if (Client.Debug.IsActive)
         {
@@ -84,7 +91,7 @@ public class SimpleGuiTheme : IGuiTheme
         }
 
         var titleLayout = chrome.TitleLayout;
-        
+
         foreach (var button in titleLayout.Buttons)
         {
             if (button.ButtonType != InternalWindowTitleBar.ControlButtonType.Empty)
@@ -104,7 +111,8 @@ public class SimpleGuiTheme : IGuiTheme
         if (chrome.Icon != null)
         {
             painter.DrawAsRectangle(chrome.Icon.Texture, titleLayout.Icon,
-                new DrawSettings {Color = Color.White, Depth = chrome.Depth - 1, SourceRectangle = chrome.Icon.SourceRectangle});
+                new DrawSettings
+                    {Color = Color.White, Depth = chrome.Depth - 1, SourceRectangle = chrome.Icon.SourceRectangle});
         }
 
         var truncatedTitle = Font.Truncate(chrome.Title, titleLayout.TitleArea.Size);
@@ -114,7 +122,8 @@ public class SimpleGuiTheme : IGuiTheme
 
     public void DrawLabel(Painter painter, Label label)
     {
-        painter.DrawStringWithinRectangle(Font, label.Text, label.Rectangle, label.Alignment, new DrawSettings{Depth = label.Depth});
+        painter.DrawStringWithinRectangle(Font, label.Text, label.Rectangle, label.Alignment,
+            new DrawSettings {Depth = label.Depth});
     }
 
     public void DrawButton(Painter painter, Button button)
@@ -225,7 +234,7 @@ public class SimpleGuiTheme : IGuiTheme
         {
             thumbColor = SecondaryColor;
         }
-        
+
         painter.DrawRectangle(scrollBar.BodyRectangle,
             new DrawSettings {Color = thumbColor, Depth = scrollBar.Depth});
 
