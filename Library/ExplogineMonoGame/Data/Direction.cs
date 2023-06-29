@@ -303,7 +303,7 @@ public class Direction
     {
         foreach (var direction in Direction.EachCardinal())
         {
-            if (direction.Name == name)
+            if (direction.Name.ToLower() == name.ToLower())
             {
                 return direction;
             }
