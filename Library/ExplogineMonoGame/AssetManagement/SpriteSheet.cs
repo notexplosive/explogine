@@ -21,9 +21,13 @@ public abstract class SpriteSheet : Asset
 
     public abstract void DrawFrameAtPosition(Painter painter, int index, Vector2 position, Scale2D scale,
         DrawSettings drawSettings);
-    
-    public abstract void DrawFrameAsRectangle(Painter painter, int index, RectangleF rectangleF,
-        DrawSettings drawSettings);
+
+    public void DrawFrameAsRectangle(Painter painter, int index, RectangleF rectangleF,
+        DrawSettings drawSettings)
+    {
+        drawSettings.SourceRectangle ??= GetSourceRectForFrame(index);
+        painter.DrawAsRectangle(Texture, rectangleF, drawSettings);
+    }
 
     public abstract Rectangle GetSourceRectForFrame(int index);
 

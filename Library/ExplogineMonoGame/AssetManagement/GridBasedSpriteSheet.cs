@@ -57,11 +57,4 @@ public class GridBasedSpriteSheet : SpriteSheet
 
         DrawFrameAsRectangle(painter, index, destinationRect, drawSettings);
     }
-    
-    
-    public override void DrawFrameAsRectangle(Painter painter, int index, RectangleF rectangleF, DrawSettings drawSettings)
-    {
-        drawSettings.SourceRectangle ??= GetSourceRectForFrame(index);
-        painter.DrawAsRectangle(Texture, rectangleF, drawSettings);
-    }
 }
