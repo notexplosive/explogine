@@ -22,6 +22,8 @@ public class MultiCartridge : BasicGameCartridge
         _cartridges.AddRange(startingCartridges);
     }
 
+    public int TotalCartridgeCount => _cartridges.Count;
+    
     private int CurrentCartridgeIndex
     {
         get => _currentCartridgeIndexImpl;
@@ -46,6 +48,11 @@ public class MultiCartridge : BasicGameCartridge
 
             return CurrentCartridge.CartridgeConfig;
         }
+    }
+
+    public Cartridge GetCartridgeAt(int i)
+    {
+        return _cartridges[i];
     }
 
     public void Add(Cartridge cartridge)
