@@ -1,4 +1,7 @@
-﻿using ExTween;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using ExTween;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Data;
@@ -31,6 +34,46 @@ public static class ColorExtensions
         return color.ToRgbaHex().ToString("X");
     }
 
+    public static bool IsFormattedAsRgbaHex(string colorString)
+    {
+        return ColorExtensions.TryFromRgbaHexString(colorString, out var _);
+    }
+
+    public static bool TryFromRgbaHexString(string colorString, [NotNullWhen(true)] out Color? result)
+    {
+        if (colorString.Length == 6)
+        {
+            colorString += "FF";
+        }
+
+        var valid = colorString.Length == 8;
+
+        var r = byte.MinValue;
+        var g = byte.MinValue;
+        var b = byte.MinValue;
+        var a = byte.MaxValue;
+
+        valid = valid && byte.TryParse(colorString.AsSpan(0, 2), NumberStyles.HexNumber, null, out r);
+        valid = valid && byte.TryParse(colorString.AsSpan(2, 2), NumberStyles.HexNumber, null, out g);
+        valid = valid && byte.TryParse(colorString.AsSpan(4, 2), NumberStyles.HexNumber, null, out b);
+        valid = valid && byte.TryParse(colorString.AsSpan(6, 2), NumberStyles.HexNumber, null, out a);
+
+        result = valid ? new Color(r, g, b, a) : null;
+
+        return valid;
+    }
+
+    public static Color FromRgbaHexString(string colorString)
+    {
+        if (ColorExtensions.TryFromRgbaHexString(colorString, out var color))
+        {
+            return color.Value;
+        }
+
+        throw new Exception(
+            $"Color string `{colorString}` is not formatted correctly, expected RRGGBB[AA], eg: d80050 or d80050FF");
+    }
+
     public static Color Added(this Color source, Color added)
     {
         var alpha = source.A + added.A;
@@ -44,7 +87,7 @@ public static class ColorExtensions
     {
         return color.BrightenedBy(-amount);
     }
-    
+
     public static Color BrightenedBy(this Color color, float amount)
     {
         var alpha = color.A / 255f;
