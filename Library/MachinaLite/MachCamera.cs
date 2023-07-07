@@ -3,11 +3,11 @@ using Microsoft.Xna.Framework;
 
 namespace MachinaLite;
 
-public class Camera
+public class MachCamera
 {
     private readonly IRuntime _runtime;
 
-    public Camera(IRuntime runtime)
+    public MachCamera(IRuntime runtime)
     {
         _runtime = runtime;
     }

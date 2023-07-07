@@ -1,6 +1,6 @@
 ﻿namespace ExplogineMonoGame.Rails;
 
-public interface IEarlyDrawHook
+public interface IEarlyDrawHook : IHook
 {
     void EarlyDraw(Painter painter);
 }
