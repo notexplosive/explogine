@@ -271,4 +271,10 @@ public static class Vector2Extensions
         copy.Ceiling();
         return copy;
     }
+
+    [Pure]
+    public static Vector2 Lerp(Vector2 startingValue, Vector2 targetValue, float percent)
+    {
+        return startingValue + (targetValue - startingValue) * percent;
+    }
 }
