@@ -612,4 +612,10 @@ public struct RectangleF : IEquatable<RectangleF>
 
         return new RectangleF(x, y, width, height);
     }
+
+    [Pure]
+    public bool Overlaps(RectangleF other)
+    {
+        return RectangleF.Intersect(this,other).Area > 0;
+    }
 }
