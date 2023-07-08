@@ -8,7 +8,7 @@ public interface ITweenable
     ///     This overload is used for lua bindings and other use cases that don't support generics, prefer the generic
     ///     equivalent
     /// </summary>
-    public ITween TweenTo(object? destination, float duration, Ease.Delegate ease);
+    public ITween TweenToObject(object? destination, float duration, Ease.Delegate ease);
 }
 
 public abstract class Tweenable<T> : ITweenable
@@ -44,7 +44,7 @@ public abstract class Tweenable<T> : ITweenable
         }
     }
 
-    public ITween TweenTo(object? destination, float duration, Ease.Delegate ease)
+    public ITween TweenToObject(object? destination, float duration, Ease.Delegate ease)
     {
         if (destination == null)
         {
