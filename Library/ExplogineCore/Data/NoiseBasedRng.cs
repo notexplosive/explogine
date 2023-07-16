@@ -84,7 +84,13 @@ public class NoiseBasedRng
     public int NextInt(int low, int high)
     {
         var relativeRange = high - low;
-        return NextPositiveInt() % (relativeRange - 1) + low;
+        var mod = (relativeRange - 1);
+        if (mod == 0)
+        {
+            return low;
+        }
+        
+        return NextPositiveInt() % mod + low;
     }
 
     public override string ToString()

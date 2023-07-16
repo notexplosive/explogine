@@ -42,7 +42,7 @@ public abstract class MachinaCartridge : BasicGameCartridge
         for (var i = Scenes.Count - 1; i >= 0; i--)
         {
             var scene = Scenes[i];
-            var worldHitTestStack = hitTestStack.AddLayer(scene.Camera.ScreenToWorldMatrix, Depth.Middle);    
+            var worldHitTestStack = hitTestStack.AddLayer(scene.MachCamera.ScreenToWorldMatrix, Depth.Middle);    
             // Mouse
             var mouse = input.Mouse;
             var rawMousePosition = mouse.Position(Runtime.Window.ScreenToCanvas);
@@ -59,9 +59,9 @@ public abstract class MachinaCartridge : BasicGameCartridge
             }
 
             scene.OnMouseUpdate(rawMousePosition,
-                _previousMouseWorldPosition - scene.Camera.ScreenToWorld(rawMousePosition),
+                _previousMouseWorldPosition - scene.MachCamera.ScreenToWorld(rawMousePosition),
                 mouse.Delta(Matrix.Identity), worldHitTestStack);
-            _previousMouseWorldPosition = mouse.Position(scene.Camera.ScreenToWorldMatrix);
+            _previousMouseWorldPosition = mouse.Position(scene.MachCamera.ScreenToWorldMatrix);
         }
 
         foreach (var scene in Scenes)

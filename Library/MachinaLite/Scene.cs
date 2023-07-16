@@ -12,7 +12,7 @@ namespace MachinaLite;
 public class Scene : Crane<Actor>
 {
     private readonly List<CoroutineWrapper> _coroutines = new();
-    public readonly Camera Camera;
+    public readonly MachCamera MachCamera;
     private readonly List<Action> _deferredActions = new();
 
     public bool IsFrozen { get; private set; }
@@ -21,7 +21,7 @@ public class Scene : Crane<Actor>
 
     public Scene(IRuntime runtime)
     {
-        Camera = new Camera(runtime);
+        MachCamera = new MachCamera(runtime);
     }
     
     public Actor AddActor(string name, Vector2 position = new(), float angle = 0f,
@@ -146,7 +146,7 @@ public class Scene : Crane<Actor>
 
     public override void Draw(Painter painter)
     {
-        painter.BeginSpriteBatch(Camera.WorldToScreenMatrix);
+        painter.BeginSpriteBatch(MachCamera.WorldToScreenMatrix);
 
         base.Draw(painter);
 
@@ -155,7 +155,7 @@ public class Scene : Crane<Actor>
 
     public override void DebugDraw(Painter painter)
     {
-        painter.BeginSpriteBatch(Camera.WorldToScreenMatrix);
+        painter.BeginSpriteBatch(MachCamera.WorldToScreenMatrix);
 
         base.DebugDraw(painter);
 
@@ -166,14 +166,14 @@ public class Scene : Crane<Actor>
         HitTestStack hitTestStack)
     {
         // Convert position to account for camera
-        base.OnMouseButton(mouseButton, Camera.ScreenToWorld(screenPosition), buttonState, hitTestStack);
+        base.OnMouseButton(mouseButton, MachCamera.ScreenToWorld(screenPosition), buttonState, hitTestStack);
     }
 
     public override void OnMouseUpdate(Vector2 screenPosition, Vector2 worldDelta, Vector2 rawDelta,
         HitTestStack hitTestStack)
     {
         // Convert position to account for camera
-        base.OnMouseUpdate(Camera.ScreenToWorld(screenPosition), worldDelta, rawDelta, hitTestStack);
+        base.OnMouseUpdate(MachCamera.ScreenToWorld(screenPosition), worldDelta, rawDelta, hitTestStack);
     }
 
     public int CountActors()
