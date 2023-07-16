@@ -11,6 +11,25 @@ public class SequenceTween : TweenCollection
 
     public bool IsLooping { get; set; }
 
+    public override ITweenDuration TotalDuration
+    {
+        get
+        {
+            var total = 0f;
+            var currentTime = 0f;
+            foreach (var item in Items)
+            {
+                if (item.TotalDuration is KnownTweenDuration itemDuration)
+                {
+                    total += itemDuration.Duration;
+                    currentTime += itemDuration.CurrentTime;
+                }
+            }
+
+            return new KnownTweenDuration(total, currentTime);
+        }
+    }
+
     public override float Update(float dt)
     {
         if (Items.Count == 0)
@@ -20,7 +39,7 @@ public class SequenceTween : TweenCollection
 
         if (IsAtEnd())
         {
-            if (IsLooping)
+            if (IsLooping && TotalDuration.GetDuration() > 0)
             {
                 Reset();
             }
@@ -52,25 +71,6 @@ public class SequenceTween : TweenCollection
         _currentItemIndex = 0;
     }
 
-    public override ITweenDuration TotalDuration
-    {
-        get
-        {
-            var total = 0f;
-            var currentTime = 0f;
-            foreach (var item in Items)
-            {
-                if (item.TotalDuration is KnownTweenDuration itemDuration)
-                {
-                    total += itemDuration.Duration;
-                    currentTime += itemDuration.CurrentTime;
-                }
-            }
-            
-            return new KnownTweenDuration(total, currentTime);
-        }
-    }
-    
     public override void JumpTo(float targetTime)
     {
         Reset();
@@ -78,7 +78,7 @@ public class SequenceTween : TweenCollection
         var adjustedTargetTime = targetTime;
 
         // bug?: JumpTo(TotalDuration) didn't work as intended
-        
+
         for (var i = 0; i < Items.Count; i++)
         {
             var itemDuration = Items[i].TotalDuration;
@@ -114,7 +114,7 @@ public class SequenceTween : TweenCollection
     {
         return _currentItemIndex >= Items.Count || Items.Count == 0;
     }
-    
+
     public override void SkipToEnd()
     {
         ForEachItem(item => { item.SkipToEnd(); });
