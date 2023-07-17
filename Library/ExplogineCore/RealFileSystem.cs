@@ -72,6 +72,16 @@ public class RealFileSystem : IFileSystem
         return File.ReadAllText(ToWorkingPath(relativePathToFile));
     }
 
+    public byte[] ReadBytes(string relativePathToFile)
+    {
+        if (!FileInfoAt(relativePathToFile).Exists)
+        {
+            return Array.Empty<byte>();
+        }
+        
+        return File.ReadAllBytes(ToWorkingPath(relativePathToFile));
+    }
+
     [Pure]
     public List<string> GetFilesAt(string targetRelativePath, string extension = "*", bool recursive = true)
     {

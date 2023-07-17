@@ -17,9 +17,3 @@ public struct SoundEffectSettings
         Pitch = 0f;
     }
 }
-
-[Obsolete("SoundEffectOptions was renamed to SoundEffectSettings", true)]
-public struct SoundEffectOptions
-{
-    
-}
