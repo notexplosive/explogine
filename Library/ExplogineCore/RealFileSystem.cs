@@ -167,4 +167,9 @@ public class RealFileSystem : IFileSystem
     {
         return new RealFileSystem($"{RootPath}/{subDirectory}");
     }
+
+    public long GetFileSize(string relativePathToFile)
+    {
+        return FileInfoAt(relativePathToFile).Length;
+    }
 }
