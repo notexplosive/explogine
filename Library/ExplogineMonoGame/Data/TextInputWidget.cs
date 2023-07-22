@@ -696,6 +696,9 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         {
             Cursor.SetIndex(CursorIndex + 1, leaveAnchor);
         }
+        
+        // moving right at the far right of the text should deselect 
+        Cursor.SetIndex(CursorIndex, leaveAnchor);
     }
 
     public void MoveTo(int targetIndex, bool leaveAnchor)
@@ -712,6 +715,8 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         {
             Cursor.SetIndex(CursorIndex - 1, leaveAnchor);
         }
+        
+        Cursor.SetIndex(CursorIndex, leaveAnchor);
     }
 
     public void ReverseBackspace(bool leaveAnchor)
