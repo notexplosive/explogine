@@ -1,4 +1,6 @@
-﻿namespace ExplogineCore.Data;
+﻿using System.Globalization;
+
+namespace ExplogineCore.Data;
 
 public class NoiseBasedRng
 {
@@ -103,5 +105,16 @@ public class NoiseBasedRng
         var range = max - min;
         var normal = NextFloat();
         return min + normal * range;
+    }
+
+    public char NextPrintableAsciiChar()
+    {
+        var character = (char)NextInt(0, 255);
+
+        while (!char.IsAscii(character) || char.IsControl(character) || char.IsWhiteSpace(character))
+        {
+            character = (char) NextInt(0, 255);
+        }
+        return character;
     }
 }
