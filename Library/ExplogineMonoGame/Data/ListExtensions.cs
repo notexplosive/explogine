@@ -5,8 +5,8 @@ namespace ExplogineMonoGame.Data;
 
 public static class ListExtensions
 {
-    public static bool IsWithinRange<T>(this IList<T> collection, Index i)
+    public static bool IsWithinRange<T>(this IList<T> collection, int i)
     {
-        return i.Value < collection.Count && i.Value >= 0;
+        return i < collection.Count && i >= 0;
     }
 }
