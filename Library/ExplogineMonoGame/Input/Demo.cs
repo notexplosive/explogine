@@ -214,6 +214,11 @@ public class Demo : ILoadEventProvider
 
     public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        yield return new VoidLoadEvent("PrepareDemo", "Demo", Prepare);
+        var hasDemo = Client.Args.HasValue("demo");
+
+        if (hasDemo)
+        {
+            yield return new VoidLoadEvent("PrepareDemo", "Demo Tools", Prepare);
+        }
     }
 }
