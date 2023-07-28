@@ -47,4 +47,13 @@ public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
             }
         }
     }
+
+    /// <summary>
+    /// When MultiCartridge calls RegenerateCartridge, we call this on the cartridge that is on its way out
+    /// This is meant to be used to Dispose any resources.
+    /// </summary>
+    public virtual void BeforeRegenerate()
+    {
+        // empty on purpose
+    }
 }

@@ -78,7 +78,7 @@ public class MultiCartridge : BasicGameCartridge
         _startedCartridges.Remove(i);
         
         // Commented this out because we never "reload" the cartridge... I think we'll just suffer the possible memory leak
-        // _cartridges[i].Unload();
+        _cartridges[i].BeforeRegenerate();
 
 
         if (CurrentCartridge != null)
