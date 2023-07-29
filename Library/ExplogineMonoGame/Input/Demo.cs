@@ -181,11 +181,7 @@ public class Demo : ILoadEventProvider
 
     public void Prepare()
     {
-        var demoVal = Client.Args.GetValue<string>("demo");
-        if (demoVal == "playback")
-        {
-            LoadFile("default.demo");
-        }
+        LoadFile("default.demo");
     }
 
     public void Begin()
@@ -214,11 +210,6 @@ public class Demo : ILoadEventProvider
 
     public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
     {
-        var hasDemo = Client.Args.HasValue("demo");
-
-        if (hasDemo)
-        {
-            yield return new VoidLoadEvent("PrepareDemo", "Demo Tools", Prepare);
-        }
+        yield return new VoidLoadEvent("PrepareDemo", "Engine Tools", Prepare);
     }
 }
