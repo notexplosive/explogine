@@ -104,6 +104,8 @@ public static class Client
     /// </summary>
     public static bool Headless { get; private set; } = true;
 
+    public static float TotalElapsedTime { get; private set; }
+
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop), this is called automatically and should not be called in your code
     /// </summary>
@@ -206,7 +208,10 @@ public static class Client
             Client.CartridgeChain.Update(dt);
             Client.PlatformWindow.TextEnteredBuffer = new TextEnteredBuffer();
             Client.Cursor.Resolve();
+            
+            TotalElapsedTime += dt;
         }
+
     }
 
     internal static void Draw()
