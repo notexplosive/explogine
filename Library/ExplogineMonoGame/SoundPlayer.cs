@@ -10,21 +10,15 @@ public class SoundPlayer
     {
     }
 
-    public SoundEffectInstance Play(string name, SoundEffectSettings? options = null)
+    public SoundEffectInstance Play(string name, SoundEffectSettings options)
     {
         if (Client.Headless)
         {
             return null!;
         }
-        
-        var usedOptions = new SoundEffectSettings();
-        if (options.HasValue)
-        {
-            usedOptions = options.Value;
-        }
 
         SoundEffectInstance instance;
-        if (usedOptions.Cached)
+        if (options.Cached)
         {
             instance = Client.Assets.GetSoundEffectInstance(name);
             instance.Stop();
@@ -34,10 +28,10 @@ public class SoundPlayer
             instance = Client.Assets.GetSoundEffect(name).CreateInstance();
         }
 
-        instance.Pan = usedOptions.Pan;
-        instance.Pitch = usedOptions.Pitch;
-        instance.Volume = usedOptions.Volume;
-        instance.IsLooped = usedOptions.Loop;
+        instance.Pan = options.Pan;
+        instance.Pitch = options.Pitch;
+        instance.Volume = options.Volume;
+        instance.IsLooped = options.Loop;
         instance.Play();
 
         return instance;

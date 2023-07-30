@@ -257,7 +257,7 @@ public class IntroCartridge : Cartridge
                         // _wholeWord.Angle.Value = MathF.PI / 2f;
                         _wholeWord.Opacity.Value = 0f;
                     }))
-                .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/ohm")))
+                .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/ohm", new SoundEffectSettings())))
                 .Add(new WaitSecondsTween(0.25f))
                 .Add(
                     new MultiplexTween()
@@ -312,7 +312,7 @@ public class IntroCartridge : Cartridge
                 )
                 .Add(new WaitSecondsTween(0.05f))
                 .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.25f, Ease.QuadSlowFast))
-                .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/clink")))
+                .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/clink", new SoundEffectSettings())))
             ;
     }
 
@@ -332,9 +332,9 @@ public class IntroCartridge : Cartridge
                 .Add(new MultiplexTween()
                     .AddChannel(
                         new SequenceTween()
-                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar1")))
+                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar1", new SoundEffectSettings())))
                             .Add(new Tween<float>(_wholeWord.Scale, 1.25f, 0.15f, Ease.SineSlowFast))
-                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar2")))
+                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar2", new SoundEffectSettings())))
                             .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.15f, Ease.SineFastSlow))
                     )
                     .AddChannel(
