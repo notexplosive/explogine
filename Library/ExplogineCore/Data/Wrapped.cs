@@ -20,7 +20,7 @@ public class Wrapped<T> where T : struct
         get => _value;
         set
         {
-            ValueChanged?.Invoke(_value);
+            ValueChanged?.Invoke(value);
             _value = value;
         }
     }
