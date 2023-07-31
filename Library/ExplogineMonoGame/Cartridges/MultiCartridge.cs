@@ -35,7 +35,7 @@ public class MultiCartridge : BasicGameCartridge
     }
 
     protected Cartridge? CurrentCartridge =>
-        _cartridges.IsWithinRange(CurrentCartridgeIndex) ? _cartridges[CurrentCartridgeIndex] : null;
+        _cartridges.IsValidIndex(CurrentCartridgeIndex) ? _cartridges[CurrentCartridgeIndex] : null;
 
     public override CartridgeConfig CartridgeConfig
     {
@@ -118,7 +118,7 @@ public class MultiCartridge : BasicGameCartridge
     {
         CurrentCartridgeIndex = index;
 
-        if (!_cartridges.IsWithinRange(index))
+        if (!_cartridges.IsValidIndex(index))
         {
             throw new Exception($"Tried to access Cartridge {index} with {_cartridges.Count} cartridges");
         }
