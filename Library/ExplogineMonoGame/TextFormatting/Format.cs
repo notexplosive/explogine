@@ -56,6 +56,7 @@ public static class Format
         var parametersStartChar = '(';
         var parametersEndChar = ')';
         var parametersSeparator = ',';
+        var escapeCharacter = '\\';
 
         void SaveTokenAsLiteral()
         {
@@ -104,22 +105,28 @@ public static class Format
 
         var currentMode = ParserState.ReadingLiteral;
 
+        char? prevCharacter = null;
         foreach (var character in text)
         {
             switch (currentMode)
             {
-                case ParserState.ReadingLiteral when character == commandStartChar:
+                case ParserState.ReadingLiteral when character == commandStartChar && prevCharacter != escapeCharacter:
                     SaveTokenAsLiteral();
                     currentMode = ParserState.ReadingCommandName;
                     break;
-                case ParserState.ReadingCommandName when character == commandEndChar:
+                case ParserState.ReadingCommandName when character == commandEndChar && prevCharacter != escapeCharacter:
                     SaveTokenAsCommand();
                     currentMode = ParserState.ReadingLiteral;
                     break;
                 case ParserState.ReadingLiteral or ParserState.ReadingCommandName:
-                    currentToken.Append(character);
+                    if (character != escapeCharacter || prevCharacter == escapeCharacter)
+                    {
+                        currentToken.Append(character);
+                    }
                     break;
             }
+
+            prevCharacter = character;
         }
 
         SaveTokenAsLiteral();
