@@ -8,8 +8,10 @@ public class MultiplexTween : TweenCollection
     {
         float totalOverflow = 0;
         var hasInitializedOverflow = false;
-        foreach (var tween in Items)
+        // This is a standard for loop instead of a foreach so a multiplex can add to itself
+        for (var i = 0; i < Items.Count; i++)
         {
+            var tween = Items[i];
             var pendingOverflow = tween.Update(dt);
             if (!hasInitializedOverflow)
             {
