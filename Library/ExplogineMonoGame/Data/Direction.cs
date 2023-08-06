@@ -299,8 +299,13 @@ public class Direction
         yield return Direction.Up;
     }
 
-    public static Direction FromName(string name)
+    public static Direction FromName(string? name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            return Direction.None;
+        }
+        
         foreach (var direction in Direction.EachCardinal())
         {
             if (direction.Name.ToLower() == name.ToLower())
