@@ -9,32 +9,32 @@ namespace ExplogineMonoGame.Logging;
 public class FileLogCapture : ILogCapture
 {
     private readonly List<LogMessage> _buffer = new();
-    private readonly RealFileSystem _fileSystem;
+    private readonly RealFileSystem.StreamDescriptor _stream;
 
     public FileLogCapture()
     {
         // This doesn't use Client.App.FileSystem because it might not be ready in time
-        _fileSystem = new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory);
-        Client.Exited.Add(DumpBufferWithTimestamp);
+        Directory = new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory);
+        var fileName = Path.Join("Logs", $"{DateTime.Now.ToFileTimeUtc()}.log");
+        _stream = Directory.OpenFileStream(fileName);
+        Client.Exited.Add(_stream.Close);
     }
 
-    public void CaptureMessage(LogMessage text)
-    {
-        _buffer.Add(text);
-    }
+    public RealFileSystem Directory { get; }
 
-    private void DumpBufferWithTimestamp()
+    public void CaptureMessage(LogMessage message)
     {
-        var directory = "Logs";
-        var fileName = Path.Join(directory, $"{DateTime.Now.ToFileTimeUtc()}.log");
+        _buffer.Add(message);
+        _stream.Write(message.ToFileString());
 
-        WriteBufferAsFilename(fileName);
+#if DEBUG
+        _stream.Flush();
+#endif
     }
 
     public void WriteBufferAsFilename(string fileName)
     {
-        Client.Debug.Log($"Creating file {fileName}");
-        _fileSystem.WriteToFile(fileName, GetLines().ToArray());
+        Directory.WriteToFile(fileName, GetLines().ToArray());
     }
 
     private IEnumerable<string> GetLines()

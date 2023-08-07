@@ -2,5 +2,5 @@
 
 public interface ILogCapture
 {
-    public void CaptureMessage(LogMessage text);
+    public void CaptureMessage(LogMessage message);
 }

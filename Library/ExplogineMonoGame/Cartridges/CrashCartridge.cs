@@ -21,8 +21,8 @@ public class CrashCartridge : Cartridge
 
         ThrownException = exception;
 
-        var fileName = "explogine-crash.log";
-        var fileInfo = new FileInfo(Path.Join(runtime.FileSystem.Local.GetCurrentDirectory(), fileName));
+        var fileName = $"explogine-crash-{DateTime.Now.ToFileTimeUtc()}.log";
+        var fileInfo = Client.Debug.LogFile.Directory.FileInfoAt(fileName);
         _reportText =
             $"The program has crashed!\n\nWe're very sorry this happened.\nA copy of this report, and a full log can be found at:\n{fileInfo.FullName}\n\nCrash report:\n{ThrownException.Message}\n\nStacktrace:\n{ThrownException.StackTrace}";
         

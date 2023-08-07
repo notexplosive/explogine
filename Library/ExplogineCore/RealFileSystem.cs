@@ -109,6 +109,41 @@ public class RealFileSystem : IFileSystem
         CreateOrOverwriteFile(relativePathToFile);
         AppendToFile(relativePathToFile, lines);
     }
+    
+    public StreamDescriptor OpenFileStream(string relativePathToFile)
+    {
+        var info = FileInfoAt(relativePathToFile);
+        CreateOrOverwriteFile(relativePathToFile);
+        return new StreamDescriptor(info);
+    }
+
+    public class StreamDescriptor
+    {
+        private readonly FileStream _fileStream;
+        private readonly StreamWriter _streamWriter;
+
+        public StreamDescriptor(FileInfo info)
+        {
+            _fileStream = new FileStream(info.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _streamWriter = new StreamWriter(_fileStream);
+        }
+
+        public void Close()
+        {
+            _streamWriter.Dispose();
+            _fileStream.Dispose();
+        }
+
+        public void Write(string content)
+        {
+            _streamWriter.WriteLine(content);
+        }
+
+        public void Flush()
+        {
+            _streamWriter.Flush();
+        }
+    }
 
     public string GetCurrentDirectory()
     {
