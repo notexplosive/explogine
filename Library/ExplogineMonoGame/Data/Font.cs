@@ -100,6 +100,8 @@ public class Font : IFont
     {
         if (!restrictedWidth.HasValue)
         {
+            // SpriteFont.MeasureString chokes on tab characters >:(
+            text = text.Replace("\t", "  ");
             return SpriteFont.MeasureString(text) * ScaleFactor;
         }
 
