@@ -14,6 +14,11 @@ public class LayoutBuilder
         _style = style;
     }
 
+    public void Clear()
+    {
+        _nodes.Clear();
+    }
+
     public void Add(LayoutElement element)
     {
         if (element.Children.HasValue)
