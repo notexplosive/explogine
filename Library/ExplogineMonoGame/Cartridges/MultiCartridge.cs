@@ -58,6 +58,12 @@ public class MultiCartridge : BasicGameCartridge
     public void Add(Cartridge cartridge)
     {
         _cartridges.Add(cartridge);
+
+        // If we just added the first cartridge, load it
+        if (_cartridges.Count == 1)
+        {
+            SwapTo(0);
+        }
     }
 
     public T RegenerateCartridge<T>() where T : Cartridge
