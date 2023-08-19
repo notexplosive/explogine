@@ -31,7 +31,7 @@ public static class ColorExtensions
 
     public static string ToRgbaHexString(this Color color)
     {
-        return color.ToRgbaHex().ToString("X");
+        return color.ToRgbaHex().ToString("X8");
     }
 
     public static bool IsFormattedAsRgbaHex(string colorString)
@@ -130,5 +130,10 @@ public static class ColorExtensions
             result[2],
             result[3]
         );
+    }
+
+    public static Color InvertRgb(Color color)
+    {
+        return new Color(byte.MaxValue - color.R, byte.MaxValue - color.G, byte.MaxValue - color.B);
     }
 }
