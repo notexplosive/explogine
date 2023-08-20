@@ -26,7 +26,7 @@ public static class ColorExtensions
 
     public static uint ToRgbaHex(this Color color)
     {
-        return (uint) (0xFF | (color.R << 24) | (color.G << 16) | (color.B << 8));
+        return (uint) (color.A | (color.R << 24) | (color.G << 16) | (color.B << 8));
     }
 
     public static string ToRgbaHexString(this Color color)
