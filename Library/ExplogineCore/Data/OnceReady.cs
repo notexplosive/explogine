@@ -23,4 +23,10 @@ public class OnceReady
         Readied?.Invoke();
         Readied = null;
     }
+
+    public void ClearAndBecomeUnready()
+    {
+        IsReady = false;
+        Readied = null;
+    }
 }
