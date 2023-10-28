@@ -6,7 +6,6 @@ using System.Text;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Input;
-using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -43,7 +42,11 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         Content = new TextInputContent(font, settings.StartingText ?? "", TextAreaRectangle, Alignment,
             _isSingleLine);
         Resized += () => Content.ChangeSize(TextAreaRectangle);
-        Content.CacheUpdated += () => OnCursorMoved(CursorIndex);
+        Content.CacheUpdated += () =>
+        {
+            OnCursorMoved(CursorIndex);
+            OnTextChanged(Text);
+        };
     }
 
     public TextInputWidget(RectangleF rectangle, IFontGetter font, Settings settings) : this(rectangle.Location,
@@ -52,7 +55,6 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
     }
 
     public Selectable Selectable { get; }
-
     public Alignment Alignment { get; } = Alignment.TopLeft;
     private TextInputContent Content { get; }
     public TextCursor Cursor { get; } = new();
@@ -395,6 +397,28 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         }
     }
 
+    public void PrepareDraw(Painter painter, IGuiTheme theme)
+    {
+        Client.Graphics.PushCanvas(Canvas);
+        theme.DrawTextInput(painter, this);
+
+        if (IsShowingScrollbar)
+        {
+            painter.BeginSpriteBatch();
+            ScrollableArea.DrawScrollbars(painter, theme);
+            painter.EndSpriteBatch();
+        }
+
+        Client.Graphics.PopCanvas();
+    }
+
+    public event Action<string>? TextChanged;
+
+    private void OnTextChanged(string text)
+    {
+        TextChanged?.Invoke(text);
+    }
+
     private void UnselectWidget(bool leaveAnchor)
     {
         Selected = false;
@@ -604,7 +628,8 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
 
     private bool IsWordBoundaryAtIndex(int nodeIndex)
     {
-        return nodeIndex == LastIndex || char.IsWhiteSpace(Text[nodeIndex]);
+        var currentChar = Text[nodeIndex];
+        return nodeIndex == LastIndex || char.IsWhiteSpace(currentChar) || char.IsSymbol(currentChar) || char.IsSeparator(currentChar) || char.IsPunctuation(currentChar);
     }
 
     public void MoveToStartOfLine(bool leaveAnchor)
@@ -675,28 +700,13 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         }
     }
 
-    public void PrepareDraw(Painter painter, IGuiTheme theme)
-    {
-        Client.Graphics.PushCanvas(Canvas);
-        theme.DrawTextInput(painter, this);
-
-        if (IsShowingScrollbar)
-        {
-            painter.BeginSpriteBatch();
-            ScrollableArea.DrawScrollbars(painter, theme);
-            painter.EndSpriteBatch();
-        }
-
-        Client.Graphics.PopCanvas();
-    }
-
     public void MoveRight(bool leaveAnchor)
     {
         if (CursorIndex < Content.NumberOfChars)
         {
             Cursor.SetIndex(CursorIndex + 1, leaveAnchor);
         }
-        
+
         // moving right at the far right of the text should deselect 
         Cursor.SetIndex(CursorIndex, leaveAnchor);
     }
@@ -715,7 +725,7 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         {
             Cursor.SetIndex(CursorIndex - 1, leaveAnchor);
         }
-        
+
         Cursor.SetIndex(CursorIndex, leaveAnchor);
     }
 

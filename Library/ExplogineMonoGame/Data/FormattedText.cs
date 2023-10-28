@@ -53,12 +53,12 @@ public readonly struct FormattedText
 
         if (colors.Count != 1)
         {
-            Client.Debug.LogWarning($"Colors stack was {colors.Count} when it should be 1");
+            // Client.Debug.LogWarning($"Colors stack was {colors.Count} when it should be 1");
         }
 
         if (fonts.Count != 1)
         {
-            Client.Debug.LogWarning($"Fonts stack was {fonts.Count} when it should be 1");
+            // Client.Debug.LogWarning($"Fonts stack was {fonts.Count} when it should be 1");
         }
 
         _fragments = fragments.ToArray();

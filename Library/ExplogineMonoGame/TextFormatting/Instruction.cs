@@ -49,8 +49,8 @@ public abstract class Instruction
                     return unscopedCommand.Create(args);
             }
         }
-
-        throw new Exception($"Command not found {commandName}");
+        
+        throw new Exception($"Command not found, {commandName}");
     }
 }
 
