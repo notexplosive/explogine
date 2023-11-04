@@ -83,6 +83,12 @@ public static class ColorExtensions
         return new Color(r, g, b, alpha);
     }
 
+    public static Color DesaturatedBy(this Color color, float percent)
+    {
+        var l = 0.3*color.R + 0.6*color.G + 0.1*color.B;
+        return new Color((byte)(color.R + percent * (l - color.R)), (byte)(color.G + percent * (l - color.G)), (byte)(color.B + percent * (l - color.B)));
+    }
+    
     public static Color DimmedBy(this Color color, float amount)
     {
         return color.BrightenedBy(-amount);
