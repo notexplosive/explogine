@@ -85,12 +85,20 @@ public class MultiCartridge : BasicGameCartridge
         
         // Commented this out because we never "reload" the cartridge... I think we'll just suffer the possible memory leak
         _cartridges[i].BeforeRegenerate();
-
+        _cartridges[i].Unload();
 
         if (CurrentCartridge != null)
         {
             var targetType = _cartridges[i].GetType();
             _cartridges[i] = Cartridge.CreateInstance(targetType, Runtime);
+            
+            if (_cartridges[i] is ILoadEventProvider loadEventProvider)
+            {
+                foreach (var loadEvent in loadEventProvider.LoadEvents(Client.Graphics.Painter))
+                {
+                    loadEvent?.Execute();
+                }
+            }
 
             if (i == CurrentCartridgeIndex)
             {
