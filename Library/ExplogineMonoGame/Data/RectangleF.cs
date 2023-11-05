@@ -63,6 +63,14 @@ public struct RectangleF : IEquatable<RectangleF>
         return !left.Equals(right);
     }
 
+    public static RectangleF Transform(RectangleF rectangle, Matrix matrix)
+    {
+        return RectangleF.FromCorners(
+            Vector2.Transform(rectangle.TopLeft, matrix),
+            Vector2.Transform(rectangle.BottomRight, matrix)
+        );
+    }
+
     public Vector2 Location { get; set; }
     public Vector2 Size { get; set; }
     public float Width => Size.X;
