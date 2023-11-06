@@ -83,7 +83,7 @@ public class ScrollableArea : IUpdateInputHook
         var delta = -input.Mouse.ScrollDelta() / 120f * increment;
         if (delta != 0)
         {
-            SetPosition(_viewPosition += new Vector2(0,delta));
+            SetPosition(_viewPosition + new Vector2(0,delta));
         }
     }
 }
