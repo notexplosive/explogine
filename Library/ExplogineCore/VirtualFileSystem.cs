@@ -101,6 +101,12 @@ public class VirtualFileSystem : IFileSystem
         return "/";
     }
 
+    public IFileSystem GetDirectory(string subDirectory)
+    {
+        // this doesn't fake the right thing.
+        return new VirtualFileSystem();
+    }
+
     private interface IVirtualItem
     {
         VirtualDirectory Parent { get; }

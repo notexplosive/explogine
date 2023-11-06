@@ -61,12 +61,6 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
             _useSnapshotTimer = false;
             Client.Debug.Log("Snapshot timer disabled");
         }
-
-        var repoPath = Client.Args.GetValue<string>("repoPath");
-        if (!string.IsNullOrEmpty(repoPath))
-        {
-            Client.Debug.RepoFileSystem = new RealFileSystem(repoPath);
-        }
     }
 
     public override void Update(float dt)

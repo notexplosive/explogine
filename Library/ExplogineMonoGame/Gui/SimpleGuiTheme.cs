@@ -61,7 +61,7 @@ public class SimpleGuiTheme : IGuiTheme
                 }
 
                 painter.DrawRectangle(selectionRect,
-                    new DrawSettings {Depth = depth + 1, Color = selectionColor.WithMultipliedOpacity(0.5f)});
+                    new DrawSettings {Depth = depth + 1, Color = selectionColor});
             }
         }
 

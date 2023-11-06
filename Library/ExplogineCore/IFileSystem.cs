@@ -62,4 +62,11 @@ public interface IFileSystem
     /// </summary>
     /// <returns></returns>
     string GetCurrentDirectory();
+
+    /// <summary>
+    /// Creates a new filesystem object at the subdirectory path
+    /// </summary>
+    /// <param name="subDirectory"></param>
+    /// <returns></returns>
+    IFileSystem GetDirectory(string subDirectory);
 }

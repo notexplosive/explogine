@@ -47,6 +47,12 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         {
             Client.Debug.GameSpeed = args.GetValue<int>("gameSpeed");
         }
+        
+        var repoPath = Client.Args.GetValue<string>("repoPath");
+        if (!string.IsNullOrEmpty(repoPath))
+        {
+            Client.Debug.RepoFileSystem = new RealFileSystem(repoPath);
+        }
     }
 
     public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)

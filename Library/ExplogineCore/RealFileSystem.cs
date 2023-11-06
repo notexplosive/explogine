@@ -198,7 +198,7 @@ public class RealFileSystem : IFileSystem
         return Path.Join(RootPath, relativePath);
     }
 
-    public RealFileSystem GetDirectory(string subDirectory)
+    public IFileSystem GetDirectory(string subDirectory)
     {
         return new RealFileSystem($"{RootPath}/{subDirectory}");
     }
