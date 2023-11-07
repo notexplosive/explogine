@@ -39,7 +39,7 @@ public class Tween<T> : ITween, IValueTween
 
         if (overflow > 0)
         {
-            CurrentTime -= overflow;
+            CurrentTime = TotalDuration.GetDuration();
         }
 
         ApplyTimeToValue();
