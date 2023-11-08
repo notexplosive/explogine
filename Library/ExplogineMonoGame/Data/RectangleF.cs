@@ -611,6 +611,12 @@ public struct RectangleF : IEquatable<RectangleF>
     }
     
     [Pure]
+    public static RectangleF FromCenterAndSize(Vector2 headPosition, Vector2 size)
+    {
+        return new RectangleF(headPosition, Vector2.Zero).Inflated(size.X / 2, size.Y / 2);
+    }
+    
+    [Pure]
     public static RectangleF Lerp(RectangleF startingValue, RectangleF targetValue, float percent)
     {
         var x = FloatExtensions.Lerp(startingValue.Location.X, targetValue.Location.X, percent);
