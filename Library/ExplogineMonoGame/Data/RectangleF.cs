@@ -89,6 +89,12 @@ public struct RectangleF : IEquatable<RectangleF>
     public Vector2 TopRight => new(Location.X + Size.X, Location.Y);
     public float Area => Width * Height;
 
+    [Pure]
+    public float LongSide => Math.Max(Width, Height);
+
+    [Pure]
+    public float ShortSide => Math.Min(Width, Height);
+
     public bool IsEmpty()
     {
         return Size.Length() <= 0;
@@ -609,13 +615,13 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return new RectangleF(headPosition, Vector2.Zero).Inflated(width, height);
     }
-    
+
     [Pure]
     public static RectangleF FromCenterAndSize(Vector2 headPosition, Vector2 size)
     {
         return new RectangleF(headPosition, Vector2.Zero).Inflated(size.X / 2, size.Y / 2);
     }
-    
+
     [Pure]
     public static RectangleF Lerp(RectangleF startingValue, RectangleF targetValue, float percent)
     {
@@ -630,6 +636,6 @@ public struct RectangleF : IEquatable<RectangleF>
     [Pure]
     public bool Overlaps(RectangleF other)
     {
-        return RectangleF.Intersect(this,other).Area > 0;
+        return RectangleF.Intersect(this, other).Area > 0;
     }
 }
