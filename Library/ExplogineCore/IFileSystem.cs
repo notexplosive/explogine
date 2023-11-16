@@ -69,4 +69,11 @@ public interface IFileSystem
     /// <param name="subDirectory"></param>
     /// <returns></returns>
     IFileSystem GetDirectory(string subDirectory);
+
+    /// <summary>
+    /// Gets length of a file in bytes.
+    /// </summary>
+    /// <param name="relativePathToFile"></param>
+    /// <returns></returns>
+    public long GetFileSize(string relativePathToFile);
 }
