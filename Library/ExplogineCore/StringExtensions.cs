@@ -19,6 +19,11 @@ public static class StringExtensions
     [Pure]
     public static string RemoveFileExtension(this string str)
     {
+        if (string.IsNullOrEmpty(str))
+        {
+            return str;
+        }
+        
         var fileInfo = new FileInfo(str);
         return fileInfo.Name.Substring(0, fileInfo.Name.Length - fileInfo.Extension.Length);
     }
