@@ -21,7 +21,7 @@ public abstract class Instruction
         return new TextureLiteralInstruction(new IndirectTexture(texture));
     }
 
-    public static Instruction FromString(string commandName, string[] args)
+    public static Instruction? TryFromString(string commandName, string[] args)
     {
         var isPopCommand = false;
         if (commandName.StartsWith('/'))
@@ -49,8 +49,8 @@ public abstract class Instruction
                     return unscopedCommand.Create(args);
             }
         }
-        
-        throw new Exception($"Command not found, {commandName}");
+
+        return null;
     }
 }
 

@@ -98,15 +98,11 @@ public static class Format
                 }
             }
 
-            try
+            var instruction = Instruction.TryFromString(commandName.ToString(), parameters.ToString().Split(parametersSeparator));
+
+            if (instruction != null)
             {
-                var instruction = Instruction.FromString(commandName.ToString(),
-                    parameters.ToString().Split(parametersSeparator));
                 result.Add(instruction);
-            }
-            catch (Exception)
-            {
-                // ignore
             }
 
             currentToken.Clear();
