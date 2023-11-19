@@ -3,16 +3,16 @@ using ExplogineMonoGame.Data;
 
 namespace ExplogineMonoGame.TextFormatting;
 
-public class PushFont : Instruction, IStackInstruction<IFontGetter>
+public class FontCommand : Instruction
 {
     public IFontGetter? Font { get; }
 
-    internal PushFont(IFontGetter font)
+    internal FontCommand(IFontGetter font)
     {
         Font = font;
     }
 
-    public PushFont(string[] args)
+    public FontCommand(string[] args)
     {
         if (args.IsValidIndex(1))
         {
@@ -23,11 +23,19 @@ public class PushFont : Instruction, IStackInstruction<IFontGetter>
         }
     }
 
-    public void Do(Stack<IFontGetter> stack)
+    public override void Do(TextRun textRun)
     {
         if (Font != null && Font.Exists())
         {
-            stack.Push(Font);
+            textRun.PushFont(Font);
+        }
+    }
+
+    public class Pop : Instruction
+    {
+        public override void Do(TextRun textRun)
+        {
+            textRun.PopFont();
         }
     }
 }

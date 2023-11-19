@@ -50,4 +50,6 @@ public abstract class Instruction
 
         return null;
     }
+
+    public abstract void Do(TextRun textRun);
 }

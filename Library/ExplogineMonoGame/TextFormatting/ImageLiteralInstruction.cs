@@ -26,4 +26,9 @@ public class ImageLiteralInstruction : Instruction, ILiteralInstruction
     {
         return new FormattedText.FragmentImage(Image, ScaleFactor, color);
     }
+
+    public override void Do(TextRun textRun)
+    {
+        textRun.Fragments.Add(GetFragment(textRun.PeekFont(), textRun.PeekColor()));
+    }
 }

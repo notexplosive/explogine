@@ -6,13 +6,18 @@ public class BuiltInCommands
 {
     [UsedImplicitly]
     public static ScopedCommand Color = new(
-        args => new PushColor(args),
-        () => new PopColor());
+        args => new ColorCommand(args),
+        () => new ColorCommand.Pop());
 
     [UsedImplicitly]
     public static ScopedCommand Font = new(
-        args => new PushFont(args),
-        () => new PopFont());
+        args => new FontCommand(args),
+        () => new FontCommand.Pop());
+    
+    [UsedImplicitly]
+    public static ScopedCommand Scale = new(
+        args => new FontScaleCommand(args),
+        () => new FontScaleCommand.Pop());
 
     [UsedImplicitly]
     public static Command Image = new(

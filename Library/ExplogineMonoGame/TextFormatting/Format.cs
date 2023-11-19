@@ -9,22 +9,12 @@ public static class Format
 {
     public static Instruction Push(Color color)
     {
-        return new PushColor(color);
+        return new ColorCommand(color);
     }
 
     public static Instruction Push(IFontGetter font)
     {
-        return new PushFont(font);
-    }
-
-    public static Instruction PopColor()
-    {
-        return new PopColor();
-    }
-
-    public static Instruction PopFont()
-    {
-        return new PopFont();
+        return new FontCommand(font);
     }
 
     public static Instruction Image(string imageName, float scaleFactor = 1f)

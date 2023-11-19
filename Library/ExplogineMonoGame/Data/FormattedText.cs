@@ -26,52 +26,13 @@ public readonly struct FormattedText
     public FormattedText(IFontGetter startingFont, Color startingColor,
         Instruction[] instructions)
     {
-        var fragments = new List<IFragment>();
-        var fonts = new Stack<IFontGetter>();
-        fonts.Push(startingFont);
-
-        var colors = new Stack<Color>();
-        colors.Push(startingColor);
+        var textRun = new TextRun(startingFont, startingColor);
 
         foreach (var instruction in instructions)
         {
-            if (instruction is ILiteralInstruction literalInstruction)
-            {
-                if (!fonts.TryPeek(out var font))
-                {
-                    font = startingFont.GetFont();
-                }
-
-                if (!colors.TryPeek(out var color))
-                {
-                    color = startingColor;
-                }
-                
-                fragments.Add(literalInstruction.GetFragment(font, color));
-            }
-
-            if (instruction is IStackInstruction<Color> colorInstruction)
-            {
-                colorInstruction.Do(colors);
-            }
-
-            if (instruction is IStackInstruction<IFontGetter> fontInstruction)
-            {
-                fontInstruction.Do(fonts);
-            }
+            instruction.Do(textRun);
         }
-
-        if (colors.Count != 1)
-        {
-            // Client.Debug.LogWarning($"Colors stack was {colors.Count} when it should be 1");
-        }
-
-        if (fonts.Count != 1)
-        {
-            // Client.Debug.LogWarning($"Fonts stack was {fonts.Count} when it should be 1");
-        }
-
-        _fragments = fragments.ToArray();
+        _fragments = textRun.Fragments.ToArray();
     }
 
     private FormattedText(IFontGetter startingFont, Color startingColor, string formatString, FormattedTextParser parser) : this(startingFont, startingColor,  Format.StringToInstructions(formatString, parser))
@@ -340,5 +301,86 @@ public readonly struct FormattedText
 
             return $"{Size} {result.ToString()}";
         }
+    }
+}
+
+public class TextRun
+{
+    private readonly IFontGetter _startingFont;
+    private readonly Color _startingColor;
+    public List<FormattedText.IFragment> Fragments { get; } = new();
+    private readonly Stack<IFontGetter> _fonts = new();
+    private readonly Stack<Color> _colors = new();
+    private readonly Stack<float> _scales = new();
+
+    public TextRun(IFontGetter startingFont, Color startingColor)
+    {
+        _startingFont = startingFont;
+        _startingColor = startingColor;
+        _fonts.Push(startingFont);
+        _colors.Push(startingColor);
+    }
+
+    public IFontGetter PeekFont()
+    {
+        if (!_fonts.TryPeek(out var font))
+        {
+            font = _startingFont.GetFont();
+        }
+        
+        var realFont = font.GetFont();
+        font = realFont.WithHeight((int) (realFont.Height * PeekScale()));
+
+        return font;
+    }
+    
+    public float PeekScale()
+    {
+        if (!_scales.TryPeek(out var scale))
+        {
+            scale = 1f;
+        }
+
+        return scale;
+    }
+
+    public Color PeekColor()
+    {
+        if (!_colors.TryPeek(out var color))
+        {
+            color = _startingColor;
+        }
+
+        return color;
+    }
+
+    public void PushColor(Color color)
+    {
+        _colors.Push(color);
+    }
+
+    public void PushFont(IFontGetter font)
+    {
+        _fonts.Push(font);
+    }
+
+    public void PopColor()
+    {
+        _colors.TryPop(out _);
+    }
+    
+    public void PopFont()
+    {
+        _fonts.TryPop(out _);
+    }
+
+    public void PopScale()
+    {
+        _scales.TryPop(out _);
+    }
+
+    public void PushScale(float scale)
+    {
+        _scales.Push(scale);
     }
 }

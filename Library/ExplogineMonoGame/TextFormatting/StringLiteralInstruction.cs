@@ -16,4 +16,9 @@ public class StringLiteralInstruction : Instruction, ILiteralInstruction
     {
         return new FormattedText.Fragment(font, Text, color);
     }
+
+    public override void Do(TextRun textRun)
+    {
+        textRun.Fragments.Add(GetFragment(textRun.PeekFont(), textRun.PeekColor()));
+    }
 }

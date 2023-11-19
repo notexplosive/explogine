@@ -129,4 +129,9 @@ public class TestFont : IFont
 
         return RestrictedStringBuilder.FromText(text, restrictedWidth.Value, this).Size;
     }
+
+    public IFont WithHeight(int newScaleFactor)
+    {
+        return this;
+    }
 }

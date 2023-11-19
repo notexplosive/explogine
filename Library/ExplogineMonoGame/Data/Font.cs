@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using ExplogineMonoGame.AssetManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -111,6 +112,11 @@ public class Font : IFont
         }
 
         return GetRestrictedString(text, restrictedWidth.Value).Size;
+    }
+
+    public IFont WithHeight(int newScaleFactor)
+    {
+        return new Font(SpriteFont, newScaleFactor);
     }
 
     public string Linebreak(string text, float restrictedWidth)

@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.TextFormatting;
 
-public class PushColor : Instruction, IStackInstruction<Color>
+public class ColorCommand : Instruction
 {
-    public PushColor(string[] args)
+    public ColorCommand(string[] args)
     {
         if (uint.TryParse(args[0], NumberStyles.HexNumber, null, out var hex))
         {
@@ -19,15 +19,24 @@ public class PushColor : Instruction, IStackInstruction<Color>
         }
     }
 
-    internal PushColor(Color color)
+    internal ColorCommand(Color color)
     {
         Color = color;
     }
 
     public Color Color { get; }
-
-    public void Do(Stack<Color> stack)
+    
+    public override void Do(TextRun textRun)
     {
-        stack.Push(Color);
+        textRun.PushColor(Color);
+    }
+    
+    
+    public class Pop : Instruction
+    {
+        public override void Do(TextRun textRun)
+        {
+            textRun.PopColor();
+        }
     }
 }
