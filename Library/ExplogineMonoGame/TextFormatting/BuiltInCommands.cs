@@ -2,7 +2,7 @@
 
 namespace ExplogineMonoGame.TextFormatting;
 
-internal class BuiltInCommands
+public class BuiltInCommands
 {
     [UsedImplicitly]
     public static ScopedCommand Color = new(

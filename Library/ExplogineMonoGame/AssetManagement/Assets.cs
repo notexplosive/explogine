@@ -12,17 +12,35 @@ public class Assets
     
     public T GetAsset<T>(string key) where T : Asset
     {
+        var (found, error) = CheckAsset<T>(key);
+
+        if (!found)
+        {
+            throw new Exception(error);
+        }
+        
+        return (_lookupTable[key] as T)!;
+    }
+
+    public bool HasAsset<T>(string key) where T : Asset
+    {
+        var (check, error) = CheckAsset<T>(key);
+        return check;
+    }
+
+    private (bool, string) CheckAsset<T>(string key) where T : Asset
+    {
         if (!_lookupTable.ContainsKey(key))
         {
-            throw new Exception($"No such asset: {key}");
+            return (false, $"No such asset: {key}");
         }
 
         if (_lookupTable[key] is not T result)
         {
-            throw new Exception($"No {typeof(T).Name} with name {key} found");
+            return (false, $"No {typeof(T).Name} with name {key} found");
         }
-
-        return result;
+        
+        return (true, "found");
     }
     
     public Effect GetEffect(string key)

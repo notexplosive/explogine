@@ -5,19 +5,29 @@ namespace ExplogineMonoGame.TextFormatting;
 
 public class PushFont : Instruction, IStackInstruction<IFontGetter>
 {
-    public IFontGetter Font { get; }
+    public IFontGetter? Font { get; }
 
     internal PushFont(IFontGetter font)
     {
         Font = font;
     }
 
-    public PushFont(string[] args) : this(new IndirectFont(args[0], int.Parse(args[1])))
+    public PushFont(string[] args)
     {
+        if (args.IsValidIndex(1))
+        {
+            if (int.TryParse(args[1], out var result))
+            {
+                Font = new IndirectFont(args[0], result);
+            }
+        }
     }
 
     public void Do(Stack<IFontGetter> stack)
     {
-        stack.Push(Font);
+        if (Font != null && Font.Exists())
+        {
+            stack.Push(Font);
+        }
     }
 }

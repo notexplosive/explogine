@@ -2,7 +2,7 @@
 
 namespace ExplogineMonoGame.TextFormatting;
 
-internal interface IStackInstruction<T>
+public interface IStackInstruction<T>
 {
     public void Do(Stack<T> stack);
 }

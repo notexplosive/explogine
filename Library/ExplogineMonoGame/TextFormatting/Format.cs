@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.TextFormatting;
 
@@ -46,7 +44,7 @@ public static class Format
         return new FormattedText(startingFont, startingColor, instructions);
     }
 
-    public static Instruction[] StringToInstructions(string text)
+    public static Instruction[] StringToInstructions(string text, FormattedTextParser parser)
     {
         var result = new List<Instruction>();
         var currentToken = new StringBuilder();
@@ -98,7 +96,8 @@ public static class Format
                 }
             }
 
-            var instruction = Instruction.TryFromString(commandName.ToString(), parameters.ToString().Split(parametersSeparator));
+            var instruction = Instruction.TryFromString(commandName.ToString(),
+                parameters.ToString().Split(parametersSeparator), parser);
 
             if (instruction != null)
             {
@@ -119,7 +118,8 @@ public static class Format
                     SaveTokenAsLiteral();
                     currentMode = ParserState.ReadingCommandName;
                     break;
-                case ParserState.ReadingCommandName when character == commandEndChar && prevCharacter != escapeCharacter:
+                case ParserState.ReadingCommandName
+                    when character == commandEndChar && prevCharacter != escapeCharacter:
                     SaveTokenAsCommand();
                     currentMode = ParserState.ReadingLiteral;
                     break;
@@ -128,6 +128,7 @@ public static class Format
                     {
                         currentToken.Append(character);
                     }
+
                     break;
             }
 

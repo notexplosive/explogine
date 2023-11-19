@@ -95,6 +95,11 @@ public class Font : IFont
         return BinarySearchAttempt(text.Length);
     }
 
+    public bool Exists()
+    {
+        return true;
+    }
+
     [Pure]
     public Vector2 MeasureString(string text, float? restrictedWidth = null)
     {

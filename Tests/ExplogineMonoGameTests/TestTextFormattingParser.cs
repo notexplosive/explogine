@@ -12,7 +12,7 @@ public class TestTextFormattingParser
     [Fact]
     public void push_one_color_integration()
     {
-        var result = Format.StringToInstructions("This should push a [color(ff0000)]color[/color]");
+        var result = Format.StringToInstructions("This should push a [color(ff0000)]color[/color]", FormattedTextParser.Default);
         
         result.Should().HaveCount(4);
         result[0].Should().BeOfType<StringLiteralInstruction>().Which.Text.Should().Be("This should push a ");

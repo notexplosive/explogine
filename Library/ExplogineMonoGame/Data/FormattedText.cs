@@ -37,7 +37,17 @@ public readonly struct FormattedText
         {
             if (instruction is ILiteralInstruction literalInstruction)
             {
-                fragments.Add(literalInstruction.GetFragment(fonts.Peek(), colors.Peek()));
+                if (!fonts.TryPeek(out var font))
+                {
+                    font = startingFont.GetFont();
+                }
+
+                if (!colors.TryPeek(out var color))
+                {
+                    color = startingColor;
+                }
+                
+                fragments.Add(literalInstruction.GetFragment(font, color));
             }
 
             if (instruction is IStackInstruction<Color> colorInstruction)
@@ -64,7 +74,7 @@ public readonly struct FormattedText
         _fragments = fragments.ToArray();
     }
 
-    private FormattedText(IFontGetter startingFont, Color startingColor, string formatString) : this(startingFont, startingColor,  Format.StringToInstructions(formatString))
+    private FormattedText(IFontGetter startingFont, Color startingColor, string formatString, FormattedTextParser parser) : this(startingFont, startingColor,  Format.StringToInstructions(formatString, parser))
     {
     }
 
@@ -87,9 +97,9 @@ public readonly struct FormattedText
         }
     }
 
-    public static FormattedText FromFormatString(IFontGetter startingFont, Color startingColor, string formatString)
+    public static FormattedText FromFormatString(IFontGetter startingFont, Color startingColor, string formatString, FormattedTextParser? parser = null)
     {
-        return new FormattedText(startingFont, startingColor, formatString);
+        return new FormattedText(startingFont, startingColor, formatString, parser ?? FormattedTextParser.Default);
     }
 
     /// <summary>
