@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using ExplogineCore;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace ExplogineMonoGame.TextFormatting;
 
-internal class Commands
+internal class BuiltInCommands
 {
     [UsedImplicitly]
     public static ScopedCommand Color = new(
@@ -20,12 +18,9 @@ internal class Commands
     public static Command Image = new(
         args => new ImageLiteralInstruction(args)
     );
-    
+
     [UsedImplicitly]
     public static Command Texture = new(
         args => new TextureLiteralInstruction(args)
     );
-
-    public static readonly Dictionary<string, ICommand> LookupTable =
-        Reflection.GetStaticFieldsThatDeriveFromType<Commands, ICommand>();
 }

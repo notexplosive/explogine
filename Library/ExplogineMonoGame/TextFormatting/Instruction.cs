@@ -30,7 +30,7 @@ public abstract class Instruction
             commandName = commandName.Substring(1, commandName.Length - 1);
         }
 
-        foreach (var keyPair in Commands.LookupTable)
+        foreach (var keyPair in FormattingCommands.SupportedCommands)
         {
             if (!String.Equals(keyPair.Key, commandName, StringComparison.InvariantCultureIgnoreCase))
             {

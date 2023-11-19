@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
@@ -7,16 +7,13 @@ namespace ExplogineMonoGame.TextFormatting;
 
 public class PushColor : Instruction, IStackInstruction<Color>
 {
-    public Color Color { get; }
-
     public PushColor(string[] args)
     {
-        try
+        if (uint.TryParse(args[0], NumberStyles.HexNumber, null, out var hex))
         {
-            var hex = uint.Parse(args[0], System.Globalization.NumberStyles.HexNumber);
             Color = ColorExtensions.FromRgbHex(hex);
         }
-        catch (Exception)
+        else
         {
             Color = Color.White;
         }
@@ -26,6 +23,8 @@ public class PushColor : Instruction, IStackInstruction<Color>
     {
         Color = color;
     }
+
+    public Color Color { get; }
 
     public void Do(Stack<Color> stack)
     {
