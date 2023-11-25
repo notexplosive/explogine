@@ -20,4 +20,23 @@ public static class Reflection
                 fieldInfo => (TInterface) fieldInfo.GetValue(null)!
             );
     }
+
+    public static List<Type> GetAllTypesThatDeriveFrom<T>()
+    {
+        // Get all loaded assemblies
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        // Find all types that implement ISpecificInterface
+        var implementingTypes = new List<Type>();
+
+        foreach (var assembly in assemblies)
+        {
+            var types = assembly.GetTypes()
+                .Where(type => typeof(T).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract);
+
+            implementingTypes.AddRange(types);
+        }
+        
+        return implementingTypes;
+    }
 }
