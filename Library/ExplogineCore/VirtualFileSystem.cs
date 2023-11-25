@@ -107,6 +107,11 @@ public class VirtualFileSystem : IFileSystem
         return new VirtualFileSystem();
     }
 
+    public long GetFileSize(string relativePathToFile)
+    {
+        return 0;
+    }
+
     private interface IVirtualItem
     {
         VirtualDirectory Parent { get; }

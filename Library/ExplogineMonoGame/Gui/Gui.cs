@@ -11,6 +11,11 @@ public class Gui : IUpdateInputHook
     private readonly List<IGuiWidget> _widgets = new();
     private bool _isReadyToDraw;
     public bool Enabled { get; set; } = true;
+    
+    public IEnumerable<IGuiWidget> Widgets()
+    {
+        return _widgets;
+    }
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {

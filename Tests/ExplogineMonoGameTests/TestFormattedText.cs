@@ -103,6 +103,11 @@ public class TestFont : IFont
         return text;
     }
 
+    public bool Exists()
+    {
+        return true;
+    }
+
     public float ScaleFactor => 1f;
     public float Height => 32;
 
@@ -123,5 +128,10 @@ public class TestFont : IFont
         }
 
         return RestrictedStringBuilder.FromText(text, restrictedWidth.Value, this).Size;
+    }
+
+    public IFont WithHeight(int newScaleFactor)
+    {
+        return this;
     }
 }

@@ -277,14 +277,17 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
                     if (isWithin)
                     {
                         var nodesOnLine = Content.GetNodesOnLine(lineNumber);
-                        if (mousePosition.X > lineRectangle.Right || forceToEnd)
+                        if (nodesOnLine.Length != 0)
                         {
-                            targetIndex = nodesOnLine[^1];
-                        }
+                            if (mousePosition.X > lineRectangle.Right || forceToEnd)
+                            {
+                                targetIndex = nodesOnLine[^1];
+                            }
 
-                        if (mousePosition.X < lineRectangle.Left || forceToStart)
-                        {
-                            targetIndex = nodesOnLine[0];
+                            if (mousePosition.X < lineRectangle.Left || forceToStart)
+                            {
+                                targetIndex = nodesOnLine[0];
+                            }
                         }
                     }
                 }

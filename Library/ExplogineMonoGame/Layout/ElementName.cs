@@ -1,6 +1,6 @@
 ﻿namespace ExplogineMonoGame.Layout;
 
-internal readonly record struct ElementName(string Text) : IElementName
+public readonly record struct ElementName(string Text) : IElementName
 {
     public override string ToString()
     {

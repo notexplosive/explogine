@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using ExplogineMonoGame.AssetManagement;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
@@ -28,6 +30,11 @@ public class IndirectFont : IFontGetter
     public string Truncate(string text, Vector2 bounds)
     {
         return GetFont().Truncate(text,bounds);
+    }
+
+    public bool Exists()
+    {
+        return Client.Assets.HasAsset<SpriteFontAsset>(SpriteFontPath);
     }
 
     [Pure]

@@ -21,7 +21,7 @@ public abstract class Instruction
         return new TextureLiteralInstruction(new IndirectTexture(texture));
     }
 
-    public static Instruction FromString(string commandName, string[] args)
+    public static Instruction? TryFromString(string commandName, string[] args, FormattedTextParser parser)
     {
         var isPopCommand = false;
         if (commandName.StartsWith('/'))
@@ -30,14 +30,12 @@ public abstract class Instruction
             commandName = commandName.Substring(1, commandName.Length - 1);
         }
 
-        foreach (var keyPair in Commands.LookupTable)
+        foreach (var (key, command) in parser.GetCommands())
         {
-            if (!String.Equals(keyPair.Key, commandName, StringComparison.InvariantCultureIgnoreCase))
+            if (!String.Equals(key, commandName, StringComparison.InvariantCultureIgnoreCase))
             {
                 continue;
             }
-
-            var command = keyPair.Value;
 
             switch (command)
             {
@@ -49,16 +47,9 @@ public abstract class Instruction
                     return unscopedCommand.Create(args);
             }
         }
-        
-        throw new Exception($"Command not found, {commandName}");
+
+        return null;
     }
+
+    public abstract void Do(TextRun textRun);
 }
-
-public interface ICommand
-{
-}
-
-public record Command(Func<string[], Instruction> Create) : ICommand;
-
-public record ScopedCommand
-    (Func<string[], Instruction> CreatePush, Func<Instruction> CreatePop) : ICommand;

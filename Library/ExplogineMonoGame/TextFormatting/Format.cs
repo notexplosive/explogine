@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.TextFormatting;
 
@@ -11,22 +9,12 @@ public static class Format
 {
     public static Instruction Push(Color color)
     {
-        return new PushColor(color);
+        return new ColorCommand(color);
     }
 
     public static Instruction Push(IFontGetter font)
     {
-        return new PushFont(font);
-    }
-
-    public static Instruction PopColor()
-    {
-        return new PopColor();
-    }
-
-    public static Instruction PopFont()
-    {
-        return new PopFont();
+        return new FontCommand(font);
     }
 
     public static Instruction Image(string imageName, float scaleFactor = 1f)
@@ -46,7 +34,7 @@ public static class Format
         return new FormattedText(startingFont, startingColor, instructions);
     }
 
-    public static Instruction[] StringToInstructions(string text)
+    public static Instruction[] StringToInstructions(string text, FormattedTextParser parser)
     {
         var result = new List<Instruction>();
         var currentToken = new StringBuilder();
@@ -98,15 +86,12 @@ public static class Format
                 }
             }
 
-            try
+            var instruction = Instruction.TryFromString(commandName.ToString(),
+                parameters.ToString().Split(parametersSeparator), parser);
+
+            if (instruction != null)
             {
-                var instruction = Instruction.FromString(commandName.ToString(),
-                    parameters.ToString().Split(parametersSeparator));
                 result.Add(instruction);
-            }
-            catch (Exception)
-            {
-                // ignore
             }
 
             currentToken.Clear();
@@ -123,7 +108,8 @@ public static class Format
                     SaveTokenAsLiteral();
                     currentMode = ParserState.ReadingCommandName;
                     break;
-                case ParserState.ReadingCommandName when character == commandEndChar && prevCharacter != escapeCharacter:
+                case ParserState.ReadingCommandName
+                    when character == commandEndChar && prevCharacter != escapeCharacter:
                     SaveTokenAsCommand();
                     currentMode = ParserState.ReadingLiteral;
                     break;
@@ -132,6 +118,7 @@ public static class Format
                     {
                         currentToken.Append(character);
                     }
+
                     break;
             }
 
