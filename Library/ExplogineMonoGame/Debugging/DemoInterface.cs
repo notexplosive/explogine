@@ -67,7 +67,10 @@ internal class DemoInterface : IUpdateHook
             {
                 Client.Demo.DumpRecording();
             }
+        }
 
+        if (Client.Input.Keyboard.Modifiers.ControlShift)
+        {
             if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.Demo.IsPlaying)
             {
                 Client.Demo.BeginPlayback();
