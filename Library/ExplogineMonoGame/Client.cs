@@ -106,6 +106,14 @@ public static class Client
 
     public static float TotalElapsedTime { get; private set; }
 
+    public static void HeadlessStart(string[] argsArray)
+    {
+        // Setup Command Line
+        Client.commandLineParameters = new CommandLineParameters(argsArray);
+        Client.Essentials.AddCommandLineParameters(Client.commandLineParameters.Writer);
+        Client.Essentials.ExecuteCommandLineArgs(Client.commandLineParameters.Args);
+    }
+
     /// <summary>
     ///     Entrypoint for Platform (ie: Desktop), this is called automatically and should not be called in your code
     /// </summary>
@@ -117,9 +125,11 @@ public static class Client
         Func<IRuntime, Cartridge> gameCartridgeCreator,
         IPlatformInterface platform)
     {
+        Client.HeadlessStart(argsArray);
+        
         // Setup Platform
         Client.Headless = false;
-
+        
         var window = platform.PlatformWindow;
         var fileSystem = new ClientFileSystem(
             new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),
@@ -128,11 +138,6 @@ public static class Client
         );
         Client.Runtime.Setup(window, fileSystem);
         Client.startingConfig = windowConfig;
-
-        // Setup Command Line
-        Client.commandLineParameters = new CommandLineParameters(argsArray);
-        Client.Essentials.AddCommandLineParameters(Client.commandLineParameters.Writer);
-        Client.Essentials.ExecuteCommandLineArgs(Client.commandLineParameters.Args);
 
         var skipIntro = Client.commandLineParameters.Args.GetValue<bool>("skipIntro") ||
                         Client.Debug.LaunchedAsDebugMode();
