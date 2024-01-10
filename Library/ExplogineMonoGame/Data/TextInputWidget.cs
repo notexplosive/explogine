@@ -8,6 +8,7 @@ using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using TextCopy;
 
 namespace ExplogineMonoGame.Data;
 
@@ -213,6 +214,9 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
             KeyBind(keyboard, Keys.Delete, HasSelection, ModifierAgnostic, ClearSelectedRange);
             KeyBind(keyboard, Keys.A, SelectionAgnostic, ControlIsDown, SelectEverything);
             KeyBind(keyboard, Keys.Escape, SelectionAgnostic, ModifierAgnostic, UnselectWidget);
+            KeyBind(keyboard, Keys.C, HasSelection, ControlIsDown, CopySelectedBuffer);
+            KeyBind(keyboard, Keys.X, HasSelection, ControlIsDown, CutSelectedBuffer);
+            KeyBind(keyboard, Keys.V, SelectionAgnostic, ControlIsDown, PasteBuffer);
         }
 
         var wrapperHitTestStack = hitTestStack.AddLayer(Matrix.Identity, Depth, OutputRectangle);
@@ -631,8 +635,13 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
 
     private bool IsWordBoundaryAtIndex(int nodeIndex)
     {
+        if (nodeIndex == LastIndex)
+        {
+            return true;
+        }
+        
         var currentChar = Text[nodeIndex];
-        return nodeIndex == LastIndex || char.IsWhiteSpace(currentChar) || char.IsSymbol(currentChar) || char.IsSeparator(currentChar) || char.IsPunctuation(currentChar);
+        return char.IsWhiteSpace(currentChar) || char.IsSymbol(currentChar) || char.IsSeparator(currentChar) || char.IsPunctuation(currentChar);
     }
 
     public void MoveToStartOfLine(bool leaveAnchor)
@@ -761,6 +770,54 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
             }
 
             input.Keyboard.ConsumeTextInput(character);
+        }
+    }
+
+    private void CopySelectedBuffer(bool leaveAnchor = true)
+    {
+        if (Cursor.SelectedRangeSize > 0)
+        {
+            var text = Content.GetTextAt(Cursor.SelectedRangeStart, Cursor.SelectedRangeSize);
+            ClipboardService.SetText(text);
+        }
+    }
+    
+    private void CutSelectedBuffer(bool leaveAnchor = true)
+    {
+        if (Cursor.SelectedRangeSize > 0)
+        {
+            var text = Content.GetTextAt(Cursor.SelectedRangeStart, Cursor.SelectedRangeSize);
+            ClipboardService.SetText(text);
+            ClearSelectedRange();
+        }
+    }
+    
+    private void PasteBuffer(bool leaveAnchor = true)
+    {
+        if (Cursor.SelectedRangeSize > 0)
+        {
+            ClearSelectedRange();
+        }
+        
+        var text = ClipboardService.GetText();
+
+        if (text != null)
+        {
+            var buffer = new List<char>();
+            foreach (var c in text)
+            {
+                if (_isSingleLine && char.IsWhiteSpace(c))
+                {
+                    buffer.Add(' ');
+                }
+                else
+                {
+                    buffer.Add(c);
+                }
+            }
+
+            Content.InsertMany(Cursor.Index, buffer);
+            Cursor.SetIndex(Cursor.Index + text.Length, false);
         }
     }
 
@@ -937,9 +994,36 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
             CacheUpdated?.Invoke();
         }
 
+        public string GetTextAt(int cursorIndex, int count)
+        {
+            var text = new StringBuilder();
+            for (var i = 0; i < count; i++)
+            {
+                if (cursorIndex != NumberOfNodes - 1)
+                {
+                    text.Append(_nodes[cursorIndex + i]);
+                }
+            }
+
+            return text.ToString();
+        }
+
         public void Insert(int cursorIndex, char character)
         {
             _nodes.Insert(cursorIndex, character);
+            Cache = Cache.Rebuild(_nodes.ToArray());
+            CacheUpdated?.Invoke();
+        }
+
+        public void InsertMany(int cursorIndex, IList<char> characters)
+        {
+            var i = 0;
+            foreach (var character in characters)
+            {
+                _nodes.Insert(cursorIndex + i, character);
+                i++;
+            }
+
             Cache = Cache.Rebuild(_nodes.ToArray());
             CacheUpdated?.Invoke();
         }
