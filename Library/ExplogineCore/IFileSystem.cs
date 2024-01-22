@@ -64,7 +64,8 @@ public interface IFileSystem
     string GetCurrentDirectory();
 
     /// <summary>
-    /// Creates a new filesystem object at the subdirectory path
+    /// Creates directory if it does not exist.
+    /// Creates a new filesystem object at the subdirectory path.
     /// </summary>
     /// <param name="subDirectory"></param>
     /// <returns></returns>

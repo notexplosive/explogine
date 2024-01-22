@@ -85,10 +85,12 @@ public class RealFileSystem : IFileSystem
     [Pure]
     public List<string> GetFilesAt(string targetRelativePath, string extension = "*", bool recursive = true)
     {
+        // Create the directory
+        GetDirectory(targetRelativePath);
+        
         var fullPaths = GetFilesAtFullPath(ToWorkingPath(targetRelativePath), extension, recursive);
 
         var result = new List<string>();
-        var root = RootPath;
         foreach (var path in fullPaths)
         {
             var revisedPath = path.Replace(Path.DirectorySeparatorChar, '/')
