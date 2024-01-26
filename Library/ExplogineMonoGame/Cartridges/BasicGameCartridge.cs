@@ -3,7 +3,7 @@ using ExplogineCore;
 
 namespace ExplogineMonoGame.Cartridges;
 
-public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, ICommandLineParameterProvider
+public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, ICommandLineParameterProvider, IHotReloadable
 {
     protected BasicGameCartridge(IRuntime runtime) : base(runtime)
     {
@@ -20,4 +20,6 @@ public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, IComma
     {
         return false;
     }
+
+    public abstract void OnHotReload();
 }

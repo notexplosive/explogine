@@ -83,7 +83,6 @@ public class MultiCartridge : BasicGameCartridge
     {
         _startedCartridges.Remove(i);
         
-        // Commented this out because we never "reload" the cartridge... I think we'll just suffer the possible memory leak
         _cartridges[i].BeforeRegenerate();
         _cartridges[i].Unload();
 
@@ -197,6 +196,14 @@ public class MultiCartridge : BasicGameCartridge
     {
         CurrentCartridge?.Draw(painter);
         AfterDraw(painter);
+    }
+    
+    public override void OnHotReload()
+    {
+        if (CurrentCartridge is IHotReloadable hotReloadable)
+        {
+            hotReloadable.OnHotReload();
+        }
     }
 
     public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
