@@ -26,14 +26,14 @@ public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
         var constructedCartridge =
             (TCartridge?) Activator.CreateInstance(typeof(TCartridge), runtime);
         return constructedCartridge ??
-               throw new Exception($"Activator could not create instance of {typeof(TCartridge).Name} using `new {typeof(TCartridge).Name}({nameof(Runtime)}),` maybe this constructor isn't supported?");
+               throw new Exception($"Activator could not create instance of {typeof(TCartridge).Name} using `new {typeof(TCartridge).Name}({nameof(Cartridge.Runtime)}),` maybe this constructor isn't supported?");
     }
     
     public static Cartridge CreateInstance(Type type, IRuntime runtime)
     {
         var constructedCartridge = (Cartridge?) Activator.CreateInstance(type, runtime);
         return constructedCartridge ??
-               throw new Exception($"Activator could not create instance of {type.Name} using `new {type.Name}({nameof(Runtime)}),` maybe this constructor isn't supported?");
+               throw new Exception($"Activator could not create instance of {type.Name} using `new {type.Name}({nameof(Cartridge.Runtime)}),` maybe this constructor isn't supported?");
     }
 
     public static IEnumerable<ILoadEvent?> GetLoadEventsForCartridge<TCartridge>(IRuntime runtime) where TCartridge : Cartridge

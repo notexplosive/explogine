@@ -11,14 +11,36 @@ public class HotReloadCartridge : MultiCartridge
 
     protected override void BeforeUpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
-        if (Client.Debug.IsPassiveOrActive && input.Keyboard.Modifiers.Control && input.Keyboard.GetButton(Keys.R, true).WasPressed)
+        var ctrl = input.Keyboard.Modifiers.Control;
+        var ctrlShift = input.Keyboard.Modifiers.ControlShift;
+        if (Client.Debug.IsPassiveOrActive && (ctrl || ctrlShift) && input.Keyboard.GetButton(Keys.R, true).WasPressed)
         {
-            RegenerateCurrentCartridge();
-            
-            if (CurrentCartridge is IHotReloadable hotReloadable)
+            if (ctrl)
             {
-                hotReloadable.OnHotReload();
+                var cartridge = CurrentCartridge;
+                RegenerateCurrentCartridge();
+                HotReloadCartridge.HotReload(cartridge);
             }
+            else if(ctrlShift)
+            {
+                // Mega-reload, restart from scratch
+                for (int i = 0; i < TotalCartridgeCount; i++)
+                {
+                    var cartridge = GetCartridgeAt(i);
+                    RegenerateCartridge(i);
+                    HotReloadCartridge.HotReload(cartridge);
+                }
+                
+                SwapTo(0);
+            }
+        }
+    }
+
+    private static void HotReload(Cartridge? cartridge)
+    {
+        if (cartridge is IHotReloadable hotReloadable)
+        {
+            hotReloadable.OnHotReload();
         }
     }
 }

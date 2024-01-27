@@ -88,8 +88,9 @@ public class MultiCartridge : BasicGameCartridge
 
         if (CurrentCartridge != null)
         {
+            var originalRuntime = _cartridges[i].Runtime;
             var targetType = _cartridges[i].GetType();
-            _cartridges[i] = Cartridge.CreateInstance(targetType, Runtime);
+            _cartridges[i] = Cartridge.CreateInstance(targetType, originalRuntime);
             
             if (_cartridges[i] is ILoadEventProvider loadEventProvider)
             {
