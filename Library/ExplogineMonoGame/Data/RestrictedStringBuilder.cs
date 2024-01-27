@@ -80,7 +80,7 @@ public static class RestrictedStringBuilder
                 var finalLetterFragment =
                     new FormattedText.CharGlyphData(finalFragmentAsFragment.Font, ' ');
 
-                lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(finalLetterFragment.Size,
+                lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(new Vector2(0, finalLetterFragment.Size.Y),
                     finalLetterFragment.ScaleFactor, WhiteSpaceType.NullTerminator);
             }
             else
