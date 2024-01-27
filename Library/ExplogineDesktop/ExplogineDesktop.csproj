@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ExplogineMonoGame\ExplogineMonoGame.csproj" />
+        <ProjectReference Include="..\ExplogineMonoGame\ExplogineMonoGame.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
+        <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303"/>
     </ItemGroup>
 
 </Project>

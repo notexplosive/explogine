@@ -23,7 +23,7 @@ public class MultiCartridge : BasicGameCartridge
     }
 
     public int TotalCartridgeCount => _cartridges.Count;
-    
+
     private int CurrentCartridgeIndex
     {
         get => _currentCartridgeIndexImpl;
@@ -82,7 +82,7 @@ public class MultiCartridge : BasicGameCartridge
     public Cartridge RegenerateCartridge(int i)
     {
         _startedCartridges.Remove(i);
-        
+
         _cartridges[i].BeforeRegenerate();
         _cartridges[i].Unload();
 
@@ -91,7 +91,7 @@ public class MultiCartridge : BasicGameCartridge
             var originalRuntime = _cartridges[i].Runtime;
             var targetType = _cartridges[i].GetType();
             _cartridges[i] = Cartridge.CreateInstance(targetType, originalRuntime);
-            
+
             if (_cartridges[i] is ILoadEventProvider loadEventProvider)
             {
                 foreach (var loadEvent in loadEventProvider.LoadEvents(Client.Graphics.Painter))
@@ -198,7 +198,7 @@ public class MultiCartridge : BasicGameCartridge
         CurrentCartridge?.Draw(painter);
         AfterDraw(painter);
     }
-    
+
     public override void OnHotReload()
     {
         if (CurrentCartridge is IHotReloadable hotReloadable)
@@ -250,7 +250,7 @@ public class MultiCartridge : BasicGameCartridge
     public override void AddCommandLineParameters(CommandLineParametersWriter parameters)
     {
         AddExtraCommandLineParameters(parameters);
-        
+
         foreach (var cartridge in _cartridges)
         {
             if (cartridge is ICommandLineParameterProvider provider)

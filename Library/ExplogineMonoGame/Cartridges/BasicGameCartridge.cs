@@ -10,6 +10,8 @@ public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, IComma
     }
 
     public abstract void AddCommandLineParameters(CommandLineParametersWriter parameters);
+
+    public abstract void OnHotReload();
     public abstract IEnumerable<ILoadEvent?> LoadEvents(Painter painter);
 
     public override void Unload()
@@ -20,6 +22,4 @@ public abstract class BasicGameCartridge : Cartridge, ILoadEventProvider, IComma
     {
         return false;
     }
-
-    public abstract void OnHotReload();
 }
