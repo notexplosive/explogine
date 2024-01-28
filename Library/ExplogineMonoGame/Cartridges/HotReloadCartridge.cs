@@ -31,6 +31,9 @@ public class HotReloadCartridge : MultiCartridge
                     HotReloadCartridge.HotReload(cartridge);
                 }
                 
+                // hot reload self (does not actually regen own cartridge)
+                OnHotReload();
+                
                 SwapTo(0);
             }
         }
