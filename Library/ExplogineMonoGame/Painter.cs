@@ -130,7 +130,7 @@ public class Painter
                 {
                     finalColor = finalColor.WithMultipliedOpacity((float) settings.Color.A / byte.MaxValue);
                 }
-
+                
                 _spriteBatch.DrawString(
                     realFont.SpriteFont,
                     fragmentChar.Text.ToString(),

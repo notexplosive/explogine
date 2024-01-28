@@ -35,10 +35,10 @@ public class ClientDebug
                 Level = DebugLevel.Passive;
                 break;
         }
-        
+
         Client.Debug.Log($"Debug level set to {Level}");
     }
-    
+
     public bool LaunchedAsDebugMode()
     {
         if (Client.Args.HasValue("debug"))
@@ -58,7 +58,7 @@ public class ClientDebug
         var output = CreateOutputString(message, paramsObjects);
         Output.Emit(new LogMessage(LogMessageType.Verbose, output));
     }
-    
+
     public void Log(object? message, params object?[] paramsObjects)
     {
         var output = CreateOutputString(message, paramsObjects);
@@ -70,7 +70,7 @@ public class ClientDebug
         var output = CreateOutputString(message, paramsObjects);
         Output.Emit(new LogMessage(LogMessageType.Error, output));
     }
-    
+
     public void LogWarning(object? message, params object?[] paramsObjects)
     {
         var output = CreateOutputString(message, paramsObjects);
