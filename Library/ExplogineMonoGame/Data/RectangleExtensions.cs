@@ -27,4 +27,18 @@ public static class RectangleExtensions
         rectangle.Offset(offsetAmount);
         return rectangle;
     }
+    
+    [Pure]
+    public static Rectangle Inflated(this Rectangle rectangle, Point inflateAmount)
+    {
+        var rectangle2 = rectangle;
+        rectangle2.Inflate(inflateAmount.X, inflateAmount.Y);
+        return rectangle2;
+    }
+
+    [Pure]
+    public static Rectangle Inflated(this Rectangle rectangle, int x, int y)
+    {
+        return Inflated(rectangle, new Point(x, y));
+    }
 }

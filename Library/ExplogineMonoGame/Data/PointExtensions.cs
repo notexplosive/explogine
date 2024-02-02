@@ -86,4 +86,10 @@ public static class PointExtensions
     {
         return new RectangleF(Vector2.Zero, point.ToVector2());
     }
+    
+    [Pure]
+    public static Rectangle ToRectangle(this Point point)
+    {
+        return new Rectangle(Point.Zero, point);
+    }
 }
