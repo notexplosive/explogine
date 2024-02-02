@@ -20,6 +20,11 @@ public class GridBasedSpriteSheet : SpriteSheet
 
     public GridBasedSpriteSheet(Texture2D texture, Point frameSize) : base(texture)
     {
+        if (frameSize.X > texture.Width || frameSize.Y > texture.Height)
+        {
+            throw new Exception("Frame size is too big for texture");
+        }
+        
         var isValid = texture.Width % frameSize.X == 0;
         isValid = isValid && texture.Height % frameSize.Y == 0;
 
