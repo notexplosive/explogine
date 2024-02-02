@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Gui;
-using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Logging;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Debugging;
 
 internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 {
-    private readonly IRuntime _runtime;
     private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
     private readonly float _maxTimer = 5;
+    private readonly IRuntime _runtime;
     private float _timer;
 
     public LogOverlay(IRuntime runtime)
@@ -34,7 +31,7 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
         {
             return;
         }
-        
+
         var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth), _font);
 
         float usedHeight = 0;
@@ -66,10 +63,6 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
         _timer = _maxTimer;
     }
 
-    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
-    {
-    }
-
     public void Update(float dt)
     {
         if (_timer > 0)
@@ -81,6 +74,10 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
                 _linesBuffer.Clear();
             }
         }
+    }
+
+    public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
+    {
     }
 
     public void Draw(Painter painter, Depth depth)
@@ -110,15 +107,15 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 
     private class RenderedMessage
     {
-        public Vector2 Size { get; }
-
         public RenderedMessage(LogMessage content, Vector2 size, IFontGetter font)
         {
             var messageColor = LogMessage.GetColorFromType(content.Type);
             Size = size;
             FormattedText = new FormattedText(font, content.Text, messageColor);
         }
-        
+
+        public Vector2 Size { get; }
+
         public FormattedText FormattedText { get; }
     }
 }

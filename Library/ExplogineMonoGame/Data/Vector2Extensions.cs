@@ -277,4 +277,31 @@ public static class Vector2Extensions
     {
         return startingValue + (targetValue - startingValue) * percent;
     }
+
+    [Pure]
+    public static Vector2 ConstrainedTo(this Vector2 self, RectangleF bounds)
+    {
+        var result = self;
+        if (result.X < bounds.Left)
+        {
+            result.X = bounds.Left;
+        }
+
+        if (result.X > bounds.Right)
+        {
+            result.X = bounds.Right;
+        }
+
+        if (result.Y < bounds.Top)
+        {
+            result.Y = bounds.Top;
+        }
+
+        if (result.Y > bounds.Bottom)
+        {
+            result.Y = bounds.Bottom;
+        }
+
+        return result;
+    }
 }

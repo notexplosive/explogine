@@ -28,6 +28,8 @@ public class IntroCartridge : Cartridge
 
     public SequenceTween Tween { get; } = new();
 
+    public override CartridgeConfig CartridgeConfig { get; } = new();
+
     public override void OnCartridgeStarted()
     {
         _wholeWord = new Figure(_text);
@@ -37,7 +39,7 @@ public class IntroCartridge : Cartridge
             _letters.Add(new Figure(character.ToString()));
         }
 
-        var tweens = new Func<SequenceTween>[]
+        var tweens = new[]
         {
             HeartBeat,
             RingRing,
@@ -137,8 +139,6 @@ public class IntroCartridge : Cartridge
     public override void Unload()
     {
     }
-
-    public override CartridgeConfig CartridgeConfig { get; } = new();
 
     private SequenceTween FlyInLetters()
     {
@@ -249,7 +249,6 @@ public class IntroCartridge : Cartridge
         var duration = 1.25f;
         return
             new SequenceTween()
-                
                 .Add(
                     new CallbackTween(() =>
                     {
@@ -332,9 +331,11 @@ public class IntroCartridge : Cartridge
                 .Add(new MultiplexTween()
                     .AddChannel(
                         new SequenceTween()
-                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar1", new SoundEffectSettings())))
+                            .Add(new CallbackTween(() =>
+                                Client.SoundPlayer.Play("engine/jar1", new SoundEffectSettings())))
                             .Add(new Tween<float>(_wholeWord.Scale, 1.25f, 0.15f, Ease.SineSlowFast))
-                            .Add(new CallbackTween(() => Client.SoundPlayer.Play("engine/jar2", new SoundEffectSettings())))
+                            .Add(new CallbackTween(() =>
+                                Client.SoundPlayer.Play("engine/jar2", new SoundEffectSettings())))
                             .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.15f, Ease.SineFastSlow))
                     )
                     .AddChannel(

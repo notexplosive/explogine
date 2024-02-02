@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Cartridges;
@@ -12,7 +10,8 @@ public class CrashCartridge : Cartridge
     private readonly string _reportText;
     private readonly IndirectFont _titleFont = new("engine/console-font", 100);
 
-    public CrashCartridge(IRuntime runtime, Exception exception, bool dumpCrashLog = true, bool resetGraphics = true) : base(runtime)
+    public CrashCartridge(IRuntime runtime, Exception exception, bool dumpCrashLog = true, bool resetGraphics = true) :
+        base(runtime)
     {
         if (resetGraphics)
         {
@@ -25,7 +24,7 @@ public class CrashCartridge : Cartridge
         var fileInfo = Client.Debug.LogFile.Directory.FileInfoAt(fileName);
         _reportText =
             $"The program has crashed!\n\nWe're very sorry this happened.\nA copy of this report, and a full log can be found at:\n{fileInfo.FullName}\n\nCrash report:\n{ThrownException.Message}\n\nStacktrace:\n{ThrownException.StackTrace}";
-        
+
         if (dumpCrashLog)
         {
             Client.Debug.LogError(_reportText);
@@ -40,6 +39,8 @@ public class CrashCartridge : Cartridge
 
     public Exception ThrownException { get; }
 
+    public override CartridgeConfig CartridgeConfig { get; } = new();
+
     public override void OnCartridgeStarted()
     {
     }
@@ -47,7 +48,7 @@ public class CrashCartridge : Cartridge
     public override void Update(float dt)
     {
     }
-    
+
     public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
     }
@@ -63,7 +64,7 @@ public class CrashCartridge : Cartridge
 
         painter.DrawStringWithinRectangle(_titleFont, "heck! :(", rect, Alignment.TopLeft, new DrawSettings());
         rect.Height -= _titleFont.FontSize;
-        rect.Location += new Point(0,_titleFont.FontSize);
+        rect.Location += new Point(0, _titleFont.FontSize);
         painter.DrawStringWithinRectangle(_font, _reportText,
             rect, Alignment.TopLeft,
             new DrawSettings());
@@ -79,6 +80,4 @@ public class CrashCartridge : Cartridge
     public override void Unload()
     {
     }
-
-    public override CartridgeConfig CartridgeConfig { get; } = new();
 }

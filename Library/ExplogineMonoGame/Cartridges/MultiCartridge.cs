@@ -23,7 +23,7 @@ public class MultiCartridge : BasicGameCartridge
     }
 
     public int TotalCartridgeCount => _cartridges.Count;
-    
+
     private int CurrentCartridgeIndex
     {
         get => _currentCartridgeIndexImpl;
@@ -58,12 +58,6 @@ public class MultiCartridge : BasicGameCartridge
     public void Add(Cartridge cartridge)
     {
         _cartridges.Add(cartridge);
-
-        // If we just added the first cartridge, load it
-        if (_cartridges.Count == 1)
-        {
-            SwapTo(0);
-        }
     }
 
     public T RegenerateCartridge<T>() where T : Cartridge
@@ -82,16 +76,16 @@ public class MultiCartridge : BasicGameCartridge
     public Cartridge RegenerateCartridge(int i)
     {
         _startedCartridges.Remove(i);
-        
-        // Commented this out because we never "reload" the cartridge... I think we'll just suffer the possible memory leak
+
         _cartridges[i].BeforeRegenerate();
         _cartridges[i].Unload();
 
         if (CurrentCartridge != null)
         {
+            var originalRuntime = _cartridges[i].Runtime;
             var targetType = _cartridges[i].GetType();
-            _cartridges[i] = Cartridge.CreateInstance(targetType, Runtime);
-            
+            _cartridges[i] = Cartridge.CreateInstance(targetType, originalRuntime);
+
             if (_cartridges[i] is ILoadEventProvider loadEventProvider)
             {
                 foreach (var loadEvent in loadEventProvider.LoadEvents(Client.Graphics.Painter))
@@ -199,6 +193,14 @@ public class MultiCartridge : BasicGameCartridge
         AfterDraw(painter);
     }
 
+    public override void OnHotReload()
+    {
+        if (CurrentCartridge is IHotReloadable hotReloadable)
+        {
+            hotReloadable.OnHotReload();
+        }
+    }
+
     public override void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         BeforeUpdateInput(input, hitTestStack);
@@ -242,7 +244,7 @@ public class MultiCartridge : BasicGameCartridge
     public override void AddCommandLineParameters(CommandLineParametersWriter parameters)
     {
         AddExtraCommandLineParameters(parameters);
-        
+
         foreach (var cartridge in _cartridges)
         {
             if (cartridge is ICommandLineParameterProvider provider)

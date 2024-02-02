@@ -43,7 +43,7 @@ public class LoadingCartridge : Cartridge
         {
             return;
         }
-        
+
         var expectedFrameDuration = 1 / 60f;
 
         // If we dedicate the whole frame to loading we'll effectively block on the UI thread.
@@ -63,7 +63,7 @@ public class LoadingCartridge : Cartridge
             {
                 _statusRingBuffer.AddFirst(_loader.NextStatus);
             }
-            
+
             while (_statusRingBuffer.Count > LoadingCartridge.RingBufferSize)
             {
                 _statusRingBuffer.RemoveLast();
@@ -131,7 +131,7 @@ public class LoadingCartridge : Cartridge
             _startingDelayFrames--;
             return;
         }
-        
+
         // Wait until we've drawn a few frames of the finished loading bar before we move on
         // This way we make sure we're at a stable framerate before we start the game in earnest.
         if (_loader.IsDone())

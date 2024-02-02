@@ -18,6 +18,34 @@ internal class DemoInterface : IUpdateHook
         _runtime = runtime;
     }
 
+    public void Update(float dt)
+    {
+        _totalTime += dt;
+        if (Client.Input.Keyboard.Modifiers.Control)
+        {
+            if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && Client.Demo.IsRecording)
+            {
+                Client.Demo.DumpRecording();
+            }
+        }
+
+        if (Client.Input.Keyboard.Modifiers.ControlShift)
+        {
+            if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.Demo.IsPlaying)
+            {
+                Client.Demo.BeginPlayback();
+            }
+        }
+
+        if (Client.Demo.IsPlaying)
+        {
+            if (Client.HumanInput.Keyboard.GetButton(Keys.Escape).WasPressed)
+            {
+                Client.Demo.Stop();
+            }
+        }
+    }
+
     public void Draw(Painter painter, Depth depth)
     {
         var spriteSheet = Client.Assets.GetAsset<SpriteSheet>("demo-indicators");
@@ -54,34 +82,6 @@ internal class DemoInterface : IUpdateHook
                     new Vector2(_runtime.Window.Size.X - spriteSheet.GetSourceRectForFrame(0).Width, 0),
                     Scale2D.One,
                     new DrawSettings {Depth = depth});
-            }
-        }
-    }
-
-    public void Update(float dt)
-    {
-        _totalTime += dt;
-        if (Client.Input.Keyboard.Modifiers.Control)
-        {
-            if (Client.Input.Keyboard.GetButton(Keys.P).WasPressed && Client.Demo.IsRecording)
-            {
-                Client.Demo.DumpRecording();
-            }
-        }
-
-        if (Client.Input.Keyboard.Modifiers.ControlShift)
-        {
-            if (Client.Input.Keyboard.GetButton(Keys.D).WasPressed && !Client.Demo.IsPlaying)
-            {
-                Client.Demo.BeginPlayback();
-            }
-        }
-
-        if (Client.Demo.IsPlaying)
-        {
-            if (Client.HumanInput.Keyboard.GetButton(Keys.Escape).WasPressed)
-            {
-                Client.Demo.Stop();
             }
         }
     }
