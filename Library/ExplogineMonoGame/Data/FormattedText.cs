@@ -67,12 +67,18 @@ public readonly struct FormattedText
     ///     The size of the whole text if it had infinite width
     /// </summary>
     /// <returns></returns>
-    public Vector2 MaxNeededWidth()
+    public Vector2 MaxNeededSize()
     {
         var (_, restrictedSize) = RestrictedStringBuilder.FromFragments(_fragments, float.MaxValue);
 
         // +1 on both sides to round up
         return restrictedSize + new Vector2(1);
+    }
+
+    [Obsolete("RENAMED Use MaxNeededSize instead",true)]
+    public Vector2 MaxNeededWith()
+    {
+        return MaxNeededSize();
     }
 
     public IEnumerable<FormattedGlyph> GetGlyphs(RectangleF rectangle, Alignment alignment)

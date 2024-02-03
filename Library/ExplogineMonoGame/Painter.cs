@@ -102,7 +102,7 @@ public class Painter
     public void DrawFormattedStringAtPosition(FormattedText formattedText, Vector2 position, Alignment alignment,
         DrawSettings settings)
     {
-        var rectangle = new RectangleF(position, formattedText.MaxNeededWidth()).ToRectangle();
+        var rectangle = new RectangleF(position, formattedText.MaxNeededSize()).ToRectangle();
         var movedRectangle = rectangle.Moved(-settings.Origin.Calculate(rectangle.Size));
         DrawFormattedStringWithinRectangle(formattedText, movedRectangle, alignment, settings);
     }

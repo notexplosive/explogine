@@ -638,4 +638,12 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return RectangleF.Intersect(this, other).Area > 0;
     }
+
+    [Pure]
+    public RectangleF TransformedBy(Matrix matrix)
+    {
+        var topLeft = Vector2.Transform(TopLeft, matrix);
+        var bottomRight = Vector2.Transform(BottomRight, matrix);
+        return RectangleF.FromCorners(topLeft, bottomRight);
+    }
 }
