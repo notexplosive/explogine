@@ -187,12 +187,12 @@ public readonly struct FormattedText
 
     public readonly record struct CharGlyphData(IFont Font, char Text, Color? Color = null) : IGlyphData
     {
-        public Vector2 Size => Font.MeasureString(Text.ToString());
+        public Vector2 Size => Font.MeasureString(CacheUtil.CharToString(Text));
         public float ScaleFactor => Font.ScaleFactor;
 
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
-            painter.DrawStringAtPosition(Font, Text.ToString(), position,
+            painter.DrawStringAtPosition(Font, CacheUtil.CharToString(Text), position,
                 drawSettings with {Color = Color ?? drawSettings.Color});
         }
 
