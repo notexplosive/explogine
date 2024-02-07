@@ -646,4 +646,25 @@ public struct RectangleF : IEquatable<RectangleF>
         var bottomRight = Vector2.Transform(BottomRight, matrix);
         return RectangleF.FromCorners(topLeft, bottomRight);
     }
+
+    [Pure]
+    public Vector2 GetPointAlongPerimeter(float percent)
+    {
+        if (percent >= 0)
+        {
+            percent %= 1.0f;
+        }
+        else
+        {
+            percent = 1.0f - (-percent % 1.0f);
+        }
+
+        return percent switch
+        {
+            <= 0.25f => Vector2.Lerp(TopLeft, TopRight, (percent % 0.25f) / 0.25f),
+            <= 0.5f => Vector2.Lerp(TopRight, BottomRight, (percent - 0.25f) % 0.25f / 0.25f),
+            <= 0.75f => Vector2.Lerp(BottomRight, BottomLeft, (percent - 0.5f) % 0.25f / 0.25f),
+            _ => Vector2.Lerp(BottomLeft, TopLeft, (percent - 0.75f) % 0.25f / 0.25f)
+        };
+    }
 }
