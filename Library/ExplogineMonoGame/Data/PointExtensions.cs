@@ -92,4 +92,26 @@ public static class PointExtensions
     {
         return new Rectangle(Point.Zero, point);
     }
+
+    [Pure]
+    public static Point Min(Point a, Point b)
+    {
+        var min = new Point
+        {
+            X = Math.Min(a.X, b.X),
+            Y = Math.Min(a.Y, b.Y)
+        };
+        return min;
+    }
+    
+    [Pure]
+    public static Point Max(Point a, Point b)
+    {
+        var min = new Point
+        {
+            X = Math.Max(a.X, b.X),
+            Y = Math.Max(a.Y, b.Y)
+        };
+        return min;
+    }
 }
