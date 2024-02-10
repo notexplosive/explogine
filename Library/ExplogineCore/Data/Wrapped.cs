@@ -3,6 +3,7 @@
 public class Wrapped<T> where T : struct
 {
     private T _value;
+    private bool _valueChangeInProgress;
 
     public Wrapped() : this(default)
     {
@@ -20,8 +21,16 @@ public class Wrapped<T> where T : struct
         get => _value;
         set
         {
+            if (_valueChangeInProgress)
+            {
+                _value = value;
+                return;
+            }
+            
+            _valueChangeInProgress = true;
             ValueChanged?.Invoke(value);
             _value = value;
+            _valueChangeInProgress = false;
         }
     }
 
@@ -34,5 +43,11 @@ public class Wrapped<T> where T : struct
     {
         var str = _value.ToString();
         return str ?? "null";
+    }
+
+    public void SetWithoutEvent(T newValue)
+    {
+        // Set without calling ValueChanged
+        _value = newValue;
     }
 }
