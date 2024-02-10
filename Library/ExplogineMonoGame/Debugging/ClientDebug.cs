@@ -20,6 +20,7 @@ public class ClientDebug
     public FileLogCapture LogFile { get; }
     public int GameSpeed { get; set; } = 1;
     public IFileSystem RepoFileSystem { get; internal set; } = new RealFileSystem(".");
+    public bool MonitorMemoryUsage { get; set; }
 
     public void CycleDebugMode()
     {

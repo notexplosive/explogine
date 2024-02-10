@@ -19,6 +19,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         parameters.RegisterParameter<bool>("skipIntro");
         parameters.RegisterParameter<bool>("debug");
         parameters.RegisterParameter<bool>("skipSnapshot");
+        parameters.RegisterParameter<bool>("watchMemory");
         parameters.RegisterParameter<string>("repoPath");
     }
 
@@ -46,6 +47,11 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         if (args.GetValue<int>("gameSpeed") > 0)
         {
             Client.Debug.GameSpeed = args.GetValue<int>("gameSpeed");
+        }
+
+        if (args.GetValue<bool>("watchMemory"))
+        {
+            Client.Debug.MonitorMemoryUsage = true;
         }
         
         var repoPath = Client.Args.GetValue<string>("repoPath");

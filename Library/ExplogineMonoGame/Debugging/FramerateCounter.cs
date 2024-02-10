@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
@@ -19,8 +20,17 @@ public class FramerateCounter : IUpdateHook, IDrawHook
         
         if (_updatesPerSecond > 0)
         {
+            var memoryUsageStat = string.Empty;
+
+            if (Client.Debug.MonitorMemoryUsage)
+            {
+                var currentProc = Process.GetCurrentProcess();
+                long memoryUsed = currentProc.PrivateMemorySize64;
+                memoryUsageStat = (memoryUsed / 1000_000f).ToString("F2") + " MB";
+            }
+            
             painter.BeginSpriteBatch();
-            painter.DrawDebugStringAtPosition($"{_updatesPerSecond:F0} UPS / {drawsPerSecond:F0} FPS" , Vector2.Zero, new DrawSettings());
+            painter.DrawDebugStringAtPosition($"{memoryUsageStat} {_updatesPerSecond:F0} UPS / {drawsPerSecond:F0} FPS" , Vector2.Zero, new DrawSettings());
             painter.EndSpriteBatch();
         }
     }
