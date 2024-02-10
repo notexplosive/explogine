@@ -165,7 +165,7 @@ public class SimpleGuiTheme : IGuiTheme
         painter.DrawStringWithinRectangle(Font, checkbox.Label, labelRect, Alignment.CenterLeft,
             new DrawSettings
             {
-                Color = PrimaryColor,
+                Color = TextInputForegroundColor,
                 Depth = checkbox.Depth
             });
 
