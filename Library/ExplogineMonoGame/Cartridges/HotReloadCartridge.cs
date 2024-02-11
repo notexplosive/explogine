@@ -1,4 +1,5 @@
-﻿using ExplogineMonoGame.Data;
+﻿using System;
+using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Cartridges;
@@ -15,6 +16,8 @@ public class HotReloadCartridge : MultiCartridge
         var ctrlShift = input.Keyboard.Modifiers.ControlShift;
         if (Client.Debug.IsPassiveOrActive && (ctrl || ctrlShift) && input.Keyboard.GetButton(Keys.R, true).WasPressed)
         {
+            GC.Collect();
+            
             if (ctrl)
             {
                 var cartridge = CurrentCartridge;
