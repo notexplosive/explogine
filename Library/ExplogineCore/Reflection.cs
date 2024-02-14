@@ -39,4 +39,17 @@ public static class Reflection
         
         return implementingTypes;
     }
+
+    public static IEnumerable<Tuple<MemberInfo, Type>> GetAllMembersInAssemblyWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
+    {
+        var types = assembly.GetTypes();
+        var attributeType = typeof(TAttribute);
+        foreach (var type in types)
+        {
+            foreach (var member in type.GetMembers().Where(method => Attribute.IsDefined(method, attributeType)))
+            {
+                yield return new Tuple<MemberInfo, Type>(member, type);
+            }
+        }
+    }
 }
