@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 
 namespace ExplogineCore;
 
@@ -49,6 +50,19 @@ public static class Reflection
             foreach (var member in type.GetMembers().Where(method => Attribute.IsDefined(method, attributeType)))
             {
                 yield return new Tuple<MemberInfo, Type>(member, type);
+            }
+        }
+    }
+
+    public static IEnumerable<Type> GetAllTypesWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
+    {
+        var types = assembly.GetTypes();
+        var attributeType = typeof(TAttribute);
+        foreach (var type in types)
+        {
+            if (Attribute.IsDefined(type, attributeType))
+            {
+                yield return type;
             }
         }
     }
