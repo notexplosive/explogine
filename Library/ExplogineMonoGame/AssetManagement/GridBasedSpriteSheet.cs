@@ -30,7 +30,7 @@ public class GridBasedSpriteSheet : SpriteSheet
 
         if (!isValid)
         {
-            throw new Exception("Texture does not evenly divide by cell dimensions");
+            throw new Exception($"Texture {texture.Width}, {texture.Height} does not evenly divide by cell dimensions {frameSize.X}, {frameSize.Y}");
         }
 
         FrameSize = frameSize;
