@@ -150,9 +150,9 @@ public static class Vector2Extensions
     {
         return new Vector2(aspectRatio, 1);
     }
-
+    
     [Pure]
-    public static Vector2 Truncate(this Vector2 vector)
+    public static Vector2 Truncated(this Vector2 vector)
     {
         return new Vector2((int)vector.X, (int)vector.Y);
     }
