@@ -137,6 +137,10 @@ public readonly struct FormattedText
     {
         Vector2 Size { get; }
         float ScaleFactor { get; }
+        
+        /// <summary>
+        /// We never actually call this I think?
+        /// </summary>
         void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings);
     }
 
@@ -231,6 +235,31 @@ public readonly struct FormattedText
         {
             return $"{Size} (image)";
         }
+    }
+
+    public readonly record struct DrawableGlyphData(Action<Painter, Vector2, DrawSettings> DrawCallback, Func<Vector2> SizeCallback)
+        : IGlyphData
+    {
+        public Vector2 Size => SizeCallback();
+        public float ScaleFactor => 1f;
+        public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
+        {
+            DrawCallback(painter, position, drawSettings);
+        }
+    }
+
+    public readonly record struct FragmentDrawable(Action<Painter, Vector2, DrawSettings> DrawCallback, Func<Vector2> SizeCallback) : IFragment
+    {
+        public Vector2 Size => SizeCallback();
+        public IGlyphData ToGlyphData()
+        {
+            return new DrawableGlyphData(DrawCallback, SizeCallback);
+        }
+
+        /// <summary>
+        /// This represents one drawable "unit" so it's just 1 character
+        /// </summary>
+        public int CharCount => 1;
     }
 
     public readonly record struct FragmentImage(IndirectAsset<ImageAsset> Image, float ScaleFactor = 1f,

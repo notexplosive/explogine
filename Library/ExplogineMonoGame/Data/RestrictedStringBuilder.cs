@@ -85,7 +85,8 @@ public static class RestrictedStringBuilder
             }
             else
             {
-                lettersAsFragments[^1] = finalFragment.ToGlyphData();
+                lettersAsFragments[^1] =
+                    new FormattedText.WhiteSpaceGlyphData(finalFragment.Size.JustY(), 1f, WhiteSpaceType.NullTerminator);
             }
         }
 

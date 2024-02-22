@@ -161,6 +161,11 @@ public class Painter
                     Origin = new DrawOrigin(letterOrigin)
                 });
         }
+
+        if (glyph.Data is FormattedText.DrawableGlyphData drawableGlyphData)
+        {
+            drawableGlyphData.DrawCallback(this, position, settings with {Origin = new DrawOrigin(letterOrigin)});
+        }
     }
     
     public void DrawFormattedStringWithinRectangle(FormattedText formattedText, RectangleF rectangle,
