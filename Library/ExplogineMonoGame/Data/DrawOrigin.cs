@@ -64,4 +64,14 @@ public readonly record struct DrawOrigin
         Constant,
         Centered
     }
+    
+    public static DrawOrigin operator-(DrawOrigin origin)
+    {
+        if (origin._style == Style.Constant)
+        {
+            return new DrawOrigin(-origin._constantValue);
+        }
+
+        return origin;
+    }
 }

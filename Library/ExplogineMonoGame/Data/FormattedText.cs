@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ExplogineMonoGame.Data;
 
-public readonly struct FormattedText
+public class FormattedText
 {
     private readonly IFragment[] _fragments;
 
