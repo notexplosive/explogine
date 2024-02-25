@@ -82,27 +82,31 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 
     public void Draw(Painter painter, Depth depth)
     {
-        painter.BeginSpriteBatch();
-        var latestLogMessageRect = new Rectangle(5, 0, TotalWidth - 10, MaxHeight);
-
-        foreach (var message in _linesBuffer)
+        if (_linesBuffer.First != null)
         {
-            var color = Color.White;
+           painter.BeginSpriteBatch();
+            var latestLogMessageRect =
+                new Rectangle(5, (int) _linesBuffer.First.Value.Size.Y, TotalWidth - 10, MaxHeight);
 
-            painter.DrawFormattedStringWithinRectangle(
-                message.FormattedText,
-                latestLogMessageRect,
-                Alignment.TopLeft,
-                new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
+            foreach (var message in _linesBuffer)
+            {
+                var color = Color.White;
 
-            latestLogMessageRect.Location += new Point(0, (int) message.Size.Y);
+                painter.DrawFormattedStringWithinRectangle(
+                    message.FormattedText,
+                    latestLogMessageRect,
+                    Alignment.TopLeft,
+                    new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
+
+                latestLogMessageRect.Location += new Point(0, (int) message.Size.Y);
+            }
+
+            var overlayHeight = (float) latestLogMessageRect.Location.Y;
+
+            painter.DrawRectangle(new RectangleF(0, 0, TotalWidth, overlayHeight),
+                new DrawSettings {Color = Color.Black.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
+            painter.EndSpriteBatch();
         }
-
-        var overlayHeight = (float) latestLogMessageRect.Location.Y;
-
-        painter.DrawRectangle(new RectangleF(0, 0, TotalWidth, overlayHeight),
-            new DrawSettings {Color = Color.Black.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
-        painter.EndSpriteBatch();
     }
 
     private class RenderedMessage

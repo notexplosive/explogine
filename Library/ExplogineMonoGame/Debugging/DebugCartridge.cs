@@ -76,8 +76,8 @@ public class DebugCartridge : Cartridge, ILoadEventProvider, IEarlyDrawHook
     {
         if (Client.Debug.IsPassiveOrActive)
         {
-            _framerateCounter.Draw(painter);
             _logOverlay.Draw(painter, ConsoleOverlayDepth);
+            _framerateCounter.Draw(painter);
         }
 
         painter.BeginSpriteBatch();
