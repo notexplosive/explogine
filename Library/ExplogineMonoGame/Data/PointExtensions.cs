@@ -114,4 +114,17 @@ public static class PointExtensions
         };
         return min;
     }
+    
+    
+    [Pure]
+    public static Point JustX(this Point vec)
+    {
+        return new Point(vec.X, 0);
+    }
+    
+    [Pure]
+    public static Point JustY(this Point vec)
+    {
+        return new Point(0, vec.Y);
+    }
 }
