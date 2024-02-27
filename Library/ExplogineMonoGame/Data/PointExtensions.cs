@@ -127,4 +127,10 @@ public static class PointExtensions
     {
         return new Point(0, vec.Y);
     }
+    
+    [Pure]
+    public static Point Abs(this Point vec)
+    {
+        return new Point(Math.Abs(vec.X), Math.Abs(vec.Y));
+    }
 }
