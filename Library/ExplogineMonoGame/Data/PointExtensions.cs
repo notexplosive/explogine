@@ -16,6 +16,11 @@ public static class PointExtensions
     {
         return Math.Max(point.X, point.Y);
     }
+    
+    public static int MinXy(this Point point)
+    {
+        return Math.Min(point.X, point.Y);
+    }
 
     public static Point Multiplied(this Point point, float scalar)
     {
