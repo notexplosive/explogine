@@ -229,6 +229,12 @@ public static class Vector2Extensions
     }
 
     [Pure]
+    public static Vector2 InverseYx(this Vector2 vector)
+    {
+        return new Vector2(vector.Y, vector.X);
+    }
+
+    [Pure]
     public static Vector2 Polar(float radius, float theta)
     {
         return new Vector2(MathF.Cos(theta), MathF.Sin(theta)) * radius;
