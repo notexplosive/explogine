@@ -209,4 +209,14 @@ public class RealFileSystem : IFileSystem
     {
         return FileInfoAt(relativePathToFile).Length;
     }
+
+    public async Task<string> ReadFileAsync(string relativePathToFile)
+    {
+        if (!FileInfoAt(relativePathToFile).Exists)
+        {
+            return string.Empty;
+        }
+
+        return await File.ReadAllTextAsync(ToWorkingPath(relativePathToFile));
+    }
 }

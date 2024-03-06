@@ -77,4 +77,6 @@ public interface IFileSystem
     /// <param name="relativePathToFile"></param>
     /// <returns></returns>
     public long GetFileSize(string relativePathToFile);
+
+    Task<string> ReadFileAsync(string fileName);
 }

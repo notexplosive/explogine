@@ -112,6 +112,23 @@ public class VirtualFileSystem : IFileSystem
         return 0;
     }
 
+    public Task<string> ReadFileAsync(string relativePathToFile)
+    {
+        var directory = _root.CreateDirectoriesUpToFile(relativePathToFile, false);
+
+        if (directory != null)
+        {
+            var file = directory.GetLocalFile(_root.GetFileName(relativePathToFile));
+
+            if (file != null)
+            {
+                return Task.FromResult(file.Content);
+            }
+        }
+
+        return Task.FromResult(string.Empty);
+    }
+
     private interface IVirtualItem
     {
         VirtualDirectory Parent { get; }
