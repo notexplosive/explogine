@@ -26,7 +26,7 @@ public class FramerateCounter : IUpdateHook, IDrawHook
         }
 
         painter.BeginSpriteBatch();
-        painter.DrawDebugStringAtPosition($"{memoryUsageStat}{drawDuration:F4}ms" , Vector2.Zero, new DrawSettings{Color = Color.White});
+        painter.DrawDebugStringAtPosition($"{memoryUsageStat}{drawDuration:F4}ms {1 / drawDuration:F0}" , Vector2.Zero, new DrawSettings{Color = Color.White});
         painter.EndSpriteBatch();
     }
 
