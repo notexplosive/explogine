@@ -21,6 +21,19 @@ public static class Reflection
                 fieldInfo => (TInterface) fieldInfo.GetValue(null)!
             );
     }
+    
+    /// <summary>
+    /// Gets static fields from type T that derive from TInterface
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TInterface"></typeparam>
+    /// <returns></returns>
+    public static IEnumerable<FieldInfo> GetStaticFieldInfosThatDeriveFromType<T, TInterface>()
+    {
+        return typeof(T)
+            .GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where(fieldInfo => fieldInfo.FieldType.GetInterfaces().Contains(typeof(TInterface)));
+    }
 
     public static List<Type> GetAllTypesThatDeriveFrom<T>()
     {
