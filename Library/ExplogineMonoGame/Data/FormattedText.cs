@@ -11,7 +11,7 @@ namespace ExplogineMonoGame.Data;
 
 public class FormattedText
 {
-    private readonly IFragment[] _fragments;
+    private readonly IFragment[]? _fragments;
 
     public FormattedText(IFontGetter indirectFont, string text, Color? color = null) : this(
         new Fragment(indirectFont, text, color))
