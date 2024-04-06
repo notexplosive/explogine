@@ -64,7 +64,14 @@ public class MultiplexTween : TweenCollection
         }
     }
 
+    [Obsolete("Use Add instead")]
     public MultiplexTween AddChannel(ITween tween)
+    {
+        Items.Add(tween);
+        return this;
+    }
+    
+    public MultiplexTween Add(ITween tween)
     {
         Items.Add(tween);
         return this;
