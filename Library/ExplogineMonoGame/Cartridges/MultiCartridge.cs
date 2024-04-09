@@ -54,6 +54,19 @@ public class MultiCartridge : BasicGameCartridge
     {
         return _cartridges[i];
     }
+    
+    public T GetCartridge<T>() where T : Cartridge
+    {
+        for (var i = 0; i < _cartridges.Count; i++)
+        {
+            if (_cartridges[i] is T t)
+            {
+                return t;
+            }
+        }
+
+        return null!;
+    }
 
     public void Add(Cartridge cartridge)
     {
