@@ -310,4 +310,26 @@ public static class Vector2Extensions
 
         return result;
     }
+
+    [Pure]
+    public static Vector2 Min(Vector2 a, Vector2 b)
+    {
+        var min = new Vector2
+        {
+            X = Math.Min(a.X, b.X),
+            Y = Math.Min(a.Y, b.Y)
+        };
+        return min;
+    }
+    
+    [Pure]
+    public static Vector2 Max(Vector2 a, Vector2 b)
+    {
+        var min = new Vector2
+        {
+            X = Math.Max(a.X, b.X),
+            Y = Math.Max(a.Y, b.Y)
+        };
+        return min;
+    }
 }
