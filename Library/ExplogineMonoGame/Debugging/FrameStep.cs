@@ -77,8 +77,8 @@ public class FrameStep : IUpdateInputHook
                 .Add(new CallbackTween(() => _shouldDisplay = true))
                 .Add(
                     new MultiplexTween()
-                        .AddChannel(new Tween<float>(_lineThickness, 5, 0.15f, Ease.CubicSlowFast))
-                        .AddChannel(
+                        .Add(new Tween<float>(_lineThickness, 5, 0.15f, Ease.CubicSlowFast))
+                        .Add(
                             new SequenceTween()
                                 .Add(new Tween<float>(_shrinkAmount, 10, 0.15f, Ease.CubicSlowFast))
                                 .Add(new Tween<float>(_shrinkAmount, 0, 0.15f, Ease.CubicFastSlow))

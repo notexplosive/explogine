@@ -14,8 +14,8 @@ public class MultiplexTweenTests
         var tweenableB = new TweenableInt(0);
 
         var tween = new MultiplexTween()
-            .AddChannel(new Tween<int>(tweenableA, 100, 1, Ease.Linear))
-            .AddChannel(new Tween<int>(tweenableB, 200, 1, Ease.Linear));
+            .Add(new Tween<int>(tweenableA, 100, 1, Ease.Linear))
+            .Add(new Tween<int>(tweenableB, 200, 1, Ease.Linear));
 
         tween.Update(0.5f);
 
@@ -30,8 +30,8 @@ public class MultiplexTweenTests
         var tweenableB = new TweenableInt(0);
 
         var tween = new MultiplexTween()
-            .AddChannel(new Tween<int>(tweenableA, 100, 1, Ease.Linear))
-            .AddChannel(new Tween<int>(tweenableB, 200, 2, Ease.Linear));
+            .Add(new Tween<int>(tweenableA, 100, 1, Ease.Linear))
+            .Add(new Tween<int>(tweenableB, 200, 2, Ease.Linear));
 
         tween.Update(1.5f);
 
@@ -46,8 +46,8 @@ public class MultiplexTweenTests
         var tweenableB = new TweenableInt(0);
 
         var tween = new MultiplexTween()
-            .AddChannel(new Tween<int>(tweenableA, 100, 0.25f, Ease.Linear))
-            .AddChannel(new Tween<int>(tweenableB, 200, 1f, Ease.Linear));
+            .Add(new Tween<int>(tweenableA, 100, 0.25f, Ease.Linear))
+            .Add(new Tween<int>(tweenableB, 200, 1f, Ease.Linear));
 
         var overflow = tween.Update(1.2f);
 
@@ -60,8 +60,8 @@ public class MultiplexTweenTests
         var hitCount = 0;
 
         var tween = new MultiplexTween()
-            .AddChannel(new WaitSecondsTween(2))
-            .AddChannel(new CallbackTween(() => { hitCount++; }));
+            .Add(new WaitSecondsTween(2))
+            .Add(new CallbackTween(() => { hitCount++; }));
 
         tween.Update(0.25f);
         tween.Update(0.25f);
@@ -73,10 +73,10 @@ public class MultiplexTweenTests
     public void multiplex_tween_reports_correct_duration()
     {
         var tween = new MultiplexTween()
-            .AddChannel(new WaitSecondsTween(2))
-            .AddChannel(new WaitSecondsTween(7))
-            .AddChannel(new WaitSecondsTween(4))
-            .AddChannel(new WaitSecondsTween(5));
+            .Add(new WaitSecondsTween(2))
+            .Add(new WaitSecondsTween(7))
+            .Add(new WaitSecondsTween(4))
+            .Add(new WaitSecondsTween(5));
 
         tween.TotalDuration.GetDuration().Should().Be(7);
     }
@@ -87,10 +87,10 @@ public class MultiplexTweenTests
         var tweenableA = new TweenableInt(0);
         var tweenableB = new TweenableInt(0);
         var tween = new MultiplexTween();
-        tween.AddChannel(new Tween<int>(tweenableA, 100, 1, Ease.Linear));
+        tween.Add(new Tween<int>(tweenableA, 100, 1, Ease.Linear));
 
         tween.Update(1.2f);
-        tween.AddChannel(new Tween<int>(tweenableB, 100, 1, Ease.Linear));
+        tween.Add(new Tween<int>(tweenableB, 100, 1, Ease.Linear));
         tween.Update(0.5f);
 
         tweenableA.Value.Should().Be(100);
@@ -104,8 +104,8 @@ public class MultiplexTweenTests
         var tweenableY = new TweenableFloat();
 
         var tween = new MultiplexTween()
-                .AddChannel(new Tween<float>(tweenableX, 100, 1, Ease.Linear))
-                .AddChannel(new Tween<float>(tweenableY, 50, 1, Ease.Linear))
+                .Add(new Tween<float>(tweenableX, 100, 1, Ease.Linear))
+                .Add(new Tween<float>(tweenableY, 50, 1, Ease.Linear))
             ;
 
         float ExpectedX(float x)

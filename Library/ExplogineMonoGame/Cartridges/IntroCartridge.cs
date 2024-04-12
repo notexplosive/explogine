@@ -174,19 +174,19 @@ public class IntroCartridge : Cartridge
                 var multi = new MultiplexTween();
                 foreach (var letter in _letters)
                 {
-                    multi.AddChannel(new SequenceTween()
+                    multi.Add(new SequenceTween()
                         .Add(new WaitSecondsTween(index * 0.05f))
                         .Add(new CallbackTween(() =>
                             Client.SoundPlayer.Play("engine/click", new SoundEffectSettings {Pitch = CurrentPitch()})))
                         .Add(new MultiplexTween()
-                            .AddChannel(
+                            .Add(
                                 new SequenceTween()
                                     .Add(new Tween<float>(letter.Scale, 0.95f, durationPerLetter * 3 / 4,
                                         Ease.QuadFastSlow))
                                     .Add(new Tween<float>(letter.Scale, 1f, durationPerLetter * 1 / 4,
                                         Ease.QuadSlowFast))
                             )
-                            .AddChannel(new Tween<float>(letter.Opacity, 1f, durationPerLetter, Ease.Linear)))
+                            .Add(new Tween<float>(letter.Opacity, 1f, durationPerLetter, Ease.Linear)))
                     );
                     index++;
                 }
@@ -219,10 +219,10 @@ public class IntroCartridge : Cartridge
                 var multi = new MultiplexTween();
                 foreach (var letter in _letters)
                 {
-                    multi.AddChannel(new SequenceTween()
+                    multi.Add(new SequenceTween()
                         .Add(new WaitSecondsTween(Client.Random.Dirty.NextFloat()))
                         .Add(new MultiplexTween()
-                            .AddChannel(
+                            .Add(
                                 new SequenceTween()
                                     .Add(new Tween<float>(letter.Scale, 0.95f, durationPerLetter * 3 / 4,
                                         Ease.QuadFastSlow))
@@ -232,7 +232,7 @@ public class IntroCartridge : Cartridge
                                     .Add(new Tween<float>(letter.Scale, 1f, durationPerLetter * 1 / 4,
                                         Ease.QuadSlowFast))
                             )
-                            .AddChannel(new Tween<float>(letter.Opacity, 1f, durationPerLetter, Ease.Linear)))
+                            .Add(new Tween<float>(letter.Opacity, 1f, durationPerLetter, Ease.Linear)))
                     );
                 }
 
@@ -260,14 +260,14 @@ public class IntroCartridge : Cartridge
                 .Add(new WaitSecondsTween(0.25f))
                 .Add(
                     new MultiplexTween()
-                        .AddChannel(
+                        .Add(
                             new SequenceTween()
                                 .Add(new Tween<float>(_wholeWord.Scale, 1.1f, duration * 1 / 4f, Ease.QuadFastSlow))
                                 .Add(new Tween<float>(_wholeWord.Scale, 1.4f, duration * 1 / 4f, Ease.QuadFastSlow))
                                 .Add(new Tween<float>(_wholeWord.Scale, 1f, duration / 2, Ease.QuadSlowFast))
                         )
-                        // .AddChannel(new Tween<float>(_wholeWord.Angle, 0f, duration, Ease.QuadFastSlow))
-                        .AddChannel(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.Linear))
+                        // .Add(new Tween<float>(_wholeWord.Angle, 0f, duration, Ease.QuadFastSlow))
+                        .Add(new Tween<float>(_wholeWord.Opacity, 1f, duration, Ease.Linear))
                 )
             ;
     }
@@ -292,10 +292,10 @@ public class IntroCartridge : Cartridge
                             flip++;
                             var even = flip % 2 == 0;
                             sequence.Add(new MultiplexTween()
-                                .AddChannel(new Tween<float>(_wholeWord.Angle, even ? angleRange : -angleRange,
+                                .Add(new Tween<float>(_wholeWord.Angle, even ? angleRange : -angleRange,
                                     increment,
                                     Ease.Linear))
-                                .AddChannel(new CallbackTween(() =>
+                                .Add(new CallbackTween(() =>
                                     Client.SoundPlayer.Play("engine/clink", new SoundEffectSettings {Pitch = 0.5f})))
                             );
                         }
@@ -304,9 +304,9 @@ public class IntroCartridge : Cartridge
                     })
                 )
                 .Add(new MultiplexTween()
-                    .AddChannel(new Tween<Vector2>(_wholeWord.Position,
+                    .Add(new Tween<Vector2>(_wholeWord.Position,
                         new Vector2(0, 0), increment, Ease.Linear))
-                    .AddChannel(new Tween<float>(_wholeWord.Angle, 0, increment,
+                    .Add(new Tween<float>(_wholeWord.Angle, 0, increment,
                         Ease.Linear))
                 )
                 .Add(new WaitSecondsTween(0.05f))
@@ -329,7 +329,7 @@ public class IntroCartridge : Cartridge
                     _wholeWord.Scale.Value = 1f;
                 }))
                 .Add(new MultiplexTween()
-                    .AddChannel(
+                    .Add(
                         new SequenceTween()
                             .Add(new CallbackTween(() =>
                                 Client.SoundPlayer.Play("engine/jar1", new SoundEffectSettings())))
@@ -338,14 +338,14 @@ public class IntroCartridge : Cartridge
                                 Client.SoundPlayer.Play("engine/jar2", new SoundEffectSettings())))
                             .Add(new Tween<float>(_wholeWord.Scale, 1f, 0.15f, Ease.SineFastSlow))
                     )
-                    .AddChannel(
+                    .Add(
                         new Tween<float>(_wholeWord.Opacity, 1f, 0.5f, Ease.Linear)
                     )
                 )
                 .Add(new MultiplexTween()
-                    .AddChannel(new Tween<Vector2>(_wholeWord.Position,
+                    .Add(new Tween<Vector2>(_wholeWord.Position,
                         new Vector2(0, 0), increment, Ease.Linear))
-                    .AddChannel(new Tween<float>(_wholeWord.Angle, 0, increment,
+                    .Add(new Tween<float>(_wholeWord.Angle, 0, increment,
                         Ease.Linear))
                 )
                 .Add(new WaitSecondsTween(0.05f))
