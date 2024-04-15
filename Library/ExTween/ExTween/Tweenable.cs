@@ -48,7 +48,7 @@ public abstract class Tweenable<T> : ITweenable
     {
         if (destination == null)
         {
-            throw new Exception("Destination was null");
+            throw new Exception("Tween destination was null");
         }
 
         var realDestination = (T) destination;
