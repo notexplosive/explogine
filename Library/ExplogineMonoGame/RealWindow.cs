@@ -80,9 +80,16 @@ public class RealWindow : IWindow
     public Matrix ScreenToCanvas => ClientCanvas.ScreenToCanvas;
     public Matrix CanvasToScreen => ClientCanvas.CanvasToScreen;
 
-    public Point Size => Client.Headless
-        ? new Point(1600, 900)
-        : new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
+    public Point Size
+    {
+        get
+        {
+            return Client.Headless
+                ? new Point(1600, 900)
+                : new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
+        }
+        set => SetSize(value);
+    }
 
     /// <summary>
     ///     Passthrough to the OS

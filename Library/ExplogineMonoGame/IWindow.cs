@@ -12,7 +12,7 @@ public interface IWindow
 {
     Point RenderResolution { get; }
     bool IsInFocus { get; }
-    Point Size { get; }
+    Point Size { get; set; }
     bool IsFullscreen { get; }
     Matrix ScreenToCanvas { get; }
     Matrix CanvasToScreen { get; }
