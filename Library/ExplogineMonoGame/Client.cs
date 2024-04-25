@@ -33,7 +33,7 @@ public static class Client
     internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
 
     /// <summary>
-    ///     Wrapper around the MonoGame Graphics objects (Device & DeviceManager)
+    ///     Wrapper around the MonoGame Graphics objects (Device and DeviceManager)
     /// </summary>
     public static Graphics Graphics { get; private set; } = null!;
 
