@@ -70,11 +70,11 @@ public class Gui : IUpdateInputHook
         return textInput;
     }
 
-    public Gui Panel(RectangleF rectangle, Depth depth)
+    public Panel Panel(RectangleF rectangle, Depth depth)
     {
         var panel = new Panel(rectangle, depth);
         _widgets.Add(panel);
-        return panel.InnerGui;
+        return panel;
     }
 
     public Gui AddSubGui(bool startEnabled = false)
