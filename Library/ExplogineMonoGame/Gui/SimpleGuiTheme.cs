@@ -122,7 +122,12 @@ public class SimpleGuiTheme : IGuiTheme
 
     public void DrawLabel(Painter painter, Label label)
     {
-        painter.DrawStringWithinRectangle(Font, label.Text, label.Rectangle, label.Alignment,
+        var font = Font;
+        if (label.FontSize.HasValue)
+        {
+            font = font.GetFont().WithHeight(label.FontSize.Value);
+        }
+        painter.DrawStringWithinRectangle(font, label.Text, label.Rectangle, label.Alignment,
             new DrawSettings {Depth = label.Depth});
     }
 
