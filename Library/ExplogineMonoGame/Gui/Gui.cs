@@ -70,9 +70,9 @@ public class Gui : IUpdateInputHook
         return textInput;
     }
 
-    public Panel Panel(RectangleF rectangle, Depth depth)
+    public Panel Panel(RectangleF rectangle, Depth depth, IGuiTheme theme)
     {
-        var panel = new Panel(rectangle, depth);
+        var panel = new Panel(rectangle, depth, theme);
         _widgets.Add(panel);
         return panel;
     }
@@ -124,7 +124,7 @@ public class Gui : IUpdateInputHook
                     theme.DrawButton(painter, button);
                     break;
                 case Panel panel:
-                    panel.Draw(painter, theme);
+                    panel.Draw(painter);
                     break;
                 case Checkbox checkbox:
                     theme.DrawCheckbox(painter, checkbox);
@@ -166,6 +166,12 @@ public class Gui : IUpdateInputHook
         {
             if (widget is IPreDrawWidget iWidgetThatDoesPreDraw)
             {
+                var widgetTheme = uiTheme;
+
+                if (widget is IThemed themed)
+                {
+                    widgetTheme = themed.Theme;
+                }
                 iWidgetThatDoesPreDraw.PrepareDraw(painter, uiTheme);
             }
         }

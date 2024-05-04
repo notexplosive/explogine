@@ -5,15 +5,16 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Gui;
 
-public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
+public class Panel : IGuiWidget, IPreDrawWidget, IDisposable, IThemed
 {
     private Action<ConsumableInput, HitTestStack>? _extraUpdateInputBehavior;
 
-    public Panel(RectangleF rectangle, Depth depth)
+    public Panel(RectangleF rectangle, Depth depth, IGuiTheme theme)
     {
         Rectangle = rectangle;
         Depth = depth;
         Widget = new Widget(rectangle, depth);
+        Theme = theme;
     }
 
     public float ScrollPositionY { get; set; }
@@ -41,9 +42,9 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
     public void PrepareDraw(Painter painter, IGuiTheme uiTheme)
     {
         Client.Graphics.PushCanvas(Widget.Canvas);
-        InnerGui.PrepareCanvases(painter, uiTheme);
+        InnerGui.PrepareCanvases(painter, Theme);
         painter.BeginSpriteBatch(CameraMatrix());
-        InnerGui.Draw(painter, uiTheme);
+        InnerGui.Draw(painter, Theme);
         painter.EndSpriteBatch();
         Client.Graphics.PopCanvas();
     }
@@ -53,9 +54,9 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
         return Matrix.CreateTranslation(new Vector3(0, -ScrollPositionY, 0));
     }
 
-    public void Draw(Painter painter, IGuiTheme uiTheme)
+    public void Draw(Painter painter)
     {
-        painter.DrawRectangle(Rectangle, new DrawSettings {Depth = Depth, Color = uiTheme.BackgroundColor});
+        painter.DrawRectangle(Rectangle, new DrawSettings {Depth = Depth, Color = Theme.BackgroundColor});
         Widget.Draw(painter);
     }
 
@@ -63,4 +64,6 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable
     {
         _extraUpdateInputBehavior += behavior;
     }
+
+    public IGuiTheme Theme { get; }
 }
