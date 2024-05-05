@@ -43,6 +43,7 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable, IThemed
     {
         Client.Graphics.PushCanvas(Widget.Canvas);
         InnerGui.PrepareCanvases(painter, Theme);
+        painter.Clear(uiTheme.BackgroundColor);
         painter.BeginSpriteBatch(CameraMatrix());
         InnerGui.Draw(painter, Theme);
         painter.EndSpriteBatch();
