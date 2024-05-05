@@ -33,12 +33,32 @@ public class RealFileSystem : IFileSystem
 
     public void CreateFile(string relativePathToFile)
     {
+        if (RealFileSystem.IsInvalidPathName(relativePathToFile))
+        {
+            // Silently fail (unfortunately)
+            return;
+        }
+
         var info = FileInfoAt(relativePathToFile);
         Directory.CreateDirectory(info.Directory!.FullName);
+        
         if (!info.Exists)
         {
             info.Create().Close();
         }
+    }
+
+    private static bool IsInvalidPathName(string path)
+    {
+        foreach (var illegalChar in Path.GetInvalidPathChars())
+        {
+            if (path.Contains(illegalChar))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void DeleteFile(string relativePathToFile)
@@ -48,6 +68,12 @@ public class RealFileSystem : IFileSystem
 
     public void CreateOrOverwriteFile(string relativePathToFile)
     {
+        if (RealFileSystem.IsInvalidPathName(relativePathToFile))
+        {
+            // Silently fail (unfortunately)
+            return;
+        }
+        
         var info = FileInfoAt(relativePathToFile);
         if (info.Exists)
         {
