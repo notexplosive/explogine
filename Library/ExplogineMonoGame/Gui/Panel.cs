@@ -57,7 +57,6 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable, IThemed
 
     public void Draw(Painter painter)
     {
-        painter.DrawRectangle(Rectangle, new DrawSettings {Depth = Depth, Color = Theme.BackgroundColor});
         Widget.Draw(painter);
     }
 
