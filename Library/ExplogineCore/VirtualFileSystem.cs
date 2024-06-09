@@ -96,6 +96,17 @@ public class VirtualFileSystem : IFileSystem
             ?.CreateFileWithContent(_root.GetFileName(relativeFileName), string.Join('\n', lines));
     }
 
+    public void WriteToFileBytes(string relativePathToFile, byte[] bytes)
+    {
+        _root.CreateDirectoriesUpToFile(relativePathToFile, true)
+            ?.CreateFileWithContent(_root.GetFileName(relativePathToFile), string.Join("",bytes));
+    }
+
+    public byte[] ReadBytes(string relativePathToFile)
+    {
+        return ReadFile(relativePathToFile).Select(b => (byte) b).ToArray();
+    }
+
     public string GetCurrentDirectory()
     {
         return "/";

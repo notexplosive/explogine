@@ -142,6 +142,12 @@ public class RealFileSystem : IFileSystem
         AppendToFile(relativePathToFile, lines);
     }
     
+    public void WriteToFileBytes(string relativePathToFile, byte[] bytes)
+    {
+        CreateOrOverwriteFile(relativePathToFile);
+        File.WriteAllBytes(ToAbsolutePath(relativePathToFile), bytes);
+    }
+    
     public StreamDescriptor OpenFileStream(string relativePathToFile)
     {
         var info = FileInfoAt(relativePathToFile);
@@ -220,7 +226,7 @@ public class RealFileSystem : IFileSystem
         return result;
     }
 
-    private string ToAbsolutePath(string givenPath)
+    public string ToAbsolutePath(string givenPath)
     {
         if (Path.IsPathRooted(givenPath))
         {
