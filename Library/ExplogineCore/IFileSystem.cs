@@ -79,4 +79,9 @@ public interface IFileSystem
     public long GetFileSize(string relativePathToFile);
 
     Task<string> ReadFileAsync(string fileName);
+    
+    /// <summary>
+    /// Create directory at the root of this FileSystem if it doesn't currently exist
+    /// </summary>
+    IFileSystem CreateDirectory(string directory = ".");
 }

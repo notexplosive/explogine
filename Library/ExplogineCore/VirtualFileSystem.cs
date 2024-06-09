@@ -103,7 +103,7 @@ public class VirtualFileSystem : IFileSystem
 
     public IFileSystem GetDirectory(string subDirectory)
     {
-        // this doesn't fake the right thing.
+        // this doesn't fake the right thing. VFS assumes all directories exist
         return new VirtualFileSystem();
     }
 
@@ -127,6 +127,12 @@ public class VirtualFileSystem : IFileSystem
         }
 
         return Task.FromResult(string.Empty);
+    }
+
+    public IFileSystem CreateDirectory(string path = ".")
+    {
+        // do nothing, VFS assumes all directories that could exist do exist
+        return new VirtualFileSystem();
     }
 
     private interface IVirtualItem

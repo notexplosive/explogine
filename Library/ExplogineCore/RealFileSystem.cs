@@ -63,7 +63,7 @@ public class RealFileSystem : IFileSystem
 
     public void DeleteFile(string relativePathToFile)
     {
-        File.Delete(ToWorkingPath(relativePathToFile));
+        File.Delete(ToAbsolutePath(relativePathToFile));
     }
 
     public void CreateOrOverwriteFile(string relativePathToFile)
@@ -85,7 +85,7 @@ public class RealFileSystem : IFileSystem
 
     public void AppendToFile(string relativePathToFile, params string[] lines)
     {
-        File.AppendAllLines(ToWorkingPath(relativePathToFile), lines);
+        File.AppendAllLines(ToAbsolutePath(relativePathToFile), lines);
     }
 
     public string ReadFile(string relativePathToFile)
@@ -95,7 +95,7 @@ public class RealFileSystem : IFileSystem
             return string.Empty;
         }
 
-        return File.ReadAllText(ToWorkingPath(relativePathToFile));
+        return File.ReadAllText(ToAbsolutePath(relativePathToFile));
     }
 
     public byte[] ReadBytes(string relativePathToFile)
@@ -105,7 +105,7 @@ public class RealFileSystem : IFileSystem
             return Array.Empty<byte>();
         }
         
-        return File.ReadAllBytes(ToWorkingPath(relativePathToFile));
+        return File.ReadAllBytes(ToAbsolutePath(relativePathToFile));
     }
 
     [Pure]
@@ -114,13 +114,12 @@ public class RealFileSystem : IFileSystem
         // Create the directory
         GetDirectory(targetRelativePath);
         
-        var fullPaths = GetFilesAtFullPath(ToWorkingPath(targetRelativePath), extension, recursive);
+        var fullPaths = GetFilesAtFullPath(ToAbsolutePath(targetRelativePath), extension, recursive);
 
         var result = new List<string>();
         foreach (var path in fullPaths)
         {
-            var revisedPath = path.Replace(Path.DirectorySeparatorChar, '/')
-                .Replace(FullNormalizedRootPath, string.Empty);
+            var revisedPath = GetRelativePath(path);
             if (revisedPath.StartsWith('/'))
             {
                 revisedPath = revisedPath.Substring(1);
@@ -130,6 +129,11 @@ public class RealFileSystem : IFileSystem
         }
 
         return result;
+    }
+
+    private string GetRelativePath(string targetPath)
+    {
+        return Path.GetRelativePath(FullNormalizedRootPath, ToAbsolutePath(targetPath)).Replace(Path.DirectorySeparatorChar, '/');
     }
 
     public void WriteToFile(string relativePathToFile, params string[] lines)
@@ -180,7 +184,7 @@ public class RealFileSystem : IFileSystem
 
     public FileInfo FileInfoAt(string relativePathToFile)
     {
-        return new FileInfo(ToWorkingPath(relativePathToFile));
+        return new FileInfo(ToAbsolutePath(relativePathToFile));
     }
 
     private List<string> GetFilesAtFullPath(string targetFullPath, string extension = "*", bool recursive = true)
@@ -216,19 +220,24 @@ public class RealFileSystem : IFileSystem
         return result;
     }
 
-    private string ToWorkingPath(string relativePath)
+    private string ToAbsolutePath(string givenPath)
     {
-        if (relativePath == ".")
+        if (Path.IsPathRooted(givenPath))
+        {
+            return new FileInfo(givenPath).FullName;
+        }
+        
+        if (givenPath == ".")
         {
             return RootPath;
         }
 
-        return Path.Join(RootPath, relativePath);
+        return Path.Join(RootPath, givenPath);
     }
 
     public IFileSystem GetDirectory(string subDirectory)
     {
-        return new RealFileSystem($"{RootPath}/{subDirectory}");
+        return new RealFileSystem(ToAbsolutePath(subDirectory));
     }
 
     public long GetFileSize(string relativePathToFile)
@@ -243,6 +252,23 @@ public class RealFileSystem : IFileSystem
             return string.Empty;
         }
 
-        return await File.ReadAllTextAsync(ToWorkingPath(relativePathToFile));
+        return await File.ReadAllTextAsync(ToAbsolutePath(relativePathToFile));
+    }
+
+    public IFileSystem CreateDirectory(string destinationPath = ".")
+    {
+        var finalPath = FullNormalizedRootPath;
+        if (destinationPath != ".")
+        {
+            finalPath = ToAbsolutePath(destinationPath);
+        }
+        
+        Directory.CreateDirectory(finalPath);
+        return GetDirectory(destinationPath);
+    }
+
+    public void DeleteDirectory(string path, bool recursive)
+    {
+        Directory.Delete(ToAbsolutePath(path), recursive);
     }
 }
