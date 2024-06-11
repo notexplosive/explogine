@@ -17,11 +17,6 @@ public class RealFileSystem : IFileSystem
         get
         {
             var fullPath = new FileInfo(RootPath).FullName;
-            if (fullPath.StartsWith('/'))
-            {
-                fullPath = fullPath.Substring(1);
-            }
-
             return fullPath.Replace(Path.DirectorySeparatorChar, '/');
         }
     }
