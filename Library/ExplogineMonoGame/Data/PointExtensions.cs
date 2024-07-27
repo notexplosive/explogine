@@ -16,7 +16,7 @@ public static class PointExtensions
     {
         return Math.Max(point.X, point.Y);
     }
-    
+
     public static int MinXy(this Point point)
     {
         return Math.Min(point.X, point.Y);
@@ -71,7 +71,7 @@ public static class PointExtensions
     /// <returns>Scalar to multiply sizeToEnclose by</returns>
     public static float CalculateScalarDifference(Point outerSize, Point innerSize)
     {
-        var enclosingSizeIsTooWide = PointExtensions.IsEnclosingSizeTooWide(outerSize, innerSize);
+        var enclosingSizeIsTooWide = IsEnclosingSizeTooWide(outerSize, innerSize);
 
         if (enclosingSizeIsTooWide)
         {
@@ -91,7 +91,7 @@ public static class PointExtensions
     {
         return new RectangleF(Vector2.Zero, point.ToVector2());
     }
-    
+
     [Pure]
     public static Rectangle ToRectangle(this Point point)
     {
@@ -99,40 +99,93 @@ public static class PointExtensions
     }
 
     [Pure]
-    public static Point Min(Point a, Point b)
+    public static Point MinAcross(Point a, Point b)
     {
-        var min = new Point
+        return new Point
         {
             X = Math.Min(a.X, b.X),
             Y = Math.Min(a.Y, b.Y)
         };
-        return min;
     }
-    
+
     [Pure]
-    public static Point Max(Point a, Point b)
+    public static Point MaxAcross(Point a, Point b)
     {
-        var min = new Point
+        return new Point
         {
             X = Math.Max(a.X, b.X),
             Y = Math.Max(a.Y, b.Y)
         };
-        return min;
+    }
+
+    [Pure]
+    [Obsolete("Use MaxAcross")]
+    public static Point Max(Point a, Point b)
+    {
+        return MaxAcross(a, b);
+    }
+
+    [Pure]
+    [Obsolete("Use MinAcross")]
+    public static Point Min(Point a, Point b)
+    {
+        return MinAcross(a, b);
+    }
+
+    [Pure]
+    public static Point Smaller(Point a, Point b)
+    {
+        if (a.Y < b.Y)
+        {
+            return a;
+        }
+
+        if (a.Y > b.Y)
+        {
+            return b;
+        }
+
+        if (a.X < b.X)
+        {
+            return a;
+        }
+
+        return b;
     }
     
-    
+    [Pure]
+    public static Point Bigger(Point a, Point b)
+    {
+        if (a.Y > b.Y)
+        {
+            return a;
+        }
+
+        if (a.Y < b.Y)
+        {
+            return b;
+        }
+
+        if (a.X > b.X)
+        {
+            return a;
+        }
+
+        return b;
+    }
+
     [Pure]
     public static Point JustX(this Point vec)
     {
         return new Point(vec.X, 0);
     }
-    
+
     [Pure]
     public static Point JustY(this Point vec)
     {
         return new Point(0, vec.Y);
     }
-    
+
     [Pure]
     public static Point Abs(this Point vec)
     {

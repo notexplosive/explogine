@@ -312,7 +312,7 @@ public static class Vector2Extensions
     }
 
     [Pure]
-    public static Vector2 Min(Vector2 a, Vector2 b)
+    public static Vector2 MinAcross(Vector2 a, Vector2 b)
     {
         var min = new Vector2
         {
@@ -323,7 +323,7 @@ public static class Vector2Extensions
     }
     
     [Pure]
-    public static Vector2 Max(Vector2 a, Vector2 b)
+    public static Vector2 MaxAcross(Vector2 a, Vector2 b)
     {
         var min = new Vector2
         {
@@ -331,5 +331,19 @@ public static class Vector2Extensions
             Y = Math.Max(a.Y, b.Y)
         };
         return min;
+    }
+    
+    [Pure]
+    [Obsolete("Use MaxAcross")]
+    public static Vector2 Max(Vector2 a, Vector2 b)
+    {
+        return MaxAcross(a, b);
+    }
+    
+    [Pure]
+    [Obsolete("Use MinAcross")]
+    public static Vector2 Min(Vector2 a, Vector2 b)
+    {
+        return MinAcross(a, b);
     }
 }
