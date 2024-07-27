@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineCore.Lua;
 using ExplogineMonoGame.Data;
@@ -18,11 +19,11 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
     private readonly IGuiTheme _theme;
     private Gui.Gui? _gui;
 
-    public LuaGui(string fileName, Style style, IGuiTheme theme, Dictionary<string, IGuiTheme> otherThemes)
+    public LuaGui(IFileSystem files,string fileName, Style style, IGuiTheme theme, Dictionary<string, IGuiTheme> otherThemes)
     {
         _fileName = fileName;
         _theme = theme;
-        LuaRuntime = new LuaRuntime(Client.Debug.RepoFileSystem.GetDirectory("EditorGui"));
+        LuaRuntime = new LuaRuntime(files);
         LuaRuntime.MessageLogged += ClientLuaUtilities.LogMessage;
         LuaRuntime.RegisterAssembly(Assembly.GetExecutingAssembly());
         LuaRuntime.RegisterType(typeof(LayoutElement));
