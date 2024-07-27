@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExplogineCore.Lua;
 using ExplogineMonoGame.Data;
 using MoonSharp.Interpreter;
 
@@ -8,6 +9,8 @@ namespace ExplogineMonoGame.Luigi;
 
 public class LuaGuiBindingContext
 {
+    private readonly LuaRuntime _luaRuntime;
+
     public delegate void ButtonDelegate(DynValue[] args);
 
     public delegate void GraphicDelegate(DynValue[] args, Painter painter, RectangleF rectangle);
@@ -21,8 +24,9 @@ public class LuaGuiBindingContext
     private readonly Dictionary<string, TextFieldInitializeDelegate?> _textFieldInitializeCommands = new();
     private readonly Dictionary<string, TextFieldModifyDelegate?> _textFieldModifyCommands = new();
 
-    public LuaGuiBindingContext(LuigiRememberedState? rememberedState)
+    public LuaGuiBindingContext(LuaRuntime luaRuntime, LuigiRememberedState? rememberedState)
     {
+        _luaRuntime = luaRuntime;
         RememberedState = rememberedState ?? new LuigiRememberedState();
     }
 
@@ -128,5 +132,29 @@ public class LuaGuiBindingContext
     {
         OnFinalize?.Invoke();
         OnFinalize = null;
+        
+        HandleErrors();
+    }
+    
+    public void HandleErrors()
+    {
+        foreach (var command in UnboundCommands())
+        {
+            Client.Debug.LogWarning("Missing Binding:", command);
+        }
+
+        if (_luaRuntime.CurrentError != null)
+        {
+            var exception = _luaRuntime.CurrentError.Exception;
+            if (exception is ScriptRuntimeException)
+            {
+                Client.Debug.LogError(exception.Message);
+                Client.Debug.LogError(_luaRuntime.Callstack());
+            }
+            else
+            {
+                Client.Debug.LogError(exception);
+            }
+        }
     }
 }

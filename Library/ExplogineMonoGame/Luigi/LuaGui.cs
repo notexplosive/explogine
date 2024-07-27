@@ -68,7 +68,7 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
         // Consume instructions
         LuaRuntime.DoFile(_fileName);
 
-        var context = new LuaGuiBindingContext(rememberedState);
+        var context = new LuaGuiBindingContext(LuaRuntime, rememberedState);
 
         // Run instructions
         _gui = _layoutBuilder.CreateGui(rootArea, context);
@@ -90,25 +90,9 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
         _gui?.Clear();
     }
 
+    [Obsolete("use context.HandleErrors()")]
     public void HandleErrors(LuaGuiBindingContext context)
     {
-        foreach (var command in context.UnboundCommands())
-        {
-            Client.Debug.LogWarning("Missing Binding:", command);
-        }
-
-        if (LuaRuntime.CurrentError != null)
-        {
-            var exception = LuaRuntime.CurrentError.Exception;
-            if (exception is ScriptRuntimeException)
-            {
-                Client.Debug.LogError(exception.Message);
-                Client.Debug.LogError(LuaRuntime.Callstack());
-            }
-            else
-            {
-                Client.Debug.LogError(exception);
-            }
-        }
+        context.HandleErrors();
     }
 }
