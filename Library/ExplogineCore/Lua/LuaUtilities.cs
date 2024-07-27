@@ -4,7 +4,6 @@ namespace ExplogineCore.Lua;
 
 public static class LuaUtilities
 {
-
     /// <summary>
     /// Enumerates a LuaTable as if it were an array, walking along each positive index until we hit a null
     /// </summary>
