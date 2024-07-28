@@ -49,9 +49,9 @@ public static class LuaGuiStatic
         
         [UsedImplicitly]
         [LuaMember("fixed")]
-        public LayoutElement Fixed(float width, float height)
+        public LayoutElement Fixed(float width, float? height = null)
         {
-            return L.FixedElement(width, height);
+            return L.FixedElement(width, height ?? width);
         }
     }
 
