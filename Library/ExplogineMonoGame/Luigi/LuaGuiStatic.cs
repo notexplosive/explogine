@@ -7,6 +7,9 @@ using JetBrains.Annotations;
 
 namespace ExplogineMonoGame.Luigi;
 
+/// <summary>
+/// Supplies the static lua objects
+/// </summary>
 public static class LuaGuiStatic
 {
     public static FillFactory Fill { get; } = new();
@@ -14,6 +17,9 @@ public static class LuaGuiStatic
     public static AlignmentFactory Alignment { get; } = new();
     public static OrientationFactory Orientation { get; } = new();
 
+    /// <summary>
+    /// This is the `fill` object
+    /// </summary>
     public class FillFactory
     {
         internal FillFactory()
@@ -49,6 +55,9 @@ public static class LuaGuiStatic
         }
     }
 
+    /// <summary>
+    /// This is the `gui` object
+    /// </summary>
     public class GuiFactory
     {
         internal GuiFactory()
@@ -81,6 +90,13 @@ public static class LuaGuiStatic
         public IGuiDescription TextField(LuaGuiCommand submitCommand, LuaGuiCommand? createCommand)
         {
             return new TextFieldGuiDescription(submitCommand, createCommand);
+        }
+        
+        [UsedImplicitly]
+        [LuaMember("tag")]
+        public IGuiDescription Tag(string tagName)
+        {
+            return new TagElementGuiDescription(tagName);
         }
     }
 

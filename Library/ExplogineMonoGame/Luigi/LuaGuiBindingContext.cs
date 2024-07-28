@@ -9,20 +9,17 @@ namespace ExplogineMonoGame.Luigi;
 
 public class LuaGuiBindingContext
 {
-    private readonly LuaRuntime _luaRuntime;
-
     public delegate void ButtonDelegate(DynValue[] args);
-
     public delegate void GraphicDelegate(DynValue[] args, Painter painter, RectangleF rectangle);
-
     public delegate void TextFieldInitializeDelegate(DynValue[] args, TextInputWidget textInputWidget);
-
     public delegate void TextFieldModifyDelegate(DynValue[] args, string currentText, bool isSubmit);
 
+    private readonly LuaRuntime _luaRuntime;
     private readonly Dictionary<string, ButtonDelegate?> _buttonCommands = new();
     private readonly Dictionary<string, GraphicDelegate?> _labelCommands = new();
     private readonly Dictionary<string, TextFieldInitializeDelegate?> _textFieldInitializeCommands = new();
     private readonly Dictionary<string, TextFieldModifyDelegate?> _textFieldModifyCommands = new();
+    private readonly Dictionary<string, RectangleF> _tagLookup = new();
 
     public LuaGuiBindingContext(LuaRuntime luaRuntime, LuigiRememberedState? rememberedState)
     {
@@ -42,17 +39,17 @@ public class LuaGuiBindingContext
         _buttonCommands[command.CommandName]?.Invoke(command.Arguments);
     }
 
-    public void LuaDrawDynamicLabel(LuaGuiCommand command, Painter painter, RectangleF rectangle)
+    internal void LuaDrawDynamicLabel(LuaGuiCommand command, Painter painter, RectangleF rectangle)
     {
         _labelCommands[command.CommandName]?.Invoke(command.Arguments, painter, rectangle);
     }
 
-    public void LuaRunTextFieldModified(LuaGuiCommand command, string currentText, bool isSubmit)
+    internal void LuaRunTextFieldModified(LuaGuiCommand command, string currentText, bool isSubmit)
     {
         _textFieldModifyCommands[command.CommandName]?.Invoke(command.Arguments, currentText, isSubmit);
     }
 
-    public void LuaRunTextFieldInitialize(LuaGuiCommand command, TextInputWidget widget)
+    internal void LuaRunTextFieldInitialize(LuaGuiCommand command, TextInputWidget widget)
     {
         _textFieldInitializeCommands[command.CommandName]?.Invoke(command.Arguments, widget);
     }
@@ -108,22 +105,22 @@ public class LuaGuiBindingContext
         }
     }
 
-    public void LuaRegisterButtonCommand(LuaGuiCommand command)
+    internal void LuaRegisterButtonCommand(LuaGuiCommand command)
     {
         _buttonCommands.TryAdd(command.CommandName, null);
     }
 
-    public void LuaRegisterGraphicCommand(LuaGuiCommand command)
+    internal void LuaRegisterGraphicCommand(LuaGuiCommand command)
     {
         _labelCommands.TryAdd(command.CommandName, null);
     }
 
-    public void LuaRegisterTextFieldModifyCommand(LuaGuiCommand command)
+    internal void LuaRegisterTextFieldModifyCommand(LuaGuiCommand command)
     {
         _textFieldModifyCommands.TryAdd(command.CommandName, null);
     }
 
-    public void LuaRegisterTextFieldInitializeCommand(LuaGuiCommand command)
+    internal void LuaRegisterTextFieldInitializeCommand(LuaGuiCommand command)
     {
         _textFieldInitializeCommands.TryAdd(command.CommandName, null);
     }
@@ -132,10 +129,10 @@ public class LuaGuiBindingContext
     {
         OnFinalize?.Invoke();
         OnFinalize = null;
-        
+
         HandleErrors();
     }
-    
+
     public void HandleErrors()
     {
         foreach (var command in UnboundCommands())
@@ -156,5 +153,20 @@ public class LuaGuiBindingContext
                 Client.Debug.LogError(exception);
             }
         }
+    }
+
+    public void AddTag(string tag, RectangleF rectangle)
+    {
+        _tagLookup[tag] = rectangle;
+    }
+
+    public RectangleF? GetRectangleAtTag(string tag)
+    {
+        if (_tagLookup.TryGetValue(tag, out var rectangle))
+        {
+            return rectangle;
+        }
+
+        return null;
     }
 }
