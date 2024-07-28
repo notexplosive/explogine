@@ -8,6 +8,7 @@ using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Layout;
 using ExplogineMonoGame.Rails;
+using Microsoft.Xna.Framework;
 using MoonSharp.Interpreter;
 
 namespace ExplogineMonoGame.Luigi;
@@ -43,7 +44,12 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
 
     public void Draw(Painter painter)
     {
-        painter.BeginSpriteBatch();
+        Draw(painter, Matrix.Identity);
+    }
+    
+    public void Draw(Painter painter, Matrix matrix)
+    {
+        painter.BeginSpriteBatch(matrix);
         _gui?.Draw(painter, _theme);
         painter.EndSpriteBatch();
     }
