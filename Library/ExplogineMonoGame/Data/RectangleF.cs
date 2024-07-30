@@ -460,6 +460,18 @@ public struct RectangleF : IEquatable<RectangleF>
     }
 
     [Pure]
+    public Matrix CanvasToScreen(float angle = 0)
+    {
+        return CanvasToScreen(Size.ToPoint(), angle);
+    }
+
+    [Pure]
+    public Matrix ScreenToCanvas(float angle = 0)
+    {
+        return ScreenToCanvas(Size.ToPoint(), angle);
+    }
+    
+    [Pure]
     public Matrix CanvasToScreen(Point outputDimensions, float angle = 0)
     {
         var halfSize = Size / 2;
