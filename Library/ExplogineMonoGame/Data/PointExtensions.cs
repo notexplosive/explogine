@@ -133,7 +133,7 @@ public static class PointExtensions
     }
 
     [Pure]
-    public static Point Smaller(Point a, Point b)
+    public static Point SmallerLeftToRight(Point a, Point b)
     {
         if (a.Y < b.Y)
         {
@@ -154,7 +154,7 @@ public static class PointExtensions
     }
     
     [Pure]
-    public static Point Bigger(Point a, Point b)
+    public static Point BiggerLeftToRight(Point a, Point b)
     {
         if (a.Y > b.Y)
         {
