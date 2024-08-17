@@ -50,7 +50,7 @@ public class IntroCartridge : Cartridge
         };
 
         Tween.Add(tweens[_index % tweens.Length]());
-        Tween.Add(new WaitSecondsTween(2f));
+        Tween.Add(new WaitSecondsTween(1f));
     }
 
     public override void Update(float dt)
