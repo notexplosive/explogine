@@ -12,6 +12,7 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 {
     private readonly IndirectFont _font = new("engine/console-font", 32);
     private readonly LinkedList<RenderedMessage> _linesBuffer = new();
+    private readonly object _lock = new();
     private readonly float _maxTimer = 5;
     private readonly IRuntime _runtime;
     private float _timer;
@@ -32,35 +33,38 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
             return;
         }
 
-        var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth), _font);
-
-        float usedHeight = 0;
-        foreach (var line in _linesBuffer)
+        lock (_lock)
         {
-            usedHeight += line.Size.Y;
-        }
+            var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth), _font);
 
-        void RemoveEntriesUntilFit(float pendingTotalHeight)
-        {
-            if (pendingTotalHeight > MaxHeight)
+            float usedHeight = 0;
+            foreach (var line in _linesBuffer)
             {
-                var first = _linesBuffer.First;
+                usedHeight += line.Size.Y;
+            }
 
-                if (first != _linesBuffer.Last && first != null)
+            void RemoveEntriesUntilFit(float pendingTotalHeight)
+            {
+                if (pendingTotalHeight > MaxHeight)
                 {
-                    var firstValue = first.Value;
-                    var removedHeight = firstValue.Size.Y;
-                    _linesBuffer.RemoveFirst();
-                    pendingTotalHeight -= removedHeight;
-                    RemoveEntriesUntilFit(pendingTotalHeight);
+                    var first = _linesBuffer.First;
+
+                    if (first != _linesBuffer.Last && first != null)
+                    {
+                        var firstValue = first.Value;
+                        var removedHeight = firstValue.Size.Y;
+                        _linesBuffer.RemoveFirst();
+                        pendingTotalHeight -= removedHeight;
+                        RemoveEntriesUntilFit(pendingTotalHeight);
+                    }
                 }
             }
+
+            RemoveEntriesUntilFit(usedHeight + newMessage.Size.Y);
+
+            _linesBuffer.AddLast(newMessage);
+            _timer = _maxTimer;
         }
-
-        RemoveEntriesUntilFit(usedHeight + newMessage.Size.Y);
-
-        _linesBuffer.AddLast(newMessage);
-        _timer = _maxTimer;
     }
 
     public void Update(float dt)
@@ -71,7 +75,10 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 
             if (_timer <= 0)
             {
-                _linesBuffer.Clear();
+                lock (_lock)
+                {
+                    _linesBuffer.Clear();
+                }
             }
         }
     }
@@ -82,31 +89,34 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
 
     public void Draw(Painter painter, Depth depth)
     {
-        if (_linesBuffer.First != null)
+        lock (_lock)
         {
-           painter.BeginSpriteBatch();
-           var offset = (int) _linesBuffer.First.Value.Size.Y;
-           var latestLogMessageRect =
-                new Rectangle(5, offset, TotalWidth - 10, MaxHeight - offset);
-
-            foreach (var message in _linesBuffer)
+            if (_linesBuffer.First != null)
             {
-                var color = Color.White;
+                painter.BeginSpriteBatch();
+                var offset = (int) _linesBuffer.First.Value.Size.Y;
+                var latestLogMessageRect =
+                    new Rectangle(5, offset, TotalWidth - 10, MaxHeight - offset);
 
-                painter.DrawFormattedStringWithinRectangle(
-                    message.FormattedText,
-                    latestLogMessageRect,
-                    Alignment.TopLeft,
-                    new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
+                foreach (var message in _linesBuffer)
+                {
+                    var color = Color.White;
 
-                latestLogMessageRect.Location += new Point(0, (int) message.Size.Y);
+                    painter.DrawFormattedStringWithinRectangle(
+                        message.FormattedText,
+                        latestLogMessageRect,
+                        Alignment.TopLeft,
+                        new DrawSettings {Color = color.WithMultipliedOpacity(Opacity), Depth = depth});
+
+                    latestLogMessageRect.Location += new Point(0, (int) message.Size.Y);
+                }
+
+                var overlayHeight = (float) latestLogMessageRect.Location.Y;
+
+                painter.DrawRectangle(new RectangleF(0, 0, TotalWidth, overlayHeight),
+                    new DrawSettings {Color = Color.Black.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
+                painter.EndSpriteBatch();
             }
-
-            var overlayHeight = (float) latestLogMessageRect.Location.Y;
-
-            painter.DrawRectangle(new RectangleF(0, 0, TotalWidth, overlayHeight),
-                new DrawSettings {Color = Color.Black.WithMultipliedOpacity(0.5f * Opacity), Depth = 100});
-            painter.EndSpriteBatch();
         }
     }
 
