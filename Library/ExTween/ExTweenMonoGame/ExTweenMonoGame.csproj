@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>ExTweenMonoGame</AssemblyName>
@@ -11,14 +11,9 @@
     <ItemGroup>
         <ProjectReference Include="..\ExTween\ExTween.csproj"/>
     </ItemGroup>
-
     <ItemGroup>
-        <PackageReference Include="MonoGame.Extended.Graphics" Version="3.8.0">
-            <PrivateAssets>All</PrivateAssets>
-        </PackageReference>
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105">
             <PrivateAssets>All</PrivateAssets>
         </PackageReference>
     </ItemGroup>
-
 </Project>
