@@ -108,6 +108,11 @@ public class SampleGameCartridge : BasicGameCartridge
         parameters.RegisterParameter<string>("echo");
     }
 
+    public override void OnHotReload()
+    {
+        
+    }
+
     public override IEnumerable<ILoadEvent> LoadEvents(Painter painter)
     {
         yield return new AssetLoadEvent("noise", () =>
