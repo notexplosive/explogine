@@ -20,7 +20,8 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
     private readonly IGuiTheme _theme;
     private Gui.Gui? _gui;
 
-    public LuaGui(IFileSystem files,string fileName, Style style, IGuiTheme theme, Dictionary<string, IGuiTheme> otherThemes)
+    public LuaGui(IFileSystem files, string fileName, Style style, IGuiTheme theme,
+        Dictionary<string, IGuiTheme> otherThemes)
     {
         _fileName = fileName;
         _theme = theme;
@@ -46,13 +47,6 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
     {
         Draw(painter, Matrix.Identity);
     }
-    
-    public void Draw(Painter painter, Matrix matrix)
-    {
-        painter.BeginSpriteBatch(matrix);
-        _gui?.Draw(painter, _theme);
-        painter.EndSpriteBatch();
-    }
 
     public void EarlyDraw(Painter painter)
     {
@@ -64,13 +58,20 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
         _gui?.UpdateInput(input, hitTestStack);
     }
 
+    public void Draw(Painter painter, Matrix matrix)
+    {
+        painter.BeginSpriteBatch(matrix);
+        _gui?.Draw(painter, _theme);
+        painter.EndSpriteBatch();
+    }
+
     public LuaGuiBindingContext RunLua(RectangleF rootArea, Table args, LuigiRememberedState? rememberedState)
     {
         LuaRuntime.SetGlobal("args", args);
 
         // Clear the state of the current layout
         _layoutBuilder.Clear();
-
+        
         // Consume instructions
         LuaRuntime.DoFile(_fileName);
 
