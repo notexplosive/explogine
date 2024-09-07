@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace ExTween;
 
@@ -48,7 +49,7 @@ public abstract class Tweenable<T> : ITweenable
     {
         if (destination == null)
         {
-            throw new Exception("Destination was null");
+            throw new Exception("Tween destination was null");
         }
 
         var realDestination = (T) destination;
@@ -62,11 +63,13 @@ public abstract class Tweenable<T> : ITweenable
         return tweenable.Value;
     }
 
+    [Pure]
     public ITween CallbackSetTo(T destination)
     {
         return new CallbackTween(() => Value = destination);
     }
 
+    [Pure]
     public ITween TweenTo(T destination, float duration, Ease.Delegate ease)
     {
         return new Tween<T>(this, destination, duration, ease);

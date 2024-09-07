@@ -39,8 +39,14 @@ public static class ColorExtensions
         return ColorExtensions.TryFromRgbaHexString(colorString, out var _);
     }
 
-    public static bool TryFromRgbaHexString(string colorString, [NotNullWhen(true)] out Color? result)
+    public static bool TryFromRgbaHexString(string? colorString, [NotNullWhen(true)] out Color? result)
     {
+        if (colorString == null)
+        {
+            result = null;
+            return false;
+        }
+        
         if (colorString.Length == 6)
         {
             colorString += "FF";
@@ -63,7 +69,7 @@ public static class ColorExtensions
         return valid;
     }
 
-    public static Color FromRgbaHexString(string colorString)
+    public static Color FromRgbaHexString(string? colorString)
     {
         if (ColorExtensions.TryFromRgbaHexString(colorString, out var color))
         {

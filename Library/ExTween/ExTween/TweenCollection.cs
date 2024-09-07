@@ -31,9 +31,10 @@ public abstract class TweenCollection : ITween
     /// Generic version of "Add" or "AddChannel", use this if you're not sure which type of TweenCollection you're dealing with
     /// </summary>
     /// <param name="tween"></param>
-    public void AddItem(ITween tween)
+    public TweenCollection AddItem(ITween tween)
     {
         Items.Add(tween);
+        return this;
     }
 
     protected void ForEachItem(Action<ITween> action)

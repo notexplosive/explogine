@@ -310,4 +310,40 @@ public static class Vector2Extensions
 
         return result;
     }
+
+    [Pure]
+    public static Vector2 MinAcross(Vector2 a, Vector2 b)
+    {
+        var min = new Vector2
+        {
+            X = Math.Min(a.X, b.X),
+            Y = Math.Min(a.Y, b.Y)
+        };
+        return min;
+    }
+    
+    [Pure]
+    public static Vector2 MaxAcross(Vector2 a, Vector2 b)
+    {
+        var min = new Vector2
+        {
+            X = Math.Max(a.X, b.X),
+            Y = Math.Max(a.Y, b.Y)
+        };
+        return min;
+    }
+    
+    [Pure]
+    [Obsolete("Use MaxAcross")]
+    public static Vector2 Max(Vector2 a, Vector2 b)
+    {
+        return MaxAcross(a, b);
+    }
+    
+    [Pure]
+    [Obsolete("Use MinAcross")]
+    public static Vector2 Min(Vector2 a, Vector2 b)
+    {
+        return MinAcross(a, b);
+    }
 }

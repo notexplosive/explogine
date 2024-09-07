@@ -25,6 +25,6 @@ public static class StringExtensions
         }
         
         var fileInfo = new FileInfo(str);
-        return fileInfo.Name.Substring(0, fileInfo.Name.Length - fileInfo.Extension.Length);
+        return str.Substring(0, str.Length - fileInfo.Extension.Length);
     }
 }

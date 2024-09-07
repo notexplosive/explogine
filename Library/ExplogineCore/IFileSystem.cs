@@ -58,6 +58,20 @@ public interface IFileSystem
     void WriteToFile(string relativeFileName, params string[] lines);
 
     /// <summary>
+    ///     Creates (or overwrites) a file and writes lines to it.
+    /// </summary>
+    /// <param name="relativePathToFile"></param>
+    /// <param name="bytes"></param>
+    public void WriteToFileBytes(string relativePathToFile, byte[] bytes);
+
+    /// <summary>
+    /// Reads all bytes in a file
+    /// </summary>
+    /// <param name="relativePathToFile"></param>
+    /// <returns></returns>
+    public byte[] ReadBytes(string relativePathToFile);
+
+    /// <summary>
     /// Working Directory of this FileSystem object
     /// </summary>
     /// <returns></returns>
@@ -79,4 +93,9 @@ public interface IFileSystem
     public long GetFileSize(string relativePathToFile);
 
     Task<string> ReadFileAsync(string fileName);
+    
+    /// <summary>
+    /// Create directory at the root of this FileSystem if it doesn't currently exist
+    /// </summary>
+    IFileSystem CreateDirectory(string directory = ".");
 }

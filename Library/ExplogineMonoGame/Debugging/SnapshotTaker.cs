@@ -45,7 +45,7 @@ internal class SnapshotTaker : IUpdateInputHook, IUpdateHook
                         .Add(new WaitSecondsTween(0.1f))
                         .Add(new CallbackTween(TakeSnapshot))
                     ;
-                _timerMax = Math.Min(30, _timerMax * 2);
+                _timerMax = Math.Min(10, _timerMax * 2);
                 _timer = _timerMax;
             }
         }

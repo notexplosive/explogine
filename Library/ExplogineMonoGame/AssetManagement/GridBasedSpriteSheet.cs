@@ -22,7 +22,7 @@ public class GridBasedSpriteSheet : SpriteSheet
     {
         if (frameSize.X > texture.Width || frameSize.Y > texture.Height)
         {
-            throw new Exception("Frame size is too big for texture");
+            Client.Debug.LogWarning($"Frame size ({frameSize.X}, {frameSize.Y}) is too big for texture: {texture.Name} ({texture.Width}, {texture.Height})");
         }
         
         var isValid = texture.Width % frameSize.X == 0;
@@ -30,7 +30,7 @@ public class GridBasedSpriteSheet : SpriteSheet
 
         if (!isValid)
         {
-            throw new Exception($"Texture {texture.Width}, {texture.Height} does not evenly divide by cell dimensions {frameSize.X}, {frameSize.Y}");
+            Client.Debug.LogWarning($"Texture {texture.Width}, {texture.Height} does not evenly divide by cell dimensions {frameSize.X}, {frameSize.Y}");
         }
 
         FrameSize = frameSize;

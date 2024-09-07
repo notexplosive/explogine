@@ -96,6 +96,17 @@ public class VirtualFileSystem : IFileSystem
             ?.CreateFileWithContent(_root.GetFileName(relativeFileName), string.Join('\n', lines));
     }
 
+    public void WriteToFileBytes(string relativePathToFile, byte[] bytes)
+    {
+        _root.CreateDirectoriesUpToFile(relativePathToFile, true)
+            ?.CreateFileWithContent(_root.GetFileName(relativePathToFile), string.Join("",bytes));
+    }
+
+    public byte[] ReadBytes(string relativePathToFile)
+    {
+        return ReadFile(relativePathToFile).Select(b => (byte) b).ToArray();
+    }
+
     public string GetCurrentDirectory()
     {
         return "/";
@@ -103,7 +114,7 @@ public class VirtualFileSystem : IFileSystem
 
     public IFileSystem GetDirectory(string subDirectory)
     {
-        // this doesn't fake the right thing.
+        // this doesn't fake the right thing. VFS assumes all directories exist
         return new VirtualFileSystem();
     }
 
@@ -127,6 +138,12 @@ public class VirtualFileSystem : IFileSystem
         }
 
         return Task.FromResult(string.Empty);
+    }
+
+    public IFileSystem CreateDirectory(string path = ".")
+    {
+        // do nothing, VFS assumes all directories that could exist do exist
+        return new VirtualFileSystem();
     }
 
     private interface IVirtualItem

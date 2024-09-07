@@ -24,7 +24,7 @@ public readonly struct ModifierKeys
     public bool AltInclusive => _alt;
     
     /// <summary>
-    /// True if left and right shift are pressed
+    /// True if left or right shift are pressed
     /// </summary>
     public bool ShiftInclusive => _shift;
     

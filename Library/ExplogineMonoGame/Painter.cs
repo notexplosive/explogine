@@ -36,6 +36,11 @@ public class Painter
         BeginSpriteBatch(viewBounds.CanvasToScreen(outputDimensions, angle));
     }
 
+    public void BeginSpriteBatch(SamplerState samplerState, Matrix? matrix = null, Effect? effect = null)
+    {
+        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, effect, matrix);
+    }
+
     public void BeginSpriteBatch(Matrix matrix, Effect? effect = null)
     {
         _spriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, effect, matrix);

@@ -85,8 +85,9 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
         if (_linesBuffer.First != null)
         {
            painter.BeginSpriteBatch();
-            var latestLogMessageRect =
-                new Rectangle(5, (int) _linesBuffer.First.Value.Size.Y, TotalWidth - 10, MaxHeight);
+           var offset = (int) _linesBuffer.First.Value.Size.Y;
+           var latestLogMessageRect =
+                new Rectangle(5, offset, TotalWidth - 10, MaxHeight - offset);
 
             foreach (var message in _linesBuffer)
             {

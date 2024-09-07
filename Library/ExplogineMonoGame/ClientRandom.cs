@@ -18,7 +18,6 @@ public class ClientRandom
         get => _seed;
         set
         {
-            Client.Debug.Log($"Random seed: {value}");
             _seed = value;
             CleanNoise = new Noise(_seed);
             Clean = new NoiseBasedRng(CleanNoise);

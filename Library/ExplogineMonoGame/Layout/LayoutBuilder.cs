@@ -7,11 +7,11 @@ namespace ExplogineMonoGame.Layout;
 public class LayoutBuilder
 {
     private readonly List<Node> _nodes = new();
-    private readonly Style _style;
+    public Style Style { get; set; }
 
     public LayoutBuilder(Style style)
     {
-        _style = style;
+        Style = style;
     }
 
     public void Clear()
@@ -57,7 +57,7 @@ public class LayoutBuilder
             elements.Add(node.ToElement());
         }
 
-        return L.Root(_style, elements.ToArray());
+        return L.Root(Style, elements.ToArray());
     }
 
     private class Node
