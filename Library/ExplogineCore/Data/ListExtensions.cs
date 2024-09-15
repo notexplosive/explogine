@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ExplogineMonoGame.Data;
+﻿namespace ExplogineCore.Data;
 
 public static class ListExtensions
 {

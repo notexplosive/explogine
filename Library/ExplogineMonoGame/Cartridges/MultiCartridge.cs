@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ExplogineCore;
+using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 
 namespace ExplogineMonoGame.Cartridges;

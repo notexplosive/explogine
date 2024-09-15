@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 
 namespace ExplogineMonoGame.TextFormatting;
