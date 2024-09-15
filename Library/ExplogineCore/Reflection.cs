@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace ExplogineCore;
@@ -11,11 +12,23 @@ public static class Reflection
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TInterface"></typeparam>
     /// <returns></returns>
+    [Pure]
     public static Dictionary<string, TInterface> GetStaticFieldsThatDeriveFromType<T, TInterface>()
     {
-        return typeof(T)
+        return GetStaticFieldsThatDeriveFromType<TInterface>(typeof(T));
+    }
+    
+    /// <summary>
+    /// Gets static fields from type T that derive from TInterface
+    /// </summary>
+    /// <typeparam name="TInterface"></typeparam>
+    /// <returns></returns>
+    [Pure]
+    public static Dictionary<string, TInterface> GetStaticFieldsThatDeriveFromType<TInterface>(Type t)
+    {
+        return t
             .GetFields(BindingFlags.Public | BindingFlags.Static)
-            .Where(fieldInfo => fieldInfo.FieldType.GetInterfaces().Contains(typeof(TInterface)))
+            .Where(fieldInfo => fieldInfo.FieldType.GetInterfaces().Contains(typeof(TInterface)) || fieldInfo.FieldType == typeof(TInterface))
             .ToDictionary(
                 fieldInfo => fieldInfo.Name,
                 fieldInfo => (TInterface) fieldInfo.GetValue(null)!
@@ -28,6 +41,7 @@ public static class Reflection
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TInterface"></typeparam>
     /// <returns></returns>
+    [Pure]
     public static IEnumerable<FieldInfo> GetStaticFieldInfosThatDeriveFromType<T, TInterface>()
     {
         return typeof(T)
@@ -35,6 +49,7 @@ public static class Reflection
             .Where(fieldInfo => fieldInfo.FieldType.GetInterfaces().Contains(typeof(TInterface)));
     }
 
+    [Pure]
     public static List<Type> GetAllTypesThatDeriveFrom<T>()
     {
         // Get all loaded assemblies
@@ -54,6 +69,7 @@ public static class Reflection
         return implementingTypes;
     }
 
+    [Pure]
     public static IEnumerable<Tuple<MemberInfo, Type>> GetAllMembersInAssemblyWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
     {
         var types = assembly.GetTypes();
@@ -67,6 +83,7 @@ public static class Reflection
         }
     }
 
+    [Pure]
     public static IEnumerable<Type> GetAllTypesWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
     {
         var types = assembly.GetTypes();
