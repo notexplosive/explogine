@@ -112,8 +112,7 @@ public class InternalWindowChrome : IUpdateInputHook
     private void HandleResizing(ConsumableInput input, HitTestStack hitTestStack)
     {
         var resizedWholeWindowRect =
-            _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth,
-                _parentWindow.ParentRuntime.Window.ScreenToCanvas, 10, _minimumSize);
+            _rectResizer.GetResizedRect(input, hitTestStack, WholeWindowRectangle, Depth, 10, _minimumSize);
 
         if (_rectResizer.HasGrabbed)
         {
