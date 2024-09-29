@@ -85,15 +85,21 @@ public class Widget : IDisposable, IDrawHook
         painter.DrawAsRectangle(Texture, OutputRectangle, new DrawSettings {Depth = Depth});
     }
 
-    public void ResizeCanvas(Point newSize)
+    public void ResizeCanvas(Point newSize, bool resizeWidgetAsWell = false)
     {
         if (Canvas.Size == newSize)
         {
             return;
         }
 
+        
         Canvas.Dispose();
         Canvas = new Canvas(newSize);
+        
+        if (resizeWidgetAsWell)
+        {
+            Size = RenderResolution;
+        }
         Resized?.Invoke();
     }
 
