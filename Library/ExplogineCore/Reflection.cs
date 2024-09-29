@@ -85,13 +85,13 @@ public static class Reflection
     }
 
     [Pure]
-    public static IEnumerable<Tuple<MemberInfo, Type>> GetAllMembersInTypeWithAttribute<TAttribute>(Type type)
+    public static IEnumerable<MemberInfo> GetAllMembersInTypeWithAttribute<TAttribute>(Type type)
         where TAttribute : Attribute
     {
         var attributeType = typeof(TAttribute);
-        foreach (var member in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).Where(method => Attribute.IsDefined(method, attributeType)))
+        foreach (var member in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).Where(method => Attribute.IsDefined(method, attributeType)))
         {
-            yield return new Tuple<MemberInfo, Type>(member, type);
+            yield return member;
         }
     }
 
