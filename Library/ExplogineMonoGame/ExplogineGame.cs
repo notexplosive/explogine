@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 #if !DEBUG
+// needed for crash reporting
 using System;
 #endif
 
@@ -19,6 +21,9 @@ internal class ExplogineGame : Game
     protected override void Initialize()
     {
         Client.Initialize(GraphicsDevice, _graphics, this);
+        IsFixedTimeStep = false;
+        _graphics.SynchronizeWithVerticalRetrace = false;
+        _graphics.ApplyChanges();
         base.Initialize();
     }
 
