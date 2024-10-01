@@ -42,6 +42,24 @@ public static class ReadOgg
         return bytes;
     }
 
+    public static UncompressedSound ReadVorbisSingleChannel(string fullFileName, bool isRightChannel)
+    {
+        using var vorbis = new VorbisReader(fullFileName);
+        var frames = new float[vorbis.TotalSamples * vorbis.Channels];
+        var length = vorbis.ReadSamples(frames, 0, frames.Length);
+        var sampleRate = vorbis.SampleRate;
+
+        var offset = isRightChannel ? 1 : 0;
+        
+        var newFrames = new float[vorbis.TotalSamples];
+        for (int i = 0; i < vorbis.TotalSamples; i++)
+        {
+            newFrames[i] = frames[i * 2 + offset];
+        }
+
+        return new UncompressedSound(newFrames, length / 2, AudioChannels.Mono, sampleRate);
+    }
+    
     public static UncompressedSound ReadVorbis(string fullFileName)
     {
         // VorbisReader comes from NVorbis.
