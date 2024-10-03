@@ -49,7 +49,6 @@ public sealed class Canvas : IDisposable
     {
         if (Size.X < 1 || Size.Y < 1)
         {
-            Client.Debug.LogWarning($"RenderTarget was asked to generate with invalid size {Size}");
             Size = new Point(Math.Max(Size.X, 1), Math.Max(Size.Y, 1));
         }
         
