@@ -19,7 +19,8 @@ public static class ReadOgg
 
     public static SoundEffect ReadSoundEffect(UncompressedSound uncompressedSound)
     {
-        return new SoundEffect(ConvertFloatFramesToBytes(uncompressedSound.Frames), uncompressedSound.SampleRate, uncompressedSound.Channels);
+        return new SoundEffect(ConvertFloatFramesToBytes(uncompressedSound.Frames), uncompressedSound.SampleRate,
+            uncompressedSound.Channels);
     }
 
     public static byte[] ConvertFloatFramesToBytes(float[] frames)
@@ -46,20 +47,26 @@ public static class ReadOgg
     {
         using var vorbis = new VorbisReader(fullFileName);
         var frames = new float[vorbis.TotalSamples * vorbis.Channels];
+
+        if (vorbis.Channels == 1)
+        {
+            return ReadVorbis(fullFileName);
+        }
+        
         var length = vorbis.ReadSamples(frames, 0, frames.Length);
         var sampleRate = vorbis.SampleRate;
 
         var offset = isRightChannel ? 1 : 0;
-        
+
         var newFrames = new float[vorbis.TotalSamples];
-        for (int i = 0; i < vorbis.TotalSamples; i++)
+        for (var i = 0; i < vorbis.TotalSamples; i++)
         {
             newFrames[i] = frames[i * 2 + offset];
         }
 
         return new UncompressedSound(newFrames, length / 2, AudioChannels.Mono, sampleRate);
     }
-    
+
     public static UncompressedSound ReadVorbis(string fullFileName)
     {
         // VorbisReader comes from NVorbis.

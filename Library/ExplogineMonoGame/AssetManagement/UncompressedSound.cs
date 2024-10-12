@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Audio;
+﻿using System;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ExplogineMonoGame.AssetManagement;
 
@@ -15,5 +16,20 @@ public class UncompressedSound
         Length = length;
         Channels = channels;
         SampleRate = sampleRate;
+    }
+
+    public static UncompressedSound FromFileSingleChannel(string filePath)
+    {
+        if (filePath.EndsWith(".ogg"))
+        {
+            return ReadOgg.ReadVorbisSingleChannel(filePath, false);
+        }
+
+        if (filePath.EndsWith(".wav"))
+        {
+            return ReadWav.ReadWavFileSingleChannel(filePath, true);
+        }
+
+        throw new Exception($"Unknown sound format {filePath}");
     }
 }
