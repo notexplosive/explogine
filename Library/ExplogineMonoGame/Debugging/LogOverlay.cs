@@ -38,6 +38,9 @@ internal class LogOverlay : ILogCapture, IUpdateInputHook, IUpdateHook
             var newMessage = new RenderedMessage(message, _font.MeasureString(message.Text, TotalWidth), _font);
 
             float usedHeight = 0;
+            
+            usedHeight += _font.FontSize; // automatically spend 1 line to make room for the framerate counter
+            
             foreach (var line in _linesBuffer)
             {
                 usedHeight += line.Size.Y;
