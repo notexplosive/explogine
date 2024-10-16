@@ -25,8 +25,10 @@ public class FramerateCounter : IUpdateHook, IDrawHook
             memoryUsageStat = (memoryUsed / 1000_000f).ToString("F2") + " MB ";
         }
 
+        var finalString = $"{memoryUsageStat}{drawDuration:F4}s {1 / drawDuration:F0}";
+
         painter.BeginSpriteBatch();
-        painter.DrawDebugStringAtPosition($"{memoryUsageStat}{drawDuration:F4}s {1 / drawDuration:F0}" , Vector2.Zero, new DrawSettings{Color = Color.White});
+        painter.DrawStringWithinRectangle(Client.Assets.GetFont("engine/console-font", 32), finalString, Client.Runtime.Window.Size.ToRectangleF(), Alignment.BottomLeft, new DrawSettings{Color = Color.White});
         painter.EndSpriteBatch();
     }
 

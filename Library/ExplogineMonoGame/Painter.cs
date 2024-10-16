@@ -99,6 +99,7 @@ public class Painter
         DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
     }
 
+    [Obsolete]
     public void DrawDebugStringAtPosition(string text, Vector2 position, DrawSettings settings)
     {
         DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
