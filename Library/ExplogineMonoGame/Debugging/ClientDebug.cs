@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using ExplogineCore;
 using ExplogineMonoGame.Logging;
 
@@ -19,7 +20,13 @@ public class ClientDebug
     public bool IsPassiveOrActive => Level == DebugLevel.Passive || IsActive;
     public FileLogCapture LogFile { get; }
     public int GameSpeed { get; set; } = 1;
-    public IFileSystem RepoFileSystem { get; internal set; } = new RealFileSystem(".");
+
+    /// <summary>
+    ///     RepoFileSystem assumes it should be in the running directory unless overwritten
+    /// </summary>
+    public IFileSystem RepoFileSystem { get; internal set; } =
+        new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory);
+
     public bool MonitorMemoryUsage { get; set; }
 
     public void CycleDebugMode()
