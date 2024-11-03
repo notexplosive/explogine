@@ -162,11 +162,6 @@ public struct RectangleF : IEquatable<RectangleF>
     [Pure]
     public static RectangleF Intersect(RectangleF rectA, RectangleF rectB)
     {
-        if (!rectA.Intersects(rectB))
-        {
-            return RectangleF.Empty;
-        }
-
         var aX = MathF.Max(rectA.Location.X, rectB.Location.X);
         var aY = MathF.Max(rectA.Location.Y, rectB.Location.Y);
 
@@ -203,7 +198,7 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return other.Contains(TopLeft) || other.Contains(BottomRight) || other.Contains(TopRight) ||
                other.Contains(BottomLeft) || Contains(other.TopLeft) || Contains(other.BottomRight) ||
-               Contains(other.TopRight) || Contains(other.BottomLeft);
+               Contains(other.TopRight) || Contains(other.BottomLeft) || Intersect(this, other).Area > 0;
     }
 
     [Pure]
