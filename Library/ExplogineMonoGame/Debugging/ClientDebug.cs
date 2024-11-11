@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using ExplogineCore;
 using ExplogineMonoGame.Logging;
@@ -11,6 +12,15 @@ public class ClientDebug
     {
         Output.AddParallel(LogFile);
         Output.PushToStack(new ConsoleLogCapture());
+
+        var repoPath = AppDomain.CurrentDomain.BaseDirectory;
+
+        if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs && PlatformApi.IsAppBundle)
+        {
+            repoPath = Path.Join(Client.LocalFullPath, "../Resources");
+        }
+
+        RepoFileSystem = new RealFileSystem(repoPath);
     }
 
     public LogOutput Output { get; } = new();
@@ -19,13 +29,7 @@ public class ClientDebug
     public bool IsPassiveOrActive => Level == DebugLevel.Passive || IsActive;
     public FileLogCapture LogFile { get; } = new();
     public int GameSpeed { get; set; } = 1;
-
-    /// <summary>
-    ///     RepoFileSystem assumes it should be in the running directory unless overwritten
-    /// </summary>
-    public IFileSystem RepoFileSystem { get; internal set; } =
-        new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory);
-
+    public IFileSystem RepoFileSystem { get; internal set; }
     public bool MonitorMemoryUsage { get; set; }
 
     public void CycleDebugMode()
