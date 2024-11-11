@@ -91,20 +91,11 @@ public static class Client
 
     private static ClientEssentials Essentials { get; } = new();
 
-    public static string ContentBaseDirectory
-    {
-        get
-        {
-            if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs && PlatformApi.IsAppBundle)
-            {
-                // If we're in an AppBundle, this is where the content directory actually is
-                return "../Resources/Content";
-            }
+    public static string ContentBaseDirectory => "Content";
 
-            return "Content";
-        }
-    }
-
+    /// <summary>
+    /// Fully qualified path of the directory the executable lives in. 
+    /// </summary>
     public static string LocalFullPath => AppDomain.CurrentDomain.BaseDirectory;
 
     /// <summary>
@@ -141,11 +132,17 @@ public static class Client
         Client.Headless = false;
         
         var window = platform.PlatformWindow;
-        var fileSystem = new ClientFileSystem(
-            new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory),
-            new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name))
-        );
+        var localFileSystem = new RealFileSystem(Client.LocalFullPath);
+
+        if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs && PlatformApi.IsAppBundle)
+        {
+            // If we're a macOS App Bundle we should point to the "Resources" directory
+            localFileSystem = new RealFileSystem($"{Client.LocalFullPath}/../Resources");
+        }
+        
+        var appdataFileSystem = new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name));
+        var fileSystem = new ClientFileSystem(localFileSystem, appdataFileSystem);
         Client.Runtime.Setup(window, fileSystem);
         Client.startingConfig = windowConfig;
 
