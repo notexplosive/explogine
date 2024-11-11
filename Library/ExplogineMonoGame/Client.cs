@@ -126,6 +126,7 @@ public static class Client
         IPlatformInterface platform)
     {
         Client.HeadlessStart(argsArray);
+        Client.Debug.LogVerbose("Headless start completed");
         
         // Setup Platform
         Client.Headless = false;
