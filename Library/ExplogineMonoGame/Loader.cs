@@ -138,16 +138,20 @@ public class Loader
 
     private string[] GetKeysFromContentDirectory()
     {
+        Client.Debug.LogVerbose($"Scanning for Content at {_content.RootDirectory}");
+        
         var fileNames = _runtime.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
         var keys = new List<string>();
 
         foreach (var fileName in fileNames)
         {
+            Client.Debug.LogVerbose($"Found Content: {fileName}");
             var extension = new FileInfo(fileName).Extension;
             // Remove `.xnb`
             var withoutExtension = fileName.Substring(0, fileName.Length - extension.Length);
             // Remove `Content/`
             var withoutPrefix = withoutExtension.Substring(Client.ContentBaseDirectory.Length + 1);
+            Client.Debug.LogVerbose($"Keying as: {withoutPrefix}");
             keys.Add(withoutPrefix);
         }
 

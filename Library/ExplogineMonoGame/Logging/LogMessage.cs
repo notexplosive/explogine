@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Logging;
 
@@ -6,7 +7,7 @@ public record LogMessage(LogMessageType Type, string Text)
 {
     public string ToFileString()
     {
-        return $"{Type.ToString().ToUpper()}: {Text}";
+        return $"{DateTime.Now:s} {Type.ToString().ToUpper()}: {Text}";
     }
 
     public static Color GetColorFromType(LogMessageType contentType)

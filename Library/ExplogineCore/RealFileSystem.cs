@@ -163,6 +163,7 @@ public class RealFileSystem : IFileSystem
 
         public void Close()
         {
+            _streamWriter.Flush();
             _streamWriter.Dispose();
             _fileStream.Dispose();
         }

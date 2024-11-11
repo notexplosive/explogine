@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using ExplogineCore;
@@ -154,15 +154,32 @@ public static class Client
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game
-        using var game = new ExplogineGame();
+        Client.Debug.LogVerbose("Creating Game");
+        try
+        {
+            var game = new ExplogineGame();
+
+            Client.Debug.LogVerbose("Game Created");
         Client.currentGame = game;
 
         // Setup Exit Handler
-        Client.currentGame.Exiting += (_, _) => { Client.Exited.BecomeReady(); };
+            Client.Debug.LogVerbose("Wiring up Exit Handlers");
+            Client.currentGame.Exiting += (_, _) =>
+            {
+                Client.Debug.LogVerbose("Exited gracefully (running exit hooks)");
+                Client.Exited.BecomeReady();
+            };
 
         // Launch
         // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
+            Client.Debug.LogVerbose("Running game");
         game.Run();
+            game.Dispose();
+        }
+        catch(Exception e)
+        {
+            Client.Debug.LogVerbose("ERROR: " + e.Message, $"\n{e.StackTrace}");
+        }
     }
 
     public static void Exit()

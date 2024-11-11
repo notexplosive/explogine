@@ -26,10 +26,9 @@ public class FileLogCapture : ILogCapture
     {
         _buffer.Add(message);
         _stream.Write(message.ToFileString());
-
-#if DEBUG
+        
+        // Flush on every write, even on release builds
         _stream.Flush();
-#endif
     }
 
     public void WriteBufferAsFilename(string fileName)

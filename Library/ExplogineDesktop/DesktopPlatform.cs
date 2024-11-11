@@ -6,5 +6,7 @@ namespace ExplogineDesktop;
 public class DesktopPlatform : IPlatformInterface
 {
     public RealWindow PlatformWindow { get; } = new DesktopWindow();
-    public IFileSystem ContentFileSystem { get; } = new RealFileSystem(Client.ContentFullPath);
+    
+    [Obsolete("This will not work on macOS")]
+    public IFileSystem ContentFileSystem { get; } = new RealFileSystem(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content"));
 }
