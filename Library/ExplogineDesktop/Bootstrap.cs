@@ -13,6 +13,8 @@ public static class Bootstrap
         // extraArgs come first so args can overwrite them
         combinedArgs.AddRange(extraArgs);
         combinedArgs.AddRange(args);
+        
+        Client.Debug.LogVerbose($"Final args: {string.Join(" ", combinedArgs)}");
 
         Client.Start(combinedArgs.ToArray(), config, cartridgeCreator, new DesktopPlatform());
     }

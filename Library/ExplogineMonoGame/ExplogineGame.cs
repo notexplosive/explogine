@@ -14,7 +14,7 @@ internal class ExplogineGame : Game
     public ExplogineGame()
     {
         _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = Client.ContentBaseDirectory;
+        Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 

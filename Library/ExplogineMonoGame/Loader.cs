@@ -34,8 +34,10 @@ public class Loader
 
     public T ForceLoad<T>(string key) where T : Asset
     {
+        Client.Debug.LogVerbose($"ForceLoad: {key}");
         if (IsDone())
         {
+            Client.Debug.LogVerbose("Already cached, returning");
             return Client.Assets.GetAsset<T>(key);
         }
 
@@ -51,6 +53,8 @@ public class Loader
         if (foundLoadEvent is AssetLoadEvent assetLoadEvent)
         {
             _loadEvents.Remove(assetLoadEvent);
+            
+            Client.Debug.LogVerbose("Found load event, running");
             var asset = assetLoadEvent.ExecuteAndReturnAsset();
             var result = asset as T;
 
@@ -91,7 +95,11 @@ public class Loader
     {
         foreach (var key in GetKeysFromContentDirectory())
         {
-            yield return new AssetLoadEvent(key, key, () => LoadAsset(key));
+            yield return new AssetLoadEvent(key, key, () =>
+            {
+                Client.Debug.LogVerbose($"Attempting to load static content asset: {key}");
+                return LoadAsset(key);
+            });
         }
     }
 

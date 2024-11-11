@@ -57,6 +57,7 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         var repoPath = Client.Args.GetValue<string>("repoPath");
         if (!string.IsNullOrEmpty(repoPath))
         {
+            Client.Debug.LogVerbose($"Setting RepoPath to {repoPath}");
             Client.Debug.RepoFileSystem = new RealFileSystem(repoPath);
         }
     }
