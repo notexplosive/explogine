@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using ExplogineCore;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
@@ -57,8 +58,8 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         var repoPath = Client.Args.GetValue<string>("repoPath");
         if (!string.IsNullOrEmpty(repoPath))
         {
-            Client.Debug.LogVerbose($"Setting RepoPath to {repoPath}");
             Client.Debug.RepoFileSystem = new RealFileSystem(repoPath);
+            Client.Debug.LogVerbose($"Repo Path is now set to: {Path.GetFullPath(Client.Debug.RepoFileSystem.GetCurrentDirectory())}");
         }
     }
 
