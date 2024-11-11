@@ -43,8 +43,19 @@ public class CommandLineArguments
         return _parameters.HasValue(arg);
     }
 
+    /// <summary>
+    /// Args that were passed to the command line but don't map to anything understood by the application
+    /// </summary>
     public List<string> UnboundArgs()
     {
         return _parameters.UnboundArgs();
+    }
+
+    /// <summary>
+    /// Args that do not have dashes (eg: a file path)
+    /// </summary>
+    public IEnumerable<string> OrderedArgs()
+    {
+        return _parameters.OrderedArgs();
     }
 }

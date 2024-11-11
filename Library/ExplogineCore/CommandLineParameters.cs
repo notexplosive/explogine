@@ -4,7 +4,8 @@ public class CommandLineParameters
 {
     private readonly Dictionary<string, string> _givenArgsTable = new();
     private readonly HashSet<string> _boundArgs = new();
-    
+    private readonly List<string> _orderedArgs = new();
+
     public CommandLineArguments Args { get; }
     public CommandLineParametersWriter Writer { get; }
 
@@ -42,6 +43,10 @@ public class CommandLineParameters
                 {
                     _givenArgsTable[argWithoutDashes.ToLower()] = "true";
                 }
+            }
+            else
+            {
+                _orderedArgs.Add(arg);
             }
         }
     }
@@ -110,5 +115,10 @@ public class CommandLineParameters
     internal List<string> UnboundArgs()
     {
         return _givenArgsTable.Keys.ToList();
+    }
+
+    internal IEnumerable<string> OrderedArgs()
+    {
+        return _orderedArgs;
     }
 }
