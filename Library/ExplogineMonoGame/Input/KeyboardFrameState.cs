@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using ExplogineCore;
 using Microsoft.Xna.Framework.Input;
 
 namespace ExplogineMonoGame.Input;
@@ -18,7 +17,7 @@ public readonly struct KeyboardFrameState
     {
         return Current.TextEntered.Characters;
     }
-    
+
     public ButtonFrameState GetButton(Keys key)
     {
         var isDown = Current.IsDown(key);
@@ -30,14 +29,24 @@ public readonly struct KeyboardFrameState
     {
         get
         {
-            var control = Current.IsDown(Keys.LeftControl)
+            var nativeControl = Current.IsDown(Keys.LeftControl)
                           || Current.IsDown(Keys.RightControl);
             var alt = Current.IsDown(Keys.LeftAlt)
                       || Current.IsDown(Keys.RightAlt);
             var shift = Current.IsDown(Keys.LeftShift)
                         || Current.IsDown(Keys.RightShift);
+            var nativeCommand = Current.IsDown(Keys.LeftWindows)
+                          || Current.IsDown(Keys.RightWindows);
+            
+            var effectiveControl = nativeControl;
 
-            return new ModifierKeys(control, alt, shift);
+            if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs)
+            {
+                // If we're on macOS, CTRL and Command both do the same thing
+                effectiveControl = nativeCommand || nativeControl;
+            }
+
+            return new ModifierKeys(effectiveControl, alt, shift);
         }
     }
 
