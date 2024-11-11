@@ -9,7 +9,6 @@ public class ClientDebug
 {
     public ClientDebug()
     {
-        LogFile = new FileLogCapture();
         Output.AddParallel(LogFile);
         Output.PushToStack(new ConsoleLogCapture());
     }
@@ -18,7 +17,7 @@ public class ClientDebug
     public DebugLevel Level { get; internal set; }
     public bool IsActive => Level == DebugLevel.Active;
     public bool IsPassiveOrActive => Level == DebugLevel.Passive || IsActive;
-    public FileLogCapture LogFile { get; }
+    public FileLogCapture LogFile { get; } = new();
     public int GameSpeed { get; set; } = 1;
 
     /// <summary>

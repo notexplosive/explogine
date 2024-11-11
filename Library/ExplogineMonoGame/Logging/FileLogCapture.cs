@@ -13,8 +13,8 @@ public class FileLogCapture : ILogCapture
 
     public FileLogCapture()
     {
-        // This doesn't use Client.App.FileSystem because it might not be ready in time
-        Directory = new RealFileSystem(AppDomain.CurrentDomain.BaseDirectory);
+        // This doesn't use ClientFileSystem because it might not be ready in time
+        Directory = new RealFileSystem(Client.AppDataFullPath);
         var fileName = Path.Join("Logs", $"{DateTime.Now.ToFileTimeUtc()}.log");
         _stream = Directory.OpenFileStream(fileName);
         Client.Exited.Add(_stream.Close);

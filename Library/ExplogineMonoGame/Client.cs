@@ -99,6 +99,13 @@ public static class Client
     public static string LocalFullPath => AppDomain.CurrentDomain.BaseDirectory;
 
     /// <summary>
+    /// Fully qualified path of our subfolder in the "AppData" directory (or whatever this platform's equivalent is)
+    /// </summary>
+    public static string AppDataFullPath =>
+        Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NotExplosive",
+            Assembly.GetEntryAssembly()!.GetName().Name);
+
+    /// <summary>
     ///     Indicates if we're in a Test-Only environment. (ie: Client.Start has not been run)
     ///     In Headless mode, we have no Window, no Assets, and no Graphics.
     /// </summary>
@@ -140,8 +147,7 @@ public static class Client
             localFileSystem = new RealFileSystem($"{Client.LocalFullPath}/../Resources");
         }
         
-        var appdataFileSystem = new RealFileSystem(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "NotExplosive", Assembly.GetEntryAssembly()!.GetName().Name));
+        var appdataFileSystem = new RealFileSystem(Client.AppDataFullPath);
         var fileSystem = new ClientFileSystem(localFileSystem, appdataFileSystem);
         Client.Runtime.Setup(window, fileSystem);
         Client.startingConfig = windowConfig;
