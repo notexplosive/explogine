@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using ExplogineCore;
@@ -91,10 +91,19 @@ public static class Client
 
     private static ClientEssentials Essentials { get; } = new();
 
-    public static string ContentBaseDirectory => "Content";
+    public static string ContentBaseDirectory
+    {
+        get
+        {
+            if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs && PlatformApi.IsAppBundle)
+            {
+                // If we're in an AppBundle, this is where the content directory actually is
+                return "../Resources/Content";
+            }
 
-    public static string ContentFullPath =>
-        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Client.ContentBaseDirectory);
+            return "Content";
+        }
+    }
 
     public static string LocalFullPath => AppDomain.CurrentDomain.BaseDirectory;
 
@@ -161,9 +170,9 @@ public static class Client
             var game = new ExplogineGame();
 
             Client.Debug.LogVerbose("Game Created");
-        Client.currentGame = game;
+            Client.currentGame = game;
 
-        // Setup Exit Handler
+            // Setup Exit Handler
             Client.Debug.LogVerbose("Wiring up Exit Handlers");
             Client.currentGame.Exiting += (_, _) =>
             {
@@ -171,10 +180,10 @@ public static class Client
                 Client.Exited.BecomeReady();
             };
 
-        // Launch
-        // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
+            // Launch
+            // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
             Client.Debug.LogVerbose("Running game");
-        game.Run();
+            game.Run();
             game.Dispose();
         }
         catch(Exception e)
