@@ -453,5 +453,10 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 
-todo.txt
+# ApprovalTests
 *.received.txt
+
+# Files I tend to make
+todo.txt
+.build
+.iconset
