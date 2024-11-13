@@ -29,8 +29,8 @@ public static class Client
     internal static readonly ClientRuntime Runtime = new();
     internal static readonly CartridgeChain CartridgeChain = new();
 
-    internal static RealWindow PlatformWindow => (Client.Runtime.Window as RealWindow)!;
-    internal static bool IsInFocus => Client.Headless || Client.currentGame.IsActive;
+    internal static RealWindow PlatformWindow => (Runtime.Window as RealWindow)!;
+    internal static bool IsInFocus => Headless || currentGame.IsActive;
 
     /// <summary>
     ///     Wrapper around the MonoGame Graphics objects (Device and DeviceManager)
@@ -52,7 +52,7 @@ public static class Client
     /// <summary>
     ///     Args passed via command line
     /// </summary>
-    public static CommandLineArguments Args => Client.commandLineParameters.Args;
+    public static CommandLineArguments Args => commandLineParameters.Args;
 
     /// <summary>
     ///     Gives you access to static Assets (aka: Content), as well as dynamic assets.
@@ -94,12 +94,12 @@ public static class Client
     public static string ContentBaseDirectory => "Content";
 
     /// <summary>
-    /// Fully qualified path of the directory the executable lives in. 
+    ///     Fully qualified path of the directory the executable lives in.
     /// </summary>
     public static string LocalFullPath => AppDomain.CurrentDomain.BaseDirectory;
 
     /// <summary>
-    /// Fully qualified path of our subfolder in the "AppData" directory (or whatever this platform's equivalent is)
+    ///     Fully qualified path of our subfolder in the "AppData" directory (or whatever this platform's equivalent is)
     /// </summary>
     public static string AppDataFullPath =>
         Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NotExplosive",
@@ -116,9 +116,9 @@ public static class Client
     public static void HeadlessStart(string[] argsArray)
     {
         // Setup Command Line
-        Client.commandLineParameters = new CommandLineParameters(argsArray);
-        Client.Essentials.AddCommandLineParameters(Client.commandLineParameters.Writer);
-        Client.Essentials.ExecuteCommandLineArgs(Client.commandLineParameters.Args);
+        commandLineParameters = new CommandLineParameters(argsArray);
+        Essentials.AddCommandLineParameters(commandLineParameters.Writer);
+        Essentials.ExecuteCommandLineArgs(commandLineParameters.Args);
     }
 
     /// <summary>
@@ -132,59 +132,58 @@ public static class Client
         Func<IRuntime, Cartridge> gameCartridgeCreator,
         IPlatformInterface platform)
     {
-        Client.HeadlessStart(argsArray);
-        Client.Debug.LogVerbose("Headless start completed");
-        
+        HeadlessStart(argsArray);
+        Debug.LogVerbose("Headless start completed");
+
         // Setup Platform
-        Client.Headless = false;
-        
+        Headless = false;
+
         var window = platform.PlatformWindow;
-        var localFileSystem = new RealFileSystem(Client.LocalFullPath);
+        var localFileSystem = new RealFileSystem(LocalFullPath);
 
         if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs && PlatformApi.IsAppBundle)
         {
             // If we're a macOS App Bundle we should point to the "Resources" directory
-            localFileSystem = new RealFileSystem($"{Client.LocalFullPath}/../Resources");
+            localFileSystem = new RealFileSystem($"{LocalFullPath}/../Resources");
         }
-        
-        var appdataFileSystem = new RealFileSystem(Client.AppDataFullPath);
-        var fileSystem = new ClientFileSystem(localFileSystem, appdataFileSystem);
-        Client.Runtime.Setup(window, fileSystem);
-        Client.startingConfig = windowConfig;
 
-        var skipIntro = Client.commandLineParameters.Args.GetValue<bool>("skipIntro") ||
-                        Client.Debug.LaunchedAsDebugMode();
+        var appdataFileSystem = new RealFileSystem(AppDataFullPath);
+        var fileSystem = new ClientFileSystem(localFileSystem, appdataFileSystem);
+        Runtime.Setup(window, fileSystem);
+        startingConfig = windowConfig;
+
+        var skipIntro = commandLineParameters.Args.GetValue<bool>("skipIntro") ||
+                        Debug.LaunchedAsDebugMode();
         // Setup Cartridges
         if (!skipIntro)
         {
-            Client.CartridgeChain.Append(new IntroCartridge(Client.Runtime, "NotExplosive.net",
-                Client.Random.Dirty.NextUInt(), 0.25f));
+            CartridgeChain.Append(new IntroCartridge(Runtime, "NotExplosive.net",
+                Random.Dirty.NextUInt(), 0.25f));
         }
 
         // Don't plug in the game cartridge until we're initialized
-        Client.InitializedGraphics.Add(() =>
-            Client.CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Client.Runtime)));
-        Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
+        InitializedGraphics.Add(() =>
+            CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Runtime)));
+        CartridgeChain.AboutToLoadLastCartridge += Demo.Begin;
 
         // Setup Game
         SafeRun(() =>
         {
             using var game = new ExplogineGame();
-            Client.currentGame = game;
+            currentGame = game;
 
             // Setup Exit Handler
-            Client.currentGame.Exiting += (_, _) =>
+            currentGame.Exiting += (_, _) =>
             {
-                Client.Debug.LogVerbose("Exited gracefully (running exit hooks)");
-                Client.Exited.BecomeReady();
+                Debug.LogVerbose("Exited gracefully (running exit hooks)");
+                Exited.BecomeReady();
             };
 
             // Launch
             // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
-            Client.Debug.LogVerbose("Running game");
+            Debug.LogVerbose("Running game");
             game.Run();
         });
-        
     }
 
     private static void SafeRun(Action function)
@@ -205,68 +204,67 @@ public static class Client
 
     public static void Exit()
     {
-        Client.currentGame.Exit();
+        currentGame.Exit();
     }
 
     internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, Game game)
     {
-        Client.Graphics = new Graphics(graphics, graphicsDevice);
-        Client.PlatformWindow.Setup(game.Window, Client.startingConfig);
+        Graphics = new Graphics(graphics, graphicsDevice);
+        PlatformWindow.Setup(game.Window, startingConfig);
 
-        Client.InitializedGraphics.BecomeReady();
+        InitializedGraphics.BecomeReady();
     }
 
     internal static void LoadContent(ContentManager contentManager)
     {
-        Client.loader = new Loader(Client.Runtime, contentManager);
-        Client.loader.AddLoadEvents(Client.Demo);
-        Client.loader.AddLoadEvents(Client.Essentials);
-        Client.loader.AddLoadEvents(Client.CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
-        Client.CartridgeChain.SetupLoadingCartridge(Client.loader);
-        Client.CartridgeChain.ValidateParameters(Client.commandLineParameters.Writer);
+        loader = new Loader(Runtime, contentManager);
+        loader.AddLoadEvents(Demo);
+        loader.AddLoadEvents(Essentials);
+        loader.AddLoadEvents(CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
+        CartridgeChain.SetupLoadingCartridge(loader);
+        CartridgeChain.ValidateParameters(commandLineParameters.Writer);
 
-        foreach (var arg in Client.commandLineParameters.Args.UnboundArgs())
+        foreach (var arg in commandLineParameters.Args.UnboundArgs())
         {
-            Client.Debug.LogWarning($"Was passed unregistered arg: {arg}");
+            Debug.LogWarning($"Was passed unregistered arg: {arg}");
         }
 
-        Client.Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
-        Client.HumanInput = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
+        Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
+        HumanInput = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
     }
 
     internal static void UnloadContent()
     {
-        Client.Assets.UnloadAll();
+        Assets.UnloadAll();
     }
 
     internal static void Update(float dt)
     {
-        for (var i = 0; i < Client.Debug.GameSpeed; i++)
+        for (var i = 0; i < Debug.GameSpeed; i++)
         {
-            Client.HumanInput = Client.HumanInput.Next(InputSnapshot.Human);
-            Client.Input = Client.Demo.ProcessInput(Client.Input);
+            HumanInput = HumanInput.Next(InputSnapshot.Human);
+            Input = Demo.ProcessInput(Input);
             var hitTest = new HitTestRoot();
-            Client.CartridgeChain.UpdateInput(new ConsumableInput(Client.Input), hitTest.BaseStack);
-            hitTest.Resolve(Client.Input.Mouse.Position());
-            Client.CartridgeChain.Update(dt);
-            Client.PlatformWindow.TextEnteredBuffer = new TextEnteredBuffer();
-            Client.Cursor.Resolve();
-            
+            CartridgeChain.UpdateInput(new ConsumableInput(Input), hitTest.BaseStack);
+            hitTest.Resolve(Input.Mouse.Position());
+            CartridgeChain.Update(dt);
+            PlatformWindow.TextEnteredBuffer = new TextEnteredBuffer();
+            Cursor.Resolve();
+
             TotalElapsedTime += dt;
         }
-
     }
 
     internal static void Draw()
     {
-        Client.Graphics.PushCanvas(Client.PlatformWindow.ClientCanvas.Internal);
-        Client.Graphics.Painter.Clear(Color.Black);
-        Client.CartridgeChain.DrawCurrentCartridge(Client.Graphics.Painter);
-        Client.Graphics.PopCanvas();
+        Graphics.PushCanvas(PlatformWindow.ClientCanvas.Internal);
+        Graphics.Painter.Clear(Color.Black);
+        CartridgeChain.DrawCurrentCartridge(Graphics.Painter);
+        Graphics.PopCanvas();
 
-        Client.CartridgeChain.PrepareDebugCartridge(Client.Graphics.Painter);
+        CartridgeChain.PrepareDebugCartridge(Graphics.Painter);
 
-        Client.PlatformWindow.ClientCanvas.Draw(Client.Graphics.Painter);
-        Client.CartridgeChain.DrawDebugCartridge(Client.Graphics.Painter);
+        PlatformWindow.ClientCanvas.Draw(Graphics.Painter);
+        CartridgeChain.DrawDebugCartridge(Graphics.Painter);
     }
 }
