@@ -167,16 +167,12 @@ public static class Client
         Client.CartridgeChain.AboutToLoadLastCartridge += Client.Demo.Begin;
 
         // Setup Game
-        Client.Debug.LogVerbose("Creating Game");
-        try
+        SafeRun(() =>
         {
-            var game = new ExplogineGame();
-
-            Client.Debug.LogVerbose("Game Created");
+            using var game = new ExplogineGame();
             Client.currentGame = game;
 
             // Setup Exit Handler
-            Client.Debug.LogVerbose("Wiring up Exit Handlers");
             Client.currentGame.Exiting += (_, _) =>
             {
                 Client.Debug.LogVerbose("Exited gracefully (running exit hooks)");
@@ -187,12 +183,24 @@ public static class Client
             // -- No code beyond this point will be run - game.Run() initiates the game loop -- //
             Client.Debug.LogVerbose("Running game");
             game.Run();
-            game.Dispose();
+        });
+        
+    }
+
+    private static void SafeRun(Action function)
+    {
+#if DEBUG
+        function();
+#else
+        try
+        {
+            function();
         }
         catch(Exception e)
         {
             Client.Debug.LogVerbose("ERROR: " + e.Message, $"\n{e.StackTrace}");
         }
+#endif
     }
 
     public static void Exit()
