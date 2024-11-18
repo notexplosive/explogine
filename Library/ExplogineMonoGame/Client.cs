@@ -29,6 +29,8 @@ public static class Client
     internal static readonly ClientRuntime Runtime = new();
     internal static readonly CartridgeChain CartridgeChain = new();
 
+    public static ClipboardApi Clipboard { get; } = new();
+
     internal static RealWindow PlatformWindow => (Runtime.Window as RealWindow)!;
     internal static bool IsInFocus => Headless || currentGame.IsActive;
 
