@@ -139,6 +139,7 @@ public class UndoStack
 
     public void AddTransaction(string name, bool isSilent, Func<Action> doAndGenerateUndo)
     {
+        Client.Debug.LogVerbose($"Added Undo Transaction: {name}");
         var transaction = new Transaction(name, isSilent, doAndGenerateUndo);
         transaction.Do();
         PushTransaction(transaction);
