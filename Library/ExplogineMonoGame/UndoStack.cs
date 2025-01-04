@@ -36,7 +36,7 @@ public class UndoStack
             pushStack.Push(transaction);
 
             // If the transaction is marked silent, and we have transactions before this one, do the next one back 
-            if (transaction.IsSilent && popStack.HasContent())
+            if (transaction.ShouldSkip && popStack.HasContent())
             {
                 // silent actions don't count as an "action"
                 UndoRedo(message, popStack, pushStack, method);
@@ -137,12 +137,13 @@ public class UndoStack
         }
     }
 
-    public void AddTransaction(string name, bool isSilent, Func<Action> doAndGenerateUndo)
+    public Transaction AddTransaction(string name, Func<Action> doAndGenerateUndo)
     {
         Client.Debug.LogVerbose($"Added Undo Transaction: {name}");
-        var transaction = new Transaction(name, isSilent, doAndGenerateUndo);
+        var transaction = new Transaction(name, doAndGenerateUndo);
         transaction.Do();
         PushTransaction(transaction);
+        return transaction;
     }
 
     private enum UndoRedoResult

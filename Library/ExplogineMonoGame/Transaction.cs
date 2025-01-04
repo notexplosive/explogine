@@ -5,16 +5,18 @@ namespace ExplogineMonoGame;
 public class Transaction
 {
     private readonly Func<Action> _doAndGenerate;
+    private Func<bool>? _shouldSkipFunction;
     private Action? _undo;
 
-    public Transaction(string name, bool isSilent, Func<Action> doAndGenerate)
+    public Transaction(string name, Func<Action> doAndGenerate)
     {
         _doAndGenerate = doAndGenerate;
         Name = name;
-        IsSilent = isSilent;
     }
 
     public string Name { get; }
+
+    public bool ShouldSkip => _shouldSkipFunction != null && _shouldSkipFunction();
 
     public void Do()
     {
@@ -31,5 +33,8 @@ public class Transaction
         _undo?.Invoke();
     }
 
-    public bool IsSilent { get; }
+    public void ShouldSkipWhen(Func<bool> when)
+    {
+        _shouldSkipFunction = when;
+    }
 }
