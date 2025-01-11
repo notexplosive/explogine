@@ -10,6 +10,7 @@ public class FileLogCapture : ILogCapture
 {
     private readonly List<LogMessage> _buffer = new();
     private readonly RealFileSystem.StreamDescriptor _stream;
+    private DateTime _timeSinceLastFlush;
 
     public FileLogCapture()
     {
@@ -18,6 +19,7 @@ public class FileLogCapture : ILogCapture
         var fileName = Path.Join("Logs", $"{DateTime.Now.ToFileTimeUtc()}.log");
         _stream = Directory.OpenFileStream(fileName);
         Client.Exited.Add(_stream.Close);
+        _timeSinceLastFlush = DateTime.Now;
     }
 
     public RealFileSystem Directory { get; }
@@ -26,9 +28,13 @@ public class FileLogCapture : ILogCapture
     {
         _buffer.Add(message);
         _stream.Write(message.ToFileString());
-        
-        // Flush on every write, even on release builds
-        _stream.Flush();
+
+        var currentTime = DateTime.Now;
+        if (Math.Abs((currentTime - _timeSinceLastFlush).TotalSeconds) > 1)
+        {
+            _stream.Flush();
+            _timeSinceLastFlush = currentTime;
+        }
     }
 
     public void WriteBufferAsFilename(string fileName)
