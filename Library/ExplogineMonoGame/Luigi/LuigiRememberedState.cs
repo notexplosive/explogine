@@ -10,7 +10,7 @@ public class LuigiRememberedState
     {
         _rememberedScrollPositions.Clear();
     }
-    
+
     public float GetScrollPosition(string scrollPositionId)
     {
         return _rememberedScrollPositions.GetValueOrDefault(scrollPositionId, 0);

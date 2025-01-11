@@ -35,18 +35,18 @@ public readonly struct GamePadFrameState
     }
 
     private const float Tolerance = 0.05f;
-    
-    public bool LeftThumbstickAt(PlayerIndex playerIndex, Vector2 target, float tolerance = GamePadFrameState.Tolerance)
+
+    public bool LeftThumbstickAt(PlayerIndex playerIndex, Vector2 target, float tolerance = Tolerance)
     {
         return ApproximatelyEqual(Current.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick, target, tolerance);
     }
-    
-    public bool RightThumbstickAt(PlayerIndex playerIndex, Vector2 target, float tolerance = GamePadFrameState.Tolerance)
+
+    public bool RightThumbstickAt(PlayerIndex playerIndex, Vector2 target, float tolerance = Tolerance)
     {
         return ApproximatelyEqual(Current.GamePadSnapshotOfPlayer(playerIndex).RightThumbstick, target, tolerance);
     }
 
-    public bool LeftThumbstickHit(PlayerIndex playerIndex, Vector2 target, float tolerance = GamePadFrameState.Tolerance)
+    public bool LeftThumbstickHit(PlayerIndex playerIndex, Vector2 target, float tolerance = Tolerance)
     {
         return ThumbstickHit(
             Previous.GamePadSnapshotOfPlayer(playerIndex).LeftThumbstick,

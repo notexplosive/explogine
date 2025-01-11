@@ -10,7 +10,7 @@ public class ConsoleLogCapture : ILogCapture
     {
         _filter = filter;
     }
-    
+
     public void CaptureMessage(LogMessage message)
     {
         if (message.Type.HasFlag(_filter))

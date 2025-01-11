@@ -4,6 +4,19 @@ namespace ExplogineCore;
 
 public static class PlatformApi
 {
+    public static bool IsAppBundle
+    {
+        get
+        {
+            if (OperatingSystem() == SupportedOperatingSystem.MacOs)
+            {
+                return AppDomain.CurrentDomain.BaseDirectory.Contains(".app/Contents/MacOS/");
+            }
+
+            return false;
+        }
+    }
+
     public static SupportedOperatingSystem OperatingSystem()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -36,18 +49,5 @@ public static class PlatformApi
         }
 
         return SupportedOperatingSystem.Unknown;
-    }
-
-    public static bool IsAppBundle
-    {
-        get
-        {
-            if (OperatingSystem() == SupportedOperatingSystem.MacOs)
-            {
-                return AppDomain.CurrentDomain.BaseDirectory.Contains(".app/Contents/MacOS/");
-            }
-
-            return false;
-        }
     }
 }

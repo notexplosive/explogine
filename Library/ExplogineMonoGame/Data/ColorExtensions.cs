@@ -36,7 +36,7 @@ public static class ColorExtensions
 
     public static bool IsFormattedAsRgbaHex(string colorString)
     {
-        return ColorExtensions.TryFromRgbaHexString(colorString, out var _);
+        return TryFromRgbaHexString(colorString, out var _);
     }
 
     public static bool TryFromRgbaHexString(string? colorString, [NotNullWhen(true)] out Color? result)
@@ -46,7 +46,7 @@ public static class ColorExtensions
             result = null;
             return false;
         }
-        
+
         if (colorString.Length == 6)
         {
             colorString += "FF";
@@ -71,7 +71,7 @@ public static class ColorExtensions
 
     public static Color FromRgbaHexString(string? colorString)
     {
-        if (ColorExtensions.TryFromRgbaHexString(colorString, out var color))
+        if (TryFromRgbaHexString(colorString, out var color))
         {
             return color.Value;
         }
@@ -91,10 +91,11 @@ public static class ColorExtensions
 
     public static Color DesaturatedBy(this Color color, float percent)
     {
-        var l = 0.3*color.R + 0.6*color.G + 0.1*color.B;
-        return new Color((byte)(color.R + percent * (l - color.R)), (byte)(color.G + percent * (l - color.G)), (byte)(color.B + percent * (l - color.B)));
+        var l = 0.3 * color.R + 0.6 * color.G + 0.1 * color.B;
+        return new Color((byte) (color.R + percent * (l - color.R)), (byte) (color.G + percent * (l - color.G)),
+            (byte) (color.B + percent * (l - color.B)));
     }
-    
+
     public static Color DimmedBy(this Color color, float amount)
     {
         return color.BrightenedBy(-amount);

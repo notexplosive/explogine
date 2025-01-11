@@ -127,6 +127,7 @@ public class SimpleGuiTheme : IGuiTheme
         {
             font = font.GetFont().WithHeight(label.FontSize.Value);
         }
+
         painter.DrawStringWithinRectangle(font, label.Text, label.Rectangle, label.Alignment,
             new DrawSettings {Depth = label.Depth});
     }
@@ -155,7 +156,7 @@ public class SimpleGuiTheme : IGuiTheme
 
     public void DrawCheckbox(Painter painter, Checkbox checkbox)
     {
-        var layout = L.Compute(checkbox.Rectangle, SimpleGuiTheme.CheckboxLayoutTemplate);
+        var layout = L.Compute(checkbox.Rectangle, CheckboxLayoutTemplate);
         var checkboxRect = layout.FindElement("checkbox").Rectangle;
         var labelRect = layout.FindElement("label").Rectangle;
         var isPressed = checkbox.IsEngaged && checkbox.IsHovered;

@@ -70,7 +70,7 @@ public static class InputSerialization
         var mouseButtonStates = 0;
         if (input.MouseButtonStates != null)
         {
-            mouseButtonStates = InputSerialization.StatesToInt(input.MouseButtonStates);
+            mouseButtonStates = StatesToInt(input.MouseButtonStates);
         }
 
         var mouse =
@@ -92,6 +92,6 @@ public static class InputSerialization
         }
 
         return
-            $"M:{mouse}|K:{keyboardBuilder}|E:{input.TextEntered.ToString()}|G:{InputSerialization.AsString(input.GamePadSnapshot1)}|G:{InputSerialization.AsString(input.GamePadSnapshot2)}|G:{InputSerialization.AsString(input.GamePadSnapshot3)}|G:{InputSerialization.AsString(input.GamePadSnapshot4)}";
+            $"M:{mouse}|K:{keyboardBuilder}|E:{input.TextEntered.ToString()}|G:{AsString(input.GamePadSnapshot1)}|G:{AsString(input.GamePadSnapshot2)}|G:{AsString(input.GamePadSnapshot3)}|G:{AsString(input.GamePadSnapshot4)}";
     }
 }

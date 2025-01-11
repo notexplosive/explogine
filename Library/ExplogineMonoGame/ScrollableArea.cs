@@ -1,7 +1,6 @@
 ﻿using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Gui;
-using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Rails;
 using Microsoft.Xna.Framework;
 
@@ -36,12 +35,11 @@ public class ScrollableArea : IUpdateInputHook
         {
             _horizontalScrollbar.UpdateInput(input, hitTestStack);
         }
-        
+
         if (EnabledAxes.Y)
         {
             _verticalScrollbar.UpdateInput(input, hitTestStack);
         }
-
     }
 
     public void Move(Vector2 offset)
@@ -75,7 +73,7 @@ public class ScrollableArea : IUpdateInputHook
     public bool CanScrollAlong(Axis scrollableAxis)
     {
         return ViewBounds.Size.GetAxis(scrollableAxis) <
-            InnerWorldBoundaries.Size.GetAxis(scrollableAxis);
+               InnerWorldBoundaries.Size.GetAxis(scrollableAxis);
     }
 
     public void DoScrollWithMouseWheel(ConsumableInput input, float increment = 25)
@@ -83,7 +81,7 @@ public class ScrollableArea : IUpdateInputHook
         var delta = -input.Mouse.ScrollDelta() / 120f * increment;
         if (delta != 0)
         {
-            SetPosition(_viewPosition + new Vector2(0,delta));
+            SetPosition(_viewPosition + new Vector2(0, delta));
         }
     }
 }

@@ -13,9 +13,9 @@ public delegate Asset LoadEventFunction();
 
 public class Loader
 {
-    private readonly IRuntime _runtime;
     private readonly ContentManager _content;
     private readonly List<ILoadEvent> _loadEvents = new();
+    private readonly IRuntime _runtime;
     private int _loadEventIndex;
 
     public Loader(IRuntime runtime, ContentManager content)
@@ -53,7 +53,7 @@ public class Loader
         if (foundLoadEvent is AssetLoadEvent assetLoadEvent)
         {
             _loadEvents.Remove(assetLoadEvent);
-            
+
             Client.Debug.LogVerbose("Found load event, running");
             var asset = assetLoadEvent.ExecuteAndReturnAsset();
             var result = asset as T;
@@ -147,7 +147,7 @@ public class Loader
     private string[] GetKeysFromContentDirectory()
     {
         Client.Debug.LogVerbose($"Scanning for Content at {_content.RootDirectory}");
-        
+
         var fileNames = _runtime.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
         var keys = new List<string>();
 

@@ -27,6 +27,7 @@ public class DeferredActions
         {
             item.Invoke();
         }
+
         _isRunning = false;
         _list.Clear();
     }

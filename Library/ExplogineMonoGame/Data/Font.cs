@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using ExplogineMonoGame.AssetManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -27,7 +26,7 @@ public class Font : IFont
     }
 
     /// <summary>
-    /// WARNING: Tremendously inefficient. This does a whole FormattedText layout computation multiple times
+    ///     WARNING: Tremendously inefficient. This does a whole FormattedText layout computation multiple times
     /// </summary>
     /// <param name="text"></param>
     /// <param name="bounds"></param>
@@ -49,7 +48,7 @@ public class Font : IFont
                 .FromFragments(new FormattedText.IFragment[] {new FormattedText.Fragment(this, textToRestrict)}, width)
                 .Size;
         }
-        
+
         (bool, string) Attempt(int length)
         {
             var attemptText = text.Substring(0, length);

@@ -2,6 +2,11 @@
 
 public readonly record struct ElementName(string Text) : IElementName
 {
+    public bool IsReal()
+    {
+        return true;
+    }
+
     public override string ToString()
     {
         return Text;
@@ -10,10 +15,5 @@ public readonly record struct ElementName(string Text) : IElementName
     public static implicit operator string(ElementName name)
     {
         return name.Text;
-    }
-
-    public bool IsReal()
-    {
-        return true;
     }
 }

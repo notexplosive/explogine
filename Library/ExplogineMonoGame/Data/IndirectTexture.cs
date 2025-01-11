@@ -17,12 +17,12 @@ public class IndirectTexture
     {
         _lazy = new Lazy<Texture2D>(texture);
     }
-    
+
     public static implicit operator IndirectTexture(Texture2D realTexture)
     {
         return new IndirectTexture(realTexture);
     }
-    
+
     public static implicit operator IndirectTexture(string textureAssetPath)
     {
         return new IndirectTexture(textureAssetPath);

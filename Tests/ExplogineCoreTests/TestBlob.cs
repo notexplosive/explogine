@@ -88,7 +88,7 @@ public class TestBlob
         var writeBlob = new SerialBlob();
         writeBlob.Declare("float_variable_a", 1f);
         writeBlob.Declare("float_variable_b", 2f);
-        writeBlob.Declare("enum_variable",TestEnum.TestEnumValueC);
+        writeBlob.Declare("enum_variable", TestEnum.TestEnumValueC);
         writeBlob.Dump(FileSystem, "written.txt");
 
         // Another blob (maybe the same blob after restarting the application), only has a subset of the original declared variables.

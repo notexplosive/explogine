@@ -24,7 +24,7 @@ public class ScrollAreaDescription : IGuiDescription
         var panelRectangle = rectangle;
         var panel = gui.Panel(panelRectangle, Depth.Middle, _childGroup.Theme);
 
-        var internalRectangle = new RectangleF(Vector2.Zero, new Vector2(rectangle.Width,float.MaxValue));
+        var internalRectangle = new RectangleF(Vector2.Zero, new Vector2(rectangle.Width, float.MaxValue));
         var baked = _childGroup.Bake(internalRectangle);
 
         var hoverState = new HoverState();
@@ -36,7 +36,8 @@ public class ScrollAreaDescription : IGuiDescription
             {
                 var delta = input.Mouse.ScrollDelta() / 2f;
                 input.Mouse.ConsumeScrollDelta();
-                panel.ScrollPositionY = Math.Clamp(panel.ScrollPositionY - delta, 0, Math.Max(0,baked.UsedSpace.Bottom - panelRectangle.Height));
+                panel.ScrollPositionY = Math.Clamp(panel.ScrollPositionY - delta, 0,
+                    Math.Max(0, baked.UsedSpace.Bottom - panelRectangle.Height));
 
                 if (_scrollPositionId != null)
                 {
@@ -44,7 +45,7 @@ public class ScrollAreaDescription : IGuiDescription
                 }
             }
         });
-        
+
         luaLayoutBuilder.ApplyInstructions(_childGroup, baked, context, panel.InnerGui);
 
         if (_scrollPositionId != null)

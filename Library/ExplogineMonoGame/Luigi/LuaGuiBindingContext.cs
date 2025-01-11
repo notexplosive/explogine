@@ -10,16 +10,20 @@ namespace ExplogineMonoGame.Luigi;
 public class LuaGuiBindingContext
 {
     public delegate void ButtonDelegate(DynValue[] args);
+
     public delegate void GraphicDelegate(DynValue[] args, Painter painter, RectangleF rectangle);
+
     public delegate void TextFieldInitializeDelegate(DynValue[] args, TextInputWidget textInputWidget);
+
     public delegate void TextFieldModifyDelegate(DynValue[] args, string currentText, bool isSubmit);
 
-    private readonly LuaRuntime _luaRuntime;
     private readonly Dictionary<string, ButtonDelegate?> _buttonCommands = new();
     private readonly Dictionary<string, GraphicDelegate?> _labelCommands = new();
+
+    private readonly LuaRuntime _luaRuntime;
+    private readonly Dictionary<string, RectangleF> _tagLookup = new();
     private readonly Dictionary<string, TextFieldInitializeDelegate?> _textFieldInitializeCommands = new();
     private readonly Dictionary<string, TextFieldModifyDelegate?> _textFieldModifyCommands = new();
-    private readonly Dictionary<string, RectangleF> _tagLookup = new();
 
     public LuaGuiBindingContext(LuaRuntime luaRuntime, LuigiRememberedState? rememberedState)
     {

@@ -52,7 +52,7 @@ public static class ReadOgg
         {
             return ReadVorbis(fullFileName);
         }
-        
+
         var length = vorbis.ReadSamples(frames, 0, frames.Length);
         var sampleRate = vorbis.SampleRate;
 

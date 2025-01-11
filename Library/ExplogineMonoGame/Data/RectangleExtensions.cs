@@ -10,7 +10,7 @@ public static class RectangleExtensions
     {
         return new RectangleF(rectangle);
     }
-    
+
     [Pure]
     public static Rectangle FromCorners(Point cornerA, Point cornerB)
     {
@@ -27,7 +27,7 @@ public static class RectangleExtensions
         rectangle.Offset(offsetAmount);
         return rectangle;
     }
-    
+
     [Pure]
     public static Rectangle Inflated(this Rectangle rectangle, Point inflateAmount)
     {

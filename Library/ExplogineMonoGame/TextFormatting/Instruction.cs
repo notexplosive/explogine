@@ -32,7 +32,7 @@ public abstract class Instruction
 
         foreach (var (key, command) in parser.GetCommands())
         {
-            if (!String.Equals(key, commandName, StringComparison.InvariantCultureIgnoreCase))
+            if (!string.Equals(key, commandName, StringComparison.InvariantCultureIgnoreCase))
             {
                 continue;
             }

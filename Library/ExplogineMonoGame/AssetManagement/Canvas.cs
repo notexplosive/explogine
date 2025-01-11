@@ -8,6 +8,8 @@ public sealed class Canvas : IDisposable
 {
     private RenderTarget2D? _renderTarget;
 
+    private Point _size;
+
     public Canvas(Point size) : this(size.X, size.Y)
     {
         // See other constructor
@@ -38,8 +40,6 @@ public sealed class Canvas : IDisposable
         }
     }
 
-    private Point _size;
-
     public void Dispose()
     {
         _renderTarget?.Dispose();
@@ -51,7 +51,7 @@ public sealed class Canvas : IDisposable
         {
             Size = new Point(Math.Max(Size.X, 1), Math.Max(Size.Y, 1));
         }
-        
+
         return new RenderTarget2D(
             Client.Graphics.Device,
             Size.X,

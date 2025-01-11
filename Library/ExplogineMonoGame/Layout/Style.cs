@@ -5,8 +5,11 @@ using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame.Layout;
 
-public readonly record struct Style(Orientation Orientation = Orientation.Horizontal,
-    int PaddingBetweenElements = 0, Vector2 Margin = default, Alignment Alignment = default)
+public readonly record struct Style(
+    Orientation Orientation = Orientation.Horizontal,
+    int PaddingBetweenElements = 0,
+    Vector2 Margin = default,
+    Alignment Alignment = default)
 {
     public Axis Axis
     {

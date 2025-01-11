@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using ExplogineCore.Data;
+﻿using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
 
 namespace ExplogineMonoGame.TextFormatting;
 
 public class FontCommand : Instruction
 {
-    public IFontGetter? Font { get; }
-
     internal FontCommand(IFontGetter font)
     {
         Font = font;
@@ -23,6 +20,8 @@ public class FontCommand : Instruction
             }
         }
     }
+
+    public IFontGetter? Font { get; }
 
     public override void Do(TextRun textRun)
     {

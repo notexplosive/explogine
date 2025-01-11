@@ -14,10 +14,10 @@ namespace ExplogineMonoGame.Luigi;
 /// </summary>
 public class LuaLayoutBuilder
 {
-    private readonly IGuiTheme _rootTheme;
-    private readonly Dictionary<string, IGuiTheme> _themes;
     private readonly Stack<LuaLayoutBuilderBlock> _groupStack = new();
     private readonly LuaLayoutBuilderBlock _rootBuilder;
+    private readonly IGuiTheme _rootTheme;
+    private readonly Dictionary<string, IGuiTheme> _themes;
     private int _idPool;
 
     public LuaLayoutBuilder(Style rootStyle, IGuiTheme rootTheme, Dictionary<string, IGuiTheme> themes)
@@ -47,9 +47,10 @@ public class LuaLayoutBuilder
         {
             return theme;
         }
+
         return _rootTheme;
     }
-    
+
     [UsedImplicitly]
     [LuaMember("beginGroup")]
     public LuaLayoutBuilderBlock BeginGroup(LayoutElement element, string? styleName = null)
@@ -61,7 +62,8 @@ public class LuaLayoutBuilder
 
     [UsedImplicitly]
     [LuaMember("beginScrollableGroup")]
-    public LuaLayoutBuilderBlock BeginScrollableGroup(LayoutElement element, string? scrollPositionId, string? styleName = null)
+    public LuaLayoutBuilderBlock BeginScrollableGroup(LayoutElement element, string? scrollPositionId,
+        string? styleName = null)
     {
         // The pane of the scrollable area in the parent group
         var elementId = AddElementToCurrentGroup(element);
@@ -70,7 +72,9 @@ public class LuaLayoutBuilder
         var childGroup = new LuaLayoutBuilderBlock(new LayoutBuilder(new Style()), GetStyleFromName(styleName));
 
         // Bind the pane and its content together and add an instruction to create it to the CURRENT group
-        CurrentGroup().AddInstruction(new GuiLayoutInstruction(elementId, new ScrollAreaDescription(childGroup, scrollPositionId)));
+        CurrentGroup()
+            .AddInstruction(
+                new GuiLayoutInstruction(elementId, new ScrollAreaDescription(childGroup, scrollPositionId)));
 
         // The child group becomes the new current group to build on
         _groupStack.Push(childGroup);

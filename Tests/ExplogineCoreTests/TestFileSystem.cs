@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using ExplogineCore;
-using ExplogineMonoGame;
 using FluentAssertions;
 using Xunit;
 
@@ -21,7 +20,7 @@ public abstract class TestFileSystem
         Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
         Temp.HasFile("foo/hello.txt").Should().BeTrue();
     }
-    
+
     [Fact]
     public void create_file_multiple_times()
     {
@@ -75,7 +74,7 @@ public abstract class TestFileSystem
         Temp.WriteToFile("foo/hello.txt", "this is some text");
         Temp.ReadFile("foo/hello.txt").Trim().Should().Be("this is some text");
     }
-    
+
     [Fact]
     public void can_delete_files()
     {

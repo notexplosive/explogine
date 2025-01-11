@@ -12,7 +12,7 @@ public class DesktopWindow : RealWindow
             var newWindowSize = new Point(Window.ClientBounds.Width, Window.ClientBounds.Height);
             InvokeResized(newWindowSize);
         }
-        
+
         void OnTextEntered(object? sender, TextInputEventArgs e)
         {
             InvokeTextEntered(e.Character);
@@ -22,8 +22,7 @@ public class DesktopWindow : RealWindow
         {
             InvokeFileDrop(e.Files);
         }
-        
-        
+
         Window.ClientSizeChanged += OnResize;
         Window.TextInput += OnTextEntered;
         Window.FileDrop += OnFileDrop;

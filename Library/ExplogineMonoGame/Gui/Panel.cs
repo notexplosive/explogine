@@ -50,6 +50,8 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable, IThemed
         Client.Graphics.PopCanvas();
     }
 
+    public IGuiTheme Theme { get; }
+
     private Matrix CameraMatrix()
     {
         return Matrix.CreateTranslation(new Vector3(0, -ScrollPositionY, 0));
@@ -64,6 +66,4 @@ public class Panel : IGuiWidget, IPreDrawWidget, IDisposable, IThemed
     {
         _extraUpdateInputBehavior += behavior;
     }
-
-    public IGuiTheme Theme { get; }
 }

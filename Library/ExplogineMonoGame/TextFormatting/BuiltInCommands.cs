@@ -13,7 +13,7 @@ public class BuiltInCommands
     public static ScopedCommand Font = new(
         args => new FontCommand(args),
         () => new FontCommand.Pop());
-    
+
     [UsedImplicitly]
     public static ScopedCommand Scale = new(
         args => new FontScaleCommand(args),

@@ -3,11 +3,11 @@
 namespace ExplogineMonoGame.AssetManagement;
 
 /// <summary>
-/// Asset that can be retrieved with `Assets.GetTexture()`
+///     Asset that can be retrieved with `Assets.GetTexture()`
 /// </summary>
 public class TextureAsset : Asset
 {
-    public TextureAsset(Texture2D texture): base(texture)
+    public TextureAsset(Texture2D texture) : base(texture)
     {
         Texture = texture;
     }

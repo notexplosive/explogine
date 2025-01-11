@@ -21,8 +21,8 @@ public class Axis
     {
         get
         {
-            yield return Axis.X;
-            yield return Axis.Y;
+            yield return X;
+            yield return Y;
         }
     }
 
@@ -33,14 +33,14 @@ public class Axis
 
     public Axis Opposite()
     {
-        if (this == Axis.X)
+        if (this == X)
         {
-            return Axis.Y;
+            return Y;
         }
 
-        if (this == Axis.Y)
+        if (this == Y)
         {
-            return Axis.X;
+            return X;
         }
 
         throw new Exception("Unknown Axis");
@@ -51,9 +51,9 @@ public class Axis
         switch (orientation)
         {
             case Data.Orientation.Horizontal:
-                return Axis.X;
+                return X;
             case Data.Orientation.Vertical:
-                return Axis.Y;
+                return Y;
             default:
                 throw new Exception($"Unknown Orientation {orientation}");
         }
@@ -61,12 +61,12 @@ public class Axis
 
     public Orientation Orientation()
     {
-        if (this == Axis.X)
+        if (this == X)
         {
             return Data.Orientation.Horizontal;
         }
 
-        if (this == Axis.Y)
+        if (this == Y)
         {
             return Data.Orientation.Vertical;
         }
@@ -76,12 +76,12 @@ public class Axis
 
     public T ReturnIfXElseY<T>(Func<T> doIfX, Func<T> doIfY)
     {
-        if (this == Axis.X)
+        if (this == X)
         {
             return doIfX();
         }
-            
-        if (this == Axis.Y)
+
+        if (this == Y)
         {
             return doIfY();
         }

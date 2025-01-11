@@ -24,6 +24,23 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         parameters.RegisterParameter<string>("repoPath");
     }
 
+    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
+    {
+        yield return new AssetLoadEvent("white-pixel", "Engine Tools", () =>
+        {
+            var canvas = new Canvas(1, 1);
+            Client.Graphics.PushCanvas(canvas);
+
+            painter.BeginSpriteBatch();
+            painter.Clear(Color.White);
+            painter.EndSpriteBatch();
+
+            Client.Graphics.PopCanvas();
+
+            return canvas.AsTextureAsset();
+        });
+    }
+
     public void ExecuteCommandLineArgs(CommandLineArguments args)
     {
         if (args.HasValue("randomSeed"))
@@ -54,29 +71,13 @@ internal class ClientEssentials : ICommandLineParameterProvider, ILoadEventProvi
         {
             Client.Debug.MonitorMemoryUsage = true;
         }
-        
+
         var repoPath = Client.Args.GetValue<string>("repoPath");
         if (!string.IsNullOrEmpty(repoPath))
         {
             Client.Debug.RepoFileSystem = new RealFileSystem(repoPath);
-            Client.Debug.LogVerbose($"Repo Path is now set to: {Path.GetFullPath(Client.Debug.RepoFileSystem.GetCurrentDirectory())}");
+            Client.Debug.LogVerbose(
+                $"Repo Path is now set to: {Path.GetFullPath(Client.Debug.RepoFileSystem.GetCurrentDirectory())}");
         }
-    }
-
-    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
-    {
-        yield return new AssetLoadEvent("white-pixel", "Engine Tools", () =>
-        {
-            var canvas = new Canvas(1, 1);
-            Client.Graphics.PushCanvas(canvas);
-
-            painter.BeginSpriteBatch();
-            painter.Clear(Color.White);
-            painter.EndSpriteBatch();
-
-            Client.Graphics.PopCanvas();
-
-            return canvas.AsTextureAsset();
-        });
     }
 }

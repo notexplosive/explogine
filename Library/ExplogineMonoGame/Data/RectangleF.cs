@@ -65,7 +65,7 @@ public struct RectangleF : IEquatable<RectangleF>
 
     public static RectangleF Transform(RectangleF rectangle, Matrix matrix)
     {
-        return RectangleF.FromCorners(
+        return FromCorners(
             Vector2.Transform(rectangle.TopLeft, matrix),
             Vector2.Transform(rectangle.BottomRight, matrix)
         );
@@ -178,7 +178,7 @@ public struct RectangleF : IEquatable<RectangleF>
 
         if (size.X <= 0 || size.Y <= 0)
         {
-            return RectangleF.Empty;
+            return Empty;
         }
 
         return new RectangleF(location, size);
@@ -465,7 +465,7 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         return ScreenToCanvas(Size.ToPoint(), angle);
     }
-    
+
     [Pure]
     public Matrix CanvasToScreen(Point outputDimensions, float angle = 0)
     {
@@ -613,7 +613,7 @@ public struct RectangleF : IEquatable<RectangleF>
     [Pure]
     public bool Envelopes(RectangleF smallerRect)
     {
-        var overlap = RectangleF.Intersect(this, smallerRect);
+        var overlap = Intersect(this, smallerRect);
         return overlap.Area >= smallerRect.Area;
     }
 
@@ -643,7 +643,7 @@ public struct RectangleF : IEquatable<RectangleF>
     [Pure]
     public bool Overlaps(RectangleF other)
     {
-        return RectangleF.Intersect(this, other).Area > 0;
+        return Intersect(this, other).Area > 0;
     }
 
     [Pure]
@@ -651,7 +651,7 @@ public struct RectangleF : IEquatable<RectangleF>
     {
         var topLeft = Vector2.Transform(TopLeft, matrix);
         var bottomRight = Vector2.Transform(BottomRight, matrix);
-        return RectangleF.FromCorners(topLeft, bottomRight);
+        return FromCorners(topLeft, bottomRight);
     }
 
     [Pure]
@@ -663,12 +663,12 @@ public struct RectangleF : IEquatable<RectangleF>
         }
         else
         {
-            percent = 1.0f - (-percent % 1.0f);
+            percent = 1.0f - -percent % 1.0f;
         }
 
         return percent switch
         {
-            <= 0.25f => Vector2.Lerp(TopLeft, TopRight, (percent % 0.25f) / 0.25f),
+            <= 0.25f => Vector2.Lerp(TopLeft, TopRight, percent % 0.25f / 0.25f),
             <= 0.5f => Vector2.Lerp(TopRight, BottomRight, (percent - 0.25f) % 0.25f / 0.25f),
             <= 0.75f => Vector2.Lerp(BottomRight, BottomLeft, (percent - 0.5f) % 0.25f / 0.25f),
             _ => Vector2.Lerp(BottomLeft, TopLeft, (percent - 0.75f) % 0.25f / 0.25f)

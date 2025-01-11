@@ -49,7 +49,7 @@ public abstract class MultipleDynamicTween<T> : ITween where T : TweenCollection
             var result = new T();
             for (var i = 0; i < _count; i++)
             {
-                 result.AddItem(_generateFunction(i));
+                result.AddItem(_generateFunction(i));
             }
 
             _generated = result;

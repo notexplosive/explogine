@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ExplogineCore;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;

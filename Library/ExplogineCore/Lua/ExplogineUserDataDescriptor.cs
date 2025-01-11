@@ -19,7 +19,8 @@ public class ExplogineUserDataDescriptor : StandardUserDataDescriptor
         {
             if (Attribute.IsDefined(member, typeof(LuaMemberAttribute)))
             {
-                LuaMemberAttribute luaMemberAttribute = (LuaMemberAttribute) member.GetCustomAttributes(typeof(LuaMemberAttribute)).First(a => a is LuaMemberAttribute);
+                var luaMemberAttribute = (LuaMemberAttribute) member.GetCustomAttributes(typeof(LuaMemberAttribute))
+                    .First(a => a is LuaMemberAttribute);
                 var name = luaMemberAttribute.LuaVisibleName;
 
                 if (name == null)
@@ -71,7 +72,8 @@ public class ExplogineUserDataDescriptor : StandardUserDataDescriptor
         return null;
     }
 
-    public override bool SetIndex(Script script, object clrObject, DynValue index, DynValue value, bool isDirectIndexing)
+    public override bool SetIndex(Script script, object clrObject, DynValue index, DynValue value,
+        bool isDirectIndexing)
     {
         // Client.Debug.Log("SetIndex", clrObject, index, isDirectIndexing);
         if (!isDirectIndexing)

@@ -71,7 +71,7 @@ public class LuaGui : IUpdateInputHook, IDrawHook, IEarlyDrawHook
 
         // Clear the state of the current layout
         _layoutBuilder.Clear();
-        
+
         // Consume instructions
         LuaRuntime.DoFile(_fileName);
 

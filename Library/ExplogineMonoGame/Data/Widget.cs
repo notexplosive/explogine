@@ -92,14 +92,14 @@ public class Widget : IDisposable, IDrawHook
             return;
         }
 
-        
         Canvas.Dispose();
         Canvas = new Canvas(newSize);
-        
+
         if (resizeWidgetAsWell)
         {
             Size = RenderResolution;
         }
+
         Resized?.Invoke();
     }
 

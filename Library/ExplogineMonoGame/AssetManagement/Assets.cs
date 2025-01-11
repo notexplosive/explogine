@@ -9,7 +9,7 @@ namespace ExplogineMonoGame.AssetManagement;
 public class Assets
 {
     private readonly Dictionary<string, Asset> _lookupTable = new();
-    
+
     public T GetAsset<T>(string key) where T : Asset
     {
         var (found, error) = CheckAsset<T>(key);
@@ -18,7 +18,7 @@ public class Assets
         {
             throw new Exception(error);
         }
-        
+
         return (_lookupTable[key] as T)!;
     }
 
@@ -39,10 +39,10 @@ public class Assets
         {
             return (false, $"No {typeof(T).Name} with name {key} found");
         }
-        
+
         return (true, "found");
     }
-    
+
     public Effect GetEffect(string key)
     {
         return GetAsset<EffectAsset>(key).Effect;

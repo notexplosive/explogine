@@ -119,7 +119,8 @@ public class UndoStack
             Undo();
         }
 
-        if ((input.Keyboard.Modifiers.ControlShift && input.Keyboard.GetButton(Keys.Z, true).WasPressed) || (input.Keyboard.Modifiers.Control && input.Keyboard.GetButton(Keys.Y, true).WasPressed))
+        if ((input.Keyboard.Modifiers.ControlShift && input.Keyboard.GetButton(Keys.Z, true).WasPressed) ||
+            (input.Keyboard.Modifiers.Control && input.Keyboard.GetButton(Keys.Y, true).WasPressed))
         {
             Redo();
         }

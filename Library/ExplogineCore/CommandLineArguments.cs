@@ -44,7 +44,7 @@ public class CommandLineArguments
     }
 
     /// <summary>
-    /// Args that were passed to the command line but don't map to anything understood by the application
+    ///     Args that were passed to the command line but don't map to anything understood by the application
     /// </summary>
     public List<string> UnboundArgs()
     {
@@ -52,7 +52,7 @@ public class CommandLineArguments
     }
 
     /// <summary>
-    /// Args that do not have dashes (eg: a file path)
+    ///     Args that do not have dashes (eg: a file path)
     /// </summary>
     public IEnumerable<string> OrderedArgs()
     {

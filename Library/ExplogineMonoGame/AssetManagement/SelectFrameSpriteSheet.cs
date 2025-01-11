@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +15,9 @@ public class SelectFrameSpriteSheet : SpriteSheet
     }
 
     public override int FrameCount => _frames.Count;
-    public override void DrawFrameAtPosition(Painter painter, int index, Vector2 position, Scale2D scale, DrawSettings drawSettings)
+
+    public override void DrawFrameAtPosition(Painter painter, int index, Vector2 position, Scale2D scale,
+        DrawSettings drawSettings)
     {
         var adjustedFrameSize = GetSourceRectForFrame(index).Size.ToVector2() * scale.Value;
         var destinationRect = new RectangleF(position, adjustedFrameSize);
@@ -29,6 +30,7 @@ public class SelectFrameSpriteSheet : SpriteSheet
         {
             throw new Exception("Sprite sheet has no frames");
         }
+
         return _frames[index % _frames.Count];
     }
 

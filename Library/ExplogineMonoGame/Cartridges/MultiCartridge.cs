@@ -55,7 +55,7 @@ public class MultiCartridge : BasicGameCartridge
     {
         return _cartridges[i];
     }
-    
+
     public T GetCartridge<T>() where T : Cartridge
     {
         for (var i = 0; i < _cartridges.Count; i++)
@@ -98,7 +98,7 @@ public class MultiCartridge : BasicGameCartridge
         {
             var originalRuntime = _cartridges[i].Runtime;
             var targetType = _cartridges[i].GetType();
-            _cartridges[i] = Cartridge.CreateInstance(targetType, originalRuntime);
+            _cartridges[i] = CreateInstance(targetType, originalRuntime);
 
             if (_cartridges[i] is ILoadEventProvider loadEventProvider)
             {

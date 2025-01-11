@@ -64,7 +64,7 @@ public class LoadingCartridge : Cartridge
                 _statusRingBuffer.AddFirst(_loader.NextStatus);
             }
 
-            while (_statusRingBuffer.Count > LoadingCartridge.RingBufferSize)
+            while (_statusRingBuffer.Count > RingBufferSize)
             {
                 _statusRingBuffer.RemoveLast();
             }
@@ -84,12 +84,12 @@ public class LoadingCartridge : Cartridge
         var loadingBarRect =
             RectangleF.FromSizeAlignedWithin(
                 Runtime.Window.RenderResolution.ToRectangleF(),
-                new Vector2(LoadingCartridge.ProgressBarWidth, LoadingCartridge.ProgressBarHeight), Alignment.Center);
+                new Vector2(ProgressBarWidth, ProgressBarHeight), Alignment.Center);
 
         var loadingBarFillRect =
             RectangleF.FromSizeAlignedWithin(
                 Runtime.Window.RenderResolution.ToRectangleF(),
-                new Vector2(LoadingCartridge.ProgressBarWidth, LoadingCartridge.ProgressBarHeight), Alignment.Center);
+                new Vector2(ProgressBarWidth, ProgressBarHeight), Alignment.Center);
 
         loadingBarFillRect.Size = new Vector2(loadingBarFillRect.Size.X * _loader.Percent, loadingBarFillRect.Size.Y);
 
@@ -110,7 +110,7 @@ public class LoadingCartridge : Cartridge
 
         var fragments = new List<FormattedText.IFragment>();
 
-        var bufferSize = LoadingCartridge.RingBufferSize;
+        var bufferSize = RingBufferSize;
         var itemIndex = 0;
         foreach (var item in _statusRingBuffer)
         {

@@ -8,12 +8,28 @@ public readonly record struct DrawOrigin
     private readonly Vector2 _constantValue;
     private readonly Style _style = Style.None;
 
+    public DrawOrigin(Vector2 vector2)
+    {
+        _constantValue = vector2;
+        _style = Style.Constant;
+    }
+
+    private DrawOrigin(Style style)
+    {
+        _style = style;
+        _constantValue = Vector2.Zero;
+    }
+
+    public static DrawOrigin Zero => new(Vector2.Zero);
+
+    public static DrawOrigin Center => new(Style.Centered);
+
     [Pure]
     public Vector2 Calculate(Point size)
     {
         return Calculate(size.ToVector2());
     }
-    
+
     [Pure]
     public Vector2 Calculate(Vector2 size)
     {
@@ -30,22 +46,6 @@ public readonly record struct DrawOrigin
         return Vector2.Zero;
     }
 
-    public DrawOrigin(Vector2 vector2)
-    {
-        _constantValue = vector2;
-        _style = Style.Constant;
-    }
-
-    public static DrawOrigin Zero => new(Vector2.Zero);
-
-    private DrawOrigin(Style style)
-    {
-        _style = style;
-        _constantValue = Vector2.Zero;
-    }
-
-    public static DrawOrigin Center => new(Style.Centered);
-
     public override string ToString()
     {
         switch (_style)
@@ -55,17 +55,11 @@ public readonly record struct DrawOrigin
             case Style.Constant:
                 return $"Constant: {_constantValue.X} {_constantValue.Y}";
         }
-        return $"Uninitialized ({nameof(DrawOrigin._style)} has not been set)";
+
+        return $"Uninitialized ({nameof(_style)} has not been set)";
     }
 
-    private enum Style
-    {
-        None,
-        Constant,
-        Centered
-    }
-    
-    public static DrawOrigin operator-(DrawOrigin origin)
+    public static DrawOrigin operator -(DrawOrigin origin)
     {
         if (origin._style == Style.Constant)
         {
@@ -73,5 +67,12 @@ public readonly record struct DrawOrigin
         }
 
         return origin;
+    }
+
+    private enum Style
+    {
+        None,
+        Constant,
+        Centered
     }
 }

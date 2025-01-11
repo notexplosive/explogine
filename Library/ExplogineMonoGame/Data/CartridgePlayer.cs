@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ExplogineMonoGame.Cartridges;
+﻿using ExplogineMonoGame.Cartridges;
 using ExplogineMonoGame.Rails;
 
 namespace ExplogineMonoGame.Data;
@@ -36,6 +34,4 @@ public class CartridgePlayer<TCartridge> : ICartridgePlayer where TCartridge : C
     {
         _cartridge.UpdateInput(input, hitTestStack);
     }
-
-    
 }

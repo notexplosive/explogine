@@ -32,10 +32,13 @@ public class FormattedText
         {
             instruction.Do(textRun);
         }
+
         _fragments = textRun.Fragments.ToArray();
     }
 
-    private FormattedText(IFontGetter startingFont, Color startingColor, string formatString, FormattedTextParser parser) : this(startingFont, startingColor,  Format.StringToInstructions(formatString, parser))
+    private FormattedText(IFontGetter startingFont, Color startingColor, string formatString,
+        FormattedTextParser parser) : this(startingFont, startingColor,
+        Format.StringToInstructions(formatString, parser))
     {
     }
 
@@ -58,7 +61,8 @@ public class FormattedText
         }
     }
 
-    public static FormattedText FromFormatString(IFontGetter startingFont, Color startingColor, string formatString, FormattedTextParser? parser = null)
+    public static FormattedText FromFormatString(IFontGetter startingFont, Color startingColor, string formatString,
+        FormattedTextParser? parser = null)
     {
         return new FormattedText(startingFont, startingColor, formatString, parser ?? FormattedTextParser.Default);
     }
@@ -75,7 +79,7 @@ public class FormattedText
         return restrictedSize + new Vector2(1);
     }
 
-    [Obsolete("RENAMED Use MaxNeededSize instead",true)]
+    [Obsolete("RENAMED Use MaxNeededSize instead", true)]
     public Vector2 MaxNeededWith()
     {
         return MaxNeededSize(float.MaxValue);
@@ -137,9 +141,9 @@ public class FormattedText
     {
         Vector2 Size { get; }
         float ScaleFactor { get; }
-        
+
         /// <summary>
-        /// We never actually call this I think?
+        ///     We never actually call this I think?
         /// </summary>
         void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings);
     }
@@ -150,8 +154,8 @@ public class FormattedText
     public interface IFragment
     {
         Vector2 Size { get; }
-        IGlyphData ToGlyphData();
         int CharCount { get; }
+        IGlyphData ToGlyphData();
     }
 
     /// <summary>
@@ -206,7 +210,9 @@ public class FormattedText
         }
     }
 
-    public readonly record struct WhiteSpaceGlyphData(Vector2 Size, float ScaleFactor,
+    public readonly record struct WhiteSpaceGlyphData(
+        Vector2 Size,
+        float ScaleFactor,
         WhiteSpaceType WhiteSpaceType) : IGlyphData
     {
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
@@ -220,8 +226,10 @@ public class FormattedText
         }
     }
 
-    public readonly record struct ImageGlyphData(IndirectAsset<ImageAsset> Image,
-        float ScaleFactor = 1f, Color? Color = null) : IGlyphData
+    public readonly record struct ImageGlyphData(
+        IndirectAsset<ImageAsset> Image,
+        float ScaleFactor = 1f,
+        Color? Color = null) : IGlyphData
     {
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
@@ -237,32 +245,40 @@ public class FormattedText
         }
     }
 
-    public readonly record struct DrawableGlyphData(Action<Painter, Vector2, DrawSettings> DrawCallback, Func<Vector2> SizeCallback)
+    public readonly record struct DrawableGlyphData(
+        Action<Painter, Vector2, DrawSettings> DrawCallback,
+        Func<Vector2> SizeCallback)
         : IGlyphData
     {
         public Vector2 Size => SizeCallback();
         public float ScaleFactor => 1f;
+
         public void OneOffDraw(Painter painter, Vector2 position, DrawSettings drawSettings)
         {
             DrawCallback(painter, position, drawSettings);
         }
     }
 
-    public readonly record struct FragmentDrawable(Action<Painter, Vector2, DrawSettings> DrawCallback, Func<Vector2> SizeCallback) : IFragment
+    public readonly record struct FragmentDrawable(
+        Action<Painter, Vector2, DrawSettings> DrawCallback,
+        Func<Vector2> SizeCallback) : IFragment
     {
         public Vector2 Size => SizeCallback();
+
         public IGlyphData ToGlyphData()
         {
             return new DrawableGlyphData(DrawCallback, SizeCallback);
         }
 
         /// <summary>
-        /// This represents one drawable "unit" so it's just 1 character
+        ///     This represents one drawable "unit" so it's just 1 character
         /// </summary>
         public int CharCount => 1;
     }
 
-    public readonly record struct FragmentImage(IndirectAsset<ImageAsset> Image, float ScaleFactor = 1f,
+    public readonly record struct FragmentImage(
+        IndirectAsset<ImageAsset> Image,
+        float ScaleFactor = 1f,
         Color? Color = null) : IFragment
     {
         public FragmentImage(Texture2D texture, float scaleFactor = 1f, Color? color = null) : this(
@@ -278,7 +294,7 @@ public class FormattedText
         }
 
         /// <summary>
-        /// An image is always just one character
+        ///     An image is always just one character
         /// </summary>
         public int CharCount => 1;
 
@@ -334,19 +350,18 @@ public class FormattedText
                 }
             }
 
-            return $"{Size} {result.ToString()}";
+            return $"{Size} {result}";
         }
     }
 }
 
 public class TextRun
 {
-    private readonly IFontGetter _startingFont;
-    private readonly Color _startingColor;
-    public List<FormattedText.IFragment> Fragments { get; } = new();
-    private readonly Stack<IFontGetter> _fonts = new();
     private readonly Stack<Color> _colors = new();
+    private readonly Stack<IFontGetter> _fonts = new();
     private readonly Stack<float> _scales = new();
+    private readonly Color _startingColor;
+    private readonly IFontGetter _startingFont;
 
     public TextRun(IFontGetter startingFont, Color startingColor)
     {
@@ -356,19 +371,21 @@ public class TextRun
         _colors.Push(startingColor);
     }
 
+    public List<FormattedText.IFragment> Fragments { get; } = new();
+
     public IFontGetter PeekFont()
     {
         if (!_fonts.TryPeek(out var font))
         {
             font = _startingFont.GetFont();
         }
-        
+
         var realFont = font.GetFont();
         font = realFont.WithHeight((int) (realFont.Height * PeekScale()));
 
         return font;
     }
-    
+
     public float PeekScale()
     {
         if (!_scales.TryPeek(out var scale))
@@ -403,7 +420,7 @@ public class TextRun
     {
         _colors.TryPop(out _);
     }
-    
+
     public void PopFont()
     {
         _fonts.TryPop(out _);

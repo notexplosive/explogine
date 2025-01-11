@@ -23,7 +23,7 @@ public static class StringExtensions
         {
             return str;
         }
-        
+
         var fileInfo = new FileInfo(str);
         return str.Substring(0, str.Length - fileInfo.Extension.Length);
     }

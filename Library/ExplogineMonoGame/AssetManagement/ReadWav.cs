@@ -20,17 +20,17 @@ public static class ReadWav
         {
             return initialSound;
         }
-        
+
         var offset = isRightChannel ? 1 : 0;
         var newFrames = new float[initialSound.Length];
         for (var i = 0; i < initialSound.Length / 2; i++)
         {
             newFrames[i] = initialSound.Frames[i * 2 + offset];
         }
-        
+
         return new UncompressedSound(newFrames, initialSound.Length / 2, AudioChannels.Mono, initialSound.SampleRate);
     }
-    
+
     public static UncompressedSound ReadWavFile(string fileName)
     {
         if (!File.Exists(fileName))
@@ -104,19 +104,22 @@ public static class ReadWav
         var numberOfSamples = wavBytes.Length / numberOfBytesPerSample;
         if (numberOfBytesPerSample == 2)
         {
-            return BitMagic.ConvertArrayOfBytesToNormalizedFloats<Int16>(wavBytes,numberOfSamples, numberOfBytesPerSample);
+            return BitMagic.ConvertArrayOfBytesToNormalizedFloats<short>(wavBytes, numberOfSamples,
+                numberOfBytesPerSample);
         }
-        
+
         if (numberOfBytesPerSample == 4)
         {
-            return BitMagic.ConvertArrayOfBytesToNormalizedFloats<Int32>(wavBytes,numberOfSamples, numberOfBytesPerSample);
+            return BitMagic.ConvertArrayOfBytesToNormalizedFloats<int>(wavBytes, numberOfSamples,
+                numberOfBytesPerSample);
         }
-        
+
         if (numberOfBytesPerSample == 8)
         {
-            return BitMagic.ConvertArrayOfBytesToNormalizedFloats<Int64>(wavBytes,numberOfSamples, numberOfBytesPerSample);
+            return BitMagic.ConvertArrayOfBytesToNormalizedFloats<long>(wavBytes, numberOfSamples,
+                numberOfBytesPerSample);
         }
-        
+
         throw new Exception($"Unsupported bit depth: {bitsPerSample}");
     }
 

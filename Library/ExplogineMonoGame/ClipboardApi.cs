@@ -10,7 +10,7 @@ public class ClipboardApi
         try
         {
             ClipboardService.GetText();
-            
+
             // if it didn't throw, we're good!
             return true;
         }
@@ -20,14 +20,14 @@ public class ClipboardApi
             return false;
         }
     }
-    
+
     public string? Get()
     {
         if (!IsAllowedOnPlatform())
         {
             return null;
         }
-        
+
         return ClipboardService.GetText();
     }
 
@@ -37,7 +37,7 @@ public class ClipboardApi
         {
             return;
         }
-        
+
         ClipboardService.SetText(text);
     }
 }

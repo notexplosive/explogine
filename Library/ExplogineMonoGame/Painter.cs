@@ -114,8 +114,8 @@ public class Painter
     }
 
     /// <summary>
-    /// Draws a Glyph (which already knows what position it wants to draw at)
-    /// This method is a little weird, it ignores settings.Origin and instead uses the origin vector parameter
+    ///     Draws a Glyph (which already knows what position it wants to draw at)
+    ///     This method is a little weird, it ignores settings.Origin and instead uses the origin vector parameter
     /// </summary>
     /// <param name="glyph"></param>
     /// <param name="origin"></param>
@@ -136,7 +136,7 @@ public class Painter
                 {
                     finalColor = finalColor.WithMultipliedOpacity((float) settings.Color.A / byte.MaxValue);
                 }
-                
+
                 _spriteBatch.DrawString(
                     realFont.SpriteFont,
                     fragmentChar.Text.ToString(),
@@ -173,7 +173,7 @@ public class Painter
             drawableGlyphData.DrawCallback(this, position, settings with {Origin = new DrawOrigin(letterOrigin)});
         }
     }
-    
+
     public void DrawFormattedStringWithinRectangle(FormattedText formattedText, RectangleF rectangle,
         Alignment alignment, DrawSettings settings)
     {
@@ -233,15 +233,16 @@ public class Painter
                 Color = Color.White.WithMultipliedOpacity(0.25f)
             });
         }
+
         settings.SourceRectangle ??= texture.Bounds;
-        
+
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
         var origin = settings.Origin.Calculate(settings.SourceRectangle.Value.Size);
 
         var destSize = destinationRectangle.Size;
         var sourceSize = settings.SourceRectangle.Value.Size.ToVector2();
         var scale = new Scale2D(destSize.StraightDivide(sourceSize));
-        
+
         settings = settings with {Origin = new DrawOrigin(origin)};
 
         DrawAtPosition(texture, destinationRectangle.Location, scale, settings);

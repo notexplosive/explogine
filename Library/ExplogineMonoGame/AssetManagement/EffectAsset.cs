@@ -4,10 +4,10 @@ namespace ExplogineMonoGame.AssetManagement;
 
 public class EffectAsset : Asset
 {
-    public Effect Effect { get; }
-
     public EffectAsset(Effect effect) : base(effect)
     {
         Effect = effect;
     }
+
+    public Effect Effect { get; }
 }

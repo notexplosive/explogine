@@ -4,5 +4,5 @@ public enum WhiteSpaceType
 {
     Space,
     Newline,
-    NullTerminator,
+    NullTerminator
 }

@@ -4,11 +4,6 @@ public class Selector : ISelector
 {
     private Selectable? _selected;
 
-    public Selectable? GetSelected()
-    {
-        return _selected;
-    }
-
     public bool IsSelected(Selectable selectable)
     {
         return _selected == selectable;
@@ -23,5 +18,10 @@ public class Selector : ISelector
     public void ClearSelection()
     {
         _selected = null;
+    }
+
+    public Selectable? GetSelected()
+    {
+        return _selected;
     }
 }

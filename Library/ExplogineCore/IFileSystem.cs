@@ -65,37 +65,37 @@ public interface IFileSystem
     public void WriteToFileBytes(string relativePathToFile, byte[] bytes);
 
     /// <summary>
-    /// Reads all bytes in a file
+    ///     Reads all bytes in a file
     /// </summary>
     /// <param name="relativePathToFile"></param>
     /// <returns></returns>
     public byte[] ReadBytes(string relativePathToFile);
 
     /// <summary>
-    /// Working Directory of this FileSystem object
+    ///     Working Directory of this FileSystem object
     /// </summary>
     /// <returns></returns>
     string GetCurrentDirectory();
 
     /// <summary>
-    /// Creates directory if it does not exist.
-    /// Creates a new filesystem object at the subdirectory path.
+    ///     Creates directory if it does not exist.
+    ///     Creates a new filesystem object at the subdirectory path.
     /// </summary>
     /// <param name="subDirectory"></param>
     /// <returns></returns>
     IFileSystem GetDirectory(string subDirectory);
 
     /// <summary>
-    /// Gets length of a file in bytes.
+    ///     Gets length of a file in bytes.
     /// </summary>
     /// <param name="relativePathToFile"></param>
     /// <returns></returns>
     public long GetFileSize(string relativePathToFile);
 
     Task<string> ReadFileAsync(string fileName);
-    
+
     /// <summary>
-    /// Create directory at the root of this FileSystem if it doesn't currently exist
+    ///     Create directory at the root of this FileSystem if it doesn't currently exist
     /// </summary>
     IFileSystem CreateDirectory(string directory = ".");
 }

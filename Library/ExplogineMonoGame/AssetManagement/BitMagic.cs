@@ -4,7 +4,8 @@ namespace ExplogineMonoGame.AssetManagement;
 
 public static class BitMagic
 {
-    public static float[] ConvertArrayOfBytesToNormalizedFloats<T>(byte[] bytes, int numberOfSamples, int numberOfBytesPerSample)
+    public static float[] ConvertArrayOfBytesToNormalizedFloats<T>(byte[] bytes, int numberOfSamples,
+        int numberOfBytesPerSample)
     {
         var result = new float[numberOfSamples];
         if (typeof(T) == typeof(short))

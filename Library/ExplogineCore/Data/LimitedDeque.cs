@@ -2,14 +2,14 @@
 
 public class LimitedDeque<T> where T : class
 {
-    private readonly int _sizeLimit = int.MaxValue;
     private readonly LinkedList<T> _content = new();
+    private readonly int _sizeLimit = int.MaxValue;
     private int _cachedLength;
 
     public LimitedDeque()
     {
     }
-    
+
     public LimitedDeque(int sizeLimit)
     {
         _sizeLimit = sizeLimit;
@@ -28,7 +28,7 @@ public class LimitedDeque<T> where T : class
     }
 
     /// <summary>
-    /// Throws if you don't have content
+    ///     Throws if you don't have content
     /// </summary>
     public T PopUnsafe()
     {

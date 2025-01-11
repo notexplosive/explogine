@@ -6,11 +6,15 @@ using Microsoft.Xna.Framework.Input;
 namespace ExplogineMonoGame.Gui;
 
 /// <summary>
-/// Shared code between Buttons and Button-likes (checkbox, radial, etc)
+///     Shared code between Buttons and Button-likes (checkbox, radial, etc)
 /// </summary>
 public class ButtonBehavior
 {
-    public bool UpdateInputAndReturnClicked(ConsumableInput input, HitTestStack hitTestStack, RectangleF rectangle, Depth depth)
+    public bool IsHovered { get; private set; }
+    public bool IsEngaged { get; private set; }
+
+    public bool UpdateInputAndReturnClicked(ConsumableInput input, HitTestStack hitTestStack, RectangleF rectangle,
+        Depth depth)
     {
         var result = false;
         hitTestStack.AddZone(rectangle, depth, ClearHovered, BecomeHovered);
@@ -29,6 +33,7 @@ public class ButtonBehavior
             {
                 IsEngaged = true;
             }
+
             Client.Cursor.Set(MouseCursor.Hand);
         }
 
@@ -39,7 +44,7 @@ public class ButtonBehavior
 
         return result;
     }
-    
+
     private void BecomeHovered()
     {
         IsHovered = true;
@@ -49,7 +54,4 @@ public class ButtonBehavior
     {
         IsHovered = false;
     }
-    
-    public bool IsHovered { get; private set; }
-    public bool IsEngaged { get; private set; }
 }

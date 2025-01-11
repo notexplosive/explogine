@@ -32,7 +32,7 @@ public static class Vector2Extensions
     {
         return vec.StraightMultiply(other.ToVector2());
     }
-    
+
     [Pure]
     public static Vector2 StraightModulo(this Vector2 vec, Vector2 other)
     {
@@ -50,7 +50,7 @@ public static class Vector2Extensions
     {
         return vec.StraightModulo(other.ToVector2());
     }
-    
+
     [Pure]
     public static RectangleF ToRectangleF(this Vector2 vec)
     {
@@ -62,7 +62,7 @@ public static class Vector2Extensions
     {
         return new Vector2(vec.X / other.X, vec.Y / other.Y);
     }
-    
+
     [Pure]
     public static Vector2 StraightDivide(this Vector2 vec, float otherX, float otherY)
     {
@@ -93,7 +93,7 @@ public static class Vector2Extensions
     [Pure]
     public static float CalculateScalarDifference(Vector2 outerSize, Vector2 innerSize)
     {
-        var enclosingSizeIsTooWide = Vector2Extensions.IsEnclosingSizeTooWide(outerSize, innerSize);
+        var enclosingSizeIsTooWide = IsEnclosingSizeTooWide(outerSize, innerSize);
 
         if (enclosingSizeIsTooWide)
         {
@@ -126,7 +126,7 @@ public static class Vector2Extensions
     {
         return MathF.Max(vec.X, vec.Y);
     }
-    
+
     [Pure]
     public static float MinXy(this Vector2 vec)
     {
@@ -138,7 +138,7 @@ public static class Vector2Extensions
     {
         return new Vector2(vec.X, 0);
     }
-    
+
     [Pure]
     public static Vector2 JustY(this Vector2 vec)
     {
@@ -150,13 +150,13 @@ public static class Vector2Extensions
     {
         return new Vector2(aspectRatio, 1);
     }
-    
+
     [Pure]
     public static Vector2 Truncated(this Vector2 vector)
     {
-        return new Vector2((int)vector.X, (int)vector.Y);
+        return new Vector2((int) vector.X, (int) vector.Y);
     }
-    
+
     public static void SetAxis(this ref Vector2 vec, Axis axis, float value)
     {
         if (axis == Axis.X)
@@ -188,9 +188,9 @@ public static class Vector2Extensions
 
         throw new ArgumentOutOfRangeException(nameof(axis), axis, null);
     }
-    
+
     /// <summary>
-    /// If given Axis.X, returns JustX(), if given Axis.Y, returns JustY()
+    ///     If given Axis.X, returns JustX(), if given Axis.Y, returns JustY()
     /// </summary>
     /// <param name="vec"></param>
     /// <param name="axis"></param>
@@ -245,7 +245,6 @@ public static class Vector2Extensions
     {
         var unitX = Vector2.UnitX;
 
-        
         var dot = Vector2.Dot(unitX.Normalized(), vector.Normalized());
 
         if (float.IsNaN(dot))
@@ -259,6 +258,7 @@ public static class Vector2Extensions
         {
             angle = -angle;
         }
+
         return angle;
     }
 
@@ -269,7 +269,7 @@ public static class Vector2Extensions
         copy.Floor();
         return copy;
     }
-    
+
     [Pure]
     public static Vector2 Ceilinged(this Vector2 vector2)
     {
@@ -321,7 +321,7 @@ public static class Vector2Extensions
         };
         return min;
     }
-    
+
     [Pure]
     public static Vector2 MaxAcross(Vector2 a, Vector2 b)
     {
@@ -332,14 +332,14 @@ public static class Vector2Extensions
         };
         return min;
     }
-    
+
     [Pure]
     [Obsolete("Use MaxAcross")]
     public static Vector2 Max(Vector2 a, Vector2 b)
     {
         return MaxAcross(a, b);
     }
-    
+
     [Pure]
     [Obsolete("Use MinAcross")]
     public static Vector2 Min(Vector2 a, Vector2 b)

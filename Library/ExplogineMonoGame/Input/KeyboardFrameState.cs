@@ -30,14 +30,14 @@ public readonly struct KeyboardFrameState
         get
         {
             var nativeControl = Current.IsDown(Keys.LeftControl)
-                          || Current.IsDown(Keys.RightControl);
+                                || Current.IsDown(Keys.RightControl);
             var alt = Current.IsDown(Keys.LeftAlt)
                       || Current.IsDown(Keys.RightAlt);
             var shift = Current.IsDown(Keys.LeftShift)
                         || Current.IsDown(Keys.RightShift);
             var nativeCommand = Current.IsDown(Keys.LeftWindows)
-                          || Current.IsDown(Keys.RightWindows);
-            
+                                || Current.IsDown(Keys.RightWindows);
+
             var effectiveControl = nativeControl;
 
             if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs)

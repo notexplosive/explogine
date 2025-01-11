@@ -11,7 +11,7 @@ public class StringLiteralInstruction : Instruction, ILiteralInstruction
     }
 
     public string Text { get; }
-    
+
     public FormattedText.IFragment GetFragment(IFontGetter font, Color color)
     {
         return new FormattedText.Fragment(font, Text, color);

@@ -9,7 +9,7 @@ public static class EnumExtensions
     {
         var enumValues = Enum.GetValues<TEnum>().ToList();
         var nextIndex = enumValues.IndexOf(current) + 1;
-        
+
         if (enumValues.IsValidIndex(nextIndex))
         {
             return enumValues[nextIndex];
@@ -17,13 +17,13 @@ public static class EnumExtensions
 
         return enumValues.First();
     }
-    
+
     [Pure]
     public static TEnum Previous<TEnum>(TEnum current) where TEnum : struct, Enum
     {
         var enumValues = Enum.GetValues<TEnum>().ToList();
         var previousIndex = enumValues.IndexOf(current) - 1;
-        
+
         if (enumValues.IsValidIndex(previousIndex))
         {
             return enumValues[previousIndex];

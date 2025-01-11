@@ -89,7 +89,9 @@ public static class Reflection
         where TAttribute : Attribute
     {
         var attributeType = typeof(TAttribute);
-        foreach (var member in type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static).Where(method => Attribute.IsDefined(method, attributeType)))
+        foreach (var member in type
+                     .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
+                                 BindingFlags.Static).Where(method => Attribute.IsDefined(method, attributeType)))
         {
             yield return member;
         }

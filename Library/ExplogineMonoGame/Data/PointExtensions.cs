@@ -152,7 +152,7 @@ public static class PointExtensions
 
         return b;
     }
-    
+
     [Pure]
     public static Point BiggerLeftToRight(Point a, Point b)
     {

@@ -75,7 +75,7 @@ public class RectResizer
             {
                 sizeDelta.Y -= overflow.Y;
             }
-            
+
             var newRect = _edgeDrag.StartingValue.ResizedOnEdge(_edgeGrabbed, sizeDelta);
             return newRect;
         }

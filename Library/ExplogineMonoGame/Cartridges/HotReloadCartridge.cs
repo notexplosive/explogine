@@ -6,7 +6,8 @@ namespace ExplogineMonoGame.Cartridges;
 
 public class HotReloadCartridge : MultiCartridge
 {
-    public HotReloadCartridge(IRuntime runtime, params Cartridge[] startingCartridges) : base(runtime, startingCartridges)
+    public HotReloadCartridge(IRuntime runtime, params Cartridge[] startingCartridges) : base(runtime,
+        startingCartridges)
     {
     }
 
@@ -17,26 +18,26 @@ public class HotReloadCartridge : MultiCartridge
         if (Client.Debug.IsPassiveOrActive && (ctrl || ctrlShift) && input.Keyboard.GetButton(Keys.R, true).WasPressed)
         {
             GC.Collect();
-            
+
             if (ctrl)
             {
                 var cartridge = CurrentCartridge;
                 RegenerateCurrentCartridge();
-                HotReloadCartridge.HotReload(cartridge);
+                HotReload(cartridge);
             }
-            else if(ctrlShift)
+            else if (ctrlShift)
             {
                 // Mega-reload, restart from scratch
-                for (int i = 0; i < TotalCartridgeCount; i++)
+                for (var i = 0; i < TotalCartridgeCount; i++)
                 {
                     var cartridge = GetCartridgeAt(i);
                     RegenerateCartridge(i);
-                    HotReloadCartridge.HotReload(cartridge);
+                    HotReload(cartridge);
                 }
-                
+
                 // hot reload self (does not actually regen own cartridge)
                 OnHotReload();
-                
+
                 SwapTo(0);
             }
         }

@@ -12,10 +12,10 @@ public class ClientDebug
     {
         // All logs are sent to the log file
         Output.AddParallel(LogFile);
-        
+
         // Verbose logs are always logged to console
         Output.AddParallel(new ConsoleLogCapture(LogMessageType.Verbose));
-        
+
         // Non-verbose logs are pushed to the stack, another logger my supersede it
         Output.PushToStack(new ConsoleLogCapture(LogMessageType.Info | LogMessageType.Warning | LogMessageType.Error));
 
