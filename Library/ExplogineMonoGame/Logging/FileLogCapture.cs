@@ -49,4 +49,9 @@ public class FileLogCapture : ILogCapture
             yield return line.ToFileString();
         }
     }
+
+    public void Flush()
+    {
+        _stream.Flush();
+    }
 }
