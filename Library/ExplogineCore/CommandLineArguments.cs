@@ -18,8 +18,20 @@ public class CommandLineArguments
         stringBuilder.AppendLine("Help:");
         foreach (var parameterPair in _parameters.RegisteredParameters)
         {
+            var foundValue = parameterPair.Value;
+            var valueAsString = foundValue.ToString();
+            if (valueAsString == string.Empty)
+            {
+                valueAsString = "\"\"";
+            }
+
+            if (foundValue is bool foundBool)
+            {
+                valueAsString = foundBool.ToString().ToLowerInvariant();
+            }
+            
             stringBuilder.AppendLine(
-                $"--{parameterPair.Key}=<{parameterPair.Value.GetType().Name}> (default: \"{parameterPair.Value}\")");
+                $"--{parameterPair.Key}=<{foundValue.GetType().Name}> (found: {valueAsString}) {_parameters.ExtraHelpInfo(parameterPair.Key)}");
         }
 
         return stringBuilder.ToString();

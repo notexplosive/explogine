@@ -5,6 +5,7 @@ public class CommandLineParameters
     private readonly HashSet<string> _boundArgs = new();
     private readonly Dictionary<string, string> _givenArgsTable = new();
     private readonly List<string> _orderedArgs = new();
+    private readonly Dictionary<string, string?> _extraHelpText = new();
 
     public CommandLineParameters(params string[] args)
     {
@@ -53,7 +54,7 @@ public class CommandLineParameters
 
     internal Dictionary<string, object> RegisteredParameters { get; } = new();
 
-    public void RegisterParameter<T>(string parameterName)
+    public void RegisterParameter<T>(string parameterName, string? description = null)
     {
         string value;
         var sanitizedParameterName = parameterName.ToLower();
@@ -67,6 +68,8 @@ public class CommandLineParameters
         {
             value = GetDefaultAsString<T>();
         }
+
+        _extraHelpText[parameterName] = description;
 
         if (typeof(T) == typeof(float))
         {
@@ -120,5 +123,10 @@ public class CommandLineParameters
     internal IEnumerable<string> OrderedArgs()
     {
         return _orderedArgs;
+    }
+
+    public string? ExtraHelpInfo(string parameterName)
+    {
+        return _extraHelpText[parameterName];
     }
 }
