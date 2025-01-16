@@ -69,7 +69,7 @@ public class CommandLineParameters
             value = GetDefaultAsString<T>();
         }
 
-        _extraHelpText[parameterName] = description;
+        _extraHelpText[sanitizedParameterName] = description;
 
         if (typeof(T) == typeof(float))
         {
@@ -127,6 +127,6 @@ public class CommandLineParameters
 
     public string? ExtraHelpInfo(string parameterName)
     {
-        return _extraHelpText[parameterName];
+        return _extraHelpText.GetValueOrDefault(parameterName);
     }
 }

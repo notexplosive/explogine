@@ -31,7 +31,7 @@ public class CommandLineArguments
             }
             
             stringBuilder.AppendLine(
-                $"--{parameterPair.Key}=<{foundValue.GetType().Name}> (found: {valueAsString}) {_parameters.ExtraHelpInfo(parameterPair.Key)}");
+                $"--{parameterPair.Key}=<{foundValue.GetType().Name}> (given: {valueAsString}) {_parameters.ExtraHelpInfo(parameterPair.Key)}");
         }
 
         return stringBuilder.ToString();
