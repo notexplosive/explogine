@@ -344,6 +344,7 @@ end
         {
 #if DEBUG
             stringBuilder.AppendLine("C# callstack");
+            stringBuilder.AppendLine(CurrentError?.Exception.ToString());
             stringBuilder.AppendLine(CurrentError?.Exception.StackTrace);
 #else
             stringBuilder.AppendLine("This type of error can't generate a callstack. :(");
