@@ -11,6 +11,7 @@ public class FileLogCapture : ILogCapture
     private readonly List<LogMessage> _buffer = new();
     private readonly RealFileSystem.StreamDescriptor _stream;
     private DateTime _timeSinceLastFlush;
+    private bool _isClosed;
 
     public FileLogCapture()
     {
@@ -18,7 +19,11 @@ public class FileLogCapture : ILogCapture
         Directory = new RealFileSystem(Client.AppDataFullPath);
         var fileName = Path.Join("Logs", $"{DateTime.Now.ToFileTimeUtc()}.log");
         _stream = Directory.OpenFileStream(fileName);
-        Client.Exited.Add(_stream.Close);
+        Client.Exited.Add(()=>
+        {
+            _stream.Close();
+            _isClosed = true;
+        });
         _timeSinceLastFlush = DateTime.Now;
     }
 
@@ -26,6 +31,11 @@ public class FileLogCapture : ILogCapture
 
     public void CaptureMessage(LogMessage message)
     {
+        if (_isClosed)
+        {
+            return;
+        }
+        
         _buffer.Add(message);
         _stream.Write(message.ToFileString());
 
