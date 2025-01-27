@@ -14,14 +14,12 @@ public enum InnerOuter
 
 public class NinepatchSheet : Asset
 {
-    private readonly Texture2D _originalTexture;
     private readonly NinepatchRects _rects;
     private readonly Texture2D[] _textures;
 
     public NinepatchSheet(Texture2D sourceTexture, Rectangle outerRect, Rectangle innerRect) :
         base(null) // Implements own dispose function
     {
-        _originalTexture = sourceTexture;
         Debug.Assert(sourceTexture.Width >= outerRect.Width, "Texture is to small");
         Debug.Assert(sourceTexture.Height >= outerRect.Height, "Texture is to small");
 

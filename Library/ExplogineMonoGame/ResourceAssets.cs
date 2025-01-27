@@ -21,6 +21,8 @@ public class ResourceAssets
     private readonly Dictionary<string, SpriteSheet?> _sheets = new();
     private readonly Dictionary<string, SoundEffect?> _soundEffects = new();
     private readonly Dictionary<string, SoundEffectInstance?> _soundInstances = new();
+    private readonly Dictionary<string, NinepatchSheet?> _ninePatches = new();
+    public Texture2D? AtlasTexture { get; private set; }
 
     public static ResourceAssets Instance => instanceImpl ??= new ResourceAssets();
 
@@ -44,6 +46,11 @@ public class ResourceAssets
         return _soundInstances.GetValueOrDefault(key);
     }
 
+    public NinepatchSheet? GetNinePatch(string key)
+    {
+        return _ninePatches.GetValueOrDefault(key);
+    }
+
     public IEnumerable<ILoadEvent> LoadEvents(Painter painter)
     {
         var resourceFiles = Client.Debug.RepoFileSystem.GetDirectory("Resource");
@@ -51,7 +58,7 @@ public class ResourceAssets
         yield return new VoidLoadEvent("sprite-atlas", "Sprite Atlas", () =>
         {
             var texturePath = Path.Join(resourceFiles.GetCurrentDirectory(), "atlas.png");
-            var texture = Texture2D.FromFile(Client.Graphics.Device, texturePath);
+            AtlasTexture = Texture2D.FromFile(Client.Graphics.Device, texturePath);
             var sheetInfo = JsonConvert.DeserializeObject<AsepriteSheetData>(resourceFiles.ReadFile("atlas.json"));
 
             if (sheetInfo != null)
@@ -75,7 +82,7 @@ public class ResourceAssets
                     var sheetName = string.Join(" ", splitSheetName);
                     if (!_sheets.ContainsKey(sheetName))
                     {
-                        _sheets.Add(sheetName, new SelectFrameSpriteSheet(texture));
+                        _sheets.Add(sheetName, new SelectFrameSpriteSheet(AtlasTexture));
                     }
 
                     var rect = frame.Value.Frame;
@@ -101,6 +108,8 @@ public class ResourceAssets
 
     public void Unload()
     {
+        AtlasTexture?.Dispose();
+        AtlasTexture = null;
         Unload(_dynamicTextures);
         Unload(_soundEffects);
         Unload(_soundInstances);
@@ -141,6 +150,11 @@ public class ResourceAssets
         var soundEffect = ReadOgg.ReadSoundEffect(vorbis);
         _soundInstances[path] = soundEffect.CreateInstance();
         _soundEffects[path] = soundEffect;
+    }
+    
+    public void AddNinepatch(NinepatchSheet ninepatchSheet, string path)
+    {
+        _ninePatches[path] = ninepatchSheet;
     }
 
     public void AddWavSound(IFileSystem resourceFiles, string path)
