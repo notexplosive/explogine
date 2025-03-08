@@ -22,7 +22,7 @@ public static class Client
     public static readonly OnceReady Exited = new();
     //
 
-    private static Game currentGame = null!;
+    public static Game CurrentGame = null!;
     private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
@@ -32,7 +32,7 @@ public static class Client
     public static ClipboardApi Clipboard { get; } = new();
 
     internal static RealWindow PlatformWindow => (Runtime.Window as RealWindow)!;
-    internal static bool IsInFocus => Headless || currentGame.IsActive;
+    internal static bool IsInFocus => Headless || CurrentGame.IsActive;
 
     /// <summary>
     ///     Wrapper around the MonoGame Graphics objects (Device and DeviceManager)
@@ -172,10 +172,10 @@ public static class Client
         SafeRun(() =>
         {
             using var game = new ExplogineGame();
-            currentGame = game;
+            CurrentGame = game;
 
             // Setup Exit Handler
-            currentGame.Exiting += (_, _) =>
+            CurrentGame.Exiting += (_, _) =>
             {
                 Debug.LogVerbose("Exited gracefully (running exit hooks)");
                 Exited.BecomeReady();
@@ -206,7 +206,7 @@ public static class Client
 
     public static void Exit()
     {
-        currentGame.Exit();
+        CurrentGame.Exit();
     }
 
     internal static void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, Game game)

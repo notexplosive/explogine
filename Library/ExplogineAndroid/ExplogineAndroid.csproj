@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0-android</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>ExplogineAndroid</AssemblyName>
+        <RootNamespace>ExplogineAndroid</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ExplogineMonoGame\ExplogineMonoGame.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MonoGame.Framework.Android" Version="3.8.2.1105"/>
+    </ItemGroup>
+
+</Project>
