@@ -8,13 +8,13 @@ namespace ExplogineMonoGame;
 public class Painter
 {
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly SpriteBatch _spriteBatch;
+    public SpriteBatch SpriteBatch { get; }
     private Texture2D? _pixelAsset;
 
     public Painter(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
-        _spriteBatch = new SpriteBatch(graphicsDevice);
+        SpriteBatch = new SpriteBatch(graphicsDevice);
     }
 
     public bool IsSpriteBatchInProgress { get; private set; }
@@ -38,18 +38,18 @@ public class Painter
 
     public void BeginSpriteBatch(SamplerState samplerState, Matrix? matrix = null, Effect? effect = null)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, effect, matrix);
+        SpriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, effect, matrix);
     }
 
     public void BeginSpriteBatch(Matrix matrix, Effect? effect = null)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, effect, matrix);
+        SpriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, effect, matrix);
         IsSpriteBatchInProgress = true;
     }
 
     public void EndSpriteBatch()
     {
-        _spriteBatch.End();
+        SpriteBatch.End();
         IsSpriteBatchInProgress = false;
     }
 
@@ -77,7 +77,7 @@ public class Painter
         var font = fontLike.GetFont();
         if (font is Font realFont)
         {
-            _spriteBatch.DrawString(
+            SpriteBatch.DrawString(
                 realFont.SpriteFont,
                 text,
                 position,
@@ -137,7 +137,7 @@ public class Painter
                     finalColor = finalColor.WithMultipliedOpacity((float) settings.Color.A / byte.MaxValue);
                 }
 
-                _spriteBatch.DrawString(
+                SpriteBatch.DrawString(
                     realFont.SpriteFont,
                     fragmentChar.Text.ToString(),
                     position,
@@ -207,7 +207,7 @@ public class Painter
     public void DrawAtPosition(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
-        _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
+        SpriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Calculate(settings.SourceRectangle.Value.Size), scale2D.Value, settings.FlipEffect,
             settings.Depth);
     }
