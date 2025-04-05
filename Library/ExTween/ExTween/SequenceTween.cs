@@ -11,6 +11,12 @@ public class SequenceTween : TweenCollection
 
     public bool IsLooping { get; set; }
 
+    public SequenceTween SetLooping(bool shouldLoop)
+    {
+        IsLooping = shouldLoop;
+        return this;
+    }
+
     public override ITweenDuration TotalDuration
     {
         get

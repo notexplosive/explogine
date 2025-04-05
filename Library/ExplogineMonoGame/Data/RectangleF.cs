@@ -674,4 +674,10 @@ public struct RectangleF : IEquatable<RectangleF>
             _ => Vector2.Lerp(BottomLeft, TopLeft, (percent - 0.75f) % 0.25f / 0.25f)
         };
     }
+
+    [Pure]
+    public RectangleF ScaledFromCenter(float scale)
+    {
+        return FromCenterAndSize(Center, Size * scale);
+    }
 }
