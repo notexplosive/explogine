@@ -12,5 +12,5 @@ program.run("aseprite", { "-b",
     "--sheet", "Resource/atlas.png",
     "--data", "Resource/atlas.json",
     "--sheet-pack",
-    "--inner-padding", 2,
+    "--shape-padding", 2,
     unpack(asepriteFiles) })
