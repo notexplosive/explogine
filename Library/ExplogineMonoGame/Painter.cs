@@ -109,7 +109,7 @@ public class Painter
         DrawSettings settings)
     {
         var rectangle = new RectangleF(position, formattedText.MaxNeededSize()).ToRectangle();
-        var movedRectangle = rectangle.Moved(-settings.Origin.Calculate(rectangle.Size));
+        var movedRectangle = rectangle.Moved((-settings.Origin.Calculate(rectangle.Size)).ToPoint());
         DrawFormattedStringWithinRectangle(formattedText, movedRectangle, alignment, settings);
     }
 
