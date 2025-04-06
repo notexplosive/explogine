@@ -22,7 +22,7 @@ public static class RectangleExtensions
     }
 
     [Pure]
-    public static Rectangle Moved(this Rectangle rectangle, Vector2 offsetAmount)
+    public static Rectangle Moved(this Rectangle rectangle, Point offsetAmount)
     {
         rectangle.Offset(offsetAmount);
         return rectangle;
