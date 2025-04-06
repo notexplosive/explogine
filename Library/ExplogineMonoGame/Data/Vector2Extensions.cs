@@ -14,6 +14,14 @@ public static class Vector2Extensions
         copy.Normalize();
         return copy;
     }
+    
+    [Pure]
+    public static Vector2 Rounded(this Vector2 vec)
+    {
+        var copy = vec;
+        copy.Round();
+        return copy;
+    }
 
     [Pure]
     public static Vector2 StraightMultiply(this Vector2 vec, Vector2 other)
