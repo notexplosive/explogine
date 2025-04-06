@@ -39,11 +39,11 @@ public static class ColorExtensions
         return TryFromRgbaHexString(colorString, out var _);
     }
 
-    public static bool TryFromRgbaHexString(string? colorString, [NotNullWhen(true)] out Color? result)
+    public static bool TryFromRgbaHexString(string? colorString, out Color result)
     {
         if (colorString == null)
         {
-            result = null;
+            result = default;
             return false;
         }
 
@@ -64,7 +64,7 @@ public static class ColorExtensions
         valid = valid && byte.TryParse(colorString.AsSpan(4, 2), NumberStyles.HexNumber, null, out b);
         valid = valid && byte.TryParse(colorString.AsSpan(6, 2), NumberStyles.HexNumber, null, out a);
 
-        result = valid ? new Color(r, g, b, a) : null;
+        result = valid ? new Color(r, g, b, a) : default;
 
         return valid;
     }
@@ -73,7 +73,7 @@ public static class ColorExtensions
     {
         if (TryFromRgbaHexString(colorString, out var color))
         {
-            return color.Value;
+            return color;
         }
 
         throw new Exception(
