@@ -4,11 +4,11 @@ namespace ExTween;
 
 public class Tween<T> : ITween, IValueTween
 {
+    private readonly float _duration;
     private readonly Ease.Delegate _ease;
     private readonly T _targetValue;
     private readonly Tweenable<T> _tweenable;
     private T _startingValue;
-    private readonly float _duration;
 
     public Tween(Tweenable<T> tweenable, T targetValue, float duration, Ease.Delegate ease)
     {
@@ -69,6 +69,16 @@ public class Tween<T> : ITween, IValueTween
         ApplyTimeToValue();
     }
 
+    public string TweenableValueAsString()
+    {
+        return _tweenable.ValueAsString();
+    }
+
+    public int TweenableHashCode()
+    {
+        return _tweenable.GetHashCode();
+    }
+
     private void ApplyTimeToValue()
     {
         var percent = CurrentTime / TotalDuration.GetDuration();
@@ -94,15 +104,5 @@ public class Tween<T> : ITween, IValueTween
         result += $" Value: {_tweenable.Value}";
 
         return result;
-    }
-
-    public string TweenableValueAsString()
-    {
-        return _tweenable.ValueAsString();
-    }
-
-    public int TweenableHashCode()
-    {
-        return _tweenable.GetHashCode();
     }
 }

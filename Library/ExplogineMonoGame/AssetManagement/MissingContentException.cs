@@ -6,6 +6,5 @@ public class MissingContentException : Exception
 {
     public MissingContentException(string str) : base(str)
     {
-        
     }
 }

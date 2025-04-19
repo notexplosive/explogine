@@ -140,7 +140,8 @@ public class TweenRenderingWidget : Widget, IUpdateInputHook
                 {
                     fillColor = new NoiseBasedRng(valueTween.TweenableHashCode()).NextColor();
                     unfilledColor = new Color(fillColor.B - 10, fillColor.G - 10, fillColor.B - 10);
-                }else if (tween is WaitSecondsTween)
+                }
+                else if (tween is WaitSecondsTween)
                 {
                     fillColor = Color.White.WithMultipliedOpacity(0.5f);
                     unfilledColor = Color.Transparent;

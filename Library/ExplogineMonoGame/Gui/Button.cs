@@ -1,14 +1,13 @@
 ﻿using System;
 using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 
 namespace ExplogineMonoGame.Gui;
 
 public class Button : IGuiWidget
 {
-    private readonly Action? _onPress;
     private readonly ButtonBehavior _behavior;
+    private readonly Action? _onPress;
 
     public Button(RectangleF rectangle, string label, Action? onPress, Depth depth)
     {
@@ -18,7 +17,7 @@ public class Button : IGuiWidget
         _onPress = onPress;
         Depth = depth;
     }
-    
+
     public RectangleF Rectangle { get; }
     public string Label { get; }
     public Depth Depth { get; }

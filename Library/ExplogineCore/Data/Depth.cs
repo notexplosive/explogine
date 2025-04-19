@@ -3,8 +3,8 @@
 public struct Depth
 {
     public const int MaxAsInt = 10569646;
-    public static Depth Middle = new(Depth.MaxAsInt / 2);
-    public static Depth Back = new(Depth.MaxAsInt);
+    public static Depth Middle = new(MaxAsInt / 2);
+    public static Depth Back = new(MaxAsInt);
 
     public Depth(int val)
     {
@@ -32,13 +32,13 @@ public struct Depth
     {
         get
         {
-            var isValid = AsInt <= Depth.MaxAsInt && AsInt >= 0;
+            var isValid = AsInt <= MaxAsInt && AsInt >= 0;
             if (!isValid)
             {
                 throw new Exception("Invalid Depth");
             }
 
-            return (float) AsInt / Depth.MaxAsInt;
+            return (float) AsInt / MaxAsInt;
         }
     }
 

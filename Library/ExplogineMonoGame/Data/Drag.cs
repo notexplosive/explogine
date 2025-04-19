@@ -13,7 +13,7 @@ public class Drag<T> where T : new()
     {
         IsDragging = true;
         StartingValue = startingValue;
-        
+
         Started?.Invoke();
     }
 
@@ -24,7 +24,7 @@ public class Drag<T> where T : new()
         IsDragging = false;
         StartingValue = default;
         TotalDelta = Vector2.Zero;
-        
+
         if (wasDragging)
         {
             Finished?.Invoke();

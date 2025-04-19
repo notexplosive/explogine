@@ -14,7 +14,11 @@ internal interface IHitTestZone
     bool Contains(Vector2 position, Matrix worldMatrix);
 }
 
-internal readonly record struct HitTestZone(RectangleF Rectangle, Depth Depth, Action? BeforeResolve, Action Callback,
+internal readonly record struct HitTestZone(
+    RectangleF Rectangle,
+    Depth Depth,
+    Action? BeforeResolve,
+    Action Callback,
     bool PassThrough) : IHitTestZone
 {
     public bool Contains(Vector2 position, Matrix worldMatrix)
@@ -27,18 +31,7 @@ internal readonly record struct HitTestZone(RectangleF Rectangle, Depth Depth, A
 
 internal class NestedHitTestZone : IHitTestZone
 {
-    public HitTestStack HitTestStack { get; }
     private readonly IHitTestZone _childZone;
-    
-    public Action? BeforeResolve => _childZone.BeforeResolve;
-    public Action Callback => _childZone.Callback;
-    public bool PassThrough => _childZone.PassThrough;
-    public bool Contains(Vector2 position, Matrix worldMatrix)
-    {
-        return _childZone.Contains(position, worldMatrix);
-    }
-
-    public Depth Depth => _childZone.Depth;
 
     public NestedHitTestZone(HitTestStack hitTestStack, IHitTestZone zone)
     {
@@ -46,16 +39,32 @@ internal class NestedHitTestZone : IHitTestZone
         HitTestStack = hitTestStack;
     }
 
+    public HitTestStack HitTestStack { get; }
+
+    public Action? BeforeResolve => _childZone.BeforeResolve;
+    public Action Callback => _childZone.Callback;
+    public bool PassThrough => _childZone.PassThrough;
+
+    public bool Contains(Vector2 position, Matrix worldMatrix)
+    {
+        return _childZone.Contains(position, worldMatrix);
+    }
+
+    public Depth Depth => _childZone.Depth;
+
     public string Name => $"NestedZone using {_childZone.Name}";
 }
 
-internal readonly record struct InfiniteHitTestZone(Depth Depth, Action? BeforeResolve, Action Callback,
+internal readonly record struct InfiniteHitTestZone(
+    Depth Depth,
+    Action? BeforeResolve,
+    Action Callback,
     bool PassThrough) : IHitTestZone
 {
     public bool Contains(Vector2 position, Matrix worldMatrix)
     {
         return true;
     }
-    
+
     public string Name => "InfiniteZone";
 }

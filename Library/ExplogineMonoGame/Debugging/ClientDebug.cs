@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.IO;
+using System.Text;
 using ExplogineCore;
 using ExplogineMonoGame.Logging;
 
@@ -8,18 +10,32 @@ public class ClientDebug
 {
     public ClientDebug()
     {
-        LogFile = new FileLogCapture();
+        // All logs are sent to the log file
         Output.AddParallel(LogFile);
-        Output.PushToStack(new ConsoleLogCapture());
+
+        // Verbose logs are always logged to console
+        Output.AddParallel(new ConsoleLogCapture(LogMessageType.Verbose));
+
+        // Non-verbose logs are pushed to the stack, another logger my supersede it
+        Output.PushToStack(new ConsoleLogCapture(LogMessageType.Info | LogMessageType.Warning | LogMessageType.Error));
+
+        var repoPath = AppDomain.CurrentDomain.BaseDirectory;
+
+        if (PlatformApi.OperatingSystem() == SupportedOperatingSystem.MacOs && PlatformApi.IsAppBundle)
+        {
+            repoPath = Path.Join(Client.LocalFullPath, "../Resources");
+        }
+
+        RepoFileSystem = new RealFileSystem(repoPath);
     }
 
     public LogOutput Output { get; } = new();
     public DebugLevel Level { get; internal set; }
     public bool IsActive => Level == DebugLevel.Active;
     public bool IsPassiveOrActive => Level == DebugLevel.Passive || IsActive;
-    public FileLogCapture LogFile { get; }
+    public FileLogCapture LogFile { get; } = new();
     public int GameSpeed { get; set; } = 1;
-    public IFileSystem RepoFileSystem { get; internal set; } = new RealFileSystem(".");
+    public IFileSystem RepoFileSystem { get; internal set; }
     public bool MonitorMemoryUsage { get; set; }
 
     public void CycleDebugMode()

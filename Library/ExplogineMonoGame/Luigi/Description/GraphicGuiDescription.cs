@@ -18,7 +18,7 @@ public class GraphicGuiDescription : IGuiDescription
         LuaLayoutBuilder luaLayoutBuilder)
     {
         context.LuaRegisterGraphicCommand(_command);
-        
+
         gui.DynamicLabel(rectangle, Depth.Middle,
             (painter, theme, rectangle2, depth) => { context.LuaDrawDynamicLabel(_command, painter, rectangle); });
     }

@@ -19,9 +19,15 @@ public static class ReadOgg
 
     public static SoundEffect ReadSoundEffect(UncompressedSound uncompressedSound)
     {
+        return new SoundEffect(ConvertFloatFramesToBytes(uncompressedSound.Frames), uncompressedSound.SampleRate,
+            uncompressedSound.Channels);
+    }
+
+    public static byte[] ConvertFloatFramesToBytes(float[] frames)
+    {
         // samples is a float[], we need a short[].
-        var castBuffer = new short[uncompressedSound.Length];
-        ReadOgg.ConvertFloatBufferToShortBuffer(uncompressedSound.Frames, castBuffer, castBuffer.Length);
+        var castBuffer = new short[frames.Length];
+        ConvertFloatBufferToShortBuffer(frames, castBuffer, castBuffer.Length);
 
         // Now that we have the sound represented as a short[], we need to convert that to bytes. Each short is 2 bytes long, so we need 2X as many bytes as we have shorts.
         var bytes = new byte[castBuffer.Length * 2];
@@ -34,8 +40,31 @@ public static class ReadOgg
             bytes[i * 2 + 1] = b[1];
         }
 
-        // Put it all together!
-        return new SoundEffect(bytes, uncompressedSound.SampleRate, uncompressedSound.Channels);
+        return bytes;
+    }
+
+    public static UncompressedSound ReadVorbisSingleChannel(string fullFileName, bool isRightChannel)
+    {
+        using var vorbis = new VorbisReader(fullFileName);
+        var frames = new float[vorbis.TotalSamples * vorbis.Channels];
+
+        if (vorbis.Channels == 1)
+        {
+            return ReadVorbis(fullFileName);
+        }
+
+        var length = vorbis.ReadSamples(frames, 0, frames.Length);
+        var sampleRate = vorbis.SampleRate;
+
+        var offset = isRightChannel ? 1 : 0;
+
+        var newFrames = new float[vorbis.TotalSamples];
+        for (var i = 0; i < vorbis.TotalSamples; i++)
+        {
+            newFrames[i] = frames[i * 2 + offset];
+        }
+
+        return new UncompressedSound(newFrames, length / 2, AudioChannels.Mono, sampleRate);
     }
 
     public static UncompressedSound ReadVorbis(string fullFileName)

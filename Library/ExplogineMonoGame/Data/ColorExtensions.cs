@@ -36,17 +36,17 @@ public static class ColorExtensions
 
     public static bool IsFormattedAsRgbaHex(string colorString)
     {
-        return ColorExtensions.TryFromRgbaHexString(colorString, out var _);
+        return TryFromRgbaHexString(colorString, out var _);
     }
 
-    public static bool TryFromRgbaHexString(string? colorString, [NotNullWhen(true)] out Color? result)
+    public static bool TryFromRgbaHexString(string? colorString, out Color result)
     {
         if (colorString == null)
         {
-            result = null;
+            result = default;
             return false;
         }
-        
+
         if (colorString.Length == 6)
         {
             colorString += "FF";
@@ -64,16 +64,16 @@ public static class ColorExtensions
         valid = valid && byte.TryParse(colorString.AsSpan(4, 2), NumberStyles.HexNumber, null, out b);
         valid = valid && byte.TryParse(colorString.AsSpan(6, 2), NumberStyles.HexNumber, null, out a);
 
-        result = valid ? new Color(r, g, b, a) : null;
+        result = valid ? new Color(r, g, b, a) : default;
 
         return valid;
     }
 
     public static Color FromRgbaHexString(string? colorString)
     {
-        if (ColorExtensions.TryFromRgbaHexString(colorString, out var color))
+        if (TryFromRgbaHexString(colorString, out var color))
         {
-            return color.Value;
+            return color;
         }
 
         throw new Exception(
@@ -91,10 +91,11 @@ public static class ColorExtensions
 
     public static Color DesaturatedBy(this Color color, float percent)
     {
-        var l = 0.3*color.R + 0.6*color.G + 0.1*color.B;
-        return new Color((byte)(color.R + percent * (l - color.R)), (byte)(color.G + percent * (l - color.G)), (byte)(color.B + percent * (l - color.B)));
+        var l = 0.3 * color.R + 0.6 * color.G + 0.1 * color.B;
+        return new Color((byte) (color.R + percent * (l - color.R)), (byte) (color.G + percent * (l - color.G)),
+            (byte) (color.B + percent * (l - color.B)));
     }
-    
+
     public static Color DimmedBy(this Color color, float amount)
     {
         return color.BrightenedBy(-amount);

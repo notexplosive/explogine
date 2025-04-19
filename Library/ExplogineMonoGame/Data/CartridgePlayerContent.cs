@@ -9,6 +9,11 @@ public class CartridgePlayerContent<T> : IWindowContent, IUpdateHook where T : C
 {
     private ICartridgePlayer? _cartridgePlayer;
 
+    public void Update(float dt)
+    {
+        _cartridgePlayer?.Update(dt);
+    }
+
     public void Initialize(InternalWindow parentWindow)
     {
         _cartridgePlayer = new CartridgePlayer<T>(parentWindow.Widget);
@@ -27,10 +32,5 @@ public class CartridgePlayerContent<T> : IWindowContent, IUpdateHook where T : C
     public void UpdateInputInWindow(ConsumableInput input, HitTestStack hitTestStack)
     {
         _cartridgePlayer?.UpdateInput(input, hitTestStack);
-    }
-        
-    public void Update(float dt)
-    {
-        _cartridgePlayer?.Update(dt);
     }
 }

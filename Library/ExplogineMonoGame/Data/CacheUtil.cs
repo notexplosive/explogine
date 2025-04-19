@@ -9,11 +9,11 @@ public static class CacheUtil
     public static string CharToString(char c)
     {
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryAdd
-        if (!CacheUtil.CharToStringTable.ContainsKey(c))
+        if (!CharToStringTable.ContainsKey(c))
         {
-            CacheUtil.CharToStringTable.Add(c, c.ToString());
+            CharToStringTable.Add(c, c.ToString());
         }
-        
-        return CacheUtil.CharToStringTable[c];
+
+        return CharToStringTable[c];
     }
 }

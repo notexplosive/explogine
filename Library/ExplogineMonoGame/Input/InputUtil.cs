@@ -27,7 +27,7 @@ internal static class InputUtil
 
     public static bool CheckIsDown(ButtonState[]? mouseButtonStates, MouseButton mouseButton)
     {
-        return mouseButtonStates != null && InputUtil.CheckIsDown(mouseButtonStates, (int) mouseButton);
+        return mouseButtonStates != null && CheckIsDown(mouseButtonStates, (int) mouseButton);
     }
 
     public static Keys? CharToKeys(char c)

@@ -80,7 +80,7 @@ public class IntroCartridge : Cartridge
             * Matrix.CreateScale(new Vector3(new Vector2(_wholeWord.Scale), 1))
             * Matrix.CreateTranslation(new Vector3(Runtime.Window.RenderResolution.ToVector2() / 2, 0))
         );
-        painter.Clear(new(0, 70, 178));
+        painter.Clear(new Color(0, 70, 178));
 
         var centerOfScreen = Runtime.Window.RenderResolution.ToVector2() / 2;
 

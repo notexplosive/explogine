@@ -16,12 +16,12 @@ public static class L
 
     public static LayoutElement FixedElement(string name, float x, float y)
     {
-        return L.FixedElement(x, y) with {Name = new ElementName(name)};
+        return FixedElement(x, y) with {Name = new ElementName(name)};
     }
 
     public static LayoutElement FixedElement(string name, Vector2 size)
     {
-        return L.FixedElement(name, size.X, size.Y);
+        return FixedElement(name, size.X, size.Y);
     }
 
     public static LayoutElement Group(LayoutElement parentElement, Style settings,
@@ -32,7 +32,7 @@ public static class L
 
     public static LayoutElement FillVertical(string name, float horizontalSize)
     {
-        return L.FillVertical(horizontalSize) with {Name = new ElementName(name)};
+        return FillVertical(horizontalSize) with {Name = new ElementName(name)};
     }
 
     public static LayoutElement FillVertical(float horizontalSize)
@@ -42,7 +42,7 @@ public static class L
 
     public static LayoutElement FillHorizontal(string name, float verticalSize)
     {
-        return L.FillHorizontal(verticalSize) with {Name = new ElementName(name)};
+        return FillHorizontal(verticalSize) with {Name = new ElementName(name)};
     }
 
     public static LayoutElement FillHorizontal(float verticalSize)
@@ -55,9 +55,9 @@ public static class L
         switch (orientation)
         {
             case Orientation.Horizontal:
-                return L.FillHorizontal(name, perpendicularSize);
+                return FillHorizontal(name, perpendicularSize);
             case Orientation.Vertical:
-                return L.FillHorizontal(name, perpendicularSize);
+                return FillHorizontal(name, perpendicularSize);
             default:
                 throw new Exception("Unknown orientation");
         }
@@ -75,12 +75,12 @@ public static class L
 
     public static LayoutArrangement Compute(RectangleF outerRectangle, LayoutElementGroup root)
     {
-        return L.ComputeNested(outerRectangle, root);
+        return ComputeNested(outerRectangle, root);
     }
 
     public static LayoutArrangement Compute(Point outerSize, LayoutElementGroup root)
     {
-        return L.Compute(new RectangleF(Vector2.Zero, outerSize.ToVector2()), root);
+        return Compute(new RectangleF(Vector2.Zero, outerSize.ToVector2()), root);
     }
 
     public static string ToJson(LayoutArrangement arrangement)
@@ -94,7 +94,7 @@ public static class L
         var serialized = JsonConvert.DeserializeObject<LayoutSerialization.SerializedGroup>(json);
         var group = serialized.Deserialize();
 
-        return L.Compute(outerRectangle, group);
+        return Compute(outerRectangle, group);
     }
 
     private static LayoutArrangement ComputeNested(RectangleF outerRectangle, LayoutElementGroup group,
@@ -103,7 +103,7 @@ public static class L
         var settings = group.Style;
         var rawElements = group.Elements;
         outerRectangle.Inflate(-settings.Margin.X, -settings.Margin.Y);
-        var elements = L.ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
+        var elements = ConvertToFixedElements(rawElements, settings, outerRectangle.Size);
         var namedRects = new OneToMany<string, BakedLayoutElement>();
         var estimatedPosition = new Vector2();
         var usedPerpendicularSize = 0f;
@@ -176,7 +176,7 @@ public static class L
 
             if (element.Children.HasValue)
             {
-                var childArrangement = L.ComputeNested(elementRectangle, element.Children.Value, nestLevel + 1);
+                var childArrangement = ComputeNested(elementRectangle, element.Children.Value, nestLevel + 1);
                 foreach (var keyVal in childArrangement)
                 {
                     namedRects.Add(keyVal.Key, keyVal.Value);

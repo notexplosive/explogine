@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 namespace ExplogineMonoGame.Luigi;
 
 /// <summary>
-/// Supplies the static lua objects
+///     Supplies the static lua objects
 /// </summary>
 public static class LuaGuiStatic
 {
@@ -18,7 +18,7 @@ public static class LuaGuiStatic
     public static OrientationFactory Orientation { get; } = new();
 
     /// <summary>
-    /// This is the `fill` object
+    ///     This is the `fill` object
     /// </summary>
     public class FillFactory
     {
@@ -46,7 +46,7 @@ public static class LuaGuiStatic
         {
             return L.FillBoth();
         }
-        
+
         [UsedImplicitly]
         [LuaMember("fixed")]
         public LayoutElement Fixed(float width, float? height = null)
@@ -56,7 +56,7 @@ public static class LuaGuiStatic
     }
 
     /// <summary>
-    /// This is the `gui` object
+    ///     This is the `gui` object
     /// </summary>
     public class GuiFactory
     {
@@ -77,21 +77,21 @@ public static class LuaGuiStatic
         {
             return new GraphicGuiDescription(commandName);
         }
-        
+
         [UsedImplicitly]
         [LuaMember("button")]
         public IGuiDescription Button(LuaGuiCommand command, string? label = null)
         {
             return new ButtonGuiDescription(command, label ?? "");
         }
-        
+
         [UsedImplicitly]
         [LuaMember("textField")]
         public IGuiDescription TextField(LuaGuiCommand submitCommand, LuaGuiCommand? createCommand)
         {
             return new TextFieldGuiDescription(submitCommand, createCommand);
         }
-        
+
         [UsedImplicitly]
         [LuaMember("tag")]
         public IGuiDescription Tag(string tagName)
@@ -110,66 +110,66 @@ public static class LuaGuiStatic
         [LuaMember("topLeft")]
         public Alignment TopLeft()
         {
-            return ExplogineMonoGame.Data.Alignment.TopLeft;
+            return Data.Alignment.TopLeft;
         }
 
         [UsedImplicitly]
         [LuaMember("topCenter")]
         public Alignment TopCenter()
         {
-            return ExplogineMonoGame.Data.Alignment.TopCenter;
+            return Data.Alignment.TopCenter;
         }
 
         [UsedImplicitly]
         [LuaMember("topRight")]
         public Alignment TopRight()
         {
-            return ExplogineMonoGame.Data.Alignment.TopRight;
+            return Data.Alignment.TopRight;
         }
 
         [UsedImplicitly]
         [LuaMember("centerLeft")]
         public Alignment CenterLeft()
         {
-            return ExplogineMonoGame.Data.Alignment.CenterLeft;
+            return Data.Alignment.CenterLeft;
         }
 
         [UsedImplicitly]
         [LuaMember("center")]
         public Alignment CenterCenter()
         {
-            return ExplogineMonoGame.Data.Alignment.Center;
+            return Data.Alignment.Center;
         }
 
         [UsedImplicitly]
         [LuaMember("CenterRight")]
         public Alignment CenterRight()
         {
-            return ExplogineMonoGame.Data.Alignment.CenterRight;
+            return Data.Alignment.CenterRight;
         }
 
         [UsedImplicitly]
         [LuaMember("BottomLeft")]
         public Alignment BottomLeft()
         {
-            return ExplogineMonoGame.Data.Alignment.BottomLeft;
+            return Data.Alignment.BottomLeft;
         }
 
         [UsedImplicitly]
         [LuaMember("BottomCenter")]
         public Alignment BottomCenter()
         {
-            return ExplogineMonoGame.Data.Alignment.BottomCenter;
+            return Data.Alignment.BottomCenter;
         }
 
         [UsedImplicitly]
         [LuaMember("BottomRight")]
         public Alignment BottomRight()
         {
-            return ExplogineMonoGame.Data.Alignment.BottomRight;
+            return Data.Alignment.BottomRight;
         }
     }
-    
+
     public class OrientationFactory
     {
         internal OrientationFactory()

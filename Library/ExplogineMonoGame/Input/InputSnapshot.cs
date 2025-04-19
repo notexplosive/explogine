@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExplogineCore.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -160,14 +159,14 @@ public readonly struct InputSnapshot
             {
                 return new InputSnapshot(
                     Array.Empty<Keys>(),
-                    InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
+                    AlmostEmptyMouseState.Position.ToVector2(),
                     new[]
                     {
                         ButtonState.Released,
                         ButtonState.Released,
                         ButtonState.Released
                     },
-                    InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
+                    AlmostEmptyMouseState.ScrollWheelValue,
                     new TextEnteredBuffer(),
                     new GamePadSnapshot(),
                     new GamePadSnapshot(),
@@ -199,7 +198,6 @@ public readonly struct InputSnapshot
                 new GamePadSnapshot(p3.PressedButtons(), p3.ThumbSticks, p3.Triggers),
                 new GamePadSnapshot(p4.PressedButtons(), p4.ThumbSticks, p4.Triggers)
             );
-
         }
     }
 
@@ -222,14 +220,14 @@ public readonly struct InputSnapshot
 
     public static InputSnapshot Empty =>
         new(Array.Empty<Keys>(),
-            InputSnapshot.AlmostEmptyMouseState.Position.ToVector2(),
+            AlmostEmptyMouseState.Position.ToVector2(),
             new[]
             {
                 ButtonState.Released,
                 ButtonState.Released,
                 ButtonState.Released
             },
-            InputSnapshot.AlmostEmptyMouseState.ScrollWheelValue,
+            AlmostEmptyMouseState.ScrollWheelValue,
             new TextEnteredBuffer(),
             new GamePadSnapshot(),
             new GamePadSnapshot(),

@@ -2,17 +2,16 @@
 
 public class CommandLineParameters
 {
-    private readonly Dictionary<string, string> _givenArgsTable = new();
     private readonly HashSet<string> _boundArgs = new();
-    
-    public CommandLineArguments Args { get; }
-    public CommandLineParametersWriter Writer { get; }
+    private readonly Dictionary<string, string> _givenArgsTable = new();
+    private readonly List<string> _orderedArgs = new();
+    private readonly Dictionary<string, string?> _extraHelpText = new();
 
     public CommandLineParameters(params string[] args)
     {
         Writer = new CommandLineParametersWriter(this);
         Args = new CommandLineArguments(this);
-        
+
         bool CommandHasValue(string s)
         {
             return s.Contains('=');
@@ -29,7 +28,7 @@ public class CommandLineParameters
             {
                 throw new Exception("Individual args should not contain spaces, did you forget to use params?");
             }
-            
+
             if (IsCommand(arg))
             {
                 var argWithoutDashes = arg.Remove(0, 2);
@@ -43,12 +42,19 @@ public class CommandLineParameters
                     _givenArgsTable[argWithoutDashes.ToLower()] = "true";
                 }
             }
+            else
+            {
+                _orderedArgs.Add(arg);
+            }
         }
     }
 
+    public CommandLineArguments Args { get; }
+    public CommandLineParametersWriter Writer { get; }
+
     internal Dictionary<string, object> RegisteredParameters { get; } = new();
 
-    public void RegisterParameter<T>(string parameterName)
+    public void RegisterParameter<T>(string parameterName, string? description = null)
     {
         string value;
         var sanitizedParameterName = parameterName.ToLower();
@@ -60,8 +66,10 @@ public class CommandLineParameters
         }
         else
         {
-            value = CommandLineParameters.GetDefaultAsString<T>();
+            value = GetDefaultAsString<T>();
         }
+
+        _extraHelpText[sanitizedParameterName] = description;
 
         if (typeof(T) == typeof(float))
         {
@@ -106,9 +114,19 @@ public class CommandLineParameters
         var sanitizedName = name.ToLower();
         return _boundArgs.Contains(sanitizedName);
     }
-    
+
     internal List<string> UnboundArgs()
     {
         return _givenArgsTable.Keys.ToList();
+    }
+
+    internal IEnumerable<string> OrderedArgs()
+    {
+        return _orderedArgs;
+    }
+
+    public string? ExtraHelpInfo(string parameterName)
+    {
+        return _extraHelpText.GetValueOrDefault(parameterName);
     }
 }

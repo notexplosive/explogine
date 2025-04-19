@@ -38,12 +38,12 @@ public static class Ease
 
     public static float CubicFastSlow(float x)
     {
-        return 1 - Ease.CubicSlowFast(1 - x);
+        return 1 - CubicSlowFast(1 - x);
     }
 
     public static float QuadFastSlow(float x)
     {
-        return 1 - Ease.QuadSlowFast(1 - x);
+        return 1 - QuadSlowFast(1 - x);
     }
 
     public static float QuadSlowFastSlow(float x)

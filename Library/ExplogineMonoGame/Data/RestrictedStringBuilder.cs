@@ -18,7 +18,7 @@ public static class RestrictedStringBuilder
     public static RestrictedString<FormattedText.GlyphDataLine> FromFragments(FormattedText.IFragment[] fragments,
         float restrictedWidth)
     {
-        var lettersAsFragments = RestrictedStringBuilder.BreakFragmentsIntoIndividualLetters(fragments);
+        var lettersAsFragments = BreakFragmentsIntoIndividualLetters(fragments);
 
         return RestrictedString<FormattedText.GlyphDataLine>.ExecuteStrategy(new FragmentStrategy(),
             lettersAsFragments,
@@ -80,13 +80,15 @@ public static class RestrictedStringBuilder
                 var finalLetterFragment =
                     new FormattedText.CharGlyphData(finalFragmentAsFragment.Font, ' ');
 
-                lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(new Vector2(0, finalLetterFragment.Size.Y),
+                lettersAsFragments[^1] = new FormattedText.WhiteSpaceGlyphData(
+                    new Vector2(0, finalLetterFragment.Size.Y),
                     finalLetterFragment.ScaleFactor, WhiteSpaceType.NullTerminator);
             }
             else
             {
                 lettersAsFragments[^1] =
-                    new FormattedText.WhiteSpaceGlyphData(finalFragment.Size.JustY(), 1f, WhiteSpaceType.NullTerminator);
+                    new FormattedText.WhiteSpaceGlyphData(finalFragment.Size.JustY(), 1f,
+                        WhiteSpaceType.NullTerminator);
             }
         }
 
@@ -176,7 +178,8 @@ public static class RestrictedStringBuilder
         {
             // we divide size by 2 because MeasureString('\n') gives us 2x the height you expect
             var size = new Vector2(0, newlineCharacter.Size.Y / 2);
-            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor, WhiteSpaceType.Newline));
+            _currentLineFragments.Add(new FormattedText.WhiteSpaceGlyphData(size, newlineCharacter.ScaleFactor,
+                WhiteSpaceType.Newline));
         }
 
         public float CurrentTokenWidth()

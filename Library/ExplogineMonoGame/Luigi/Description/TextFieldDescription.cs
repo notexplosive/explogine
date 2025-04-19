@@ -21,22 +21,22 @@ public class TextFieldGuiDescription : IGuiDescription
     {
         var textInputWidget = gui.TextInputWidget(rectangle, block.Theme.Font,
             new TextInputWidget.Settings {IsSingleLine = true, Selector = new AlwaysSelected()});
-        
+
         context.LuaRegisterTextFieldModifyCommand(_submitCommand);
         textInputWidget.Submitted += () =>
         {
             context.LuaRunTextFieldModified(_submitCommand, textInputWidget.Text, true);
         };
-        
-        textInputWidget.TextChanged += text =>
-        {
-            context.LuaRunTextFieldModified(_submitCommand, text, false);
-        };
+
+        textInputWidget.TextChanged += text => { context.LuaRunTextFieldModified(_submitCommand, text, false); };
 
         if (_initializeCommand.HasValue)
         {
             context.LuaRegisterTextFieldInitializeCommand(_initializeCommand.Value);
-            context.OnFinalize += () => { context.LuaRunTextFieldInitialize(_initializeCommand.Value, textInputWidget); };
+            context.OnFinalize += () =>
+            {
+                context.LuaRunTextFieldInitialize(_initializeCommand.Value, textInputWidget);
+            };
         }
     }
 }

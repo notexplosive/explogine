@@ -19,6 +19,11 @@ public class Demo : ILoadEventProvider
     public bool IsRecording => _demoState == DemoState.Recording;
     public bool IsPlaying => _demoState == DemoState.Playing;
 
+    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
+    {
+        yield return new VoidLoadEvent("PrepareDemo", "Engine Tools", Prepare);
+    }
+
     public void BeginRecording()
     {
         _records.Clear();
@@ -206,10 +211,5 @@ public class Demo : ILoadEventProvider
         Stopped,
         Recording,
         Playing
-    }
-
-    public IEnumerable<ILoadEvent?> LoadEvents(Painter painter)
-    {
-        yield return new VoidLoadEvent("PrepareDemo", "Engine Tools", Prepare);
     }
 }

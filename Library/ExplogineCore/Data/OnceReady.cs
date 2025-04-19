@@ -17,6 +17,11 @@ public class OnceReady
         }
     }
 
+    public void Remove(Action action)
+    {
+        Readied -= action;
+    }
+
     public void BecomeReady()
     {
         IsReady = true;

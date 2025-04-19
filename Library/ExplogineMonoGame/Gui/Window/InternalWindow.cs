@@ -120,8 +120,12 @@ public class InternalWindow : IUpdateInputHook, IDisposable
         RequestedConstrainToBounds?.Invoke(this);
     }
 
-    public record Settings(string Title, ISizeSettings SizeSettings, ImageAsset? Icon = null,
-        bool AllowMinimize = false, bool AllowClose = true);
+    public record Settings(
+        string Title,
+        ISizeSettings SizeSettings,
+        ImageAsset? Icon = null,
+        bool AllowMinimize = false,
+        bool AllowClose = true);
 
     public interface ISizeSettings
     {
@@ -139,7 +143,9 @@ public class InternalWindow : IUpdateInputHook, IDisposable
         }
     }
 
-    public readonly record struct ResizableSizeSettings(Point StartingSize, Point MinimumSize,
+    public readonly record struct ResizableSizeSettings(
+        Point StartingSize,
+        Point MinimumSize,
         bool AllowFullScreen = false) : ISizeSettings
     {
         public static ResizableSizeSettings Create(Point startingSize, Point? minimumSize = null,

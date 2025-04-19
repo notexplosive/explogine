@@ -10,7 +10,7 @@ public static class RectangleExtensions
     {
         return new RectangleF(rectangle);
     }
-    
+
     [Pure]
     public static Rectangle FromCorners(Point cornerA, Point cornerB)
     {
@@ -22,12 +22,12 @@ public static class RectangleExtensions
     }
 
     [Pure]
-    public static Rectangle Moved(this Rectangle rectangle, Vector2 offsetAmount)
+    public static Rectangle Moved(this Rectangle rectangle, Point offsetAmount)
     {
         rectangle.Offset(offsetAmount);
         return rectangle;
     }
-    
+
     [Pure]
     public static Rectangle Inflated(this Rectangle rectangle, Point inflateAmount)
     {

@@ -18,7 +18,7 @@ public struct Polygon
     public Vector2 this[Index i] => CenterLocation + RelativePoints[i];
 
     /// <summary>
-    /// Rotate the Polygon clockwise around its own center
+    ///     Rotate the Polygon clockwise around its own center
     /// </summary>
     /// <param name="radians"></param>
     /// <returns></returns>

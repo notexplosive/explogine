@@ -19,7 +19,6 @@ public class LuaLayoutBuilderBlock
     private readonly List<GuiLayoutInstruction> _instructions = new();
 
     private readonly LayoutBuilder _layout;
-    public IGuiTheme Theme { get; }
 
     public LuaLayoutBuilderBlock(LayoutBuilder layout, IGuiTheme theme)
     {
@@ -27,10 +26,13 @@ public class LuaLayoutBuilderBlock
         Theme = theme;
     }
 
-    private LuaLayoutBuilderBlock(LayoutBuilder layout, List<GuiLayoutInstruction> instructions, IGuiTheme theme) : this(layout, theme)
+    private LuaLayoutBuilderBlock(LayoutBuilder layout, List<GuiLayoutInstruction> instructions, IGuiTheme theme) :
+        this(layout, theme)
     {
         _instructions = instructions;
     }
+
+    public IGuiTheme Theme { get; }
 
     [MoonSharpHidden]
     public void AddInstruction(GuiLayoutInstruction instruction)
@@ -101,23 +103,23 @@ public class LuaLayoutBuilderBlock
             case ("left", "top"):
                 newAlignment = Alignment.TopLeft;
                 break;
-            
+
             case ("left", "center"):
                 newAlignment = Alignment.CenterLeft;
                 break;
-            
+
             case ("left", "bottom"):
                 newAlignment = Alignment.BottomLeft;
                 break;
-            
+
             case ("center", "top"):
                 newAlignment = Alignment.TopCenter;
                 break;
-            
+
             case ("center", "center"):
                 newAlignment = Alignment.Center;
                 break;
-            
+
             case ("center", "bottom"):
                 newAlignment = Alignment.BottomCenter;
                 break;
@@ -125,15 +127,15 @@ public class LuaLayoutBuilderBlock
             case ("right", "top"):
                 newAlignment = Alignment.TopRight;
                 break;
-            
+
             case ("right", "center"):
                 newAlignment = Alignment.CenterRight;
                 break;
-            
+
             case ("right", "bottom"):
                 newAlignment = Alignment.BottomRight;
                 break;
-            
+
             default:
                 Client.Debug.Log("Unknown alignment:", horizontalAlignment, verticalAlignment);
                 break;
@@ -142,7 +144,7 @@ public class LuaLayoutBuilderBlock
         _layout.Style = _layout.Style with {Alignment = newAlignment};
         return this;
     }
-    
+
     [UsedImplicitly]
     [LuaMember("padding")]
     public LuaLayoutBuilderBlock Padding(int padding)
@@ -150,7 +152,7 @@ public class LuaLayoutBuilderBlock
         _layout.Style = _layout.Style with {PaddingBetweenElements = padding};
         return this;
     }
-    
+
     [UsedImplicitly]
     [LuaMember("margin")]
     public LuaLayoutBuilderBlock Margin(float horizontal, float vertical)

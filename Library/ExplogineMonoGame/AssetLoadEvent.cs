@@ -15,7 +15,7 @@ public readonly record struct VoidLoadEvent(string Key, string? Info, Action Fun
     public VoidLoadEvent(string key, Action eventFunction) : this(key, null, eventFunction)
     {
     }
-    
+
     public void Execute()
     {
         Function.Invoke();
@@ -24,13 +24,13 @@ public readonly record struct VoidLoadEvent(string Key, string? Info, Action Fun
 
 public readonly record struct AssetLoadEvent(string Key, string? Info, LoadEventFunction Function) : ILoadEvent
 {
+    public AssetLoadEvent(string key, LoadEventFunction eventFunction) : this(key, null, eventFunction)
+    {
+    }
+
     public void Execute()
     {
         ExecuteAndReturnAsset();
-    }
-
-    public AssetLoadEvent(string key, LoadEventFunction eventFunction) : this(key, null, eventFunction)
-    {
     }
 
     public Asset ExecuteAndReturnAsset()

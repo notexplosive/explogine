@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace ExTween;
@@ -27,8 +26,16 @@ public abstract class TweenCollection : ITween
         }
     }
 
+    public abstract ITweenDuration TotalDuration { get; }
+    public abstract float Update(float dt);
+    public abstract bool IsDone();
+    public abstract void Reset();
+    public abstract void JumpTo(float time);
+    public abstract void SkipToEnd();
+
     /// <summary>
-    /// Generic version of "Add" or "AddChannel", use this if you're not sure which type of TweenCollection you're dealing with
+    ///     Generic version of "Add" or "AddChannel", use this if you're not sure which type of TweenCollection you're dealing
+    ///     with
     /// </summary>
     /// <param name="tween"></param>
     public TweenCollection AddItem(ITween tween)
@@ -55,13 +62,6 @@ public abstract class TweenCollection : ITween
         Reset();
         Items.Clear();
     }
-
-    public abstract ITweenDuration TotalDuration { get; }
-    public abstract float Update(float dt);
-    public abstract bool IsDone();
-    public abstract void Reset();
-    public abstract void JumpTo(float time);
-    public abstract void SkipToEnd();
 
     public override string ToString()
     {

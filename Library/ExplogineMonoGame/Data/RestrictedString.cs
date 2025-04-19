@@ -32,7 +32,7 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
                     strategy.FinishLine();
                     strategy.StartNewLine();
                 }
-                
+
                 strategy.FinishToken();
                 strategy.AppendManualLinebreak(character);
                 strategy.FinishLine();
@@ -54,7 +54,6 @@ public readonly record struct RestrictedString<TOutput>(TOutput[] Lines, Vector2
         {
             strategy.FinishLine();
         }
-
 
         return strategy.Result;
     }

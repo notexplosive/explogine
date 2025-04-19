@@ -8,7 +8,6 @@ using ExplogineMonoGame.Gui;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using TextCopy;
 
 namespace ExplogineMonoGame.Data;
 
@@ -639,9 +638,10 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         {
             return true;
         }
-        
+
         var currentChar = Text[nodeIndex];
-        return char.IsWhiteSpace(currentChar) || char.IsSymbol(currentChar) || char.IsSeparator(currentChar) || char.IsPunctuation(currentChar);
+        return char.IsWhiteSpace(currentChar) || char.IsSymbol(currentChar) || char.IsSeparator(currentChar) ||
+               char.IsPunctuation(currentChar);
     }
 
     public void MoveToStartOfLine(bool leaveAnchor)
@@ -778,28 +778,28 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         if (Cursor.SelectedRangeSize > 0)
         {
             var text = Content.GetTextAt(Cursor.SelectedRangeStart, Cursor.SelectedRangeSize);
-            ClipboardService.SetText(text);
+            Client.Clipboard.Set(text);
         }
     }
-    
+
     private void CutSelectedBuffer(bool leaveAnchor = true)
     {
         if (Cursor.SelectedRangeSize > 0)
         {
             var text = Content.GetTextAt(Cursor.SelectedRangeStart, Cursor.SelectedRangeSize);
-            ClipboardService.SetText(text);
+            Client.Clipboard.Set(text);
             ClearSelectedRange();
         }
     }
-    
+
     private void PasteBuffer(bool leaveAnchor = true)
     {
         if (Cursor.SelectedRangeSize > 0)
         {
             ClearSelectedRange();
         }
-        
-        var text = ClipboardService.GetText();
+
+        var text = Client.Clipboard.Get();
 
         if (text != null)
         {
@@ -927,7 +927,11 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
         }
     }
 
-    public readonly record struct Settings(Depth Depth, bool IsSingleLine, bool ShowScrollbar, string? StartingText,
+    public readonly record struct Settings(
+        Depth Depth,
+        bool IsSingleLine,
+        bool ShowScrollbar,
+        string? StartingText,
         ISelector? Selector);
 
     private delegate bool ScanFindDelegate(int index);
@@ -1339,7 +1343,10 @@ public class TextInputWidget : Widget, IGuiWidget, IPreDrawWidget
             return _lineRects;
         }
 
-        private readonly record struct CacheNode(RectangleF Rectangle, int LineNumber, char Char,
+        private readonly record struct CacheNode(
+            RectangleF Rectangle,
+            int LineNumber,
+            char Char,
             FormattedText.FormattedGlyph OriginalGlyph);
     }
 

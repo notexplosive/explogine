@@ -6,13 +6,13 @@ namespace ExplogineMonoGame.Luigi.Description;
 [LuaBoundType]
 public class TagElementGuiDescription : IGuiDescription
 {
-    private string _tag;
+    private readonly string _tag;
 
     public TagElementGuiDescription(string tag)
     {
         _tag = tag;
     }
-    
+
     public void Apply(Gui.Gui gui, RectangleF rectangle, LuaGuiBindingContext context, LuaLayoutBuilderBlock block,
         LuaLayoutBuilder luaLayoutBuilder)
     {

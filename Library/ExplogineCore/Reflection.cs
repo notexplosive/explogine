@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace ExplogineCore;
@@ -6,28 +6,42 @@ namespace ExplogineCore;
 public static class Reflection
 {
     /// <summary>
-    /// Gets static fields from type T that derive from TInterface
+    ///     Gets static fields from type T that derive from TInterface
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TInterface"></typeparam>
     /// <returns></returns>
+    [Pure]
     public static Dictionary<string, TInterface> GetStaticFieldsThatDeriveFromType<T, TInterface>()
     {
-        return typeof(T)
+        return GetStaticFieldsThatDeriveFromType<TInterface>(typeof(T));
+    }
+
+    /// <summary>
+    ///     Gets static fields from type T that derive from TInterface
+    /// </summary>
+    /// <typeparam name="TInterface"></typeparam>
+    /// <returns></returns>
+    [Pure]
+    public static Dictionary<string, TInterface> GetStaticFieldsThatDeriveFromType<TInterface>(Type t)
+    {
+        return t
             .GetFields(BindingFlags.Public | BindingFlags.Static)
-            .Where(fieldInfo => fieldInfo.FieldType.GetInterfaces().Contains(typeof(TInterface)))
+            .Where(fieldInfo => fieldInfo.FieldType.GetInterfaces().Contains(typeof(TInterface)) ||
+                                fieldInfo.FieldType == typeof(TInterface))
             .ToDictionary(
                 fieldInfo => fieldInfo.Name,
                 fieldInfo => (TInterface) fieldInfo.GetValue(null)!
             );
     }
-    
+
     /// <summary>
-    /// Gets static fields from type T that derive from TInterface
+    ///     Gets static fields from type T that derive from TInterface
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TInterface"></typeparam>
     /// <returns></returns>
+    [Pure]
     public static IEnumerable<FieldInfo> GetStaticFieldInfosThatDeriveFromType<T, TInterface>()
     {
         return typeof(T)
@@ -35,6 +49,7 @@ public static class Reflection
             .Where(fieldInfo => fieldInfo.FieldType.GetInterfaces().Contains(typeof(TInterface)));
     }
 
+    [Pure]
     public static List<Type> GetAllTypesThatDeriveFrom<T>()
     {
         // Get all loaded assemblies
@@ -50,11 +65,13 @@ public static class Reflection
 
             implementingTypes.AddRange(types);
         }
-        
+
         return implementingTypes;
     }
 
-    public static IEnumerable<Tuple<MemberInfo, Type>> GetAllMembersInAssemblyWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
+    [Pure]
+    public static IEnumerable<Tuple<MemberInfo, Type>>
+        GetAllMembersInAssemblyWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
     {
         var types = assembly.GetTypes();
         var attributeType = typeof(TAttribute);
@@ -67,6 +84,20 @@ public static class Reflection
         }
     }
 
+    [Pure]
+    public static IEnumerable<MemberInfo> GetAllMembersInTypeWithAttribute<TAttribute>(Type type)
+        where TAttribute : Attribute
+    {
+        var attributeType = typeof(TAttribute);
+        foreach (var member in type
+                     .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
+                                 BindingFlags.Static).Where(method => Attribute.IsDefined(method, attributeType)))
+        {
+            yield return member;
+        }
+    }
+
+    [Pure]
     public static IEnumerable<Type> GetAllTypesWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
     {
         var types = assembly.GetTypes();
@@ -78,5 +109,26 @@ public static class Reflection
                 yield return type;
             }
         }
+    }
+
+    [Pure]
+    public static object? GetMemberValue(MemberInfo memberInfo, object instance)
+    {
+        if (memberInfo is FieldInfo fieldInfo)
+        {
+            return fieldInfo.GetValue(instance);
+        }
+
+        if (memberInfo is PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetValue(instance);
+        }
+
+        if (memberInfo is MethodInfo methodInfo)
+        {
+            return methodInfo.Invoke(instance, []);
+        }
+
+        throw new Exception($"Could not invoke {memberInfo} on {instance}");
     }
 }

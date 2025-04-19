@@ -30,8 +30,8 @@ public class LuaRuntime
             }
         };
 
-        LuaRuntime.RegisterAssembly(Assembly.GetExecutingAssembly());
-        LuaRuntime.RegisterAssembly(Assembly.GetCallingAssembly());
+        RegisterAssembly(Assembly.GetExecutingAssembly());
+        RegisterAssembly(Assembly.GetCallingAssembly());
 
         SetGlobal("SOKO_DEBUG_LOG", DebugLog);
         SetGlobal("require", Require);
@@ -48,7 +48,7 @@ end
     {
         get
         {
-            var errorFromLua = _lua.Globals.Get(LuaRuntime.ErrorKeyName).ToObject<LuaError>();
+            var errorFromLua = _lua.Globals.Get(ErrorKeyName).ToObject<LuaError>();
             return _errorFromClr ?? errorFromLua ?? null;
         }
         private set => _errorFromClr = value;
@@ -56,7 +56,7 @@ end
 
     public static void RegisterAssembly(Assembly assembly)
     {
-        if (LuaRuntime.KnownAssemblies.Contains(assembly))
+        if (KnownAssemblies.Contains(assembly))
         {
             // Already registered, do nothing
             return;
@@ -73,10 +73,10 @@ end
 
         foreach (var type in types.Distinct())
         {
-            LuaRuntime.RegisterType(type);
+            RegisterType(type);
         }
 
-        LuaRuntime.KnownAssemblies.Add(assembly);
+        KnownAssemblies.Add(assembly);
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ end
         }
         catch (Exception runtimeException)
         {
-            script.Globals[LuaRuntime.ErrorKeyName] = new LuaError(runtimeException);
+            script.Globals[ErrorKeyName] = new LuaError(runtimeException);
         }
 
         return DynValue.Nil;
@@ -344,6 +344,7 @@ end
         {
 #if DEBUG
             stringBuilder.AppendLine("C# callstack");
+            stringBuilder.AppendLine(CurrentError?.Exception.ToString());
             stringBuilder.AppendLine(CurrentError?.Exception.StackTrace);
 #else
             stringBuilder.AppendLine("This type of error can't generate a callstack. :(");

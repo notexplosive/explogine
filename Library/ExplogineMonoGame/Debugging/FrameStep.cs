@@ -1,6 +1,5 @@
 ﻿using ExplogineCore.Data;
 using ExplogineMonoGame.Data;
-using ExplogineMonoGame.Input;
 using ExplogineMonoGame.Rails;
 using ExTween;
 using Microsoft.Xna.Framework;
@@ -10,9 +9,9 @@ namespace ExplogineMonoGame.Debugging;
 
 public class FrameStep : IUpdateInputHook
 {
-    private readonly IRuntime _runtime;
     private readonly TweenableFloat _lineThickness = new();
     private readonly TweenableFloat _opacity = new();
+    private readonly IRuntime _runtime;
     private readonly TweenableFloat _shrinkAmount = new();
     private readonly SequenceTween _tween = new();
     private bool _shouldDisplay;
@@ -21,7 +20,7 @@ public class FrameStep : IUpdateInputHook
     {
         _runtime = runtime;
     }
-    
+
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
         if (Client.Debug.IsPassiveOrActive)
@@ -82,7 +81,6 @@ public class FrameStep : IUpdateInputHook
                             new SequenceTween()
                                 .Add(new Tween<float>(_shrinkAmount, 10, 0.15f, Ease.CubicSlowFast))
                                 .Add(new Tween<float>(_shrinkAmount, 0, 0.15f, Ease.CubicFastSlow))
-
                         )
                 )
                 ;

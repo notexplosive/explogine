@@ -1,5 +1,4 @@
-﻿using System;
-using ExplogineMonoGame.AssetManagement;
+﻿using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,12 +10,12 @@ namespace ExplogineMonoGame;
 /// </summary>
 public class ClientCanvas
 {
-    public Canvas Internal { get; private set; } = null!;
-
     public ClientCanvas(RealWindow window)
     {
         Window = window;
     }
+
+    public Canvas Internal { get; private set; } = null!;
 
     public Matrix CanvasToScreen => Matrix.CreateScale(new Vector3(
                                         new Vector2(PointExtensions.CalculateScalarDifference(Window.Size,

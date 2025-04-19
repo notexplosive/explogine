@@ -28,7 +28,7 @@ public class RealFileSystem : IFileSystem
 
     public void CreateFile(string relativePathToFile)
     {
-        if (RealFileSystem.IsInvalidPathName(relativePathToFile))
+        if (IsInvalidPathName(relativePathToFile))
         {
             // Silently fail (unfortunately)
             return;
@@ -36,24 +36,11 @@ public class RealFileSystem : IFileSystem
 
         var info = FileInfoAt(relativePathToFile);
         Directory.CreateDirectory(info.Directory!.FullName);
-        
+
         if (!info.Exists)
         {
             info.Create().Close();
         }
-    }
-
-    private static bool IsInvalidPathName(string path)
-    {
-        foreach (var illegalChar in Path.GetInvalidPathChars())
-        {
-            if (path.Contains(illegalChar))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public void DeleteFile(string relativePathToFile)
@@ -63,12 +50,12 @@ public class RealFileSystem : IFileSystem
 
     public void CreateOrOverwriteFile(string relativePathToFile)
     {
-        if (RealFileSystem.IsInvalidPathName(relativePathToFile))
+        if (IsInvalidPathName(relativePathToFile))
         {
             // Silently fail (unfortunately)
             return;
         }
-        
+
         var info = FileInfoAt(relativePathToFile);
         if (info.Exists)
         {
@@ -99,7 +86,7 @@ public class RealFileSystem : IFileSystem
         {
             return Array.Empty<byte>();
         }
-        
+
         return File.ReadAllBytes(ToAbsolutePath(relativePathToFile));
     }
 
@@ -108,7 +95,7 @@ public class RealFileSystem : IFileSystem
     {
         // Create the directory
         GetDirectory(targetRelativePath);
-        
+
         var fullPaths = GetFilesAtFullPath(ToAbsolutePath(targetRelativePath), extension, recursive);
 
         var result = new List<string>();
@@ -126,61 +113,79 @@ public class RealFileSystem : IFileSystem
         return result;
     }
 
-    private string GetRelativePath(string targetPath)
-    {
-        return Path.GetRelativePath(FullNormalizedRootPath, ToAbsolutePath(targetPath)).Replace(Path.DirectorySeparatorChar, '/');
-    }
-
     public void WriteToFile(string relativePathToFile, params string[] lines)
     {
         CreateOrOverwriteFile(relativePathToFile);
         AppendToFile(relativePathToFile, lines);
     }
-    
+
     public void WriteToFileBytes(string relativePathToFile, byte[] bytes)
     {
         CreateOrOverwriteFile(relativePathToFile);
         File.WriteAllBytes(ToAbsolutePath(relativePathToFile), bytes);
     }
-    
+
+    public string GetCurrentDirectory()
+    {
+        return RootPath;
+    }
+
+    public IFileSystem GetDirectory(string subDirectory)
+    {
+        return new RealFileSystem(ToAbsolutePath(subDirectory));
+    }
+
+    public long GetFileSize(string relativePathToFile)
+    {
+        return FileInfoAt(relativePathToFile).Length;
+    }
+
+    public async Task<string> ReadFileAsync(string relativePathToFile)
+    {
+        if (!FileInfoAt(relativePathToFile).Exists)
+        {
+            return string.Empty;
+        }
+
+        return await File.ReadAllTextAsync(ToAbsolutePath(relativePathToFile));
+    }
+
+    public IFileSystem CreateDirectory(string destinationPath = ".")
+    {
+        var finalPath = FullNormalizedRootPath;
+        if (destinationPath != ".")
+        {
+            finalPath = ToAbsolutePath(destinationPath);
+        }
+
+        Directory.CreateDirectory(finalPath);
+        return GetDirectory(destinationPath);
+    }
+
+    private static bool IsInvalidPathName(string path)
+    {
+        foreach (var illegalChar in Path.GetInvalidPathChars())
+        {
+            if (path.Contains(illegalChar))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private string GetRelativePath(string targetPath)
+    {
+        return Path.GetRelativePath(FullNormalizedRootPath, ToAbsolutePath(targetPath))
+            .Replace(Path.DirectorySeparatorChar, '/');
+    }
+
     public StreamDescriptor OpenFileStream(string relativePathToFile)
     {
         var info = FileInfoAt(relativePathToFile);
         CreateOrOverwriteFile(relativePathToFile);
         return new StreamDescriptor(info);
-    }
-
-    public class StreamDescriptor
-    {
-        private readonly FileStream _fileStream;
-        private readonly StreamWriter _streamWriter;
-
-        public StreamDescriptor(FileInfo info)
-        {
-            _fileStream = new FileStream(info.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-            _streamWriter = new StreamWriter(_fileStream);
-        }
-
-        public void Close()
-        {
-            _streamWriter.Dispose();
-            _fileStream.Dispose();
-        }
-
-        public void Write(string content)
-        {
-            _streamWriter.WriteLine(content);
-        }
-
-        public void Flush()
-        {
-            _streamWriter.Flush();
-        }
-    }
-
-    public string GetCurrentDirectory()
-    {
-        return RootPath;
     }
 
     public FileInfo FileInfoAt(string relativePathToFile)
@@ -227,7 +232,7 @@ public class RealFileSystem : IFileSystem
         {
             return new FileInfo(givenPath).FullName;
         }
-        
+
         if (givenPath == ".")
         {
             return RootPath;
@@ -236,40 +241,37 @@ public class RealFileSystem : IFileSystem
         return Path.Join(RootPath, givenPath);
     }
 
-    public IFileSystem GetDirectory(string subDirectory)
-    {
-        return new RealFileSystem(ToAbsolutePath(subDirectory));
-    }
-
-    public long GetFileSize(string relativePathToFile)
-    {
-        return FileInfoAt(relativePathToFile).Length;
-    }
-
-    public async Task<string> ReadFileAsync(string relativePathToFile)
-    {
-        if (!FileInfoAt(relativePathToFile).Exists)
-        {
-            return string.Empty;
-        }
-
-        return await File.ReadAllTextAsync(ToAbsolutePath(relativePathToFile));
-    }
-
-    public IFileSystem CreateDirectory(string destinationPath = ".")
-    {
-        var finalPath = FullNormalizedRootPath;
-        if (destinationPath != ".")
-        {
-            finalPath = ToAbsolutePath(destinationPath);
-        }
-        
-        Directory.CreateDirectory(finalPath);
-        return GetDirectory(destinationPath);
-    }
-
     public void DeleteDirectory(string path, bool recursive)
     {
         Directory.Delete(ToAbsolutePath(path), recursive);
+    }
+
+    public class StreamDescriptor
+    {
+        private readonly FileStream _fileStream;
+        private readonly StreamWriter _streamWriter;
+
+        public StreamDescriptor(FileInfo info)
+        {
+            _fileStream = new FileStream(info.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _streamWriter = new StreamWriter(_fileStream);
+        }
+
+        public void Close()
+        {
+            _streamWriter.Flush();
+            _streamWriter.Dispose();
+            _fileStream.Dispose();
+        }
+
+        public void Write(string content)
+        {
+            _streamWriter.WriteLine(content);
+        }
+
+        public void Flush()
+        {
+            _streamWriter.Flush();
+        }
     }
 }

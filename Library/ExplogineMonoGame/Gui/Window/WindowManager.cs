@@ -57,7 +57,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
                 numberOfOrganizedWindows++;
             }
         }
-        
+
         // Then we sort the Always-On-Top windows
         for (var i = 0; i < _windows.Count; i++)
         {
@@ -198,7 +198,7 @@ public class WindowManager : IUpdateHook, IUpdateInputHook, IDrawHook, IEarlyDra
             yield return window;
         }
     }
-    
+
     public IEnumerable<InternalWindow> AllVisibleWindows()
     {
         foreach (var window in _windows)

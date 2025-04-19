@@ -36,7 +36,7 @@ public readonly struct GamePadSnapshot
 
             i++;
         }
-        
+
         PressedButtons = pressedButtons.ToArray();
     }
 

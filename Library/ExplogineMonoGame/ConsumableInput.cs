@@ -19,18 +19,20 @@ public class ConsumableInput
         new ConsumableMouse(raw.Mouse), raw.GamePad)
     {
     }
-    
+
     public ConsumableKeyboard Keyboard { get; }
     public ConsumableMouse Mouse { get; }
+
     /// <summary>
-    /// GamePad is not consumable, we just forward the raw frame state
+    ///     GamePad is not consumable, we just forward the raw frame state
     /// </summary>
     public GamePadFrameState GamePad { get; }
 
     public ConsumableInput MouseOnly()
     {
         var emptyKeyboard = new KeyboardFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
-        return new ConsumableInput(new ConsumableKeyboard(emptyKeyboard), Mouse, new GamePadFrameState(InputSnapshot.Empty, InputSnapshot.Empty));
+        return new ConsumableInput(new ConsumableKeyboard(emptyKeyboard), Mouse,
+            new GamePadFrameState(InputSnapshot.Empty, InputSnapshot.Empty));
     }
 
     public class ConsumableMouse

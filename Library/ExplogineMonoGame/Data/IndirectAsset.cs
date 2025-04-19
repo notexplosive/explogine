@@ -22,7 +22,7 @@ public class IndirectAsset<T> where T : Asset
     {
         return new IndirectAsset<T>(realAsset);
     }
-    
+
     public static implicit operator IndirectAsset<T>(string assetName)
     {
         return new IndirectAsset<T>(assetName);

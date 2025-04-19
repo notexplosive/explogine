@@ -43,12 +43,12 @@ public readonly struct Scale2D
     {
         return new Scale2D(a.Value / b);
     }
-    
+
     public static Scale2D operator +(Scale2D a, Scale2D b)
     {
         return new Scale2D(a.Value + b.Value);
     }
-    
+
     public static Scale2D operator -(Scale2D a, Scale2D b)
     {
         return new Scale2D(a.Value - b.Value);

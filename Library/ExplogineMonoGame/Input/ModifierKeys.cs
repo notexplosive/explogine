@@ -2,71 +2,67 @@
 
 public readonly struct ModifierKeys
 {
-    private readonly bool _control;
-    private readonly bool _alt;
-    private readonly bool _shift;
-
     public ModifierKeys(bool control, bool alt, bool shift)
     {
-        _control = control;
-        _alt = alt;
-        _shift = shift;
+        ControlInclusive = control;
+        AltInclusive = alt;
+        ShiftInclusive = shift;
     }
 
     /// <summary>
-    /// True if left or right control are pressed
+    ///     True if left or right control are pressed
     /// </summary>
-    public bool ControlInclusive => _control;
-    
+    public bool ControlInclusive { get; }
+
     /// <summary>
-    /// True if left and right alt are pressed
+    ///     True if left and right alt are pressed
     /// </summary>
-    public bool AltInclusive => _alt;
-    
+    public bool AltInclusive { get; }
+
     /// <summary>
-    /// True if left or right shift are pressed
+    ///     True if left or right shift are pressed
     /// </summary>
-    public bool ShiftInclusive => _shift;
-    
+    public bool ShiftInclusive { get; }
+
     /// <summary>
-    /// True if Control is the only modifier pressed
+    ///     True if Control is the only modifier pressed
     /// </summary>
-    public bool Control => _control && !_alt && !_shift;
-    
+    public bool Control => ControlInclusive && !AltInclusive && !ShiftInclusive;
+
     /// <summary>
-    /// True if Alt is the only modifier pressed
+    ///     True if Alt is the only modifier pressed
     /// </summary>
-    public bool Alt => !_control && _alt && !_shift;
-    
+    public bool Alt => !ControlInclusive && AltInclusive && !ShiftInclusive;
+
     /// <summary>
-    /// True if Shift is the only modifier pressed
+    ///     True if Shift is the only modifier pressed
     /// </summary>
-    public bool Shift => !_control && !_alt && _shift;
-    
+    public bool Shift => !ControlInclusive && !AltInclusive && ShiftInclusive;
+
     /// <summary>
-    /// True if Alt and Shift are the only modifiers pressed
+    ///     True if Alt and Shift are the only modifiers pressed
     /// </summary>
-    public bool AltShift => !_control && _alt && _shift;
-    
+    public bool AltShift => !ControlInclusive && AltInclusive && ShiftInclusive;
+
     /// <summary>
-    /// True if Control and Shift are the only modifier pressed
+    ///     True if Control and Shift are the only modifier pressed
     /// </summary>
-    public bool ControlShift => _control && !_alt && _shift;
-    
+    public bool ControlShift => ControlInclusive && !AltInclusive && ShiftInclusive;
+
     /// <summary>
-    /// True if Control and Alt are the only modifier pressed
+    ///     True if Control and Alt are the only modifier pressed
     /// </summary>
-    public bool ControlAlt => _control && _alt && !_shift;
-    
+    public bool ControlAlt => ControlInclusive && AltInclusive && !ShiftInclusive;
+
     /// <summary>
-    /// True if Control, Alt, and Shift are all pressed
+    ///     True if Control, Alt, and Shift are all pressed
     /// </summary>
-    public bool ControlAltShift => _control && _alt && _shift;
-    
+    public bool ControlAltShift => ControlInclusive && AltInclusive && ShiftInclusive;
+
     /// <summary>
-    /// True if no modifiers are pressed
+    ///     True if no modifiers are pressed
     /// </summary>
-    public bool None => !_control && !_alt && !_shift;
+    public bool None => !ControlInclusive && !AltInclusive && !ShiftInclusive;
 
     public override string ToString()
     {
@@ -75,9 +71,9 @@ public readonly struct ModifierKeys
             return "None";
         }
 
-        var ctrl = _control ? "Control" : "";
-        var alt = _alt ? "Alt" : "";
-        var shift = _shift ? "Shift" : "";
+        var ctrl = ControlInclusive ? "Control" : "";
+        var alt = AltInclusive ? "Alt" : "";
+        var shift = ShiftInclusive ? "Shift" : "";
 
         return $"{ctrl}{alt}{shift}";
     }

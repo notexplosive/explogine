@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ExplogineMonoGame.Data;
+﻿using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
 namespace ExplogineMonoGame;
@@ -11,7 +10,7 @@ public class HitTestRoot
     public void Resolve(Vector2 position)
     {
         BaseStack.OnBeforeResolve();
-        
+
         if (!Client.IsInFocus)
         {
             return;

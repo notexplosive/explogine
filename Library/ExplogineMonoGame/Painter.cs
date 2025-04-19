@@ -8,13 +8,13 @@ namespace ExplogineMonoGame;
 public class Painter
 {
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly SpriteBatch _spriteBatch;
+    public SpriteBatch SpriteBatch { get; }
     private Texture2D? _pixelAsset;
 
     public Painter(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
-        _spriteBatch = new SpriteBatch(graphicsDevice);
+        SpriteBatch = new SpriteBatch(graphicsDevice);
     }
 
     public bool IsSpriteBatchInProgress { get; private set; }
@@ -38,18 +38,18 @@ public class Painter
 
     public void BeginSpriteBatch(SamplerState samplerState, Matrix? matrix = null, Effect? effect = null)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, effect, matrix);
+        SpriteBatch.Begin(SpriteSortMode.BackToFront, null, samplerState, null, null, effect, matrix);
     }
 
     public void BeginSpriteBatch(Matrix matrix, Effect? effect = null)
     {
-        _spriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, effect, matrix);
+        SpriteBatch.Begin(SpriteSortMode.BackToFront, null, Client.Graphics.SamplerState, null, null, effect, matrix);
         IsSpriteBatchInProgress = true;
     }
 
     public void EndSpriteBatch()
     {
-        _spriteBatch.End();
+        SpriteBatch.End();
         IsSpriteBatchInProgress = false;
     }
 
@@ -77,7 +77,7 @@ public class Painter
         var font = fontLike.GetFont();
         if (font is Font realFont)
         {
-            _spriteBatch.DrawString(
+            SpriteBatch.DrawString(
                 realFont.SpriteFont,
                 text,
                 position,
@@ -99,6 +99,7 @@ public class Painter
         DrawScaledStringAtPosition(font, text, position, Scale2D.One, settings);
     }
 
+    [Obsolete]
     public void DrawDebugStringAtPosition(string text, Vector2 position, DrawSettings settings)
     {
         DrawStringAtPosition(Client.Assets.GetFont("engine/console-font", 32), text, position, settings);
@@ -108,13 +109,13 @@ public class Painter
         DrawSettings settings)
     {
         var rectangle = new RectangleF(position, formattedText.MaxNeededSize()).ToRectangle();
-        var movedRectangle = rectangle.Moved(-settings.Origin.Calculate(rectangle.Size));
+        var movedRectangle = rectangle.Moved((-settings.Origin.Calculate(rectangle.Size)).ToPoint());
         DrawFormattedStringWithinRectangle(formattedText, movedRectangle, alignment, settings);
     }
 
     /// <summary>
-    /// Draws a Glyph (which already knows what position it wants to draw at)
-    /// This method is a little weird, it ignores settings.Origin and instead uses the origin vector parameter
+    ///     Draws a Glyph (which already knows what position it wants to draw at)
+    ///     This method is a little weird, it ignores settings.Origin and instead uses the origin vector parameter
     /// </summary>
     /// <param name="glyph"></param>
     /// <param name="origin"></param>
@@ -135,8 +136,8 @@ public class Painter
                 {
                     finalColor = finalColor.WithMultipliedOpacity((float) settings.Color.A / byte.MaxValue);
                 }
-                
-                _spriteBatch.DrawString(
+
+                SpriteBatch.DrawString(
                     realFont.SpriteFont,
                     fragmentChar.Text.ToString(),
                     position,
@@ -172,7 +173,7 @@ public class Painter
             drawableGlyphData.DrawCallback(this, position, settings with {Origin = new DrawOrigin(letterOrigin)});
         }
     }
-    
+
     public void DrawFormattedStringWithinRectangle(FormattedText formattedText, RectangleF rectangle,
         Alignment alignment, DrawSettings settings)
     {
@@ -206,7 +207,7 @@ public class Painter
     public void DrawAtPosition(Texture2D texture, Vector2 position, Scale2D scale2D, DrawSettings settings)
     {
         settings.SourceRectangle ??= texture.Bounds;
-        _spriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
+        SpriteBatch.Draw(texture, position, settings.SourceRectangle, settings.Color, settings.Angle,
             settings.Origin.Calculate(settings.SourceRectangle.Value.Size), scale2D.Value, settings.FlipEffect,
             settings.Depth);
     }
@@ -232,15 +233,16 @@ public class Painter
                 Color = Color.White.WithMultipliedOpacity(0.25f)
             });
         }
+
         settings.SourceRectangle ??= texture.Bounds;
-        
+
         // the origin is relative to the source rect, but we pass it in assume its scaled with the destination rect
         var origin = settings.Origin.Calculate(settings.SourceRectangle.Value.Size);
 
         var destSize = destinationRectangle.Size;
         var sourceSize = settings.SourceRectangle.Value.Size.ToVector2();
         var scale = new Scale2D(destSize.StraightDivide(sourceSize));
-        
+
         settings = settings with {Origin = new DrawOrigin(origin)};
 
         DrawAtPosition(texture, destinationRectangle.Location, scale, settings);

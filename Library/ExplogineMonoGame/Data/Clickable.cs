@@ -6,7 +6,7 @@ namespace ExplogineMonoGame.Data;
 public class Clickable
 {
     private readonly MouseButton _targetButton;
-    private bool _primed;
+    public bool Primed { get; private set; }
 
     public Clickable(MouseButton targetButton = MouseButton.Left)
     {
@@ -21,19 +21,19 @@ public class Clickable
             if (hovered)
             {
                 ClickInitiated?.Invoke();
-                _primed = true;
+                Primed = true;
             }
         }
 
         if (inputMouse.GetButton(_targetButton).WasReleased)
         {
-            if (hovered && _primed)
+            if (hovered && Primed)
             {
                 ClickedFully?.Invoke();
                 result = true;
             }
 
-            _primed = false;
+            Primed = false;
         }
 
         return result;

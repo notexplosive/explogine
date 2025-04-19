@@ -102,7 +102,8 @@ public class Slider : IGuiWidget
         // subtract half the thumbs size so we're centered
         relativePosition -= new Vector2(ThumbSize.GetAxis(AlongAxis) / 2f).JustAxis(AlongAxis);
 
-        var result = MathF.Round(CalculatePercent(relativePosition.GetAxis(AlongAxis), ThumbTravelDistance) * _totalNotches,
+        var result = MathF.Round(
+            CalculatePercent(relativePosition.GetAxis(AlongAxis), ThumbTravelDistance) * _totalNotches,
             MidpointRounding.ToEven);
 
         return Math.Clamp((int) result, 0, _totalNotches);

@@ -7,12 +7,13 @@ namespace ExplogineMonoGame.Layout;
 public class LayoutBuilder
 {
     private readonly List<Node> _nodes = new();
-    public Style Style { get; set; }
 
     public LayoutBuilder(Style style)
     {
         Style = style;
     }
+
+    public Style Style { get; set; }
 
     public void Clear()
     {
@@ -60,6 +61,16 @@ public class LayoutBuilder
         return L.Root(Style, elements.ToArray());
     }
 
+    public LayoutArrangement Bake(Point outerSize)
+    {
+        return L.Compute(outerSize, ToLayoutGroup());
+    }
+
+    public LayoutArrangement Bake(RectangleF rectangle)
+    {
+        return L.Compute(rectangle, ToLayoutGroup());
+    }
+
     private class Node
     {
         private readonly LayoutBuilder? _children;
@@ -79,15 +90,5 @@ public class LayoutBuilder
         {
             return new LayoutElement(_name, _x, _y, _children?.ToLayoutGroup());
         }
-    }
-
-    public LayoutArrangement Bake(Point outerSize)
-    {
-        return L.Compute(outerSize, ToLayoutGroup());
-    }
-
-    public LayoutArrangement Bake(RectangleF rectangle)
-    {
-        return L.Compute(rectangle, ToLayoutGroup());
     }
 }

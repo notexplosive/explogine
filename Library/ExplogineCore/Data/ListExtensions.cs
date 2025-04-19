@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ExplogineMonoGame.Data;
+﻿namespace ExplogineCore.Data;
 
 public static class ListExtensions
 {
@@ -9,9 +6,8 @@ public static class ListExtensions
     public static bool IsWithinRange<T>(this IList<T> collection, int i)
     {
         return collection.IsValidIndex(i);
-
     }
-    
+
     public static bool IsValidIndex<T>(this IList<T> collection, int i)
     {
         return i < collection.Count && i >= 0;

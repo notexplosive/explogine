@@ -50,7 +50,7 @@ public class LayoutArrangement : IEnumerable<KeyValuePair<string, BakedLayoutEle
         var matchingElements = FindElements(name);
         return matchingElements.Count != 0;
     }
-    
+
     public BakedLayoutElement FindElement(string name)
     {
         var matchingElements = FindElements(name);

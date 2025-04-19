@@ -13,9 +13,9 @@ public delegate Asset LoadEventFunction();
 
 public class Loader
 {
-    private readonly IRuntime _runtime;
     private readonly ContentManager _content;
     private readonly List<ILoadEvent> _loadEvents = new();
+    private readonly IRuntime _runtime;
     private int _loadEventIndex;
 
     public Loader(IRuntime runtime, ContentManager content)
@@ -34,8 +34,10 @@ public class Loader
 
     public T ForceLoad<T>(string key) where T : Asset
     {
+        Client.Debug.LogVerbose($"ForceLoad: {key}");
         if (IsDone())
         {
+            Client.Debug.LogVerbose("Already cached, returning");
             return Client.Assets.GetAsset<T>(key);
         }
 
@@ -51,6 +53,8 @@ public class Loader
         if (foundLoadEvent is AssetLoadEvent assetLoadEvent)
         {
             _loadEvents.Remove(assetLoadEvent);
+
+            Client.Debug.LogVerbose("Found load event, running");
             var asset = assetLoadEvent.ExecuteAndReturnAsset();
             var result = asset as T;
 
@@ -91,7 +95,11 @@ public class Loader
     {
         foreach (var key in GetKeysFromContentDirectory())
         {
-            yield return new AssetLoadEvent(key, key, () => LoadAsset(key));
+            yield return new AssetLoadEvent(key, key, () =>
+            {
+                Client.Debug.LogVerbose($"Attempting to load static content asset: {key}");
+                return LoadAsset(key);
+            });
         }
     }
 
@@ -138,16 +146,20 @@ public class Loader
 
     private string[] GetKeysFromContentDirectory()
     {
+        Client.Debug.LogVerbose($"Scanning for Content at {_content.RootDirectory}");
+
         var fileNames = _runtime.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
         var keys = new List<string>();
 
         foreach (var fileName in fileNames)
         {
+            Client.Debug.LogVerbose($"Found Content: {fileName}");
             var extension = new FileInfo(fileName).Extension;
             // Remove `.xnb`
             var withoutExtension = fileName.Substring(0, fileName.Length - extension.Length);
             // Remove `Content/`
             var withoutPrefix = withoutExtension.Substring(Client.ContentBaseDirectory.Length + 1);
+            Client.Debug.LogVerbose($"Keying as: {withoutPrefix}");
             keys.Add(withoutPrefix);
         }
 

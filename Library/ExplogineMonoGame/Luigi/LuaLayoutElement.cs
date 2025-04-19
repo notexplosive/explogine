@@ -6,15 +6,15 @@ namespace ExplogineMonoGame.Luigi;
 
 public class LuaLayoutElement
 {
-    private readonly LuaLayoutBuilderBlock _owningGroup;
     private readonly string _currentElementName;
+    private readonly LuaLayoutBuilderBlock _owningGroup;
 
     public LuaLayoutElement(LuaLayoutBuilderBlock owningGroup, string currentElementName)
     {
         _owningGroup = owningGroup;
         _currentElementName = currentElementName;
     }
-    
+
     [UsedImplicitly]
     [LuaMember("decorate")]
     public LuaLayoutElement Decorate(IGuiDescription? guiDescription)
@@ -24,7 +24,7 @@ public class LuaLayoutElement
             Client.Debug.LogError("Attempted to Decorate with a null");
             return this;
         }
-        
+
         _owningGroup.AddInstruction(new GuiLayoutInstruction(_currentElementName, guiDescription));
         return this;
     }

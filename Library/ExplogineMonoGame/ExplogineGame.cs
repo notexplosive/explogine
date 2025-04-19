@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 #if !DEBUG
+// needed for crash reporting
 using System;
 #endif
 
@@ -12,13 +13,16 @@ internal class ExplogineGame : Game
     public ExplogineGame()
     {
         _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = Client.ContentBaseDirectory;
+        Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
     protected override void Initialize()
     {
         Client.Initialize(GraphicsDevice, _graphics, this);
+        IsFixedTimeStep = false;
+        _graphics.SynchronizeWithVerticalRetrace = false;
+        _graphics.ApplyChanges();
         base.Initialize();
     }
 

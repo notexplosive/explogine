@@ -63,7 +63,7 @@ public class Scrollbar
 
     public float ThumbScalar =>
         ScrollableArea.ViewBounds.Size.GetAxis(AlongAxis) / ScrollableArea.InnerWorldBoundaries.Size.GetAxis(AlongAxis);
-    
+
     public RectangleF ThumbRectangle
     {
         get

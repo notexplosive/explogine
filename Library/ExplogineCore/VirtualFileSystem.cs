@@ -23,7 +23,7 @@ public class VirtualFileSystem : IFileSystem
         {
             return;
         }
-        
+
         WriteToFile(relativePathToFile, "");
     }
 
@@ -99,7 +99,7 @@ public class VirtualFileSystem : IFileSystem
     public void WriteToFileBytes(string relativePathToFile, byte[] bytes)
     {
         _root.CreateDirectoriesUpToFile(relativePathToFile, true)
-            ?.CreateFileWithContent(_root.GetFileName(relativePathToFile), string.Join("",bytes));
+            ?.CreateFileWithContent(_root.GetFileName(relativePathToFile), string.Join("", bytes));
     }
 
     public byte[] ReadBytes(string relativePathToFile)

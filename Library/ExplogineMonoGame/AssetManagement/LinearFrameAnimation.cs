@@ -6,7 +6,7 @@ namespace ExplogineMonoGame.AssetManagement;
 ///     Specify the start point and length of the animation, animation starts at firstFrame, and ends on firstFrame +
 ///     length
 /// </summary>
-public readonly struct LinearFrameAnimation : IFrameAnimation
+public class LinearFrameAnimation : IFrameAnimation
 {
     private readonly int _firstFrame;
 
@@ -19,12 +19,6 @@ public readonly struct LinearFrameAnimation : IFrameAnimation
         _firstFrame = firstFrame;
         Length = length;
         Loop = loop;
-    }
-
-    public bool Equals(LinearFrameAnimation other)
-    {
-        return other._firstFrame == _firstFrame && other.Length == Length &&
-               other.Loop == Loop;
     }
 
     public int LastFrame => _firstFrame + Length - 1;

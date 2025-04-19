@@ -11,11 +11,6 @@ public class Gui : IUpdateInputHook
     private readonly List<IGuiWidget> _widgets = new();
     private bool _isReadyToDraw;
     public bool Enabled { get; set; } = true;
-    
-    public IEnumerable<IGuiWidget> Widgets()
-    {
-        return _widgets;
-    }
 
     public void UpdateInput(ConsumableInput input, HitTestStack hitTestStack)
     {
@@ -28,6 +23,11 @@ public class Gui : IUpdateInputHook
         {
             element.UpdateInput(input, hitTestStack);
         }
+    }
+
+    public IEnumerable<IGuiWidget> Widgets()
+    {
+        return _widgets;
     }
 
     public void Button(RectangleF rectangle, string label, Depth depth, Action? onPress)
@@ -113,7 +113,7 @@ public class Gui : IUpdateInputHook
         if (!_isReadyToDraw)
         {
             throw new Exception(
-                $"{nameof(Gui.PrepareCanvases)} was not called before drawing");
+                $"{nameof(PrepareCanvases)} was not called before drawing");
         }
 
         foreach (var widget in _widgets)
@@ -172,6 +172,7 @@ public class Gui : IUpdateInputHook
                 {
                     widgetTheme = themed.Theme;
                 }
+
                 iWidgetThatDoesPreDraw.PrepareDraw(painter, uiTheme);
             }
         }

@@ -14,10 +14,10 @@ public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
 
     public IRuntime Runtime { get; }
     public abstract CartridgeConfig CartridgeConfig { get; }
-    public abstract void OnCartridgeStarted();
-    public abstract void UpdateInput(ConsumableInput input, HitTestStack hitTestStack);
-    public abstract void Update(float dt);
     public abstract void Draw(Painter painter);
+    public abstract void Update(float dt);
+    public abstract void UpdateInput(ConsumableInput input, HitTestStack hitTestStack);
+    public abstract void OnCartridgeStarted();
     public abstract bool ShouldLoadNextCartridge();
     public abstract void Unload();
 
@@ -26,19 +26,22 @@ public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
         var constructedCartridge =
             (TCartridge?) Activator.CreateInstance(typeof(TCartridge), runtime);
         return constructedCartridge ??
-               throw new Exception($"Activator could not create instance of {typeof(TCartridge).Name} using `new {typeof(TCartridge).Name}({nameof(Cartridge.Runtime)}),` maybe this constructor isn't supported?");
+               throw new Exception(
+                   $"Activator could not create instance of {typeof(TCartridge).Name} using `new {typeof(TCartridge).Name}({nameof(Runtime)}),` maybe this constructor isn't supported?");
     }
-    
+
     public static Cartridge CreateInstance(Type type, IRuntime runtime)
     {
         var constructedCartridge = (Cartridge?) Activator.CreateInstance(type, runtime);
         return constructedCartridge ??
-               throw new Exception($"Activator could not create instance of {type.Name} using `new {type.Name}({nameof(Cartridge.Runtime)}),` maybe this constructor isn't supported?");
+               throw new Exception(
+                   $"Activator could not create instance of {type.Name} using `new {type.Name}({nameof(Runtime)}),` maybe this constructor isn't supported?");
     }
 
-    public static IEnumerable<ILoadEvent?> GetLoadEventsForCartridge<TCartridge>(IRuntime runtime) where TCartridge : Cartridge
+    public static IEnumerable<ILoadEvent?> GetLoadEventsForCartridge<TCartridge>(IRuntime runtime)
+        where TCartridge : Cartridge
     {
-        var cartridge = Cartridge.CreateInstance<TCartridge>(runtime);
+        var cartridge = CreateInstance<TCartridge>(runtime);
         if (cartridge is ILoadEventProvider provider)
         {
             foreach (var loadEvent in provider.LoadEvents(Client.Graphics.Painter))
@@ -49,8 +52,8 @@ public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
     }
 
     /// <summary>
-    /// When MultiCartridge calls RegenerateCartridge, we call this on the cartridge that is on its way out
-    /// This is meant to be used to Dispose any resources.
+    ///     When MultiCartridge calls RegenerateCartridge, we call this on the cartridge that is on its way out
+    ///     This is meant to be used to Dispose any resources.
     /// </summary>
     public virtual void BeforeRegenerate()
     {

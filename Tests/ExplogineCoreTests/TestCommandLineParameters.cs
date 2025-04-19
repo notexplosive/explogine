@@ -79,7 +79,7 @@ public class TestCommandLineParameters
         commandLineParams.RegisterParameter<int>("level");
         commandLineParams.Args.GetValue<int>("level").Should().Be(10);
     }
-    
+
     [Fact]
     public void malformed_input_should_fail()
     {

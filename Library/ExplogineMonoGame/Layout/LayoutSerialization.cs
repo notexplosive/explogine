@@ -75,7 +75,7 @@ public static class LayoutSerialization
             SubGroup = layoutElement.Children.HasValue
                 ? new SerializedGroup(layoutElement.Children.Value)
                 : null;
-            Size = LayoutSerialization.SerializeSize(layoutElement.X, layoutElement.Y);
+            Size = SerializeSize(layoutElement.X, layoutElement.Y);
             Name = layoutElement.Name is ElementName name ? name.Text : null;
         }
 
@@ -115,7 +115,7 @@ public static class LayoutSerialization
 
         public LayoutElementGroup Deserialize()
         {
-            return new LayoutElementGroup(Settings.Deserialize(), LayoutSerialization.DeserializeElements(Elements));
+            return new LayoutElementGroup(Settings.Deserialize(), DeserializeElements(Elements));
         }
     }
 }

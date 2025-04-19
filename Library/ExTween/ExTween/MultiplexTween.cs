@@ -4,6 +4,25 @@ namespace ExTween;
 
 public class MultiplexTween : TweenCollection
 {
+    public override ITweenDuration TotalDuration
+    {
+        get
+        {
+            var result = 0f;
+            var currentTimeResult = 0f;
+            foreach (var item in Items)
+            {
+                if (item.TotalDuration is KnownTweenDuration itemDuration)
+                {
+                    result = Math.Max(result, itemDuration);
+                    currentTimeResult = MathF.Max(currentTimeResult, itemDuration.CurrentTime);
+                }
+            }
+
+            return new KnownTweenDuration(result, currentTimeResult);
+        }
+    }
+
     public override float Update(float dt)
     {
         float totalOverflow = 0;
@@ -45,38 +64,19 @@ public class MultiplexTween : TweenCollection
         ForEachItem(item => { item.JumpTo(time); });
     }
 
-    public override ITweenDuration TotalDuration
-    {
-        get
-        {
-            var result = 0f;
-            var currentTimeResult = 0f;
-            foreach (var item in Items)
-            {
-                if (item.TotalDuration is KnownTweenDuration itemDuration)
-                {
-                    result = Math.Max(result, itemDuration);
-                    currentTimeResult = MathF.Max(currentTimeResult, itemDuration.CurrentTime);
-                }
-            }
-
-            return new KnownTweenDuration(result, currentTimeResult);
-        }
-    }
-
     [Obsolete("Use Add instead")]
     public MultiplexTween AddChannel(ITween tween)
     {
         Items.Add(tween);
         return this;
     }
-    
+
     public MultiplexTween Add(ITween tween)
     {
         Items.Add(tween);
         return this;
     }
-    
+
     public override void SkipToEnd()
     {
         ForEachItem(item => { item.SkipToEnd(); });

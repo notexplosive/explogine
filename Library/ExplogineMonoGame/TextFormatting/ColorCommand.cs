@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using ExplogineMonoGame.Data;
 using Microsoft.Xna.Framework;
 
@@ -25,13 +24,12 @@ public class ColorCommand : Instruction
     }
 
     public Color Color { get; }
-    
+
     public override void Do(TextRun textRun)
     {
         textRun.PushColor(Color);
     }
-    
-    
+
     public class Pop : Instruction
     {
         public override void Do(TextRun textRun)

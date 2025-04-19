@@ -40,7 +40,8 @@ public readonly struct MouseFrameState
 
     public bool IsAnyButtonDown()
     {
-        return Current.MouseButtonStates != null && Current.MouseButtonStates.Any(state => state == ButtonState.Pressed);
+        return Current.MouseButtonStates != null &&
+               Current.MouseButtonStates.Any(state => state == ButtonState.Pressed);
     }
 
     public bool WasAnyButtonPressedOrReleased()

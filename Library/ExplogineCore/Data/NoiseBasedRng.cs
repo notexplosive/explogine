@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace ExplogineCore.Data;
+﻿namespace ExplogineCore.Data;
 
 public class NoiseBasedRng
 {
@@ -61,7 +59,7 @@ public class NoiseBasedRng
     {
         return new Noise(NextPositiveInt());
     }
-    
+
     public void Shuffle<T>(IList<T> list)
     {
         var n = list.Count;
@@ -86,12 +84,12 @@ public class NoiseBasedRng
     public int NextInt(int low, int high)
     {
         var relativeRange = high - low;
-        var mod = (relativeRange - 1);
+        var mod = relativeRange - 1;
         if (mod == 0)
         {
             return low;
         }
-        
+
         return NextPositiveInt() % mod + low;
     }
 
@@ -109,12 +107,13 @@ public class NoiseBasedRng
 
     public char NextPrintableAsciiChar()
     {
-        var character = (char)NextInt(0, 255);
+        var character = (char) NextInt(0, 255);
 
         while (!char.IsAscii(character) || char.IsControl(character) || char.IsWhiteSpace(character))
         {
             character = (char) NextInt(0, 255);
         }
+
         return character;
     }
 }

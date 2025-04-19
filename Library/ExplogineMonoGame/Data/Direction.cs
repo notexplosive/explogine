@@ -28,27 +28,27 @@ public class Direction
     {
         get
         {
-            if (this == Direction.Up)
+            if (this == Up)
             {
-                return Direction.Left;
+                return Left;
             }
 
-            if (this == Direction.Right)
+            if (this == Right)
             {
-                return Direction.Up;
+                return Up;
             }
 
-            if (this == Direction.Down)
+            if (this == Down)
             {
-                return Direction.Right;
+                return Right;
             }
 
-            if (this == Direction.Left)
+            if (this == Left)
             {
-                return Direction.Down;
+                return Down;
             }
 
-            return Direction.None;
+            return None;
         }
     }
 
@@ -56,27 +56,27 @@ public class Direction
     {
         get
         {
-            if (this == Direction.Up)
+            if (this == Up)
             {
-                return Direction.Right;
+                return Right;
             }
 
-            if (this == Direction.Right)
+            if (this == Right)
             {
-                return Direction.Down;
+                return Down;
             }
 
-            if (this == Direction.Down)
+            if (this == Down)
             {
-                return Direction.Left;
+                return Left;
             }
 
-            if (this == Direction.Left)
+            if (this == Left)
             {
-                return Direction.Up;
+                return Up;
             }
 
-            return Direction.None;
+            return None;
         }
     }
 
@@ -84,27 +84,27 @@ public class Direction
     {
         get
         {
-            if (this == Direction.Up)
+            if (this == Up)
             {
-                return Direction.Down;
+                return Down;
             }
 
-            if (this == Direction.Right)
+            if (this == Right)
             {
-                return Direction.Left;
+                return Left;
             }
 
-            if (this == Direction.Down)
+            if (this == Down)
             {
-                return Direction.Up;
+                return Up;
             }
 
-            if (this == Direction.Left)
+            if (this == Left)
             {
-                return Direction.Right;
+                return Right;
             }
 
-            return Direction.None;
+            return None;
         }
     }
 
@@ -131,12 +131,12 @@ public class Direction
         {
             if (point.X < 0)
             {
-                return Direction.Left;
+                return Left;
             }
 
             if (point.X > 0)
             {
-                return Direction.Right;
+                return Right;
             }
         }
 
@@ -144,16 +144,16 @@ public class Direction
         {
             if (point.Y < 0)
             {
-                return Direction.Up;
+                return Up;
             }
 
             if (point.Y > 0)
             {
-                return Direction.Down;
+                return Down;
             }
         }
 
-        return Direction.None;
+        return None;
     }
 
     public Vector2 ToGridCellSizedVector(float tileSize)
@@ -163,22 +163,22 @@ public class Direction
 
     public float Radians()
     {
-        if (this == Direction.Up)
+        if (this == Up)
         {
             return MathF.PI;
         }
 
-        if (this == Direction.Right)
+        if (this == Right)
         {
             return MathF.PI + MathF.PI / 2;
         }
 
-        if (this == Direction.Down)
+        if (this == Down)
         {
             return 0;
         }
 
-        if (this == Direction.Left)
+        if (this == Left)
         {
             return MathF.PI / 2;
         }
@@ -188,22 +188,22 @@ public class Direction
 
     public Keys ToArrowKey()
     {
-        if (this == Direction.Up)
+        if (this == Up)
         {
             return Keys.Up;
         }
 
-        if (this == Direction.Down)
+        if (this == Down)
         {
             return Keys.Down;
         }
 
-        if (this == Direction.Left)
+        if (this == Left)
         {
             return Keys.Left;
         }
 
-        if (this == Direction.Right)
+        if (this == Right)
         {
             return Keys.Right;
         }
@@ -213,22 +213,22 @@ public class Direction
 
     public Keys ToWasd()
     {
-        if (this == Direction.Up)
+        if (this == Up)
         {
             return Keys.W;
         }
 
-        if (this == Direction.Down)
+        if (this == Down)
         {
             return Keys.S;
         }
 
-        if (this == Direction.Left)
+        if (this == Left)
         {
             return Keys.A;
         }
 
-        if (this == Direction.Right)
+        if (this == Right)
         {
             return Keys.D;
         }
@@ -238,22 +238,22 @@ public class Direction
 
     public Buttons ToDPadButton()
     {
-        if (this == Direction.Up)
+        if (this == Up)
         {
             return Buttons.DPadUp;
         }
 
-        if (this == Direction.Down)
+        if (this == Down)
         {
             return Buttons.DPadDown;
         }
 
-        if (this == Direction.Left)
+        if (this == Left)
         {
             return Buttons.DPadLeft;
         }
 
-        if (this == Direction.Right)
+        if (this == Right)
         {
             return Buttons.DPadRight;
         }
@@ -293,20 +293,20 @@ public class Direction
     /// <returns></returns>
     public static IEnumerable<Direction> EachCardinal()
     {
-        yield return Direction.Right;
-        yield return Direction.Down;
-        yield return Direction.Left;
-        yield return Direction.Up;
+        yield return Right;
+        yield return Down;
+        yield return Left;
+        yield return Up;
     }
 
     public static Direction FromName(string? name)
     {
         if (string.IsNullOrEmpty(name))
         {
-            return Direction.None;
+            return None;
         }
-        
-        foreach (var direction in Direction.EachCardinal())
+
+        foreach (var direction in EachCardinal())
         {
             if (direction.Name.ToLower() == name.ToLower())
             {
@@ -314,17 +314,17 @@ public class Direction
             }
         }
 
-        return Direction.None;
+        return None;
     }
 
     public Axis GetAxis()
     {
-        if (this == Direction.Left || this == Direction.Right)
+        if (this == Left || this == Right)
         {
             return Axis.X;
         }
-        
-        if (this == Direction.Up || this == Direction.Down)
+
+        if (this == Up || this == Down)
         {
             return Axis.Y;
         }

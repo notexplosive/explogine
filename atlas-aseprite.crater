@@ -1,0 +1,16 @@
+local asepriteFiles = files.list("Aseprite", true)
+
+local function getFileName(filePath)
+    local splitPath = strings.split(filePath, "/")
+    local fileName = splitPath[#splitPath]
+    local splitFileName = strings.split(fileName, ".")
+    local extension = "." .. splitFileName[#splitFileName]
+    return strings.replace(fileName, extension, "")
+end
+
+program.run("aseprite", { "-b",
+    "--sheet", "Resource/atlas.png",
+    "--data", "Resource/atlas.json",
+    "--sheet-pack",
+    "--shape-padding", 2,
+    unpack(asepriteFiles) })

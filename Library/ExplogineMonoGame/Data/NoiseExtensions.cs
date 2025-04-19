@@ -17,7 +17,7 @@ public static class NoiseExtensions
         var angle = noiseBasedRng.NextFloat() * MathF.PI * 2f;
         return Vector2Extensions.Polar(1, angle);
     }
-    
+
     public static Color NextColor(this NoiseBasedRng noiseBasedRng)
     {
         return new Color(noiseBasedRng.NextByte(), noiseBasedRng.NextByte(), noiseBasedRng.NextByte());
