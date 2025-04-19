@@ -1,4 +1,5 @@
-﻿using ExplogineCore.Data;
+﻿using System;
+using ExplogineCore.Data;
 using Microsoft.Xna.Framework.Audio;
 
 namespace ExplogineMonoGame.Data;
@@ -12,9 +13,9 @@ public static class SoundEffectInstanceExtensions
             sound.Stop();
         }
 
-        sound.Pan = settings.Pan;
-        sound.Pitch = settings.Pitch;
-        sound.Volume = settings.Volume;
+        sound.Pan = Math.Clamp(settings.Pan, -1, 1);
+        sound.Pitch = Math.Clamp(settings.Pitch, -1, 1);
+        sound.Volume = Math.Clamp(settings.Volume, 0, 1);
         sound.IsLooped = settings.Loop;
 
         sound.Play();
