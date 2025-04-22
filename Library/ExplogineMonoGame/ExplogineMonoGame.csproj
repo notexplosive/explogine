@@ -6,6 +6,8 @@
         <LangVersion>10</LangVersion>
         <AssemblyName>ExplogineMonoGame</AssemblyName>
         <RootNamespace>ExplogineMonoGame</RootNamespace>
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
