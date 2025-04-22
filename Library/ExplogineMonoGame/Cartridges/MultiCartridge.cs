@@ -100,17 +100,13 @@ public class MultiCartridge : BasicGameCartridge
             var targetType = _cartridges[i].GetType();
             _cartridges[i] = CreateInstance(targetType, originalRuntime);
 
-            if (_cartridges[i] is ILoadEventProvider loadEventProvider)
-            {
-                foreach (var loadEvent in loadEventProvider.LoadEvents(Client.Graphics.Painter))
-                {
-                    loadEvent?.Execute();
-                }
-            }
+            var loader = new Loader(Runtime, null);
+            loader.AddLoadEventsFromCartridge(_cartridges[i]);
+            Client.CartridgeChain.SetupLoadingCartridge(loader);
 
             if (i == CurrentCartridgeIndex)
             {
-                StartCurrentCartridge();
+                Client.FinishedLoading.Add(StartCurrentCartridge);
             }
         }
 

@@ -24,8 +24,8 @@ public class LoadingCartridge : Cartridge
     {
         _loader = loader;
 
-        var spriteFont = loader.ForceLoad<SpriteFontAsset>("engine/console-font");
-        loader.ForceLoad<TextureAsset>("white-pixel");
+        var spriteFont = loader.ForceLoadStatic<SpriteFontAsset>("engine/console-font");
+        loader.ForceLoadStatic<TextureAsset>("white-pixel");
         _font = new Font(spriteFont.SpriteFont, 32);
         _statusRingBuffer = new LinkedList<string>();
     }
@@ -54,15 +54,14 @@ public class LoadingCartridge : Cartridge
         var maxTime = expectedFrameDuration * percentOfFrameAllocatedForLoading;
 
         var timeAtStartOfUpdate = DateTime.Now;
-        var itemsLoadedThisCycle = 0;
         while (!_loader.IsDone())
         {
-            _loader.LoadNext();
-
             if (_statusRingBuffer.First?.Value != _loader.NextStatus)
             {
                 _statusRingBuffer.AddFirst(_loader.NextStatus);
             }
+            
+            _loader.LoadNext();
 
             while (_statusRingBuffer.Count > RingBufferSize)
             {
@@ -70,7 +69,6 @@ public class LoadingCartridge : Cartridge
             }
 
             var timeSpentLoading = DateTime.Now - timeAtStartOfUpdate;
-            itemsLoadedThisCycle++;
             if (timeSpentLoading.TotalSeconds > maxTime)
             {
                 break;

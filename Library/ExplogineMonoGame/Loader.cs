@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
 using Microsoft.Xna.Framework.Audio;
@@ -13,12 +14,12 @@ public delegate Asset LoadEventFunction();
 
 public class Loader
 {
-    private readonly ContentManager _content;
+    private readonly ContentManager? _content;
     private readonly List<ILoadEvent> _loadEvents = new();
     private readonly IRuntime _runtime;
     private int _loadEventIndex;
 
-    public Loader(IRuntime runtime, ContentManager content)
+    public Loader(IRuntime runtime, ContentManager? content)
     {
         _runtime = runtime;
         _content = content;
@@ -30,10 +31,28 @@ public class Loader
 
     private int LoadEventCount => _loadEvents.Count;
     public float Percent => (float) _loadEventIndex / LoadEventCount;
-    public string NextStatus { get; private set; } = "Loading";
 
-    public T ForceLoad<T>(string key) where T : Asset
+    public string NextStatus
     {
+        get
+        {
+            if (_loadEvents.IsValidIndex(_loadEventIndex))
+            {
+                return _loadEvents[_loadEventIndex].Info ?? _loadEvents[_loadEventIndex].Key;
+            }
+
+            return "Loading";
+        }
+    }
+
+    public T ForceLoadStatic<T>(string key) where T : Asset
+    {
+        if (_content == null)
+        {
+            Client.Debug.LogVerbose("This loader doesn't have static content, trying to load from cache");
+            return Client.Assets.GetAsset<T>(key);
+        }
+        
         Client.Debug.LogVerbose($"ForceLoad: {key}");
         if (IsDone())
         {
@@ -80,15 +99,6 @@ public class Loader
         currentLoadEvent.Execute();
 
         _loadEventIndex++;
-
-        if (_loadEventIndex < _loadEvents.Count)
-        {
-            NextStatus = _loadEvents[_loadEventIndex].Info ?? _loadEvents[_loadEventIndex].Key;
-        }
-        else
-        {
-            NextStatus = "Done!";
-        }
     }
 
     private IEnumerable<AssetLoadEvent> StaticContentLoadEvents()
@@ -98,32 +108,32 @@ public class Loader
             yield return new AssetLoadEvent(key, key, () =>
             {
                 Client.Debug.LogVerbose($"Attempting to load static content asset: {key}");
-                return LoadAsset(key);
+                return LoadStaticAsset(key);
             });
         }
     }
 
-    private Asset LoadAsset(string key)
+    private Asset LoadStaticAsset(string key)
     {
-        var texture2D = AttemptLoad<Texture2D>(key);
+        var texture2D = AttemptLoadStatic<Texture2D>(key);
         if (texture2D != null)
         {
             return new TextureAsset(texture2D);
         }
 
-        var soundEffect = AttemptLoad<SoundEffect>(key);
+        var soundEffect = AttemptLoadStatic<SoundEffect>(key);
         if (soundEffect != null)
         {
             return new SoundAsset(soundEffect);
         }
 
-        var spriteFont = AttemptLoad<SpriteFont>(key);
+        var spriteFont = AttemptLoadStatic<SpriteFont>(key);
         if (spriteFont != null)
         {
             return new SpriteFontAsset(spriteFont);
         }
 
-        var effect = AttemptLoad<Effect>(key);
+        var effect = AttemptLoadStatic<Effect>(key);
         if (effect != null)
         {
             return new EffectAsset(effect);
@@ -132,11 +142,11 @@ public class Loader
         throw new Exception($"Unsupported/Unidentified Asset: {key}");
     }
 
-    private T? AttemptLoad<T>(string key) where T : class
+    private T? AttemptLoadStatic<T>(string key) where T : class
     {
         try
         {
-            return _content.Load<T>(key);
+            return _content?.Load<T>(key);
         }
         catch (InvalidCastException)
         {
@@ -146,6 +156,11 @@ public class Loader
 
     private string[] GetKeysFromContentDirectory()
     {
+        if (_content == null)
+        {
+            return Array.Empty<string>();
+        }
+        
         Client.Debug.LogVerbose($"Scanning for Content at {_content.RootDirectory}");
 
         var fileNames = _runtime.FileSystem.Local.GetFilesAt(Client.ContentBaseDirectory, "xnb");
@@ -168,7 +183,7 @@ public class Loader
 
     public void Unload()
     {
-        _content.Unload();
+        _content?.Unload();
     }
 
     public void AddLoadEvent(ILoadEvent assetLoadEvent)
@@ -191,6 +206,20 @@ public class Loader
             if (loadEvent != null)
             {
                 AddLoadEvent(loadEvent);
+            }
+        }
+    }
+
+    public void AddLoadEventsFromCartridge(Cartridge cartridge)
+    {
+        if (cartridge is ILoadEventProvider loadEventProvider)
+        {
+            foreach (var loadEvent in loadEventProvider.LoadEvents(Client.Graphics.Painter))
+            {
+                if (loadEvent != null)
+                {
+                    AddLoadEvent(loadEvent);
+                }
             }
         }
     }
