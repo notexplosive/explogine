@@ -120,6 +120,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
 
     public void SetupLoadingCartridge(Loader loader)
     {
+        Client.FinishedLoading.BecomeUnready();
         var loadingCartridge = new LoadingCartridge(Client.Runtime, loader);
         StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);

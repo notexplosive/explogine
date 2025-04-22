@@ -34,4 +34,9 @@ public class OnceReady
         IsReady = false;
         Readied = null;
     }
+
+    public void BecomeUnready()
+    {
+        IsReady = false;
+    }
 }
