@@ -102,7 +102,8 @@ public class MultiCartridge : BasicGameCartridge
 
             var loader = new Loader(Runtime, null);
             loader.AddLoadEventsFromCartridge(_cartridges[i]);
-            Client.CartridgeChain.SetupLoadingCartridge(loader);
+            var loadingCartridge = Client.CreateLoadingCartridge(loader);
+            Client.CartridgeChain.SetupLoadingCartridge(loadingCartridge);
 
             if (i == CurrentCartridgeIndex)
             {

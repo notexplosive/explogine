@@ -45,7 +45,25 @@ public class Loader
         }
     }
 
-    public T ForceLoadStatic<T>(string key) where T : Asset
+    public void ForceLoadVoid(string key)
+    {
+        ILoadEvent? foundLoadEvent = null;
+        foreach (var loadEvent in _loadEvents)
+        {
+            if (loadEvent.Key == key)
+            {
+                foundLoadEvent = loadEvent;
+            }
+        }
+
+        if (foundLoadEvent != null)
+        {
+            _loadEvents.Remove(foundLoadEvent);
+            foundLoadEvent.Execute();
+        }
+    }
+
+    public T ForceLoadAsset<T>(string key) where T : Asset
     {
         if (_content == null)
         {
@@ -69,10 +87,13 @@ public class Loader
             }
         }
 
+        if (foundLoadEvent != null)
+        {
+            _loadEvents.Remove(foundLoadEvent);
+        }
+
         if (foundLoadEvent is AssetLoadEvent assetLoadEvent)
         {
-            _loadEvents.Remove(assetLoadEvent);
-
             Client.Debug.LogVerbose("Found load event, running");
             var asset = assetLoadEvent.ExecuteAndReturnAsset();
             var result = asset as T;
@@ -220,6 +241,38 @@ public class Loader
                 {
                     AddLoadEvent(loadEvent);
                 }
+            }
+        }
+    }
+
+    public event Action? BeforeLoadItem;
+
+    public event Action? AfterLoadItem;
+    
+    public void LoadNextChunkOfItems()
+    {
+        var expectedFrameDuration = 1 / 60f;
+
+        // If we dedicate the whole frame to loading we'll effectively block on the UI thread.
+        // If we leave a tiny bit of headroom then on most frames we can still do UI operations
+        // (such as move the window) during the loading screen
+        var percentOfFrameAllocatedForLoading = 0.5f;
+
+        var maxTime = expectedFrameDuration * percentOfFrameAllocatedForLoading;
+
+        var timeAtStartOfUpdate = DateTime.Now;
+        while (!IsDone())
+        {
+            BeforeLoadItem?.Invoke();
+            
+            LoadNext();
+
+            AfterLoadItem?.Invoke();
+
+            var timeSpentLoading = DateTime.Now - timeAtStartOfUpdate;
+            if (timeSpentLoading.TotalSeconds > maxTime)
+            {
+                break;
             }
         }
     }

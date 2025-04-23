@@ -15,6 +15,8 @@ namespace ExplogineMonoGame;
 
 public static class Client
 {
+    private static Func<IRuntime, Loader, Cartridge>? _createLoadingCartridge;
+
     // The `OnceReady` initialization needs to happen at the top, other static initializers depend on these
     public static readonly OnceReady FinishedLoading = new();
     public static readonly OnceReady InitializedGraphics = new();
@@ -23,7 +25,6 @@ public static class Client
     //
 
     private static Game currentGame = null!;
-    private static Loader loader = null!;
     private static WindowConfig startingConfig;
     private static CommandLineParameters commandLineParameters = new();
     internal static readonly ClientRuntime Runtime = new();
@@ -217,13 +218,24 @@ public static class Client
         InitializedGraphics.BecomeReady();
     }
 
+    public static void SetLoadingCartridgeFactory(Func<IRuntime, Loader, Cartridge> createCartridge)
+    {
+        _createLoadingCartridge = createCartridge;
+    }
+
+    private static Cartridge GetDefaultLoadingCartridge(Loader localLoader)
+    {
+        return new LoadingCartridge(Runtime, localLoader);
+    }
+
     internal static void LoadContent(ContentManager contentManager)
     {
-        loader = new Loader(Runtime, contentManager);
+        var loader = new Loader(Runtime, contentManager);
         loader.AddLoadEvents(Demo);
         loader.AddLoadEvents(Essentials);
         loader.AddLoadEvents(CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
-        CartridgeChain.SetupLoadingCartridge(loader);
+        var loadingCartridge = CreateLoadingCartridge(loader);
+        CartridgeChain.SetupLoadingCartridge(loadingCartridge);
         CartridgeChain.ValidateParameters(commandLineParameters.Writer);
 
         foreach (var arg in commandLineParameters.Args.UnboundArgs())
@@ -233,6 +245,13 @@ public static class Client
 
         Input = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
         HumanInput = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
+    }
+
+    public static Cartridge CreateLoadingCartridge(Loader loader)
+    {
+        return _createLoadingCartridge == null
+            ? GetDefaultLoadingCartridge(loader)
+            : _createLoadingCartridge(Runtime, loader);
     }
 
     internal static void UnloadContent()

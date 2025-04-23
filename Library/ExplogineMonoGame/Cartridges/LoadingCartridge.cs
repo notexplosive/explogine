@@ -18,19 +18,38 @@ public class LoadingCartridge : Cartridge
     private readonly LinkedList<string> _statusRingBuffer;
     private bool _doneLoading;
     private int _endingDelayFrames = 10;
-    private int _startingDelayFrames = 10;
+    private int _startingDelayFrames = 5;
 
     public LoadingCartridge(IRuntime runtime, Loader loader) : base(runtime)
     {
         _loader = loader;
 
-        var spriteFont = loader.ForceLoadStatic<SpriteFontAsset>("engine/console-font");
-        loader.ForceLoadStatic<TextureAsset>("white-pixel");
+        var spriteFont = loader.ForceLoadAsset<SpriteFontAsset>("engine/console-font");
+        loader.ForceLoadAsset<TextureAsset>("white-pixel");
         _font = new Font(spriteFont.SpriteFont, 32);
         _statusRingBuffer = new LinkedList<string>();
+
+        _loader.BeforeLoadItem += BeforeLoadItem;
+        _loader.AfterLoadItem += AfterLoadItem;
     }
 
     public override CartridgeConfig CartridgeConfig { get; } = new();
+
+    private void BeforeLoadItem()
+    {
+        if (_statusRingBuffer.First?.Value != _loader.NextStatus)
+        {
+            _statusRingBuffer.AddFirst(_loader.NextStatus);
+        }
+    }
+
+    private void AfterLoadItem()
+    {
+        while (_statusRingBuffer.Count > RingBufferSize)
+        {
+            _statusRingBuffer.RemoveLast();
+        }
+    }
 
     public override void OnCartridgeStarted()
     {
@@ -44,36 +63,7 @@ public class LoadingCartridge : Cartridge
             return;
         }
 
-        var expectedFrameDuration = 1 / 60f;
-
-        // If we dedicate the whole frame to loading we'll effectively block on the UI thread.
-        // If we leave a tiny bit of headroom then on most frames we can still do UI operations
-        // (such as move the window) during the loading screen
-        var percentOfFrameAllocatedForLoading = 0.9f;
-
-        var maxTime = expectedFrameDuration * percentOfFrameAllocatedForLoading;
-
-        var timeAtStartOfUpdate = DateTime.Now;
-        while (!_loader.IsDone())
-        {
-            if (_statusRingBuffer.First?.Value != _loader.NextStatus)
-            {
-                _statusRingBuffer.AddFirst(_loader.NextStatus);
-            }
-            
-            _loader.LoadNext();
-
-            while (_statusRingBuffer.Count > RingBufferSize)
-            {
-                _statusRingBuffer.RemoveLast();
-            }
-
-            var timeSpentLoading = DateTime.Now - timeAtStartOfUpdate;
-            if (timeSpentLoading.TotalSeconds > maxTime)
-            {
-                break;
-            }
-        }
+        _loader.LoadNextChunkOfItems();
     }
 
     public override void Draw(Painter painter)

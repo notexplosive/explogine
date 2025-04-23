@@ -118,10 +118,9 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         }
     }
 
-    public void SetupLoadingCartridge(Loader loader)
+    public void SetupLoadingCartridge(Cartridge loadingCartridge)
     {
         Client.FinishedLoading.BecomeUnready();
-        var loadingCartridge = new LoadingCartridge(Client.Runtime, loader);
         StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(_debugCartridge.OnCartridgeStarted);
