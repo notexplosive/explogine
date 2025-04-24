@@ -7,6 +7,8 @@ namespace ExplogineMonoGame.Cartridges;
 
 public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
 {
+    public event Action? CartridgeIncremented;
+    
     protected Cartridge(IRuntime runtime)
     {
         Runtime = runtime;
@@ -58,5 +60,10 @@ public abstract class Cartridge : IUpdateInputHook, IDrawHook, IUpdateHook
     public virtual void BeforeRegenerate()
     {
         // empty on purpose
+    }
+
+    public void InvokeIncremented()
+    {
+        CartridgeIncremented?.Invoke();
     }
 }

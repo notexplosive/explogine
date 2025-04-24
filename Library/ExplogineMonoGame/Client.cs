@@ -249,9 +249,11 @@ public static class Client
 
     public static Cartridge CreateLoadingCartridge(Loader loader)
     {
-        return _createLoadingCartridge == null
+        var loadingCartridge = _createLoadingCartridge == null
             ? GetDefaultLoadingCartridge(loader)
             : _createLoadingCartridge(Runtime, loader);
+
+        return loadingCartridge;
     }
 
     internal static void UnloadContent()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ExplogineMonoGame.AssetManagement;
 
 namespace ExplogineMonoGame;
@@ -19,6 +20,27 @@ public readonly record struct VoidLoadEvent(string Key, string? Info, Action Fun
     public void Execute()
     {
         Function.Invoke();
+    }
+}
+
+public readonly record struct ThreadedVoidLoadEvent(string Key, string? Info, Action Function) : ILoadEvent
+{
+    public ThreadedVoidLoadEvent(string key, Action eventFunction) : this(key, null, eventFunction)
+    {
+    }
+
+    public void Execute()
+    {
+        Function.Invoke();
+    }
+
+    public Task ExecuteThreaded()
+    {
+        var self = this;
+        return Task.Run(() =>
+        {
+            self.Execute();
+        });
     }
 }
 

@@ -47,6 +47,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         Current.Update(dt);
         if (Current.ShouldLoadNextCartridge())
         {
+            Current.InvokeIncremented();
             IncrementCartridge();
         }
     }
@@ -121,6 +122,7 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
     public void SetupLoadingCartridge(Cartridge loadingCartridge)
     {
         Client.FinishedLoading.BecomeUnready();
+        loadingCartridge.CartridgeIncremented += Client.FinishedLoading.BecomeReady;
         StartCartridgeAndSetRenderResolution(loadingCartridge);
         Prepend(loadingCartridge);
         Client.FinishedLoading.Add(_debugCartridge.OnCartridgeStarted);

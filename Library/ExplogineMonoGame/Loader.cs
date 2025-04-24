@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using ExplogineCore.Data;
 using ExplogineMonoGame.AssetManagement;
 using ExplogineMonoGame.Cartridges;
@@ -18,6 +19,7 @@ public class Loader
     private readonly List<ILoadEvent> _loadEvents = new();
     private readonly IRuntime _runtime;
     private int _loadEventIndex;
+    private List<Task> _pendingTasks = new();
 
     public Loader(IRuntime runtime, ContentManager? content)
     {
@@ -72,7 +74,7 @@ public class Loader
         }
         
         Client.Debug.LogVerbose($"ForceLoad: {key}");
-        if (IsDone())
+        if (HasExecutedAllEvents())
         {
             Client.Debug.LogVerbose("Already cached, returning");
             return Client.Assets.GetAsset<T>(key);
@@ -109,15 +111,41 @@ public class Loader
         throw new KeyNotFoundException($"No LoadEvent with key {key}, maybe preload hasn't been completed?");
     }
 
-    public bool IsDone()
+    public bool HasExecutedAllEvents()
     {
         return _loadEventIndex >= LoadEventCount;
+    }
+
+    public bool IsFullyDone()
+    {
+        return HasExecutedAllEvents() && AllPendingTasksFinished();
+    }
+
+    private bool AllPendingTasksFinished()
+    {
+        foreach (var task in _pendingTasks)
+        {
+            if (!task.IsCompleted)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void LoadNext()
     {
         var currentLoadEvent = _loadEvents[_loadEventIndex];
-        currentLoadEvent.Execute();
+
+        if (currentLoadEvent is ThreadedVoidLoadEvent threadedEvent)
+        {
+            _pendingTasks.Add(threadedEvent.ExecuteThreaded());
+        }
+        else
+        {
+            currentLoadEvent.Execute();
+        }
 
         _loadEventIndex++;
     }
@@ -261,7 +289,7 @@ public class Loader
         var maxTime = expectedFrameDuration * percentOfFrameAllocatedForLoading;
 
         var timeAtStartOfUpdate = DateTime.Now;
-        while (!IsDone())
+        while (!HasExecutedAllEvents())
         {
             BeforeLoadItem?.Invoke();
             

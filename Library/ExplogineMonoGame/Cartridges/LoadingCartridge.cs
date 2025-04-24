@@ -122,15 +122,13 @@ public class LoadingCartridge : Cartridge
 
         // Wait until we've drawn a few frames of the finished loading bar before we move on
         // This way we make sure we're at a stable framerate before we start the game in earnest.
-        if (_loader.IsDone())
+        if (_loader.IsFullyDone())
         {
             if (_endingDelayFrames > 0)
             {
                 _endingDelayFrames--;
                 return;
             }
-
-            Client.FinishedLoading.BecomeReady();
         }
     }
 
