@@ -91,12 +91,12 @@ internal class CartridgeChain : IUpdateInputHook, IUpdateHook
         Append(cartridge);
     }
 
-    public void Append(Cartridge cartridge)
+    private void Append(Cartridge cartridge)
     {
         _list.AddLast(cartridge);
     }
 
-    private void Prepend(Cartridge cartridge)
+    public void Prepend(Cartridge cartridge)
     {
         _list.AddFirst(cartridge);
     }

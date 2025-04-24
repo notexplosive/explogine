@@ -15,7 +15,8 @@ namespace ExplogineMonoGame;
 
 public static class Client
 {
-    private static Func<IRuntime, Loader, Cartridge>? _createLoadingCartridge;
+    private static Func<IRuntime, Loader, Cartridge>? createLoadingCartridge;
+    private static Func<IRuntime, Cartridge>? createIntroCartridge;
 
     // The `OnceReady` initialization needs to happen at the top, other static initializers depend on these
     public static readonly OnceReady FinishedLoading = new();
@@ -155,15 +156,6 @@ public static class Client
         Runtime.Setup(window, fileSystem);
         startingConfig = windowConfig;
 
-        var skipIntro = commandLineParameters.Args.GetValue<bool>("skipIntro") ||
-                        Debug.LaunchedAsDebugMode();
-        // Setup Cartridges
-        if (!skipIntro)
-        {
-            CartridgeChain.Append(new IntroCartridge(Runtime, "NotExplosive.net",
-                Random.Dirty.NextUInt(), 0.25f));
-        }
-
         // Don't plug in the game cartridge until we're initialized
         InitializedGraphics.Add(() =>
             CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Runtime)));
@@ -220,12 +212,22 @@ public static class Client
 
     public static void SetLoadingCartridgeFactory(Func<IRuntime, Loader, Cartridge> createCartridge)
     {
-        _createLoadingCartridge = createCartridge;
+        createLoadingCartridge = createCartridge;
+    }
+    
+    public static void SetIntroCartridgeFactory(Func<IRuntime, Cartridge> introCartridge)
+    {
+        createIntroCartridge = introCartridge;
     }
 
     private static Cartridge GetDefaultLoadingCartridge(Loader localLoader)
     {
         return new LoadingCartridge(Runtime, localLoader);
+    }
+
+    private static Cartridge GetDefaultIntroCartridge()
+    {
+        return new IntroCartridge(Runtime, "NotExplosive.net", Random.Dirty.NextUInt(), 0.25f);
     }
 
     internal static void LoadContent(ContentManager contentManager)
@@ -234,7 +236,17 @@ public static class Client
         loader.AddLoadEvents(Demo);
         loader.AddLoadEvents(Essentials);
         loader.AddLoadEvents(CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
-        var loadingCartridge = CreateLoadingCartridge(loader);
+        
+        var loadingCartridge = CreateLoadingCartridge(loader, Runtime);
+        
+        var skipIntro = commandLineParameters.Args.GetValue<bool>("skipIntro") ||
+                        Debug.LaunchedAsDebugMode();
+        if (!skipIntro)
+        {
+            // intro might depend on loading cartridge so we set it up here
+            CartridgeChain.Prepend(CreateIntroCartridge());
+        }
+        
         CartridgeChain.SetupLoadingCartridge(loadingCartridge);
         CartridgeChain.ValidateParameters(commandLineParameters.Writer);
 
@@ -247,13 +259,18 @@ public static class Client
         HumanInput = new InputFrameState(InputSnapshot.Empty, InputSnapshot.Empty);
     }
 
-    public static Cartridge CreateLoadingCartridge(Loader loader)
+    public static Cartridge CreateLoadingCartridge(Loader loader, IRuntime runtime)
     {
-        var loadingCartridge = _createLoadingCartridge == null
+        var loadingCartridge = createLoadingCartridge == null
             ? GetDefaultLoadingCartridge(loader)
-            : _createLoadingCartridge(Runtime, loader);
+            : createLoadingCartridge(runtime, loader);
 
         return loadingCartridge;
+    }
+
+    private static Cartridge CreateIntroCartridge()
+    {
+        return createIntroCartridge == null ? GetDefaultIntroCartridge() : createIntroCartridge(Runtime);
     }
 
     internal static void UnloadContent()
