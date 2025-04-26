@@ -37,8 +37,11 @@ public class HotReloadCartridge : MultiCartridge
 
                 // hot reload self (does not actually regen own cartridge)
                 OnHotReload();
-
-                SwapTo(0);
+                
+                Client.FinishedLoading.Add(() =>
+                {
+                    SwapTo(0);
+                });
             }
         }
     }

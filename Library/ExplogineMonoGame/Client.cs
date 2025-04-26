@@ -158,7 +158,7 @@ public static class Client
 
         // Don't plug in the game cartridge until we're initialized
         InitializedGraphics.Add(() =>
-            CartridgeChain.AppendGameCartridge(gameCartridgeCreator(Runtime)));
+            CartridgeChain.Append(gameCartridgeCreator(Runtime)));
         CartridgeChain.AboutToLoadLastCartridge += Demo.Begin;
 
         // Setup Game
@@ -235,9 +235,6 @@ public static class Client
         var loader = new Loader(Runtime, contentManager);
         loader.AddLoadEvents(Demo);
         loader.AddLoadEvents(Essentials);
-        loader.AddLoadEvents(CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
-        
-        var loadingCartridge = CreateLoadingCartridge(loader, Runtime);
         
         var skipIntro = commandLineParameters.Args.GetValue<bool>("skipIntro") ||
                         Debug.LaunchedAsDebugMode();
@@ -247,7 +244,10 @@ public static class Client
             CartridgeChain.Prepend(CreateIntroCartridge());
         }
         
-        CartridgeChain.SetupLoadingCartridge(loadingCartridge);
+        loader.AddLoadEvents(CartridgeChain.GetAllCartridgesDerivedFrom<ILoadEventProvider>());
+        
+        var loadingCartridge = CreateLoadingCartridge(loader, Runtime);
+        CartridgeChain.PrependAndSetupLoadingCartridge(loadingCartridge);
         CartridgeChain.ValidateParameters(commandLineParameters.Writer);
 
         foreach (var arg in commandLineParameters.Args.UnboundArgs())
