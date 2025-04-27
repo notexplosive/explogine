@@ -24,11 +24,6 @@ public class CommandLineParameters
 
         foreach (var arg in args)
         {
-            if (arg.Contains(' '))
-            {
-                throw new Exception("Individual args should not contain spaces, did you forget to use params?");
-            }
-
             if (IsCommand(arg))
             {
                 var argWithoutDashes = arg.Remove(0, 2);
