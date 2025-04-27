@@ -156,6 +156,14 @@ public class Direction
         return None;
     }
 
+    public Vector2 ToVector()
+    {
+        return ToPoint().ToVector2();
+    }
+
+    /// <summary>
+    ///     Returns vector with magnitude = tileSize / 2
+    /// </summary>
     public Vector2 ToGridCellSizedVector(float tileSize)
     {
         return ToPoint().ToVector2() * tileSize / 2;
@@ -330,5 +338,19 @@ public class Direction
         }
 
         throw new Exception($"Direction {Name} does not have an axis");
+    }
+
+    public static Direction EstimateFromVector(Vector2 vector, float tolerance = 0.25f)
+    {
+        var toleranceSquared = tolerance * tolerance;
+        foreach (var direction in EachCardinal())
+        {
+            if ((vector.Normalized() - direction.ToVector()).LengthSquared() < toleranceSquared)
+            {
+                return direction;
+            }
+        }
+
+        return None;
     }
 }
