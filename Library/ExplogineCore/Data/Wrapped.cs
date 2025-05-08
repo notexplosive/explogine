@@ -39,6 +39,11 @@ public class Wrapped<T> where T : struct
         return wrapped.Value;
     }
 
+    public static implicit operator Wrapped<T>(T unwrapped)
+    {
+        return new Wrapped<T>(unwrapped);
+    }
+
     public override string ToString()
     {
         var str = _value.ToString();
