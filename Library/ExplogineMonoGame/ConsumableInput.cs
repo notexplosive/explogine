@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -79,6 +81,17 @@ public class ConsumableInput
             }
 
             return _raw.ScrollDelta();
+        }
+
+        public int NormalizedScrollDelta( bool shouldConsume = false)
+        {
+            var scrollVector = new Vector2(0, ScrollDelta(shouldConsume));
+            if (scrollVector.Y != 0)
+            {
+                return (int) scrollVector.Normalized().Y;
+            }
+
+            return 0;
         }
 
         public void ConsumeScrollDelta()
