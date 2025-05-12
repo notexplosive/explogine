@@ -261,7 +261,6 @@ end
 
     public void LoadSeveralFiles(string directoryPath, Action<string, DynValue, LuaRuntime> onModuleLoaded)
     {
-        // todo: this function name sucks
         foreach (var fileName in _root.GetFilesAt(directoryPath, "lua"))
         {
             var fullName = new FileInfo(fileName).Name;
