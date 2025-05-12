@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using ExplogineMonoGame.Data;
 using ExplogineMonoGame.Input;
@@ -83,7 +82,7 @@ public class ConsumableInput
             return _raw.ScrollDelta();
         }
 
-        public int NormalizedScrollDelta( bool shouldConsume = false)
+        public int NormalizedScrollDelta(bool shouldConsume = false)
         {
             var scrollVector = new Vector2(0, ScrollDelta(shouldConsume));
             if (scrollVector.Y != 0)
@@ -154,7 +153,7 @@ public class ConsumableInput
             return result;
         }
 
-        public char[] GetEnteredCharacters()
+        public char[] GetEnteredCharacters(bool shouldConsume = false)
         {
             var result = new List<char>();
 
@@ -163,6 +162,16 @@ public class ConsumableInput
                 if (!_consumedTextInput.Contains(character))
                 {
                     result.Add(character);
+                }
+
+                if (shouldConsume)
+                {
+                    ConsumeTextInput(character);
+                    var key = InputUtil.CharToKeys(character);
+                    if (key.HasValue)
+                    {
+                        Consume(key.Value);
+                    }
                 }
             }
 
