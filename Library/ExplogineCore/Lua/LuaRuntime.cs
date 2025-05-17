@@ -207,6 +207,11 @@ end
         _lua.Globals.Set(globalName, DynValue.FromObject(_lua, value));
     }
 
+    public DynValue GetGlobal(string globalName)
+    {
+        return _lua.Globals.Get(globalName);
+    }
+
     /// <summary>
     ///     Executes a chunk and returns the result. If the chunk errors, we place the error on CurrentError and return nil.
     /// </summary>
