@@ -53,7 +53,6 @@ public class LoadingCartridge : Cartridge
 
     public override void OnCartridgeStarted()
     {
-        Client.FinishedLoading.Add(() => _doneLoading = true);
     }
 
     public override void Update(float dt)
@@ -64,6 +63,11 @@ public class LoadingCartridge : Cartridge
         }
 
         _loader.LoadNextChunkOfItems();
+
+        if (_loader.IsFullyDone())
+        {
+            _doneLoading = true;
+        }
     }
 
     public override void Draw(Painter painter)
